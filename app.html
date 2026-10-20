@@ -550,25 +550,55 @@
 </head>
 <body>
 
-  <div id="app-container">
-    <div class="top-left-panel">
-      <div class="panel-row">
-        <button id="btn-view-map" class="pill-btn active" onclick="switchView('map')">🗺️ Mapa</button>
-        <button id="btn-view-list" class="pill-btn" onclick="switchView('list')">📋 Seznam</button>
+  <div id="app-layout">
+    <!-- HORNÍ LIŠTA -->
+    <header id="top-bar">
+      <div class="top-bar-left">
+        <a href="index.html" style="text-decoration:none; color:inherit;">RUN<span>ATLAS</span></a>
       </div>
-      <div class="panel-divider"></div>
-      <div class="panel-row">
-        <button id="btn-mode-races" class="pill-btn active" onclick="switchMode('races')">🏁 Závody</button>
-        <button id="btn-mode-memorable" class="pill-btn" onclick="switchMode('memorable')">🌲 Památné běhy</button>
+
+      <!-- Vyhledávání -->
+      <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Hledat závod, trasu, město..." oninput="handleGlobalSearch(this.value)">
+
+      <!-- Uživatelský profil & Přidat závod -->
+      <div class="top-bar-right">
+        <button id="btn-add-race" class="open-detail-btn" style="margin-top:0; width:auto; padding:6px 14px; display:none;" onclick="openAddModal()">➕ Přidat závod</button>
+        <button id="btn-profile" class="pill-btn" onclick="openProfileModal()">👤 <span id="label-user">Profil</span></button>
       </div>
-      <div class="panel-divider" id="region-divider"></div>
-      <div class="panel-row" id="region-row">
-        <span class="panel-label">Mapa:</span>
-        <button id="btn-reg-cesko" class="pill-btn" onclick="setRegion('cesko')">Česko</button>
-        <button id="btn-reg-evropa" class="pill-btn active" onclick="setRegion('evropa')">Evropa</button>
-        <button id="btn-reg-svet" class="pill-btn" onclick="setRegion('svet')">Svět</button>
-      </div>
+    </header>
+
+    <!-- HLAVNÍ PLOCHA -->
+    <div id="main-body">
+      <!-- LEVÝ VYSOUVACÍ PANEL -->
+      <nav id="left-rail">
+        <button id="btn-mode-races" class="rail-btn active" onclick="switchMode('races')">
+          <span class="rail-icon">🌐</span>
+          <span>Běžecký atlas</span>
+        </button>
+        <button id="btn-mode-memorable" class="rail-btn" onclick="switchMode('memorable')">
+          <span class="rail-icon">🏃</span>
+          <span>Památné běhy</span>
+        </button>
+        <div style="height: 1px; background: #2c2c2e; margin: 4px 0;"></div>
+        <button id="btn-reg-svet" class="rail-btn" onclick="setRegion('svet')">
+          <span class="rail-icon">🗺️</span>
+          <span>Celý svět</span>
+        </button>
+        <button id="btn-settings" class="rail-btn" onclick="alert('Nastavení atlasu')">
+          <span class="rail-icon">⚙️</span>
+          <span>Nastavení</span>
+        </button>
+      </nav>
+
+      <!-- MAPA -->
+      <div id="map"></div>
+
+      <!-- PRAVÝ PANEL (Seznam a filtry zůstávají) -->
+      <aside id="sidebar">
+        <!-- Zde ponech celý stávající obsah elementu sidebar: header, status-boxes, filtry a content -->
+      </aside>
     </div>
+  </div>
 
     <div id="map"></div>
 
