@@ -18,9 +18,125 @@
   
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body { height: 100%; width: 100%; overflow: hidden; background: #121212; color: #e0e0e0; }
     
-    #app-container { display: flex; width: 100vw; height: 100vh; position: relative; }
+    /* Celkový rámec aplikace */
+    #app-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; }
+
+    /* Horní průhledná lišta */
+    #top-bar {
+      height: 52px;
+      background: rgba(22, 22, 26, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid #2c2c2e;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 2000;
+      flex-shrink: 0;
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 14px; font-weight: 800; font-size: 1.1rem; color: #fff; }
+    .top-bar-left span { color: #007aff; }
+
+    .top-search-input {
+      background: #1c1c1e;
+      border: 1px solid #3a3a3c;
+      border-radius: 8px;
+      padding: 6px 14px;
+      color: #fff;
+      font-size: 0.85rem;
+      width: 280px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .top-search-input:focus { border-color: #007aff; width: 340px; }
+
+    .top-bar-right { display: flex; align-items: center; gap: 10px; }
+
+    /* Tělo aplikace pod lištou */
+    #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
+
+    /* Levý rozbalovací panel (Runalyze Rail) */
+    #left-rail {
+      width: 56px;
+      background: rgba(20, 20, 24, 0.92);
+      backdrop-filter: blur(14px);
+      border-right: 1px solid #2c2c2e;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 10px 6px;
+      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      white-space: nowrap;
+      z-index: 1500;
+    }
+    #left-rail:hover { width: 200px; box-shadow: 6px 0 24px rgba(0,0,0,0.6); }
+
+    .rail-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      color: #8e8e93;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .rail-btn:hover, .rail-btn.active { background: #2c2c2e; color: #fff; }
+    .rail-btn .rail-icon { font-size: 1.15rem; flex-shrink: 0; }
+
+    /* Mapa a Sidebar */
+    #map { flex: 1; height: 100%; min-height: 100%; background: #1a1a1a; z-index: 1; }
+    #sidebar {
+      width: 440px;
+      height: 100%;
+      background: #1c1c1e;
+      border-left: 1px solid #2c2c2e;
+      display: flex;
+      flex-direction: column;
+      z-index: 2;
+    }
+
+    /* Mobilní responzivita (obrazovky do 768px) */
+    @media (max-width: 768px) {
+      .top-search-input { display: none; }
+      
+      #left-rail {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100% !important;
+        height: 56px;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        border-right: none;
+        border-top: 1px solid #2c2c2e;
+        z-index: 3000;
+        padding: 0 10px;
+      }
+      .rail-btn span:not(.rail-icon) { display: none; } /* Na mobilu schová text, nechá jen ikony */
+
+      #sidebar {
+        position: fixed;
+        inset: 52px 0 56px 0;
+        width: 100%;
+        transform: translateY(100%);
+        transition: transform 0.25s ease;
+        z-index: 2500;
+      }
+      #sidebar.mobile-open { transform: translateY(0); }
+
+      #map { width: 100%; height: calc(100vh - 108px); }
+    }
     
     #map {
       flex: 1;
