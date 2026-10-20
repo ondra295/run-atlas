@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RunAtlas — Tvůj běžecký atlas a deník tras</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    html, body { width: 100%; height: 100%; overflow-x: hidden; background: #0c0c0e; color: #fff; }
+
+    .hero-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 20px 40px;
+      overflow: hidden;
+    }
+
+    /* Video na pozadí */
+    .bg-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    /* Tmavý gradientní filtr přes video */
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(12,12,14,0.45) 0%, rgba(12,12,14,0.85) 100%);
+      z-index: 2;
+    }
+
+    /* Horní navigace s logem */
+    .top-nav {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+    .brand-logo span { color: #007aff; }
+
+    /* Hlavní text uprostřed */
+    .hero-center {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      max-width: 780px;
+      padding: 0 10px;
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+      color: #5ac8fa;
+    }
+    .hero-title {
+      font-size: 3.4rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      letter-spacing: -0.5px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: #c7c7cc;
+      line-height: 1.6;
+      margin-bottom: 34px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+    }
+
+    /* Skupina 3 tlačítek */
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 13px 26px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: #007aff;
+      color: #fff;
+      border: 1px solid #007aff;
+      box-shadow: 0 4px 18px rgba(0, 122, 255, 0.35);
+    }
+    .btn-primary:hover { background: #0062cc; transform: translateY(-2px); }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.22); transform: translateY(-2px); }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #e5e5ea;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    /* Patička */
+    .hero-footer {
+      position: relative;
+      z-index: 3;
+      font-size: 0.78rem;
+      color: #8e8e93;
+    }
+
+    /* Vyskakovací okno pro přihlášení / registraci */
+    .auth-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .auth-box {
+      background: #1c1c1e;
+      border: 1px solid #333;
+      border-radius: 16px;
+      width: 380px;
+      max-width: 100%;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    }
+    .auth-box h3 { font-size: 1.3rem; font-weight: 700; }
+    .auth-box input {
+      padding: 12px;
+      border-radius: 8px;
+      background: #2c2c2e;
+      border: 1px solid #444;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .auth-box input:focus { border-color: #007aff; }
+
+    /* Mobilní zobrazení */
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.2rem; }
+      .hero-subtitle { font-size: 0.98rem; }
+      .hero-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-container">
+    <!-- Video na pozadí (nahraj do repozitáře soubor hero.mp4) -->
+    <video autoplay muted loop playsinline class="bg-video">
+      <source src="hero.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+
+    <header class="top-nav">
+      <div class="brand-logo">RUN<span>ATLAS</span></div>
+      <button class="btn btn-ghost" style="padding: 7px 16px; font-size: 0.85rem;" onclick="openAuth('login')">Sign In</button>
+    </header>
+
+    <main class="hero-center">
+      <div class="hero-badge">🏔️ Interaktivní závodní atlas & deník</div>
+      <h1 class="hero-title">Všechny tvoje běžecké stopy na jediné mapě</h1>
+      <p class="hero-subtitle">
+        Prohlížej si své zdolané maratony i horské traily, analyzuj výškové profily, 
+        ukládej si vysněný bucket list a sdílej svou mapu s přáteli.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="openAuth('signup')">Create an account</button>
+        <button class="btn btn-secondary" onclick="openAuth('login')">Sign In</button>
+        <a href="app.html?demo=true" class="btn btn-ghost">See how it works ➔</a>
+      </div>
+    </main>
+
+    <footer class="hero-footer">
+      &copy; 2026 RunAtlas. Všechna práva vyhrazena.
+    </footer>
+  </div>
+
+  <!-- AUTH MODAL -->
+  <div id="modal-auth" class="auth-modal">
+    <div class="auth-box">
+      <h3 id="modal-title">Přihlášení do atlasu</h3>
+      <input type="email" id="auth-email" placeholder="E-mail">
+      <input type="password" id="auth-password" placeholder="Heslo">
+      <input type="text" id="auth-username" placeholder="Uživatelské jméno (např. ondra)" style="display:none;">
+      
+      <button id="btn-submit-auth" class="btn btn-primary" style="margin-top: 6px;" onclick="submitAuth()">Pokračovat</button>
+      <button class="btn btn-ghost" onclick="closeAuth()">Zrušit</button>
+    </div>
+  </div>
+
+  <script>
+    // DOPLŇ SVOJE SUPABASE ÚDAJE:
+    const SUPABASE_URL = "TVOJE_PROJECT_URL_TADY";
+    const SUPABASE_ANON_KEY = "TVUJ_ANON_PUBLIC_KEY_TADY";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let authMode = 'login';
+
+    function openAuth(mode) {
+      authMode = mode;
+      document.getElementById('modal-auth').style.display = 'flex';
+      document.getElementById('modal-title').textContent = mode === 'signup' ? 'Vytvořit nový účet' : 'Přihlásit se do účtu';
+      document.getElementById('auth-username').style.display = mode === 'signup' ? 'block' : 'none';
+      document.getElementById('btn-submit-auth').textContent = mode === 'signup' ? 'Zaregistrovat se' : 'Přihlásit se';
+    }
+
+    function closeAuth() {
+      document.getElementById('modal-auth').style.display = 'none';
+    }
+
+    async function submitAuth() {
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      const username = document.getElementById('auth-username').value.trim().toLowerCase();
+
+      if (authMode === 'signup') {
+        if (!username) { alert('Zadej své uživatelské jméno.'); return; }
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) { alert(error.message); return; }
+        
+        if (data.user) {
+          await supabase.from('profiles').insert([{ id: data.user.id, username: username, display_name: username }]);
+          window.location.href = 'app.html';
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) { alert(error.message); return; }
+        window.location.href = 'app.html';
+      }
+    }
+
+    // Pokud už je uživatel přihlášený, přesměrujeme ho rovnou do aplikace
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) window.location.href = 'app.html';
+    });
+  </script>
+</body>
+</html>
