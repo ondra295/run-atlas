@@ -2847,6 +2847,29 @@ function getDifficultyBadge(diff) {
     function applyFilters() {
       isShowingDetail = false; activeDetailItemId = null; renderMarkers();
     }
+	  function handleGlobalSearch(query) {
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    applyFilters();
+    return;
+  }
+  
+  // Filtrujeme položky podle názvu nebo poznámek
+  const activeDataSet = currentMode === 'races' ? races : memorableRuns;
+  currentFilteredList = activeDataSet.filter(item => 
+    item.name.toLowerCase().includes(q) || 
+    (item.notes && item.notes.toLowerCase().includes(q)) ||
+    (item.why && item.why.toLowerCase().includes(q))
+  );
+  
+  renderMarkers();
+  renderSidebarList();
+  
+  // Pokud je nalezena přesně jedna trasa, vycentrujeme na ni mapu
+  if (currentFilteredList.length === 1) {
+    map.panTo(currentFilteredList[0].coords, { animate: true });
+  }
+}
 
     updateHomeMarker(); switchMode('races');
   </script>
