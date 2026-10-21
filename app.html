@@ -2881,6 +2881,153 @@ function getDifficultyBadge(diff) {
 }
 
     updateHomeMarker(); switchMode('races');
+	  async function initAppAuth() {
+  const params = new URLSearchParams(window.location.search);
+  isDemoMode = params.get('demo') === 'true';
+  const sharedUser = params.get('u');
+
+  // 1. REŽIM UKÁZKY (See how it works)
+  if (isDemoMode) {
+    const mainTitle = document.getElementById('main-title');
+    if (mainTitle) mainTitle.textContent = "Běžecký atlas (Ukázka)";
+    
+    const labelUser = document.getElementById('label-user');
+    if (labelUser) labelUser.textContent = "Demo režim";
+
+    // Vezmeme prvních 5 závodů ze zálohy jako ukázku
+    if (typeof backupRaces !== 'undefined' && backupRaces.length > 0) {
+      races = backupRaces.slice(0, 5);
+    }
+    
+    renderMarkers();
+    renderSidebarList();
+    return;
+  }
+
+  // 2. KONTROLA PŘIHLÁŠENÉHO UŽIVATELE
+  const { data: { user } } = await supabaseClient.auth.getUser();
+  currentUser = user;
+
+  if (currentUser) {
+    const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
+    currentProfile = profile;
+    const displayName = profile?.display_name || profile?.username || currentUser.email.split('@')[0];
+    
+    const labelUser = document.getElementById('label-user');
+    if (labelUser) labelUser.textContent = displayName;
+
+    const btnAdd = document.getElementById('btn-add-race');
+    if (btnAdd) btnAdd.style.display = 'inline-flex';
+
+    await loadUserRaces(currentUser.id);
+  } else if (sharedUser) {
+    // 3. PROHLÍŽENÍ PŘES ODKAZ (?u=jmeno)
+    const { data: profile } = await supabaseClient.from('profiles').select('*').eq('username', sharedUser).single();
+    if (profile) {
+      const mainTitle = document.getElementById('main-title');
+      if (mainTitle) mainTitle.textContent = `Atlas běžce: ${profile.display_name || profile.username}`;
+      await loadUserRaces(profile.id);
+    } else {
+      alert("Profil uživatele nebyl nalezen.");
+      window.location.href = 'index.html';
+    }
+  } else {
+    // 4. Nepřihlášený uživatel bez odkazu -> zpět na landing page
+    window.location.href = 'index.html';
+  }
+}
+
+async function loadUserRaces(userId) {
+  const { data, error } = await supabaseClient.from('races').select('*').eq('user_id', userId);
+  
+  if (!error && data && data.length > 0) {
+    races = data.map(item => ({
+      id: item.id,
+      name: item.name,
+      date: item.date,
+      month: item.month,
+      coords: item.coords,
+      status: item.status,
+      statusLabel: item.status_label,
+      surface: item.surface,
+      surfaceLabel: item.surface_label,
+      difficulty: item.difficulty,
+      distance: item.distance,
+      elevation: item.elevation,
+      why: item.why,
+      howItWent: item.how_it_went,
+      notes: item.notes,
+      image: item.image_url,
+      result: item.how_it_went
+    }));
+
+    data.forEach(item => {
+      if (item.route_coords && typeof zavodniTrasy !== 'undefined') {
+        zavodniTrasy[item.id] = item.route_coords;
+      }
+    });
+  } else if (currentUser && userId === currentUser.id) {
+    offerInitialDataImport();
+  }
+
+  renderMarkers();
+  renderSidebarList();
+}
+
+function offerInitialDataImport() {
+  const content = document.getElementById('content');
+  if (!content) return;
+  content.innerHTML = `
+    <div style="padding: 24px; text-align: center; background: #242426; border-radius: 12px; margin: 20px 0; border: 1px solid #333;">
+      <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 8px;">Vítej ve svém atlasu!</h3>
+      <p style="font-size: 0.82rem; color: #aaa; margin-bottom: 16px; line-height: 1.5;">
+        Tvůj online účet je zatím prázdný. Chceš do něj nahrát všech svých ${backupRaces.length} závodů?
+      </p>
+      <button class="open-detail-btn" style="width: auto; padding: 10px 20px; font-size: 0.85rem;" onclick="importBackupRacesToDatabase()">
+        📥 Uložit mé stávající závody do účtu
+      </button>
+    </div>
+  `;
+}
+
+async function importBackupRacesToDatabase() {
+  if (!currentUser) return;
+  const btn = event.target;
+  btn.textContent = "Nahrávám data do Supabase...";
+  btn.disabled = true;
+
+  const records = backupRaces.map(r => ({
+    user_id: currentUser.id,
+    name: r.name,
+    date: r.date,
+    month: r.month,
+    surface: r.surface,
+    surface_label: r.surfaceLabel,
+    distance: r.distance,
+    elevation: r.elevation,
+    difficulty: r.difficulty || 'snadna',
+    status: r.status,
+    status_label: r.statusLabel,
+    why: r.why,
+    how_it_went: r.howItWent || r.result,
+    notes: r.notes,
+    image_url: r.image,
+    coords: r.coords,
+    route_coords: (typeof zavodniTrasy !== 'undefined' && zavodniTrasy[r.id]) ? zavodniTrasy[r.id] : null
+  }));
+
+  const { error } = await supabaseClient.from('races').insert(records);
+  if (error) {
+    alert("Chyba při importu: " + error.message);
+    btn.disabled = false;
+  } else {
+    alert("Všechny závody byly úspěšně uloženy do tvé databáze!");
+    loadUserRaces(currentUser.id);
+  }
+}
+
+// Spustit autorizaci a načítání dat
+initAppAuth();
   </script>
 </body>
 </html>
