@@ -804,6 +804,100 @@ let isDemoMode = false;
       <div style="font-size: 0.75rem; color: #ddd;">Slaný, Wilsonova 1501</div>
     `, { direction: 'top', className: 'custom-hover-tip' });
 
+	  function checkEmptyState() {
+  const overlay = document.getElementById('onboarding-overlay');
+  // Zobrazit overlay pouze pokud:
+  // 1. Uživatel je přihlášený
+  // 2. Není v demo režimu
+  // 3. Nemá v databázi ještě žádné závody
+  if (currentUser && !isDemoMode && races.length === 0) {
+    if (overlay) overlay.style.display = 'flex';
+  } else {
+    if (overlay) overlay.style.display = 'none';
+  }
+}
+
+// Otevření nahrávacího okna z overlaye
+function startAddFromOnboarding(type) {
+  document.getElementById('onboarding-overlay').style.display = 'none';
+  if (type === 'memorable') {
+    switchMode('memorable');
+  } else {
+    switchMode('races');
+  }
+  openAddModal(); // Otevře modal pro nahrání GPX a fotky
+}
+
+// Spuštění interaktivního tutoriálu přes Driver.js
+function startInteractiveTutorial() {
+  // Schováme šedý overlay, aby byla vidět celá mapa
+  const overlay = document.getElementById('onboarding-overlay');
+  if (overlay) overlay.style.display = 'none';
+
+  const driverObj = window.driver.js.driver({
+    showProgress: true,
+    animate: true,
+    nextBtnText: 'Další ➔',
+    prevBtnText: '⬅ Zpět',
+    doneBtnText: 'Rozumím, jdeme běhat!',
+    steps: [
+      {
+        element: '#left-rail',
+        popover: {
+          title: 'Navigační panel',
+          description: 'Tady přepínáš mezi oficiálními Závody a Památnými běhy v terénu. Lišta se po najetí myší plynule rozbalí.',
+          side: "right",
+          align: 'start'
+        }
+      },
+      {
+        element: '#global-search',
+        popover: {
+          title: 'Rychlé vyhledávání',
+          description: 'Hledej závody podle názvu, měst, pohoří nebo poznámek. Mapa se na nalezenou trasu rovnou vycentruje.',
+          side: "bottom",
+          align: 'center'
+        }
+      },
+      {
+        element: '#btn-add-race',
+        popover: {
+          title: 'Nahrání trasy z hodinek',
+          description: 'Stačí sem přetáhnout .GPX soubor. Web si sám spočítá kilometry, převýšení a vykreslí křivku na mapě.',
+          side: "bottom",
+          align: 'end'
+        }
+      },
+      {
+        element: '#sidebar',
+        popover: {
+          title: 'Přehled a filtrace',
+          description: 'Zde najdeš filtry podle povrchu (trail vs. silnice), statusu (odběhnuto vs. plán) a detailní statistiky.',
+          side: "left",
+          align: 'start'
+        }
+      },
+      {
+        element: '#map',
+        popover: {
+          title: 'Interaktivní mapa',
+          description: 'Každý nahraný běh vytvoří na mapě špendlík. Kliknutím na něj se ti rozsvítí přesná trasa a výškový profil.',
+          side: "top",
+          align: 'center'
+        }
+      }
+    ],
+    onDestroyed: () => {
+      // Pokud uživatel tutoriál zavře a stále nemá žádný závod, overlay mu můžeme buď vrátit, nebo nechat otevřenou mapu
+      if (races.length === 0) {
+        // necháme mapu odkrytou, aby mohl kliknout na '+ Přidat závod'
+      }
+    }
+  });
+
+  driverObj.drive();
+}
+	  
     function updateHomeMarker() {
       const z = map.getZoom();
       const baseZoom = 5.5;
