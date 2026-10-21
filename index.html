@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RunAtlas — Tvůj běžecký atlas a deník tras</title>
+  <title>RunAtlas — Your Running Atlas & Route Log</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -23,7 +23,7 @@
       overflow: hidden;
     }
 
-    /* Video na pozadí */
+    /* Video pozadí */
     .bg-video {
       position: absolute;
       top: 50%;
@@ -37,7 +37,7 @@
       z-index: 1;
     }
 
-    /* Tmavý gradientní filtr přes video */
+    /* Tmavý gradientní overlay */
     .video-overlay {
       position: absolute;
       inset: 0;
@@ -45,7 +45,7 @@
       z-index: 2;
     }
 
-    /* Horní navigace s logem */
+    /* Horní navigace */
     .top-nav {
       position: relative;
       z-index: 3;
@@ -63,7 +63,7 @@
     }
     .brand-logo span { color: #007aff; }
 
-    /* Hlavní text uprostřed */
+    /* Hlavní text */
     .hero-center {
       position: relative;
       z-index: 3;
@@ -100,7 +100,7 @@
       text-shadow: 0 2px 10px rgba(0,0,0,0.7);
     }
 
-    /* Skupina 3 tlačítek */
+    /* Tlačítka */
     .hero-actions {
       display: flex;
       justify-content: center;
@@ -151,7 +151,7 @@
       color: #8e8e93;
     }
 
-    /* Vyskakovací okno pro přihlášení / registraci */
+    /* Přihlašovací / Registrační okno */
     .auth-modal {
       display: none;
       position: fixed;
@@ -187,7 +187,7 @@
     }
     .auth-box input:focus { border-color: #007aff; }
 
-    /* Mobilní zobrazení */
+    /* Mobilní přizpůsobení */
     @media (max-width: 768px) {
       .hero-title { font-size: 2.2rem; }
       .hero-subtitle { font-size: 0.98rem; }
@@ -202,7 +202,7 @@
 <body>
 
   <div class="hero-container">
-    <!-- Video na pozadí (nahraj do repozitáře soubor hero.mp4) -->
+    <!-- Pozadí s videem -->
     <video autoplay muted loop playsinline class="bg-video">
       <source src="hero.mp4" type="video/mp4">
     </video>
@@ -214,11 +214,11 @@
     </header>
 
     <main class="hero-center">
-      <div class="hero-badge">🏔️ Interaktivní závodní atlas & deník</div>
-      <h1 class="hero-title">Všechny tvoje běžecké stopy na jediné mapě</h1>
+      <div class="hero-badge">🏔️ Interactive Race Atlas & Training Log</div>
+      <h1 class="hero-title">All your running footsteps on a single map</h1>
       <p class="hero-subtitle">
-        Prohlížej si své zdolané maratony i horské traily, analyzuj výškové profily, 
-        ukládej si vysněný bucket list a sdílej svou mapu s přáteli.
+        Explore your finished marathons and mountain trails, analyze elevation profiles, 
+        build your dream bucket list, and share your personal atlas with friends.
       </p>
 
       <div class="hero-actions">
@@ -229,20 +229,20 @@
     </main>
 
     <footer class="hero-footer">
-      &copy; 2026 RunAtlas. Všechna práva vyhrazena.
+      &copy; 2026 RunAtlas. All rights reserved.
     </footer>
   </div>
 
   <!-- AUTH MODAL -->
   <div id="modal-auth" class="auth-modal">
     <div class="auth-box">
-      <h3 id="modal-title">Přihlášení do atlasu</h3>
-      <input type="email" id="auth-email" placeholder="E-mail">
-      <input type="password" id="auth-password" placeholder="Heslo">
-      <input type="text" id="auth-username" placeholder="Uživatelské jméno (např. ondra)" style="display:none;">
+      <h3 id="modal-title">Sign in to RunAtlas</h3>
+      <input type="email" id="auth-email" placeholder="Email address">
+      <input type="password" id="auth-password" placeholder="Password">
+      <input type="text" id="auth-username" placeholder="Username (e.g. ondra)" style="display:none;">
       
-      <button id="btn-submit-auth" class="btn btn-primary" style="margin-top: 6px;" onclick="submitAuth()">Pokračovat</button>
-      <button class="btn btn-ghost" onclick="closeAuth()">Zrušit</button>
+      <button id="btn-submit-auth" class="btn btn-primary" style="margin-top: 6px;" onclick="submitAuth()">Continue</button>
+      <button class="btn btn-ghost" onclick="closeAuth()">Cancel</button>
     </div>
   </div>
 
@@ -250,7 +250,6 @@
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbm96Z3BudGdhdWxkdnB2c3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTA0MzUsImV4cCI6MjEwODA4NjQzNX0.TfmHE3zkVgVjupOFLA8_egRGwmVx5BDljHggk3H1ohc";
     
-    // Přejmenováno na supabaseClient, aby nekolidovalo s knihovnou
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let authMode = 'login';
@@ -261,13 +260,13 @@
       if (modal) modal.style.display = 'flex';
       
       const title = document.getElementById('modal-title');
-      if (title) title.textContent = mode === 'signup' ? 'Vytvořit nový účet' : 'Přihlásit se do účtu';
+      if (title) title.textContent = mode === 'signup' ? 'Create a new account' : 'Sign in to RunAtlas';
       
       const userInp = document.getElementById('auth-username');
       if (userInp) userInp.style.display = mode === 'signup' ? 'block' : 'none';
       
       const submitBtn = document.getElementById('btn-submit-auth');
-      if (submitBtn) submitBtn.textContent = mode === 'signup' ? 'Zaregistrovat se' : 'Přihlásit se';
+      if (submitBtn) submitBtn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
     }
 
     function closeAuth() {
@@ -281,7 +280,7 @@
       const username = document.getElementById('auth-username').value.trim().toLowerCase();
 
       if (authMode === 'signup') {
-        if (!username) { alert('Zadej své uživatelské jméno.'); return; }
+        if (!username) { alert('Please enter your chosen username.'); return; }
         const { data, error } = await supabaseClient.auth.signUp({ email, password });
         if (error) { alert(error.message); return; }
         
@@ -296,7 +295,7 @@
       }
     }
 
-    // Automatické přesměrování, pokud je uživatel už přihlášený
+    // Automatické přesměrování do aplikace, pokud je uživatel již přihlášený
     supabaseClient.auth.getUser().then(({ data: { user } }) => {
       if (user) window.location.href = 'app.html';
     });
