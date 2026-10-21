@@ -909,7 +909,7 @@ function getDifficultyBadge(diff) {
       return `<span class="badge badge-diff-${diff}">${label}</span>`;
     }
 
-    const races = [
+    const backupRaces = [
       // --- ODBĚHNUTÉ ZÁVODY ---
       {
         id: "ruda", name: "Běhej lesy Železná Ruda", date: "19. 9. 2026", month: 9,
@@ -2107,6 +2107,8 @@ function getDifficultyBadge(diff) {
       }
 
     ];
+
+	  let races = [];
 
     const memorableRuns = [
       { id: "mem-ostrava", name: "Ranní 24,5 km podél Ostravice", coords: [49.835, 18.292], date: "Září 2026", month: 9, importance: 7, surface: "road", surfaceLabel: "Asfalt / Cyklostezka", distCategory: "25", distance: "24,5 km", elevation: "+45 m", why: "Pracovní cesta proměněná v parádní dlouhý ranní běh v mlze podél řeky." },
