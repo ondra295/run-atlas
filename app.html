@@ -830,14 +830,12 @@ let isDemoMode = false;
 
 	  function checkEmptyState() {
   const overlay = document.getElementById('onboarding-overlay');
-  // Zobrazit overlay pouze pokud:
-  // 1. Uživatel je přihlášený
-  // 2. Není v demo režimu
-  // 3. Nemá v databázi ještě žádné závody
+  if (!overlay) return;
+
   if (currentUser && !isDemoMode && races.length === 0) {
-    if (overlay) overlay.style.display = 'flex';
+    overlay.style.display = 'flex';
   } else {
-    if (overlay) overlay.style.display = 'none';
+    overlay.style.display = 'none';
   }
 }
 
