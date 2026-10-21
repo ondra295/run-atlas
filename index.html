@@ -249,20 +249,30 @@
   <script>
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbm96Z3BudGdhdWxkdnB2c3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTA0MzUsImV4cCI6MjEwODA4NjQzNX0.TfmHE3zkVgVjupOFLA8_egRGwmVx5BDljHggk3H1ohc";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // Přejmenováno na supabaseClient, aby nekolidovalo s knihovnou
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let authMode = 'login';
 
     function openAuth(mode) {
       authMode = mode;
-      document.getElementById('modal-auth').style.display = 'flex';
-      document.getElementById('modal-title').textContent = mode === 'signup' ? 'Vytvořit nový účet' : 'Přihlásit se do účtu';
-      document.getElementById('auth-username').style.display = mode === 'signup' ? 'block' : 'none';
-      document.getElementById('btn-submit-auth').textContent = mode === 'signup' ? 'Zaregistrovat se' : 'Přihlásit se';
+      const modal = document.getElementById('modal-auth');
+      if (modal) modal.style.display = 'flex';
+      
+      const title = document.getElementById('modal-title');
+      if (title) title.textContent = mode === 'signup' ? 'Vytvořit nový účet' : 'Přihlásit se do účtu';
+      
+      const userInp = document.getElementById('auth-username');
+      if (userInp) userInp.style.display = mode === 'signup' ? 'block' : 'none';
+      
+      const submitBtn = document.getElementById('btn-submit-auth');
+      if (submitBtn) submitBtn.textContent = mode === 'signup' ? 'Zaregistrovat se' : 'Přihlásit se';
     }
 
     function closeAuth() {
-      document.getElementById('modal-auth').style.display = 'none';
+      const modal = document.getElementById('modal-auth');
+      if (modal) modal.style.display = 'none';
     }
 
     async function submitAuth() {
@@ -272,24 +282,25 @@
 
       if (authMode === 'signup') {
         if (!username) { alert('Zadej své uživatelské jméno.'); return; }
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabaseClient.auth.signUp({ email, password });
         if (error) { alert(error.message); return; }
         
         if (data.user) {
-          await supabase.from('profiles').insert([{ id: data.user.id, username: username, display_name: username }]);
+          await supabaseClient.from('profiles').insert([{ id: data.user.id, username: username, display_name: username }]);
           window.location.href = 'app.html';
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) { alert(error.message); return; }
         window.location.href = 'app.html';
       }
     }
 
-    // Pokud už je uživatel přihlášený, přesměrujeme ho rovnou do aplikace
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    // Automatické přesměrování, pokud je uživatel už přihlášený
+    supabaseClient.auth.getUser().then(({ data: { user } }) => {
       if (user) window.location.href = 'app.html';
     });
   </script>
+  
 </body>
 </html>
