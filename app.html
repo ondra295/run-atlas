@@ -312,22 +312,56 @@
     <!-- MAIN WORKSPACE -->
     <div id="main-body">
       <!-- LEFT RUNALYZE-STYLE RAIL -->
+     <!-- LEVÝ ROZBALOVACÍ PANEL S MODERNÍMI SVG IKONAMI -->
       <nav id="left-rail">
+        <!-- 1. Závodní atlas (Globus s poledníky) -->
         <button id="rail-races" class="rail-btn active" onclick="switchMode('races')">
-          <span class="rail-icon">🌐</span>
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </span>
           <span>Race Atlas</span>
         </button>
+
+        <!-- 2. Památné běhy (Silueta běžce v pohybu) -->
         <button id="rail-memorable" class="rail-btn" onclick="switchMode('memorable')">
-          <span class="rail-icon">🏃</span>
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="16" cy="4" r="2" fill="currentColor"></circle>
+              <path d="m15 7-4 2.5-3-1.5"></path>
+              <path d="m11 9.5 2 4.5-3 4-4-1"></path>
+              <path d="m13 14 3.5 2 3-2"></path>
+              <path d="m15 7 2 3.5 4 .5"></path>
+            </svg>
+          </span>
           <span>Memorable Runs</span>
         </button>
-        <div style="height: 1px; background: #2c2c2e; margin: 4px 0;"></div>
+
+        <div style="height: 1px; background: #2c2c2e; margin: 6px 4px;"></div>
+
+        <!-- 3. Zoom Evropa (Skládaná turistická mapa) -->
         <button class="rail-btn" onclick="map.setView([50.0, 14.5], 5, { animate: true })">
-          <span class="rail-icon">🗺️</span>
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+              <line x1="9" y1="3" x2="9" y2="18"></line>
+              <line x1="15" y1="6" x2="15" y2="21"></line>
+            </svg>
+          </span>
           <span>Europe</span>
         </button>
+
+        <!-- 4. Zoom Svět (Navigační kompas) -->
         <button class="rail-btn" onclick="map.setView([30.0, 15.0], 2.5, { animate: true })">
-          <span class="rail-icon">🌍</span>
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" fill-opacity="0.25"></polygon>
+            </svg>
+          </span>
           <span>World</span>
         </button>
       </nav>
