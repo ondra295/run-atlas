@@ -552,7 +552,7 @@
   </style>
 </head>
 <body>
-<!-- ONBOARDING OVERLAY (musí být přímo v body) -->
+  <!-- 1. JEDINÝ ONBOARDING OVERLAY PŘÍMO V BODY -->
   <div id="onboarding-overlay" style="display:none; position:fixed; inset:0; background:rgba(12, 12, 14, 0.85); backdrop-filter:blur(8px); z-index:99999; align-items:center; justify-content:center; padding:20px;">
     <div style="background:#1c1c1e; border:1px solid #333; border-radius:18px; max-width:520px; width:100%; padding:36px 30px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,0.8); color:#fff;">
       <div style="font-size:2.8rem; margin-bottom:12px;">🗺️</div>
@@ -570,37 +570,15 @@
           🏃 Přidat památný běh (Add memorable run)
         </button>
 
-        <button class="pill-btn" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#c7c7cc; padding:12px; font-size:0.9rem; cursor:pointer;" onclick="startInteractiveTutorial()">
+        <button class="pill-btn" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#c7c7cc; padding:12px; font-size:0.9rem; cursor:pointer; justify-content:center;" onclick="startInteractiveTutorial()">
           💡 Ukázat, jak to funguje (See tutorial)
         </button>
       </div>
     </div>
   </div>
 
+  <!-- 2. HLAVNÍ ROZLOŽENÍ APLIKACE (RUNALYZE STYL) -->
   <div id="app-layout">
-	  <div id="onboarding-overlay" style="display:none; position:fixed; inset:0; background:rgba(12, 12, 14, 0.78); backdrop-filter:blur(8px); z-index:2800; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:#1c1c1e; border:1px solid #333; border-radius:18px; max-width:520px; width:100%; padding:36px 30px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,0.8); color:#fff;">
-    <div style="font-size:2.8rem; margin-bottom:12px;">🗺️</div>
-    <h2 style="font-size:1.6rem; font-weight:800; margin-bottom:8px;">Vítej ve svém RunAtlasu!</h2>
-    <p style="font-size:0.92rem; color:#a1a1a6; line-height:1.55; margin-bottom:28px;">
-      Tvoje mapa je zatím čisté plátno. Začni nahráním svého prvního závodu, zaznamenej nezapomenutelný trénink nebo si nech ukázat, jak atlas funguje.
-    </p>
-
-    <div style="display:flex; flex-direction:column; gap:12px;">
-      <button class="open-detail-btn" style="background:#007aff; color:#fff; padding:14px; font-size:0.95rem; font-weight:600; border-radius:10px;" onclick="startAddFromOnboarding('race')">
-        🏁 Přidat první závod (Add race)
-      </button>
-
-      <button class="open-detail-btn" style="background:#2c2c2e; border:1px solid #444; color:#fff; padding:14px; font-size:0.95rem; font-weight:600; border-radius:10px;" onclick="startAddFromOnboarding('memorable')">
-        🏃 Přidat památný běh (Add memorable run)
-      </button>
-
-      <button class="pill-btn" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#c7c7cc; padding:12px; font-size:0.9rem;" onclick="startInteractiveTutorial()">
-        💡 Ukázat, jak to funguje (See tutorial)
-      </button>
-    </div>
-  </div>
-</div>
     <!-- HORNÍ LIŠTA -->
     <header id="top-bar">
       <div class="top-bar-left">
@@ -612,7 +590,7 @@
 
       <!-- Uživatelský profil & Přidat závod -->
       <div class="top-bar-right">
-        <button id="btn-add-race" class="open-detail-btn" style="margin-top:0; width:auto; padding:6px 14px; display:none;" onclick="openAddModal()">➕ Přidat závod</button>
+        <button id="btn-add-race" class="open-detail-btn" style="margin-top:0; width:auto; padding:6px 14px; display:none;" onclick="startAddFromOnboarding('race')">➕ Přidat závod</button>
         <button id="btn-profile" class="pill-btn" onclick="openProfileModal()">👤 <span id="label-user">Profil</span></button>
       </div>
     </header>
@@ -640,132 +618,94 @@
         </button>
       </nav>
 
-      <!-- MAPA -->
+      <!-- MAPA (POUZE JEDNA V CELÉM KÓDU) -->
       <div id="map"></div>
 
-      <!-- PRAVÝ PANEL (Seznam a filtry zůstávají) -->
+      <!-- PRAVÝ PANEL (POUZE JEDEN V CELÉM KÓDU) -->
       <aside id="sidebar">
-      <div class="sidebar-header" style="padding: 16px 20px; border-bottom: 1px solid #2c2c2e;">
-        <h2 id="main-title" style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Běžecký atlas</h2>
-        <div id="stats" style="font-size: 0.8rem; color: #8e8e93;">Celkem závodů v přehledu</div>
-      </div>
-
-      <!-- Filtry stavu -->
-      <div class="filter-section" style="padding: 12px 20px; display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #222;">
-        <button class="pill-btn active" onclick="setStatusFilter('all')">Vše</button>
-        <button class="pill-btn" onclick="setStatusFilter('done')">Odběhnuto</button>
-        <button class="pill-btn" onclick="setStatusFilter('planned')">V plánu</button>
-        <button class="pill-btn" onclick="setStatusFilter('bucket')">Bucket list</button>
-      </div>
-
-      <!-- Filtry povrchu a obtížnosti -->
-      <div class="filter-section" style="padding: 10px 20px; display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #222; font-size: 0.8rem;">
-        <button class="pill-btn" onclick="setSurfaceFilter('all')">Všechny povrchy</button>
-        <button class="pill-btn" onclick="setSurfaceFilter('trail')">Trail</button>
-        <button class="pill-btn" onclick="setSurfaceFilter('road')">Silnice</button>
-      </div>
-
-      <!-- Místo pro vykreslování kartiček závodů -->
-      <div id="content" style="flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;">
-        <!-- Zde JavaScript generuje jednotlivé závody -->
-      </div>
-    </aside>
-    </div>
-  </div>
-
-    <div id="map"></div>
-
-    <div id="sidebar">
-      <div class="header">
-        <h1 id="main-title">Běžecký atlas</h1>
-        <div class="header-filters-container">
-          <div id="section-status-boxes" class="status-boxes">
-            <div class="status-card-btn active" data-status="done" onclick="toggleStatus('done')">
-              <span>Odběhnuto</span><span class="indicator"></span>
+        <div class="header">
+          <h1 id="main-title">Běžecký atlas</h1>
+          <div class="header-filters-container">
+            <div id="section-status-boxes" class="status-boxes">
+              <div class="status-card-btn active" data-status="done" onclick="toggleStatus('done')">
+                <span>Odběhnuto</span><span class="indicator"></span>
+              </div>
+              <div class="status-card-btn active" data-status="planned" onclick="toggleStatus('planned')">
+                <span>V plánu</span><span class="indicator"></span>
+              </div>
+              <div class="status-card-btn active" data-status="bucket" onclick="toggleStatus('bucket')">
+                <span>Bucket list</span><span class="indicator"></span>
+              </div>
             </div>
-            <div class="status-card-btn active" data-status="planned" onclick="toggleStatus('planned')">
-              <span>V plánu</span><span class="indicator"></span>
-            </div>
-            <div class="status-card-btn active" data-status="bucket" onclick="toggleStatus('bucket')">
-              <span>Bucket list</span><span class="indicator"></span>
-            </div>
-          </div>
-          <button id="toggle-filters-btn" class="toggle-filters-btn" onclick="toggleFiltersAccordion()">
-            <span>⚙ Podrobné filtry</span><span id="filters-chevron">▾</span>
-          </button>
-          <div id="collapsible-filters" class="filters-wrapper">
-            <div class="filter-group">
-              <span>Měsíc:</span>
-              <select id="filter-month" class="filter-select" onchange="applyFilters()">
-                <option value="all">Všechny měsíce</option>
-                <option value="1">Leden</option>
-                <option value="2">Únor</option>
-                <option value="3">Březen</option>
-                <option value="4">Duben</option>
-                <option value="5">Květen</option>
-                <option value="6">Červen</option>
-                <option value="7">Červenec</option>
-                <option value="8">Srpen</option>
-                <option value="9">Září</option>
-                <option value="10">Říjen</option>
-                <option value="11">Listopad</option>
-                <option value="12">Prosinec</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <span>Povrch:</span>
-              <select id="filter-surface" class="filter-select" onchange="applyFilters()">
-                <option value="all">Všechny povrchy</option>
-                <option value="trail">Trail / Hory</option>
-                <option value="road">Silnice / Asfalt</option>
-              </select>
-            </div>
-		<div class="filter-group" id="group-difficulty">
-              <span>Obtížnost:</span>
-              <select id="filter-difficulty" class="filter-select" onchange="applyFilters()">
-                <option value="all">Všechny obtížnosti</option>
-                <option value="snadna">🟢 Snadná</option>
-                <option value="stredni">🟡 Střední</option>
-                <option value="tezka">🟠 Těžká</option>
-                <option value="extremni">🔴 Extrémní</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <span>Délka:</span>
-              <select id="filter-dist" class="filter-select" onchange="applyFilters()"></select>
-            </div>
-            <div class="filter-group" id="group-year">
-              <span>Rok:</span>
-              <select id="filter-year" class="filter-select" onchange="applyFilters()">
-                <option value="all">Všechny roky</option>
-              </select>
-            </div>
-            <div class="filter-group" id="group-cost">
-              <span>Cena:</span>
-              <select id="filter-cost" class="filter-select" onchange="applyFilters()">
-                <option value="all">Všechny ceny</option>
-                <option value="€">Skoro zadarmo (€)</option>
-                <option value="€€">Nízká (€€)</option>
-                <option value="€€€">Střední (€€€)</option>
-                <option value="€€€€">Vysoká (€€€€)</option>
-		<option value="€€€€€">Extrémní (€€€€€)</option>
-		<option value="€€€€€€">Skoro nedostupné (€€€€€€)</option>
-              </select>
-            </div>
-            <div class="filter-group" id="group-priority">
-              <span>Priorita:</span>
-              <select id="filter-priority" class="filter-select" onchange="applyFilters()">
-                <option value="all">Všechny priority</option>
-                <option value="1-3">1–3 (Nízká)</option>
-                <option value="3-6">3–6 (Střední)</option>
-                <option value="7-9">7–9 (Vysoká)</option>
-                <option value="10">10 (Must)</option>
-              </select>
+            <button id="toggle-filters-btn" class="toggle-filters-btn" onclick="toggleFiltersAccordion()">
+              <span>⚙ Podrobné filtry</span><span id="filters-chevron">▾</span>
+            </button>
+            <div id="collapsible-filters" class="filters-wrapper">
+              <div class="filter-group">
+                <span>Měsíc:</span>
+                <select id="filter-month" class="filter-select" onchange="applyFilters()">
+                  <option value="all">Všechny měsíce</option>
+                  <option value="1">Leden</option><option value="2">Únor</option><option value="3">Březen</option>
+                  <option value="4">Duben</option><option value="5">Květen</option><option value="6">Červen</option>
+                  <option value="7">Červenec</option><option value="8">Srpen</option><option value="9">Září</option>
+                  <option value="10">Říjen</option><option value="11">Listopad</option><option value="12">Prosinec</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <span>Povrch:</span>
+                <select id="filter-surface" class="filter-select" onchange="applyFilters()">
+                  <option value="all">Všechny povrchy</option>
+                  <option value="trail">Trail / Hory</option>
+                  <option value="road">Silnice / Asfalt</option>
+                </select>
+              </div>
+              <div class="filter-group" id="group-difficulty">
+                <span>Obtížnost:</span>
+                <select id="filter-difficulty" class="filter-select" onchange="applyFilters()">
+                  <option value="all">Všechny obtížnosti</option>
+                  <option value="snadna">🟢 Snadná</option>
+                  <option value="stredni">🟡 Střední</option>
+                  <option value="tezka">🟠 Těžká</option>
+                  <option value="extremni">🔴 Extrémní</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <span>Délka:</span>
+                <select id="filter-dist" class="filter-select" onchange="applyFilters()"></select>
+              </div>
+              <div class="filter-group" id="group-year">
+                <span>Rok:</span>
+                <select id="filter-year" class="filter-select" onchange="applyFilters()">
+                  <option value="all">Všechny roky</option>
+                </select>
+              </div>
+              <div class="filter-group" id="group-cost">
+                <span>Cena:</span>
+                <select id="filter-cost" class="filter-select" onchange="applyFilters()">
+                  <option value="all">Všechny ceny</option>
+                  <option value="€">Skoro zadarmo (€)</option>
+                  <option value="€€">Nízká (€€)</option>
+                  <option value="€€€">Střední (€€€)</option>
+                  <option value="€€€€">Vysoká (€€€€)</option>
+                  <option value="€€€€€">Extrémní (€€€€€)</option>
+                  <option value="€€€€€€">Skoro nedostupné (€€€€€€)</option>
+                </select>
+              </div>
+              <div class="filter-group" id="group-priority">
+                <span>Priorita:</span>
+                <select id="filter-priority" class="filter-select" onchange="applyFilters()">
+                  <option value="all">Všechny priority</option>
+                  <option value="1-3">1–3 (Nízká)</option>
+                  <option value="3-6">3–6 (Střední)</option>
+                  <option value="7-9">7–9 (Vysoká)</option>
+                  <option value="10">10 (Must)</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div id="content"></div>
+        <div id="content"></div>
+      </aside>
     </div>
   </div>
 
