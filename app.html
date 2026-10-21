@@ -2899,8 +2899,12 @@ function getDifficultyBadge(diff) {
       races = backupRaces.slice(0, 5);
     }
     
-    renderMarkers();
-    renderSidebarList();
+   renderMarkers();
+    if (typeof applyFilters === 'function') {
+      applyFilters();
+    } else if (typeof renderList === 'function') {
+      renderList();
+    }
     return;
   }
 
@@ -2971,7 +2975,11 @@ async function loadUserRaces(userId) {
   }
 
   renderMarkers();
-  renderSidebarList();
+  if (typeof applyFilters === 'function') {
+    applyFilters();
+  } else if (typeof renderList === 'function') {
+    renderList();
+  }
 }
 
 function offerInitialDataImport() {
