@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>RunAtlas — Běžecký atlas</title>
+  <title>RunAtlas — Running Atlas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Driver.js (interaktivní tutoriál) -->
+  <!-- Driver.js (Interactive Tutorial) -->
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 
@@ -23,10 +23,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body { height: 100%; width: 100%; overflow: hidden; background: #121214; color: #e0e0e0; }
 
-    /* Celkový rámec aplikace */
+    /* App Layout */
     #app-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; }
 
-    /* Horní průhledná lišta */
+    /* Top Bar */
     #top-bar {
       height: 52px;
       background: rgba(22, 22, 26, 0.9);
@@ -57,10 +57,10 @@
 
     .top-bar-right { display: flex; align-items: center; gap: 10px; }
 
-    /* Tělo aplikace */
+    /* Main Body */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
-    /* Levý rozbalovací panel (Runalyze Rail) */
+    /* Left Runalyze Rail */
     #left-rail {
       width: 56px;
       background: rgba(20, 20, 24, 0.94);
@@ -94,10 +94,10 @@
     .rail-btn:hover, .rail-btn.active { background: #2c2c2e; color: #fff; }
     .rail-btn .rail-icon { font-size: 1.15rem; flex-shrink: 0; }
 
-    /* Mapa */
+    /* Map */
     #map { flex: 1; height: 100%; background: #1a1a1a; z-index: 1; }
 
-    /* Pravý postranní panel */
+    /* Right Sidebar */
     #sidebar {
       width: 430px;
       height: 100%;
@@ -135,7 +135,7 @@
 
     #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 
-    /* Kartičky položek */
+    /* Cards */
     .race-card {
       background: #242426; border: 1px solid #2c2c2e; border-radius: 8px;
       padding: 12px 14px; cursor: pointer; transition: all 0.2s ease;
@@ -162,7 +162,7 @@
       color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px;
     }
 
-    /* Vlastní špendlík na mapě */
+    /* Custom Map Pin */
     .custom-race-pin { background: transparent !important; border: none !important; }
     .pin-circle {
       border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center;
@@ -170,7 +170,7 @@
     }
     .pin-circle:hover { transform: scale(1.18); }
 
-    /* Modály a vyskakovací okna */
+    /* Modals */
     .modal-backdrop {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
@@ -183,7 +183,7 @@
       padding: 10px; background: #2c2c2e; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none;
     }
 
-    /* Mobilní responzivita */
+    /* Mobile Responsiveness */
     @media (max-width: 768px) {
       .top-search-input { display: none; }
       #left-rail {
@@ -203,236 +203,234 @@
 <body>
 
   <!-- ========================================== -->
-  <!-- 1. ONBOARDING OVERLAY PRO PRÁZDNÝ ATLAS   -->
+  <!-- 1. ONBOARDING OVERLAY FOR EMPTY STATE      -->
   <!-- ========================================== -->
   <div id="onboarding-overlay" class="modal-backdrop">
     <div class="modal-card" style="text-align: center; max-width: 490px; padding: 36px 28px;">
       <div style="font-size: 2.8rem; margin-bottom: 8px;">🗺️</div>
-      <h2 style="font-size: 1.55rem; font-weight: 800; margin-bottom: 6px;">Vítej ve svém RunAtlasu!</h2>
+      <h2 style="font-size: 1.55rem; font-weight: 800; margin-bottom: 6px;">Welcome to your RunAtlas!</h2>
       <p style="font-size: 0.9rem; color: #a1a1a6; line-height: 1.5; margin-bottom: 24px;">
-        Tvoje mapa je zatím čisté plátno. Nahraj svůj první závod z hodinek, ulož si památný trénink nebo si prohlédni, jak atlas funguje.
+        Your personal map is a clean canvas. Upload your first race from your GPS watch, log an unforgettable training run, or take a quick tour to explore features.
       </p>
 
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <button class="open-detail-btn" style="padding: 13px; font-size: 0.92rem;" onclick="openAddModal('race')">
-          🏁 Přidat první závod (Add race)
+          🏁 Add your first race
         </button>
         <button class="open-detail-btn" style="background:#2c2c2e; border:1px solid #444; padding:13px; font-size:0.92rem;" onclick="openAddModal('memorable')">
-          🏃 Přidat památný běh (Add memorable run)
+          🏃 Add a memorable run
         </button>
         <button class="pill-btn" style="padding: 11px; font-size: 0.88rem; justify-content: center;" onclick="startInteractiveTutorial()">
-          💡 Ukázat, jak to funguje (See tutorial)
+          💡 See tutorial
         </button>
       </div>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 2. FORMULÁŘ: PŘIDÁNÍ ZÁVODU / BĚHU       -->
+  <!-- 2. MODAL: ADD RACE / MEMORABLE RUN         -->
   <!-- ========================================== -->
   <div id="add-modal" class="modal-backdrop" style="overflow-y: auto;">
     <div class="modal-card">
-      <h3 id="add-modal-title" style="font-size: 1.2rem; font-weight: 700;">Přidat novou trasu</h3>
+      <h3 id="add-modal-title" style="font-size: 1.2rem; font-weight: 700;">Add New Route</h3>
 
-      <!-- Drag & drop GPX -->
+      <!-- Drag & Drop GPX -->
       <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 8px; padding: 16px; text-align: center; background: rgba(0,122,255,0.08); cursor: pointer;">
-        <span id="gpx-label">📁 Přetáhni sem .GPX z hodinek (nebo klikni)</span>
+        <span id="gpx-label">📁 Drag & drop your .GPX file (or click to browse)</span>
         <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
       </div>
 
-      <input id="form-name" type="text" placeholder="Název závodu nebo běhu *">
+      <input id="form-name" type="text" placeholder="Race or run title *">
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <input id="form-date" type="text" placeholder="Datum (např. 24. 10. 2026)">
+        <input id="form-date" type="text" placeholder="Date (e.g. Oct 24, 2026)">
         <select id="form-status">
-          <option value="done">Odběhnuto</option>
-          <option value="planned">V plánu</option>
+          <option value="done">Completed</option>
+          <option value="planned">Planned</option>
           <option value="bucket">Bucket list</option>
         </select>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <input id="form-distance" type="text" placeholder="Vzdálenost (spočte GPX)">
-        <input id="form-elevation" type="text" placeholder="Převýšení (spočte GPX)">
+        <input id="form-distance" type="text" placeholder="Distance (auto from GPX)">
+        <input id="form-elevation" type="text" placeholder="Elevation gain (auto from GPX)">
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
         <select id="form-surface">
-          <option value="trail">Trail / Hory</option>
-          <option value="road">Silnice / Asfalt</option>
+          <option value="trail">Trail / Mountains</option>
+          <option value="road">Road / Pavement</option>
         </select>
         <select id="form-difficulty">
-          <option value="snadna">🟢 Snadná</option>
-          <option value="stredni">🟡 Střední</option>
-          <option value="tezka">🟠 Těžká</option>
-          <option value="extremni">🔴 Extrémní</option>
+          <option value="snadna">🟢 Easy</option>
+          <option value="stredni">🟡 Moderate</option>
+          <option value="tezka">🟠 Hard</option>
+          <option value="extremni">🔴 Extreme</option>
         </select>
       </div>
 
-      <input id="form-why" type="text" placeholder="Moje „proč“ (krátký citát či motivace)">
-      <textarea id="form-notes" placeholder="Poznámky k terénu, zážitku, logistice..." style="height: 60px;"></textarea>
+      <input id="form-why" type="text" placeholder="My 'Why' (quote or personal motivation)">
+      <textarea id="form-notes" placeholder="Notes on terrain, logistics, feelings..." style="height: 60px;"></textarea>
 
       <div>
-        <label style="font-size: 0.75rem; color: #aaa; display: block; margin-bottom: 4px;">Fotka ze závodu:</label>
+        <label style="font-size: 0.75rem; color: #aaa; display: block; margin-bottom: 4px;">Activity photo:</label>
         <input type="file" id="input-image" accept="image/*" style="font-size: 0.8rem; color: #888;">
       </div>
 
-      <button id="btn-save-race" class="open-detail-btn" style="padding: 12px; margin-top: 4px;" onclick="saveRaceToSupabase()">Uložit trasu do atlasu</button>
-      <button class="pill-btn" style="align-self: center; justify-content: center;" onclick="closeModals()">Zrušit</button>
+      <button id="btn-save-race" class="open-detail-btn" style="padding: 12px; margin-top: 4px;" onclick="saveRaceToSupabase()">Save Route to Atlas</button>
+      <button class="pill-btn" style="align-self: center; justify-content: center;" onclick="closeModals()">Cancel</button>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 3. HLAVNÍ ROZLOŽENÍ APLIKACE              -->
+  <!-- 3. MAIN APPLICATION INTERFACE              -->
   <!-- ========================================== -->
   <div id="app-layout">
-    <!-- HORNÍ LIŠTA -->
+    <!-- TOP BAR -->
     <header id="top-bar">
       <a href="index.html" class="top-bar-left">RUN<span>ATLAS</span></a>
-      <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Hledat závod, trasu, město..." oninput="handleSearch(this.value)">
+      <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Search race, route, city..." oninput="handleSearch(this.value)">
       <div class="top-bar-right">
-        <button id="btn-add-race" class="open-detail-btn" style="display: none;" onclick="openAddModal('race')">➕ Přidat závod</button>
-        <button id="btn-profile" class="pill-btn" onclick="handleProfileClick()">👤 <span id="label-user">Profil</span></button>
+        <button id="btn-add-race" class="open-detail-btn" style="display: none;" onclick="openAddModal('race')">➕ Add Activity</button>
+        <button id="btn-profile" class="pill-btn" onclick="handleProfileClick()">👤 <span id="label-user">Profile</span></button>
       </div>
     </header>
 
-    <!-- HLAVNÍ PLOCHA -->
+    <!-- MAIN WORKSPACE -->
     <div id="main-body">
-      <!-- LEVÝ ROZBALOVACÍ PANEL -->
+      <!-- LEFT RUNALYZE-STYLE RAIL -->
       <nav id="left-rail">
         <button id="rail-races" class="rail-btn active" onclick="switchMode('races')">
           <span class="rail-icon">🌐</span>
-          <span>Běžecký atlas</span>
+          <span>Race Atlas</span>
         </button>
         <button id="rail-memorable" class="rail-btn" onclick="switchMode('memorable')">
           <span class="rail-icon">🏃</span>
-          <span>Památné běhy</span>
+          <span>Memorable Runs</span>
         </button>
         <div style="height: 1px; background: #2c2c2e; margin: 4px 0;"></div>
         <button class="rail-btn" onclick="map.setView([50.0, 14.5], 5, { animate: true })">
           <span class="rail-icon">🗺️</span>
-          <span>Celá Evropa</span>
+          <span>Europe</span>
         </button>
         <button class="rail-btn" onclick="map.setView([30.0, 15.0], 2.5, { animate: true })">
           <span class="rail-icon">🌍</span>
-          <span>Celý svět</span>
+          <span>World</span>
         </button>
       </nav>
 
-      <!-- MAPA -->
+      <!-- MAP -->
       <div id="map"></div>
 
-      <!-- PRAVÝ PANEL -->
+      <!-- RIGHT SIDEBAR -->
       <aside id="sidebar">
         <div class="sidebar-header">
-          <h2 id="main-title">Běžecký atlas</h2>
-          <p id="stats-label">Načítám závody...</p>
+          <h2 id="main-title">Race Atlas</h2>
+          <p id="stats-label">Loading activities...</p>
           <div id="status-boxes-wrap" class="status-boxes">
             <div class="status-card-btn active" data-status="done" onclick="toggleStatusFilter('done')">
-              <span>Odběhnuto</span><span class="indicator"></span>
+              <span>Completed</span><span class="indicator"></span>
             </div>
             <div class="status-card-btn active" data-status="planned" onclick="toggleStatusFilter('planned')">
-              <span>V plánu</span><span class="indicator"></span>
+              <span>Planned</span><span class="indicator"></span>
             </div>
             <div class="status-card-btn active" data-status="bucket" onclick="toggleStatusFilter('bucket')">
-              <span>Bucket list</span><span class="indicator"></span>
+              <span>Bucket List</span><span class="indicator"></span>
             </div>
           </div>
         </div>
 
-        <!-- RYCHLÉ FILTRY POVRCHU -->
+        <!-- SURFACE FILTERS -->
         <div class="filters-section">
           <div class="filter-pills">
-            <button class="pill-btn active" onclick="setSurfaceFilter('all', this)">Vše</button>
-            <button class="pill-btn" onclick="setSurfaceFilter('trail', this)">Trail / Hory</button>
-            <button class="pill-btn" onclick="setSurfaceFilter('road', this)">Silnice / Asfalt</button>
+            <button class="pill-btn active" onclick="setSurfaceFilter('all', this)">All</button>
+            <button class="pill-btn" onclick="setSurfaceFilter('trail', this)">Trail</button>
+            <button class="pill-btn" onclick="setSurfaceFilter('road', this)">Road</button>
           </div>
         </div>
 
-        <!-- SEZNAM KARET -->
+        <!-- ACTIVITY LIST CARDS -->
         <div id="content"></div>
       </aside>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 4. JAVASCRIPT A LOGIKA SUPABASE           -->
+  <!-- 4. JAVASCRIPT & SUPABASE LOGIC             -->
   <!-- ========================================== -->
   <script>
-    // Konfigurace tvého projektu Supabase
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbm96Z3BudGdhdWxkdnB2c3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTA0MzUsImV4cCI6MjEwODA4NjQzNX0.TfmHE3zkVgVjupOFLA8_egRGwmVx5BDljHggk3H1ohc";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Globální stavy
     let currentUser = null;
     let currentProfile = null;
     let isDemoMode = false;
-    let currentMode = 'races'; // 'races' nebo 'memorable'
+    let currentMode = 'races';
     let currentRouteLayer = null;
 
     let races = [];
     let memorableRuns = [];
-    let zavodniTrasy = {}; // Souřadnice linek z GPX
+    let zavodniTrasy = {};
 
     const statusFilters = { done: true, planned: true, bucket: true };
     let surfaceFilter = 'all';
     let searchQuery = '';
 
-    // Ukázková data POUZE pro demo režim (?demo=true)
+    // Sample data for demo mode (?demo=true)
     const demoRaces = [
       {
-        id: "demo-helsinki", name: "Björn Borg Marathon Helsinki", date: "22. 8. 2026", month: 8,
-        coords: [60.155, 24.951], status: "done", statusLabel: "Odběhnuto", surface: "road", surfaceLabel: "Silnice",
+        id: "demo-helsinki", name: "Björn Borg Marathon Helsinki", date: "Aug 22, 2026", month: 8,
+        coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road",
         distance: "42.2 km", elevation: "+226 m", difficulty: "stredni",
-        why: "První maraton — rovinatá trať podél moře za příjemného severského léta.",
-        notes: "Even split po celou dobu, perfektní organizace.", result: "3:11:04",
+        why: "First marathon — coastal, flat, and cool northern weather.",
+        notes: "Kept an even split throughout the race, outstanding organization.", result: "3:11:04",
         image: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=800&q=80"
       },
       {
-        id: "demo-dresden", name: "Dresden Half Marathon", date: "24. 10. 2026", month: 10,
-        coords: [51.050, 13.737], status: "planned", statusLabel: "V plánu", surface: "road", surfaceLabel: "Silnice",
+        id: "demo-dresden", name: "Dresden Half Marathon", date: "Oct 24, 2026", month: 10,
+        coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road",
         distance: "21.1 km", elevation: "+110 m", difficulty: "snadna",
-        why: "Rychlý asfalt podél Labe kousek od domova, ideální na osobák.",
-        notes: "Cílové tempo 4:07 min/km.", result: "Cíl pod 1:27:00",
+        why: "Fast and flat road along the Elbe River, ideal for a new PR.",
+        notes: "Target pace: 4:07 min/km.", result: "Target sub 1:27:00",
         image: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=800&q=80"
       },
       {
-        id: "demo-chianti", name: "Chianti Ultra Trail", date: "20. 3. 2027", month: 3,
-        coords: [43.490, 11.378], status: "planned", statusLabel: "V plánu", surface: "trail", surfaceLabel: "Trail",
-        distance: "73 km", elevation: "+3 000 m", difficulty: "tezka",
-        why: "Ranní svítání nad toskánskými vinicemi a historická městečka.",
-        notes: "Běhavý profil, ale slunce prověří hydrataci.", result: "Dokončit se ctí",
+        id: "demo-chianti", name: "Chianti Ultra Trail", date: "Mar 20, 2027", month: 3,
+        coords: [43.490, 11.378], status: "planned", statusLabel: "Planned", surface: "trail", surfaceLabel: "Trail",
+        distance: "73 km", elevation: "+3,000 m", difficulty: "tezka",
+        why: "Sunrise over the Tuscan vineyards and passing through medieval hamlets.",
+        notes: "Runnable course, though hydration management under the sun will be critical.", result: "Finish strong",
         image: "https://images.unsplash.com/photo-1523348837708-a5d9fc0189fa?auto=format&fit=crop&w=800&q=80"
       },
       {
-        id: "demo-nuts", name: "NUTS Karhunkierros", date: "Květen 2027", month: 5,
+        id: "demo-nuts", name: "NUTS Karhunkierros", date: "May 2027", month: 5,
         coords: [66.368, 29.324], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail",
-        distance: "83 km", elevation: "+1 200 m", difficulty: "tezka",
-        why: "Nekonečný polární den v arktické tajze národního parku Oulanka.",
-        notes: "Visuté mosty, divoké peřeje a rašeliniště.", result: "Zážitkový bucket list",
+        distance: "83 km", elevation: "+1,200 m", difficulty: "tezka",
+        why: "Endless midnight sun across the Arctic taiga in Oulanka National Park.",
+        notes: "Suspension bridges over roaring rapids and wild marshes.", result: "Wilderness bucket list",
         image: "https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=800&q=80"
       }
     ];
 
     // ==========================================
-    // INICIALIZACE MAPY (Leaflet)
+    // MAP SETUP (Leaflet)
     // ==========================================
     const map = L.map('map', { center: [50.0, 14.5], zoom: 5 });
     const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 18 }).addTo(map);
     const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Dark', maxZoom: 16 });
-    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Satelit', maxZoom: 18 });
+    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Satellite', maxZoom: 18 });
 
-    L.control.layers({ "Topografická (výchozí)": esriTopo, "Tmavá mapa": esriDark, "Satelit": esriSat }).addTo(map);
+    L.control.layers({ "Topographic (Default)": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
     let markerLayerGroup = L.featureGroup().addTo(map);
 
-    // Domovský bod (Slaný)
+    // Home pin (Slaný)
     const homeMarker = L.circleMarker([50.2305, 14.0888], {
       radius: 7, fillColor: '#007aff', color: '#fff', weight: 2, fillOpacity: 1
-    }).addTo(map).bindTooltip("🏠 Domov (Slaný)", { direction: 'top' });
+    }).addTo(map).bindTooltip("🏠 Home Base", { direction: 'top' });
 
     // ==========================================
-    // AUTORIZACE A NAČTENÍ DAT
+    // AUTHENTICATION & DATA FETCHING
     // ==========================================
     async function initApp() {
       const params = new URLSearchParams(window.location.search);
@@ -440,8 +438,8 @@
       const sharedUser = params.get('u');
 
       if (isDemoMode) {
-        document.getElementById('label-user').textContent = "Demo účet";
-        document.getElementById('main-title').textContent = "Běžecký atlas (Ukázka)";
+        document.getElementById('label-user').textContent = "Demo User";
+        document.getElementById('main-title').textContent = "Race Atlas (Demo)";
         races = [...demoRaces];
         renderAll();
         return;
@@ -462,10 +460,10 @@
         const { data: profile } = await supabaseClient.from('profiles').select('*').eq('username', sharedUser).single();
         if (profile) {
           document.getElementById('main-title').textContent = `Atlas: ${profile.display_name || profile.username}`;
-          document.getElementById('label-user').textContent = "Host";
+          document.getElementById('label-user').textContent = "Guest";
           await loadRacesFromDB(profile.id);
         } else {
-          alert('Uživatel nebyl nalezen.');
+          alert('User profile not found.');
           window.location.href = 'index.html';
         }
       } else {
@@ -504,7 +502,6 @@
       } else {
         races = [];
         renderAll();
-        // Spolehlivé zobrazení overlaye pro prázdný účet
         setTimeout(() => {
           document.getElementById('onboarding-overlay').style.display = 'flex';
         }, 120);
@@ -512,7 +509,7 @@
     }
 
     // ==========================================
-    // VYKRESLENÍ (MAPA + SEZNAM)
+    // RENDER (MAP + SIDEBAR)
     // ==========================================
     function renderAll() {
       markerLayerGroup.clearLayers();
@@ -526,15 +523,14 @@
         return true;
       });
 
-      document.getElementById('stats-label').textContent = `Zobrazeno ${activeList.length} položek`;
+      document.getElementById('stats-label').textContent = `Showing ${activeList.length} activities`;
 
       if (activeList.length === 0) {
-        content.innerHTML = '<div style="color:#777; text-align:center; margin-top:40%; font-size:0.85rem;">Žádný záznam neodpovídá filtrům.</div>';
+        content.innerHTML = '<div style="color:#777; text-align:center; margin-top:40%; font-size:0.85rem;">No activities match your filters.</div>';
         return;
       }
 
       activeList.forEach(item => {
-        // 1. Značka na mapě
         const colors = { done: '#34c759', planned: '#ff9f0a', bucket: '#5ac8fa', memorable: '#af52de' };
         const pinColor = colors[item.status] || '#007aff';
 
@@ -545,7 +541,6 @@
         marker.bindTooltip(`<b>${item.name}</b><br>${item.distance} &bull; ${item.surfaceLabel}`);
         marker.on('click', () => showDetail(item));
 
-        // 2. Kartička v sidebaru
         const card = document.createElement('div');
         card.className = 'race-card';
         card.innerHTML = `
@@ -569,7 +564,7 @@
     }
 
     // ==========================================
-    // DETAIL POLOŽKY A VYKRESLENÍ TRASY
+    // DETAIL & ROUTE DRAWING
     // ==========================================
     function showDetail(item) {
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
@@ -578,34 +573,33 @@
       const photoHtml = item.image ? `<img src="${item.image}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : '';
 
       content.innerHTML = `
-        <button class="back-btn" onclick="renderAll()">← Zpět na seznam</button>
+        <button class="back-btn" onclick="renderAll()">← Back to list</button>
         ${photoHtml}
         <h2 style="font-size:1.25rem; font-weight:700; color:#fff; margin-bottom:6px;">${item.name}</h2>
-        <div style="font-size:0.8rem; color:#aaa; margin-bottom:12px;">📅 ${item.date || 'Bez data'} &bull; ${item.surfaceLabel}</div>
+        <div style="font-size:0.8rem; color:#aaa; margin-bottom:12px;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel}</div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#242426; padding:12px; border-radius:8px; margin-bottom:12px;">
-          <div><small style="color:#777; font-size:0.7rem; display:block;">VZDÁLENOST</small><strong>${item.distance}</strong></div>
-          <div><small style="color:#777; font-size:0.7rem; display:block;">PŘEVÝŠENÍ</small><strong>${item.elevation}</strong></div>
+          <div><small style="color:#777; font-size:0.7rem; display:block;">DISTANCE</small><strong>${item.distance}</strong></div>
+          <div><small style="color:#777; font-size:0.7rem; display:block;">ELEVATION GAIN</small><strong>${item.elevation}</strong></div>
         </div>
 
         ${item.why ? `<div style="background:#1f2733; border-left:3px solid #007aff; padding:10px; border-radius:6px; font-size:0.84rem; margin-bottom:10px;"><em>„${item.why}“</em></div>` : ''}
         ${item.notes ? `<div style="background:#242426; padding:10px; border-radius:6px; font-size:0.8rem; color:#bbb;">${item.notes}</div>` : ''}
       `;
 
-      // Kreslení křivky trasy z GPX
       if (zavodniTrasy[item.id]) {
         const coords = zavodniTrasy[item.id];
         currentRouteLayer = L.featureGroup([
           L.polyline(coords, { color: '#007aff', weight: 4 }),
           L.circleMarker(coords[0], { radius: 6, fillColor: '#34c759', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Start"),
-          L.circleMarker(coords[coords.length - 1], { radius: 6, fillColor: '#ff3b30', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Cíl")
+          L.circleMarker(coords[coords.length - 1], { radius: 6, fillColor: '#ff3b30', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Finish")
         ]).addTo(map);
         map.fitBounds(currentRouteLayer.getBounds(), { padding: [40, 40] });
       }
     }
 
     // ==========================================
-    // FILTRY A VYHLEDÁVÁNÍ
+    // FILTERS & NAVIGATION
     // ==========================================
     function toggleStatusFilter(statusKey) {
       statusFilters[statusKey] = !statusFilters[statusKey];
@@ -630,12 +624,12 @@
       document.getElementById('rail-races').classList.toggle('active', mode === 'races');
       document.getElementById('rail-memorable').classList.toggle('active', mode === 'memorable');
       document.getElementById('status-boxes-wrap').style.display = mode === 'races' ? 'flex' : 'none';
-      document.getElementById('main-title').textContent = mode === 'races' ? 'Běžecký atlas' : 'Památné běhy';
+      document.getElementById('main-title').textContent = mode === 'races' ? 'Race Atlas' : 'Memorable Runs';
       renderAll();
     }
 
     // ==========================================
-    // NAHRÁVÁNÍ NOVÉHO ZÁVODU & GPX PARSER
+    // GPX UPLOAD & SAVE TO SUPABASE
     // ==========================================
     let parsedGpxCoords = null;
     let parsedCenterCoords = null;
@@ -643,7 +637,7 @@
     function openAddModal(type = 'race') {
       closeModals();
       document.getElementById('add-modal').style.display = 'flex';
-      document.getElementById('add-modal-title').textContent = type === 'memorable' ? 'Přidat památný běh' : 'Přidat nový závod';
+      document.getElementById('add-modal-title').textContent = type === 'memorable' ? 'Add Memorable Run' : 'Add New Race';
     }
 
     function closeModals() {
@@ -657,7 +651,7 @@
 
     function handleGpxUpload(file) {
       if (!file) return;
-      document.getElementById('gpx-label').textContent = 'Načítám: ' + file.name;
+      document.getElementById('gpx-label').textContent = 'Loading: ' + file.name;
 
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -666,7 +660,7 @@
         const trkpts = xml.querySelectorAll('trkpt');
 
         if (trkpts.length === 0) {
-          alert('V GPX souboru nebyly nalezeny body trasy.');
+          alert('No trackpoints found in the GPX file.');
           return;
         }
 
@@ -702,7 +696,7 @@
 
         document.getElementById('form-distance').value = totalDist.toFixed(1) + ' km';
         document.getElementById('form-elevation').value = '+' + Math.round(totalEle) + ' m';
-        document.getElementById('gpx-label').textContent = `✅ Načteno (${latlngs.length} bodů, ${totalDist.toFixed(1)} km)`;
+        document.getElementById('gpx-label').textContent = `✅ Loaded (${latlngs.length} points, ${totalDist.toFixed(1)} km)`;
       };
       reader.readAsText(file);
     }
@@ -710,11 +704,11 @@
     async function saveRaceToSupabase() {
       if (!currentUser) return;
       const name = document.getElementById('form-name').value.trim();
-      if (!name) { alert('Vyplň prosím název.'); return; }
-      if (!parsedCenterCoords) { alert('Nahraj prosím GPX soubor s trasou.'); return; }
+      if (!name) { alert('Please enter an activity title.'); return; }
+      if (!parsedCenterCoords) { alert('Please upload a GPX file.'); return; }
 
       const btn = document.getElementById('btn-save-race');
-      btn.textContent = 'Ukládám do cloudu...';
+      btn.textContent = 'Saving to cloud...';
       btn.disabled = true;
 
       try {
@@ -756,33 +750,33 @@
         const { error: insertErr } = await supabaseClient.from('races').insert([record]);
         if (insertErr) throw insertErr;
 
-        alert('Trasa byla úspěšně uložena!');
+        alert('Route saved successfully!');
         closeModals();
         await loadRacesFromDB(currentUser.id);
       } catch (err) {
-        alert('Chyba: ' + err.message);
+        alert('Error: ' + err.message);
       } finally {
-        btn.textContent = 'Uložit trasu do atlasu';
+        btn.textContent = 'Save Route to Atlas';
         btn.disabled = false;
       }
     }
 
     // ==========================================
-    // INTERAKTIVNÍ TUTORIÁL (Driver.js)
+    // INTERACTIVE TUTORIAL (Driver.js)
     // ==========================================
     function startInteractiveTutorial() {
       closeModals();
       const driverObj = window.driver.js.driver({
         showProgress: true,
         animate: true,
-        nextBtnText: 'Další ➔',
-        prevBtnText: '⬅ Zpět',
-        doneBtnText: 'Hotovo, jdeme běhat!',
+        nextBtnText: 'Next ➔',
+        prevBtnText: '⬅ Back',
+        doneBtnText: "Ready, let's run!",
         steps: [
-          { element: '#left-rail', popover: { title: 'Navigace', description: 'Tady přepínáš mezi oficiálními Závody a Památnými běhy.', side: "right" } },
-          { element: '#global-search', popover: { title: 'Rychlé hledání', description: 'Filtruj trasy podle názvu, měst nebo pohoří.', side: "bottom" } },
-          { element: '#btn-add-race', popover: { title: 'Nahrání trasy', description: 'Přetáhni sem .GPX ze svých hodinek a fotku z mobilu.', side: "bottom" } },
-          { element: '#sidebar', popover: { title: 'Seznam a filtrace', description: 'Kliknutím na kartu v seznamu se vycentruje mapa a vykreslí profil trasy.', side: "left" } }
+          { element: '#left-rail', popover: { title: 'Navigation', description: 'Switch easily between official Races and Memorable Runs.', side: "right" } },
+          { element: '#global-search', popover: { title: 'Quick Search', description: 'Find activities by title, mountain range, or city.', side: "bottom" } },
+          { element: '#btn-add-race', popover: { title: 'Add Activity', description: 'Upload .GPX files straight from your watch along with course photos.', side: "bottom" } },
+          { element: '#sidebar', popover: { title: 'List & Filtering', description: 'Click any card to pan the map and display the elevation and route.', side: "left" } }
         ]
       });
       driverObj.drive();
@@ -790,12 +784,12 @@
 
     function handleProfileClick() {
       if (isDemoMode) { window.location.href = 'index.html'; return; }
-      if (confirm('Chceš se odhlásit z atlasu?')) {
+      if (confirm('Do you want to log out of RunAtlas?')) {
         supabaseClient.auth.signOut().then(() => { window.location.href = 'index.html'; });
       }
     }
 
-    // Start aplikace
+    // Start application
     initApp();
   </script>
 </body>
