@@ -192,7 +192,43 @@
 
     <!-- Středový blok: Logo -> Nadpis -> 3 Tlačítka -->
     <main class="hero-center">
-      <div class="brand-logo">RUN<span>ATLAS</span></div>
+      <!-- NOVÉ LOGO TOPO-PEAK -->
+      <div class="brand-logo" style="margin-bottom: 24px; display: inline-flex; justify-content: center;">
+        <svg width="360" height="74" viewBox="0 0 390 76" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;">
+          <defs>
+            <!-- Jemná záře bílé hřebenové křivky -->
+            <filter id="ridgeGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="1.8" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
+
+          <!-- Text RUN (bílá, ultra bold) -->
+          <text x="14" y="54" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="50" font-weight="900" letter-spacing="1">RUN</text>
+
+          <!-- Vrcholové písmeno 'A' s výškovým profilem -->
+          <g>
+            <!-- Silueta hory / tělo písmene A -->
+            <path d="M 178 8 L 148 54 L 160 54 L 178 26 L 196 54 L 208 54 Z" fill="#007aff"/>
+            
+            <!-- 1. Vrcholová linie (bílá hřebenovka s vlnou) -->
+            <path d="M 142 36 Q 160 25 178 34 T 216 31" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none" filter="url(#ridgeGlow)"/>
+            
+            <!-- 2. Terénní vrstevnice (azurová) -->
+            <path d="M 144 45 Q 161 34 178 43 T 214 40" stroke="#5ac8fa" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          </g>
+
+          <!-- Text TLAS (elektrická modrá) -->
+          <text x="214" y="54" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="50" font-weight="900" letter-spacing="1">TLAS</text>
+
+          <!-- Spodní vodicí linka s výškovým profilem -->
+          <path d="M 16 70 L 285 70 L 295 62 L 303 74 L 312 55 L 322 70 L 376 70" stroke="#007aff" stroke-width="1.8" stroke-opacity="0.45" stroke-linecap="round" stroke-linejoin="round"/>
+          
+          <!-- Startovací (zelený) a cílový (červený) bod -->
+          <circle cx="16" cy="70" r="3" fill="#34c759"/>
+          <circle cx="376" cy="70" r="3" fill="#ff3b30"/>
+        </svg>
+      </div>
       <h1 class="hero-title">All your running footsteps on a single map</h1>
 
       <div class="hero-actions">
