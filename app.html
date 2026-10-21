@@ -39,9 +39,6 @@
       z-index: 2000;
       flex-shrink: 0;
     }
-    .top-bar-left { display: flex; align-items: center; gap: 14px; font-weight: 800; font-size: 1.15rem; color: #fff; text-decoration: none; }
-    .top-bar-left span { color: #007aff; }
-
     .top-search-input {
       background: #1c1c1e;
       border: 1px solid #3a3a3c;
@@ -54,14 +51,13 @@
       transition: all 0.2s;
     }
     .top-search-input:focus { border-color: #007aff; width: 340px; }
-
     .top-bar-right { display: flex; align-items: center; gap: 10px; }
 
     /* Main Body */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
     /* Left Runalyze Rail */
-   #left-rail {
+    #left-rail {
       width: 56px;
       background: rgba(20, 20, 24, 0.94);
       backdrop-filter: blur(14px);
@@ -76,8 +72,6 @@
       z-index: 1500;
     }
     #left-rail:hover { width: 205px; box-shadow: 6px 0 24px rgba(0,0,0,0.6); }
-
-    .rail-spacer { flex: 1; min-height: 20px; }
 
     .rail-btn {
       display: flex;
@@ -94,7 +88,28 @@
       transition: all 0.15s;
     }
     .rail-btn:hover, .rail-btn.active { background: #2c2c2e; color: #fff; }
-    .rail-btn .rail-icon { font-size: 1.15rem; flex-shrink: 0; }
+    .rail-btn .rail-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Skrytí textu při zavřené liště */
+    #left-rail .rail-btn span:not(.rail-icon) {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+      white-space: nowrap;
+    }
+    #left-rail:hover .rail-btn span:not(.rail-icon) {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .rail-spacer { flex: 1; min-height: 20px; }
 
     /* Map */
     #map { flex: 1; height: 100%; background: #1a1a1a; z-index: 1; }
@@ -185,14 +200,14 @@
       padding: 10px; background: #2c2c2e; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none;
     }
 
-    /* Mobile Responsiveness */
+    /* Mobile */
     @media (max-width: 768px) {
       .top-search-input { display: none; }
       #left-rail {
         position: fixed; bottom: 0; left: 0; right: 0; width: 100% !important; height: 56px;
         flex-direction: row; justify-content: space-around; border-right: none; border-top: 1px solid #2c2c2e; z-index: 3000;
       }
-      .rail-btn span:not(.rail-icon) { display: none; }
+      .rail-btn span:not(.rail-icon) { display: none !important; }
       #sidebar {
         position: fixed; inset: 52px 0 56px 0; width: 100%; transform: translateY(100%);
         transition: transform 0.25s ease; z-index: 2500;
@@ -236,7 +251,6 @@
     <div class="modal-card">
       <h3 id="add-modal-title" style="font-size: 1.2rem; font-weight: 700;">Add New Route</h3>
 
-      <!-- Drag & Drop GPX -->
       <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 8px; padding: 16px; text-align: center; background: rgba(0,122,255,0.08); cursor: pointer;">
         <span id="gpx-label">📁 Drag & drop your .GPX file (or click to browse)</span>
         <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
@@ -285,12 +299,40 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 3. MAIN APPLICATION INTERFACE              -->
+  <!-- 3. MODAL: SETTINGS                         -->
+  <!-- ========================================== -->
+  <div id="modal-settings" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 style="font-size:1.25rem; font-weight:700;">Settings & Preferences</h3>
+      <div>
+        <label style="font-size:0.75rem; color:#aaa; display:block; margin-bottom:5px;">Home Base Coordinates (Latitude, Longitude):</label>
+        <input id="setting-home-coords" type="text" placeholder="e.g. 50.2305, 14.0888">
+        <small style="font-size:0.72rem; color:#666; display:block; margin-top:3px;">Your default view centers on these coordinates.</small>
+      </div>
+      <button class="open-detail-btn" style="padding:11px;" onclick="saveUserSettings()">Save Settings</button>
+      <button class="pill-btn" style="justify-content:center;" onclick="closeModals()">Close</button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 4. MODAL: ABOUT & SUPPORT                  -->
+  <!-- ========================================== -->
+  <div id="modal-info" class="modal-backdrop">
+    <div class="modal-card" style="text-align:center; max-width:440px;">
+      <h3 id="info-modal-title" style="font-size:1.25rem; font-weight:700; margin-bottom:6px;"></h3>
+      <div id="info-modal-body" style="font-size:0.88rem; color:#c7c7cc; line-height:1.6; margin-bottom:16px;"></div>
+      <button class="pill-btn" style="justify-content:center;" onclick="closeModals()">Close</button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 5. MAIN APPLICATION INTERFACE              -->
   <!-- ========================================== -->
   <div id="app-layout">
     <!-- TOP BAR -->
     <header id="top-bar">
-     <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
+      <!-- Topo-Peak Logo v liště -->
+      <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
         <svg width="155" height="30" viewBox="0 0 390 76" fill="none" xmlns="http://www.w3.org/2000/svg">
           <text x="14" y="54" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="50" font-weight="900" letter-spacing="1">RUN</text>
           <g>
@@ -304,7 +346,9 @@
           <circle cx="376" cy="70" r="3.5" fill="#ff3b30"/>
         </svg>
       </a>
+
       <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Search race, route, city..." oninput="handleSearch(this.value)">
+
       <div class="top-bar-right">
         <button id="btn-add-race" class="open-detail-btn" style="display: none;" onclick="openAddModal('race')">➕ Add Activity</button>
         <button id="btn-profile" class="pill-btn" onclick="handleProfileClick()">👤 <span id="label-user">Profile</span></button>
@@ -313,9 +357,7 @@
 
     <!-- MAIN WORKSPACE -->
     <div id="main-body">
-      <!-- LEFT RUNALYZE-STYLE RAIL -->
-     <!-- LEVÝ ROZBALOVACÍ PANEL S MODERNÍMI SVG IKONAMI -->
-     <!-- LEVÝ RUNALYZER PANEL -->
+      <!-- LEVÝ ROZBALOVACÍ PANEL -->
       <nav id="left-rail">
         <!-- 1. Race Atlas -->
         <button id="rail-races" class="rail-btn active" onclick="switchMode('races')">
@@ -329,20 +371,23 @@
           <span>Race Atlas</span>
         </button>
 
-        <!-- 2. Memorable Runs (Plynulý sportovní běžec) -->
+        <!-- 2. Memorable Runs (Čistá atletická silueta) -->
         <button id="rail-memorable" class="rail-btn" onclick="switchMode('memorable')">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="16.5" cy="4.5" r="2" fill="currentColor"></circle>
-              <path d="M6 18l3.5-3.5 2 2 3-5-3-2.5 2-3h3"></path>
-              <path d="M11.5 9l-3 3.5-4-1"></path>
-              <path d="M14.5 16.5l2.5 3.5 4-1"></path>
+              <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
+              <path d="M7 21l3-4"></path>
+              <path d="M16 21l-2-4-3-3 1-6"></path>
+              <path d="M6 12l2-3 4-1 3 3 3 1"></path>
             </svg>
           </span>
           <span>Memorable Runs</span>
         </button>
 
-        <!-- 3. Home Base (Vycentrovat na domov) -->
+        <!-- ODDĚLOVACÍ LINKA -->
+        <div style="height: 1px; background: #2c2c2e; margin: 10px 4px;"></div>
+
+        <!-- 3. Home Base -->
         <button class="rail-btn" onclick="jumpToHomeBase()">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -363,11 +408,11 @@
           <span>Settings</span>
         </button>
 
-        <!-- Pružný prostor posouvající zbytek na dno -->
+        <!-- Pružné odsazení -->
         <div class="rail-spacer"></div>
-        <div style="height: 1px; background: #2c2c2e; margin: 4px 6px;"></div>
+        <div style="height: 1px; background: #2c2c2e; margin: 4px 4px;"></div>
 
-        <!-- 5. About Us -->
+        <!-- 5. About -->
         <button class="rail-btn" onclick="openInfoModal('about')">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -395,10 +440,10 @@
         </button>
       </nav>
 
-      <!-- MAP -->
+      <!-- MAPA -->
       <div id="map"></div>
 
-      <!-- RIGHT SIDEBAR -->
+      <!-- PRAVÝ PANEL -->
       <aside id="sidebar">
         <div class="sidebar-header">
           <h2 id="main-title">Race Atlas</h2>
@@ -425,14 +470,14 @@
           </div>
         </div>
 
-        <!-- ACTIVITY LIST CARDS -->
+        <!-- SEZNAM KARET -->
         <div id="content"></div>
       </aside>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 4. JAVASCRIPT & SUPABASE LOGIC             -->
+  <!-- 6. JAVASCRIPT & LOGIKA SUPABASE            -->
   <!-- ========================================== -->
   <script>
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
@@ -453,7 +498,10 @@
     let surfaceFilter = 'all';
     let searchQuery = '';
 
-    // Sample data for demo mode (?demo=true)
+    // Domovská základna: čte se z paměti prohlížeče, výchozí Slaný
+    let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || [50.2305, 14.0888];
+
+    // Ukázková data POUZE pro demo režim (?demo=true)
     const demoRaces = [
       {
         id: "demo-helsinki", name: "Björn Borg Marathon Helsinki", date: "Aug 22, 2026", month: 8,
@@ -490,9 +538,9 @@
     ];
 
     // ==========================================
-    // MAP SETUP (Leaflet)
+    // MAP SETUP (Leaflet s oddáleným centrem 5.2)
     // ==========================================
-    const map = L.map('map', { center: [50.0, 14.5], zoom: 5 });
+    const map = L.map('map', { center: userHomeCoords, zoom: 5.2 });
     const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 18 }).addTo(map);
     const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Dark', maxZoom: 16 });
     const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Satellite', maxZoom: 18 });
@@ -500,8 +548,8 @@
     L.control.layers({ "Topographic (Default)": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
     let markerLayerGroup = L.featureGroup().addTo(map);
 
-    // Home pin (Slaný)
-    const homeMarker = L.circleMarker([50.2305, 14.0888], {
+    // Domovský bod
+    const homeMarker = L.circleMarker(userHomeCoords, {
       radius: 7, fillColor: '#007aff', color: '#fff', weight: 2, fillOpacity: 1
     }).addTo(map).bindTooltip("🏠 Home Base", { direction: 'top' });
 
@@ -705,6 +753,65 @@
     }
 
     // ==========================================
+    // HOME BASE & SETTINGS LOGIC
+    // ==========================================
+    function jumpToHomeBase() {
+      if (userHomeCoords && userHomeCoords.length === 2) {
+        map.setView(userHomeCoords, 5.2, { animate: true });
+        if (typeof homeMarker !== 'undefined') {
+          homeMarker.setLatLng(userHomeCoords);
+        }
+      } else {
+        openSettingsModal();
+      }
+    }
+
+    function openSettingsModal() {
+      closeModals();
+      document.getElementById('setting-home-coords').value = userHomeCoords.join(', ');
+      document.getElementById('modal-settings').style.display = 'flex';
+    }
+
+    function saveUserSettings() {
+      const val = document.getElementById('setting-home-coords').value.trim();
+      const parts = val.split(',').map(p => parseFloat(p.trim()));
+      
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        userHomeCoords = parts;
+        localStorage.setItem('runatlas_home_coords', JSON.stringify(parts));
+        homeMarker.setLatLng(parts);
+        alert('Home Base saved successfully!');
+        closeModals();
+        jumpToHomeBase();
+      } else {
+        alert('Please enter valid coordinates in format: latitude, longitude (e.g. 50.2305, 14.0888)');
+      }
+    }
+
+    function openInfoModal(type) {
+      closeModals();
+      const title = document.getElementById('info-modal-title');
+      const body = document.getElementById('info-modal-body');
+
+      if (type === 'about') {
+        title.textContent = 'About RunAtlas';
+        body.innerHTML = `
+          RunAtlas is your personal interactive running atlas and route log. Built for passionate runners to visualize journeys, analyze elevations, and keep a living bucket list of world races.<br><br>
+          <span style="font-size:0.75rem; color:#888;">Version 1.0 &bull; Built with Leaflet & Supabase</span>
+        `;
+      } else {
+        title.textContent = 'Help & Support';
+        body.innerHTML = `
+          Have an issue with GPX imports or account data?<br><br>
+          Drop us a line directly at:<br>
+          <a href="mailto:support@runatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runatlas.app</a><br><br>
+          We'll get back to you as soon as we finish our long run! 🏃
+        `;
+      }
+      document.getElementById('modal-info').style.display = 'flex';
+    }
+
+    // ==========================================
     // GPX UPLOAD & SAVE TO SUPABASE
     // ==========================================
     let parsedGpxCoords = null;
@@ -719,6 +826,8 @@
     function closeModals() {
       document.getElementById('onboarding-overlay').style.display = 'none';
       document.getElementById('add-modal').style.display = 'none';
+      document.getElementById('modal-settings').style.display = 'none';
+      document.getElementById('modal-info').style.display = 'none';
     }
 
     document.getElementById('drop-gpx').addEventListener('click', () => {
@@ -849,10 +958,10 @@
         prevBtnText: '⬅ Back',
         doneBtnText: "Ready, let's run!",
         steps: [
-          { element: '#left-rail', popover: { title: 'Navigation', description: 'Switch easily between official Races and Memorable Runs.', side: "right" } },
+          { element: '#left-rail', popover: { title: 'Navigation', description: 'Switch easily between official Races and Memorable Runs, or jump to your Home Base.', side: "right" } },
           { element: '#global-search', popover: { title: 'Quick Search', description: 'Find activities by title, mountain range, or city.', side: "bottom" } },
           { element: '#btn-add-race', popover: { title: 'Add Activity', description: 'Upload .GPX files straight from your watch along with course photos.', side: "bottom" } },
-          { element: '#sidebar', popover: { title: 'List & Filtering', description: 'Click any card to pan the map and display the elevation and route.', side: "left" } }
+          { element: '#sidebar', popover: { title: 'List & Filtering', description: 'Click any card to pan the map and display the elevation profile and route line.', side: "left" } }
         ]
       });
       driverObj.drive();
@@ -867,90 +976,6 @@
 
     // Start application
     initApp();
-    
-// ==========================================
-    // HOME BASE & SETTINGS LOGIC
-    // ==========================================
-    let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || [50.2305, 14.0888];
-
-    function jumpToHomeBase() {
-      if (userHomeCoords && userHomeCoords.length === 2) {
-        map.setView(userHomeCoords, 10, { animate: true });
-        homeMarker.setLatLng(userHomeCoords);
-      } else {
-        openSettingsModal();
-      }
-    }
-
-    function openSettingsModal() {
-      closeModals();
-      document.getElementById('setting-home-coords').value = userHomeCoords.join(', ');
-      document.getElementById('modal-settings').style.display = 'flex';
-    }
-
-    function saveUserSettings() {
-      const val = document.getElementById('setting-home-coords').value.trim();
-      const parts = val.split(',').map(p => parseFloat(p.trim()));
-      
-      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-        userHomeCoords = parts;
-        localStorage.setItem('runatlas_home_coords', JSON.stringify(parts));
-        homeMarker.setLatLng(parts);
-        alert('Home Base saved successfully!');
-        closeModals();
-        jumpToHomeBase();
-      } else {
-        alert('Please enter valid coordinates in format: latitude, longitude (e.g. 50.2305, 14.0888)');
-      }
-    }
-
-    function openInfoModal(type) {
-      closeModals();
-      const title = document.getElementById('info-modal-title');
-      const body = document.getElementById('info-modal-body');
-
-      if (type === 'about') {
-        title.textContent = 'About RunAtlas';
-        body.innerHTML = `
-          RunAtlas is your personal interactive running atlas and route log. Built for passionate runners to visualize journeys, analyze elevations, and keep a living bucket list of world races.<br><br>
-          <span style="font-size:0.75rem; color:#888;">Version 1.0 &bull; Built with Leaflet & Supabase</span>
-        `;
-      } else {
-        title.textContent = 'Help & Support';
-        body.innerHTML = `
-          Have an issue with GPX imports or account data?<br><br>
-          Drop us a line directly at:<br>
-          <a href="mailto:support@runatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runatlas.app</a><br><br>
-          We'll get back to you as soon as we finish our long run! 🏃
-        `;
-      }
-      document.getElementById('modal-info').style.display = 'flex';
-    }
-
   </script>
-  <!-- MODAL: SETTINGS -->
-  <div id="modal-settings" class="modal-backdrop">
-    <div class="modal-card">
-      <h3 style="font-size:1.25rem; font-weight:700;">Settings & Preferences</h3>
-      
-      <div>
-        <label style="font-size:0.75rem; color:#aaa; display:block; margin-bottom:5px;">Home Base Coordinates (Latitude, Longitude):</label>
-        <input id="setting-home-coords" type="text" placeholder="e.g. 50.2305, 14.0888">
-        <small style="font-size:0.72rem; color:#666; display:block; margin-top:3px;">Used to center your map and calculate travel distances.</small>
-      </div>
-
-      <button class="open-detail-btn" style="padding:11px;" onclick="saveUserSettings()">Save Settings</button>
-      <button class="pill-btn" style="justify-content:center;" onclick="closeModals()">Close</button>
-    </div>
-  </div>
-
-  <!-- MODAL: ABOUT & SUPPORT -->
-  <div id="modal-info" class="modal-backdrop">
-    <div class="modal-card" style="text-align:center; max-width:440px;">
-      <h3 id="info-modal-title" style="font-size:1.25rem; font-weight:700; margin-bottom:6px;"></h3>
-      <div id="info-modal-body" style="font-size:0.88rem; color:#c7c7cc; line-height:1.6; margin-bottom:16px;"></div>
-      <button class="pill-btn" style="justify-content:center;" onclick="closeModals()">Close</button>
-    </div>
-  </div>
 </body>
 </html>
