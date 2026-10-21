@@ -595,8 +595,31 @@
 
       <!-- PRAVÝ PANEL (Seznam a filtry zůstávají) -->
       <aside id="sidebar">
-        <!-- Zde ponech celý stávající obsah elementu sidebar: header, status-boxes, filtry a content -->
-      </aside>
+      <div class="sidebar-header" style="padding: 16px 20px; border-bottom: 1px solid #2c2c2e;">
+        <h2 id="main-title" style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Běžecký atlas</h2>
+        <div id="stats" style="font-size: 0.8rem; color: #8e8e93;">Celkem závodů v přehledu</div>
+      </div>
+
+      <!-- Filtry stavu -->
+      <div class="filter-section" style="padding: 12px 20px; display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #222;">
+        <button class="pill-btn active" onclick="setStatusFilter('all')">Vše</button>
+        <button class="pill-btn" onclick="setStatusFilter('done')">Odběhnuto</button>
+        <button class="pill-btn" onclick="setStatusFilter('planned')">V plánu</button>
+        <button class="pill-btn" onclick="setStatusFilter('bucket')">Bucket list</button>
+      </div>
+
+      <!-- Filtry povrchu a obtížnosti -->
+      <div class="filter-section" style="padding: 10px 20px; display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #222; font-size: 0.8rem;">
+        <button class="pill-btn" onclick="setSurfaceFilter('all')">Všechny povrchy</button>
+        <button class="pill-btn" onclick="setSurfaceFilter('trail')">Trail</button>
+        <button class="pill-btn" onclick="setSurfaceFilter('road')">Silnice</button>
+      </div>
+
+      <!-- Místo pro vykreslování kartiček závodů -->
+      <div id="content" style="flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;">
+        <!-- Zde JavaScript generuje jednotlivé závody -->
+      </div>
+    </aside>
     </div>
   </div>
 
