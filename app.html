@@ -27,7 +27,7 @@
 
     /* Top Bar */
     #top-bar {
-      height: 52px; background: rgba(22, 22, 26, 0.92); backdrop-filter: blur(14px);
+      height: 52px; background: rgba(22, 22, 26, 0.95); backdrop-filter: blur(14px);
       border-bottom: 1px solid #2c2c2e; display: flex; align-items: center;
       justify-content: space-between; padding: 0 18px; z-index: 2000; flex-shrink: 0;
     }
@@ -65,12 +65,39 @@
     #left-rail:hover .rail-btn span:not(.rail-icon) { opacity: 1; pointer-events: auto; }
     .rail-spacer { flex: 1; min-height: 20px; }
 
-    /* Map */
-    #map { flex: 1; height: 100%; background: #1a1a1a; z-index: 1; }
+    /* Map Area Wrapper */
+    #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; }
+    #map { width: 100%; height: 100%; background: #1a1a1a; z-index: 1; }
+
+    /* ONBOARDING OVERLAY: covers ONLY the map, bars stay clickable */
+    #onboarding-overlay {
+      display: none; position: absolute; inset: 0; background: rgba(12, 12, 14, 0.78);
+      backdrop-filter: blur(8px); z-index: 1100; align-items: center; justify-content: center; padding: 24px;
+    }
+    .onboarding-card {
+      background: rgba(28, 28, 30, 0.94); border: 1px solid #38383a; border-radius: 20px;
+      padding: 36px 32px; max-width: 580px; width: 100%; text-align: center; color: #fff;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.85); backdrop-filter: blur(16px);
+    }
+    .onboarding-split-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 24px 0 16px;
+    }
+    .split-choice-card {
+      background: #242428; border: 1px solid #3a3a3c; border-radius: 14px; padding: 20px 16px;
+      cursor: pointer; transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1); text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .split-choice-card:hover {
+      background: #2c2c32; border-color: #007aff; transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(0,122,255,0.25);
+    }
+    .split-choice-card.primary { border-color: rgba(0,122,255,0.4); }
+    .split-card-title { font-size: 1rem; font-weight: 700; color: #fff; }
+    .split-card-sub { font-size: 0.74rem; color: #8e8e93; line-height: 1.4; }
 
     /* Floating Home Base prompt */
     #floating-home-prompt {
-      position: absolute; bottom: 24px; left: 74px; z-index: 1400;
+      position: absolute; bottom: 24px; left: 24px; z-index: 1050;
       background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(12px);
       border: 1px solid #007aff; border-radius: 12px; padding: 12px 18px;
       display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7);
@@ -152,361 +179,78 @@
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82);
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
     }
-    .modal-card {
-      background: #1c1c1e; border: 1px solid #333; border-radius: 16px; padding: 26px;
-      max-width: 530px; width: 100%; color: #fff; display: flex; flex-direction: column; gap: 12px;
-      max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    
+    /* DASHBOARD COCKPIT ADD ACTIVITY MODAL */
+    .dashboard-modal-card {
+      background: #1c1c1e; border: 1px solid #38383a; border-radius: 20px; padding: 28px;
+      max-width: 860px; width: 100%; color: #fff; display: flex; flex-direction: column; gap: 16px;
+      max-height: 92vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.85);
     }
-    .modal-card input, .modal-card select, .modal-card textarea {
-      padding: 10px; background: #2c2c2e; border: 1px solid #444; border-radius: 6px;
-      color: #fff; font-size: 0.85rem; outline: none; width: 100%;
+    .dashboard-grid {
+      display: grid; grid-template-columns: 1.15fr 1fr; gap: 24px;
     }
-    .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus { border-color: #007aff; }
+    .dashboard-col {
+      display: flex; flex-direction: column; gap: 12px;
+    }
 
     .form-group-label { font-size: 0.74rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; margin-bottom: 4px; display: block; }
-    .form-slider-wrap { display: flex; align-items: center; gap: 12px; background: #242426; padding: 8px 12px; border-radius: 6px; border: 1px solid #333; }
+    .cockpit-input {
+      padding: 10px; background: #242426; border: 1px solid #3a3a3c; border-radius: 8px;
+      color: #fff; font-size: 0.86rem; outline: none; width: 100%; transition: border-color 0.2s;
+    }
+    .cockpit-input:focus { border-color: #007aff; }
+
+    /* Toggle Chips / Pills */
+    .chips-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip-btn {
+      padding: 6px 12px; background: #242426; border: 1px solid #3a3a3c; border-radius: 8px;
+      color: #aaa; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+      user-select: none;
+    }
+    .chip-btn:hover { background: #2c2c30; color: #fff; }
+    .chip-btn.active { background: #007aff; border-color: #007aff; color: #fff; }
+
+    .form-slider-wrap { display: flex; align-items: center; gap: 12px; background: #242426; padding: 8px 12px; border-radius: 8px; border: 1px solid #3a3a3c; }
     .form-slider-wrap input[type=range] { flex: 1; accent-color: #007aff; }
 
-    .details-accordion-btn {
-      background: #242426; border: 1px dashed #444; color: #5ac8fa; padding: 10px 14px;
-      border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: pointer; text-align: left;
-      display: flex; justify-content: space-between; align-items: center; margin-top: 4px;
-    }
-    .details-accordion-btn:hover { background: #2c2c2e; border-color: #007aff; }
-
-    /* Segmented pill radio */
-    .segmented-control { display: flex; gap: 6px; }
-    .segmented-btn {
-      flex: 1; padding: 7px; background: #2c2c2e; border: 1px solid #444; border-radius: 6px;
-      color: #aaa; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center;
-    }
-    .segmented-btn.active { background: #007aff; color: #fff; border-color: #007aff; }
-
-    /* Time picker cluster */
     .time-inputs-cluster { display: flex; gap: 6px; align-items: center; }
     .time-box-input {
-      width: 62px !important; text-align: center; font-weight: 700; padding: 8px 4px !important;
+      width: 58px !important; text-align: center; font-weight: 700; padding: 8px 4px !important;
     }
 
-    /* Image Gallery preview */
     .gallery-preview-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
-    .gallery-thumb { width: 100%; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #444; }
+    .gallery-thumb { width: 100%; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #444; }
+
+    .details-accordion-btn {
+      background: #242428; border: 1px dashed #444; color: #5ac8fa; padding: 10px 14px;
+      border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; text-align: left;
+      display: flex; justify-content: space-between; align-items: center; margin-top: 2px;
+    }
+    .details-accordion-btn:hover { background: #2c2c32; border-color: #007aff; }
 
     /* Mobile */
-    @media (max-width: 768px) {
+    @media (max-width: 820px) {
+      .dashboard-grid { grid-template-columns: 1fr; gap: 14px; }
+      .onboarding-split-grid { grid-template-columns: 1fr; }
       .top-search-input { display: none; }
       #left-rail {
         position: fixed; bottom: 0; left: 0; right: 0; width: 100% !important; height: 56px;
         flex-direction: row; justify-content: space-around; border-right: none; border-top: 1px solid #2c2c2e; z-index: 3000;
       }
-      .rail-btn span:not(.rail-icon) { display: none !important; }
       #floating-home-prompt { bottom: 68px; left: 16px; }
       #sidebar {
         position: fixed; inset: 52px 0 56px 0; width: 100%; transform: translateY(100%);
         transition: transform 0.25s ease; z-index: 2500;
       }
       #sidebar.mobile-open { transform: translateY(0); }
-      #map { width: 100%; height: calc(100vh - 108px); }
+      #map-wrapper { width: 100%; height: calc(100vh - 108px); }
     }
   </style>
 </head>
 <body>
 
   <!-- ========================================== -->
-  <!-- 1. ONBOARDING OVERLAY (MODERN SVG ICONS)   -->
-  <!-- ========================================== -->
-  <div id="onboarding-overlay" class="modal-backdrop">
-    <div class="modal-card" style="text-align: center; max-width: 480px; padding: 36px 28px;">
-      <div style="display:flex; justify-content:center; margin-bottom: 12px;">
-        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
-          <line x1="9" y1="3" x2="9" y2="18"></line>
-          <line x1="15" y1="6" x2="15" y2="21"></line>
-        </svg>
-      </div>
-
-      <h2 style="font-size: 1.55rem; font-weight: 800; margin-bottom: 6px;">Welcome to your RunAtlas!</h2>
-      <p style="font-size: 0.9rem; color: #a1a1a6; line-height: 1.5; margin-bottom: 24px;">
-        Your personal map is a clean canvas. Upload your first race from your GPS watch, log an unforgettable training run, or take a quick tour to explore features.
-      </p>
-
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <button class="open-detail-btn" style="padding: 13px; font-size: 0.92rem;" onclick="openAddModal('race')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-            <line x1="4" y1="22" x2="4" y2="15"></line>
-          </svg>
-          Add your first race
-        </button>
-
-        <button class="open-detail-btn" style="background:#2c2c2e; border:1px solid #444; padding:13px; font-size:0.92rem;" onclick="openAddModal('memorable')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
-            <path d="M7 21l3-4"></path>
-            <path d="M16 21l-2-4-3-3 1-6"></path>
-            <path d="M6 12l2-3 4-1 3 3 3 1"></path>
-          </svg>
-          Add a memorable run
-        </button>
-
-        <button class="pill-btn" style="padding: 11px; font-size: 0.88rem; justify-content: center;" onclick="startInteractiveTutorial()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="9" y1="18" x2="15" y2="18"></line>
-            <line x1="10" y1="22" x2="14" y2="22"></line>
-            <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
-          </svg>
-          See tutorial
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- 2. RESTRUCTURED ADD ACTIVITY MODAL         -->
-  <!-- ========================================== -->
-  <div id="add-modal" class="modal-backdrop">
-    <div class="modal-card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <h3 id="add-modal-title" style="font-size: 1.25rem; font-weight: 700;">Add New Race</h3>
-        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.4rem; cursor:pointer;">&times;</button>
-      </div>
-
-      <!-- Drag & Drop GPX (Optional) -->
-      <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 8px; padding: 14px; text-align: center; background: rgba(0,122,255,0.06); cursor: pointer;">
-        <span id="gpx-label">📁 Drag & drop watch .GPX file (Optional, or click to browse)</span>
-        <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
-      </div>
-
-      <div>
-        <label class="form-group-label">Activity Title *</label>
-        <input id="form-name" type="text" placeholder="e.g. Dresden Half Marathon">
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div>
-          <label class="form-group-label">Event Date</label>
-          <input id="form-date" type="date">
-        </div>
-        <div>
-          <label class="form-group-label">Status *</label>
-          <select id="form-status" onchange="handleStatusChange(this.value)">
-            <option value="" disabled selected>Choose status</option>
-            <option value="done">Completed</option>
-            <option value="planned">Planned</option>
-            <option value="bucket">Bucket list</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div>
-          <label class="form-group-label">Surface</label>
-          <select id="form-surface">
-            <option value="" disabled selected>Choose surface</option>
-            <option value="trail">Trail / Mountains</option>
-            <option value="road">Road / Pavement</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-group-label">Difficulty</label>
-          <select id="form-difficulty">
-            <option value="" disabled selected>Choose difficulty</option>
-            <option value="snadna">🟢 Easy</option>
-            <option value="stredni">🟡 Moderate</option>
-            <option value="tezka">🟠 Hard</option>
-            <option value="extremni">🔴 Extreme</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div>
-          <label class="form-group-label">Distance</label>
-          <input id="form-distance" type="text" placeholder="e.g. 21.1 km">
-        </div>
-        <div>
-          <label class="form-group-label">Elevation Gain</label>
-          <input id="form-elevation" type="text" placeholder="e.g. +110 m">
-        </div>
-      </div>
-
-      <!-- Importance Slider (1-10) -->
-      <div>
-        <label class="form-group-label" id="importance-label">Race Importance: <span id="importance-val" style="color:#007aff; font-weight:800;">5</span> / 10</label>
-        <div class="form-slider-wrap">
-          <span style="font-size:0.75rem; color:#666;">1</span>
-          <input type="range" id="form-importance" min="1" max="10" value="5" oninput="document.getElementById('importance-val').textContent = this.value">
-          <span style="font-size:0.75rem; color:#666;">10</span>
-        </div>
-      </div>
-
-      <!-- Tailored Why (Optional) -->
-      <div>
-        <label class="form-group-label" id="label-why">My 'Why' (Optional)</label>
-        <input id="form-why" type="text" placeholder="What motivated me to register for this race?">
-      </div>
-
-      <!-- Accordion: More Details (Notes, Timing, Logistics) -->
-      <button type="button" class="details-accordion-btn" onclick="toggleDetailsAccordion()">
-        <span id="details-accordion-title">+ Add more details (Exact times, notes, logistics, satisfaction...)</span>
-        <span id="details-accordion-chevron">▾</span>
-      </button>
-
-      <div id="details-accordion-content" style="display: none; flex-direction: column; gap: 12px; background:#161618; padding:14px; border-radius:8px; border:1px solid #28282a;">
-        
-        <!-- COMPLETED SPECIFIC -->
-        <div id="group-details-completed" style="display:flex; flex-direction:column; gap:12px;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div>
-              <label class="form-group-label">Target ambition time</label>
-              <div class="time-inputs-cluster">
-                <input id="ambition-h" class="time-box-input" type="number" min="0" max="99" placeholder="HH" oninput="calculateTimeDifference()">
-                <span style="color:#666;">:</span>
-                <input id="ambition-m" class="time-box-input" type="number" min="0" max="59" placeholder="MM" oninput="calculateTimeDifference()">
-                <span style="color:#666;">:</span>
-                <input id="ambition-s" class="time-box-input" type="number" min="0" max="59" placeholder="SS" oninput="calculateTimeDifference()">
-              </div>
-            </div>
-            <div>
-              <label class="form-group-label">Official finish time</label>
-              <div class="time-inputs-cluster">
-                <input id="finish-h" class="time-box-input" type="number" min="0" max="99" placeholder="HH" oninput="calculateTimeDifference()">
-                <span style="color:#666;">:</span>
-                <input id="finish-m" class="time-box-input" type="number" min="0" max="59" placeholder="MM" oninput="calculateTimeDifference()">
-                <span style="color:#666;">:</span>
-                <input id="finish-s" class="time-box-input" type="number" min="0" max="59" placeholder="SS" oninput="calculateTimeDifference()">
-              </div>
-            </div>
-          </div>
-
-          <div id="ambition-diff-box" style="display:none; font-size:0.82rem; padding:8px 12px; border-radius:6px; background:#1c2b20; border:1px solid #34c759;">
-            Difference vs goal: <strong id="ambition-diff-text"></strong>
-          </div>
-
-          <div>
-            <label class="form-group-label">Overall placement / field size</label>
-            <input id="form-placement" type="text" placeholder="e.g. 42nd of 431 runners">
-          </div>
-
-          <div>
-            <label class="form-group-label">Performance satisfaction: <span id="satisfaction-val" style="color:#34c759; font-weight:800;">7</span> / 10</label>
-            <div class="form-slider-wrap">
-              <span style="font-size:0.75rem; color:#666;">1</span>
-              <input type="range" id="form-satisfaction" min="1" max="10" value="7" oninput="document.getElementById('satisfaction-val').textContent = this.value">
-              <span style="font-size:0.75rem; color:#666;">10</span>
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <div>
-              <label class="form-group-label">Met expectations?</label>
-              <select id="form-expectations">
-                <option value="met">Met expectations</option>
-                <option value="exceeded">Exceeded expectations</option>
-                <option value="below">Below expectations</option>
-              </select>
-            </div>
-            <div>
-              <label class="form-group-label">Would I run it again?</label>
-              <div class="segmented-control">
-                <div class="segmented-btn active" data-repeat="yes" onclick="setRepeatValue('yes', this)">Yes</div>
-                <div class="segmented-btn" data-repeat="maybe" onclick="setRepeatValue('maybe', this)">Maybe</div>
-                <div class="segmented-btn" data-repeat="no" onclick="setRepeatValue('no', this)">No</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PLANNED & BUCKET LIST SPECIFIC -->
-        <div id="group-details-planning" style="display:none; flex-direction:column; gap:12px;">
-          <div>
-            <label class="form-group-label">Target / Ambition</label>
-            <input id="form-target-ambition" type="text" placeholder="e.g. Sub 3:15:00 or Finish without exhaustion">
-          </div>
-
-          <div>
-            <label class="form-group-label">Logistics</label>
-            <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:6px;">
-              <input id="form-logistics-dist" type="text" placeholder="Distance from home (km)">
-              <select id="form-logistics-transport">
-                <option value="" disabled selected>Transport</option>
-                <option value="Car">Car</option>
-                <option value="Plane">Plane</option>
-                <option value="Train">Train</option>
-                <option value="Bus">Bus</option>
-                <option value="Transit">Public Transit</option>
-                <option value="Bicycle">Bicycle</option>
-                <option value="Other">Other</option>
-              </select>
-              <input id="form-logistics-time" type="text" placeholder="Travel time (e.g. 2h)">
-            </div>
-          </div>
-
-          <div>
-            <label class="form-group-label">Estimated Financial Cost</label>
-            <select id="form-cost">
-              <option value="€">€ (Almost free / local)</option>
-              <option value="€€">€€ (Budget friendly)</option>
-              <option value="€€€">€€€ (Moderate / hotel stay)</option>
-              <option value="€€€€">€€€€ (High / international travel)</option>
-              <option value="€€€€€">€€€€€ (Extreme / overseas expedition)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- NOTES INSIDE ACCORDION -->
-        <div>
-          <label class="form-group-label" id="label-notes">Race & Terrain Notes (Optional)</label>
-          <textarea id="form-notes" placeholder="Notes on pacing, profile, course quirks, fueling..." style="height: 64px;"></textarea>
-        </div>
-
-      </div>
-
-      <!-- Multiple Photos (Optional, up to 10) -->
-      <div>
-        <label class="form-group-label">Activity Photos (Optional, up to 10 photos):</label>
-        <input type="file" id="input-images" accept="image/*" multiple onchange="handleMultipleImagesPreview(this.files)">
-        <div id="images-preview" class="gallery-preview-grid"></div>
-      </div>
-
-      <button id="btn-save-race" class="open-detail-btn" style="padding: 12px; margin-top: 4px;" onclick="saveActivityToSupabase()">Save Activity</button>
-      <button class="pill-btn" style="align-self: center; justify-content: center; width: 100%;" onclick="closeModals()">Cancel</button>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- 3. MODAL: SETTINGS & HOME BASE             -->
-  <!-- ========================================== -->
-  <div id="modal-settings" class="modal-backdrop">
-    <div class="modal-card">
-      <h3 style="font-size:1.25rem; font-weight:700;">Home Base & Settings</h3>
-      <div>
-        <label class="form-group-label">Your Home Base Location:</label>
-        <div style="display:flex; gap:8px;">
-          <input id="setting-home-query" type="text" placeholder="City or address (e.g. Slaný, Czech Republic)">
-          <button class="pill-btn" style="background:#007aff; color:#fff;" onclick="geocodeAndSaveHome()">Search</button>
-        </div>
-        <small style="font-size:0.72rem; color:#888; display:block; margin-top:5px;">Or enter latitude, longitude coordinates manually below:</small>
-        <input id="setting-home-coords" type="text" placeholder="50.2305, 14.0888" style="margin-top:6px;">
-      </div>
-      <button class="open-detail-btn" style="padding:11px;" onclick="saveUserSettingsManual()">Save Home Base</button>
-      <button class="pill-btn" style="justify-content:center;" onclick="closeModals()">Close</button>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- 4. MODAL: ABOUT & SUPPORT                  -->
-  <!-- ========================================== -->
-  <div id="modal-info" class="modal-backdrop">
-    <div class="modal-card" style="text-align:center; max-width:440px;">
-      <h3 id="info-modal-title" style="font-size:1.25rem; font-weight:700; margin-bottom:6px;"></h3>
-      <div id="info-modal-body" style="font-size:0.88rem; color:#c7c7cc; line-height:1.6; margin-bottom:16px;"></div>
-      <button class="pill-btn" style="justify-content:center;" onclick="closeModals()">Close</button>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- 5. MAIN WORKSPACE                          -->
+  <!-- 1. FULL APP LAYOUT                         -->
   <!-- ========================================== -->
   <div id="app-layout">
     <!-- TOP BAR -->
@@ -617,17 +361,62 @@
         </button>
       </nav>
 
-      <!-- MAP CONTAINER -->
-      <div id="map"></div>
+      <!-- MAPA & ONBOARDING OVERLAY NAD NÍ -->
+      <div id="map-wrapper">
+        <div id="map"></div>
 
-      <!-- FLOATING SET HOME BASE PROMPT (IF NOT SET) -->
-      <div id="floating-home-prompt" style="display:none;" onclick="openSettingsModal()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
-        </svg>
-        <div>
-          <div style="font-size:0.85rem; font-weight:700; color:#fff;">Choose my home base</div>
-          <div style="font-size:0.72rem; color:#aaa;">Click to set your location & auto-center</div>
+        <!-- ONBOARDING OVERLAY: covers ONLY the map -->
+        <div id="onboarding-overlay">
+          <div class="onboarding-card">
+            <div style="display:inline-flex; padding:10px; border-radius:50%; background:rgba(0,122,255,0.12); margin-bottom:12px;">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+                <line x1="9" y1="3" x2="9" y2="18"></line>
+                <line x1="15" y1="6" x2="15" y2="21"></line>
+              </svg>
+            </div>
+            <h2 style="font-size:1.6rem; font-weight:800; margin-bottom:6px;">Your map is a clean canvas</h2>
+            <p style="font-size:0.88rem; color:#a1a1a6; line-height:1.5;">Choose how you want to start logging your running journey:</p>
+
+            <!-- VARIANT A: 2 INTERACTIVE SPLIT CARDS -->
+            <div class="onboarding-split-grid">
+              <div class="split-choice-card primary" onclick="openAddModal('race')">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                  <line x1="4" y1="22" x2="4" y2="15"></line>
+                </svg>
+                <div class="split-card-title">Official Race</div>
+                <div class="split-card-sub">Marathons, trail races, results & bib numbers</div>
+              </div>
+
+              <div class="split-choice-card" onclick="openAddModal('memorable')">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#af52de" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
+                  <path d="M7 21l3-4"></path>
+                  <path d="M16 21l-2-4-3-3 1-6"></path>
+                  <path d="M6 12l2-3 4-1 3 3 3 1"></path>
+                </svg>
+                <div class="split-card-title">Memorable Run</div>
+                <div class="split-card-sub">Mountain summits, milestones & epic trainings</div>
+              </div>
+            </div>
+
+            <!-- Tour Link -->
+            <a href="javascript:void(0)" onclick="startInteractiveTutorial()" style="color:#5ac8fa; font-size:0.82rem; font-weight:600; text-decoration:none;">
+              New here? Take a 30s quick tour ➔
+            </a>
+          </div>
+        </div>
+
+        <!-- FLOATING SET HOME BASE PROMPT -->
+        <div id="floating-home-prompt" style="display:none;" onclick="openSettingsModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+          </svg>
+          <div>
+            <div style="font-size:0.85rem; font-weight:700; color:#fff;">Choose my home base</div>
+            <div style="font-size:0.72rem; color:#aaa;">Click to set your location & auto-center</div>
+          </div>
         </div>
       </div>
 
@@ -661,7 +450,265 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 6. JAVASCRIPT & SUPABASE ARCHITECTURE      -->
+  <!-- 2. DASHBOARD MODAL: ADD ACTIVITY           -->
+  <!-- ========================================== -->
+  <div id="add-modal" class="modal-backdrop">
+    <div class="dashboard-modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2e2e32; padding-bottom:12px;">
+        <h3 id="add-modal-title" style="font-size: 1.3rem; font-weight: 700;">Add New Race</h3>
+        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- LEFT COLUMN: THE FACTS -->
+        <div class="dashboard-col">
+          <!-- GPX Dropzone (Optional) -->
+          <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 14px; text-align: center; background: rgba(0,122,255,0.06); cursor: pointer;">
+            <span id="gpx-label">📁 Drag & drop .GPX track (Optional)</span>
+            <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
+          </div>
+
+          <div>
+            <label class="form-group-label">Activity Title *</label>
+            <input id="form-name" class="cockpit-input" type="text" placeholder="e.g. Dresden Half Marathon">
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div>
+              <label class="form-group-label">Event Date</label>
+              <input id="form-date" class="cockpit-input" type="date">
+            </div>
+            <div>
+              <label class="form-group-label">Status *</label>
+              <div class="chips-group" id="chips-status" style="margin-top:2px;">
+                <div class="chip-btn" data-val="done" onclick="selectChip('status', 'done')">Completed</div>
+                <div class="chip-btn" data-val="planned" onclick="selectChip('status', 'planned')">Planned</div>
+                <div class="chip-btn" data-val="bucket" onclick="selectChip('status', 'bucket')">Bucket list</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div>
+              <label class="form-group-label">Distance</label>
+              <input id="form-distance" class="cockpit-input" type="text" placeholder="e.g. 21.1 km">
+            </div>
+            <div>
+              <label class="form-group-label">Elevation Gain</label>
+              <input id="form-elevation" class="cockpit-input" type="text" placeholder="e.g. +110 m">
+            </div>
+          </div>
+
+          <!-- COMPLETED TIMING (SEPARATE HH:MM:SS) -->
+          <div id="group-details-completed" style="display:none; flex-direction:column; gap:8px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div>
+                <label class="form-group-label">Target Ambition</label>
+                <div class="time-inputs-cluster">
+                  <input id="ambition-h" class="cockpit-input time-box-input" type="number" min="0" max="99" placeholder="HH" oninput="calculateTimeDifference()">
+                  <span style="color:#666;">:</span>
+                  <input id="ambition-m" class="cockpit-input time-box-input" type="number" min="0" max="59" placeholder="MM" oninput="calculateTimeDifference()">
+                  <span style="color:#666;">:</span>
+                  <input id="ambition-s" class="cockpit-input time-box-input" type="number" min="0" max="59" placeholder="SS" oninput="calculateTimeDifference()">
+                </div>
+              </div>
+              <div>
+                <label class="form-group-label">Official Finish Time</label>
+                <div class="time-inputs-cluster">
+                  <input id="finish-h" class="cockpit-input time-box-input" type="number" min="0" max="99" placeholder="HH" oninput="calculateTimeDifference()">
+                  <span style="color:#666;">:</span>
+                  <input id="finish-m" class="cockpit-input time-box-input" type="number" min="0" max="59" placeholder="MM" oninput="calculateTimeDifference()">
+                  <span style="color:#666;">:</span>
+                  <input id="finish-s" class="cockpit-input time-box-input" type="number" min="0" max="59" placeholder="SS" oninput="calculateTimeDifference()">
+                </div>
+              </div>
+            </div>
+
+            <div id="ambition-diff-box" style="display:none; font-size:0.8rem; padding:7px 10px; border-radius:6px; background:#1c2b20; border:1px solid #34c759;">
+              Diff vs goal: <strong id="ambition-diff-text"></strong>
+            </div>
+
+            <div>
+              <label class="form-group-label">Overall Placement (Optional)</label>
+              <input id="form-placement" class="cockpit-input" type="text" placeholder="e.g. 42nd of 431 runners">
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: THE EXPERIENCE & DETAILS -->
+        <div class="dashboard-col">
+          <!-- Surface & Difficulty Chips -->
+          <div>
+            <label class="form-group-label">Surface</label>
+            <div class="chips-group" id="chips-surface">
+              <div class="chip-btn" data-val="trail" onclick="selectChip('surface', 'trail')">⛰️ Trail</div>
+              <div class="chip-btn" data-val="road" onclick="selectChip('surface', 'road')">🛣️ Road</div>
+              <div class="chip-btn" data-val="mixed" onclick="selectChip('surface', 'mixed')">🌲 Mixed</div>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-group-label">Difficulty</label>
+            <div class="chips-group" id="chips-difficulty">
+              <div class="chip-btn" data-val="snadna" onclick="selectChip('difficulty', 'snadna')">🟢 Easy</div>
+              <div class="chip-btn" data-val="stredni" onclick="selectChip('difficulty', 'stredni')">🟡 Moderate</div>
+              <div class="chip-btn" data-val="tezka" onclick="selectChip('difficulty', 'tezka')">🟠 Hard</div>
+              <div class="chip-btn" data-val="extremni" onclick="selectChip('difficulty', 'extremni')">🔴 Extreme</div>
+            </div>
+          </div>
+
+          <!-- Importance -->
+          <div>
+            <label class="form-group-label">Race Importance: <span id="importance-val" style="color:#007aff; font-weight:800;">5</span> / 10</label>
+            <div class="form-slider-wrap">
+              <span style="font-size:0.75rem; color:#666;">1</span>
+              <input type="range" id="form-importance" min="1" max="10" value="5" oninput="document.getElementById('importance-val').textContent = this.value">
+              <span style="font-size:0.75rem; color:#666;">10</span>
+            </div>
+          </div>
+
+          <!-- Why (Optional) -->
+          <div>
+            <label class="form-group-label" id="label-why">My 'Why' (Optional)</label>
+            <input id="form-why" class="cockpit-input" type="text" placeholder="What motivated me to run this?">
+          </div>
+
+          <!-- Accordion: Logistics, Notes, Extras -->
+          <button type="button" class="details-accordion-btn" onclick="toggleDetailsAccordion()">
+            <span>+ More details (Notes, Logistics, Review...)</span>
+            <span id="details-accordion-chevron">▾</span>
+          </button>
+
+          <div id="details-accordion-content" style="display:none; flex-direction:column; gap:10px; background:#18181c; padding:12px; border-radius:10px; border:1px solid #2e2e34;">
+            
+            <!-- Notes -->
+            <div>
+              <label class="form-group-label">Race & Terrain Notes (Optional)</label>
+              <textarea id="form-notes" class="cockpit-input" placeholder="Notes on pacing, profile, quirks, fueling..." style="height:56px;"></textarea>
+            </div>
+
+            <!-- Planning specifics -->
+            <div id="group-details-planning" style="display:none; flex-direction:column; gap:8px;">
+              <div>
+                <label class="form-group-label">Target Ambition</label>
+                <input id="form-target-ambition" class="cockpit-input" type="text" placeholder="e.g. Sub 3:15:00 or Finish without cramps">
+              </div>
+
+              <div>
+                <label class="form-group-label">Logistics</label>
+                <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:6px;">
+                  <input id="form-logistics-dist" class="cockpit-input" type="text" placeholder="Distance from home (km)">
+                  <select id="form-logistics-transport" class="cockpit-input">
+                    <option value="" disabled selected>Transport</option>
+                    <option value="Car">Car</option>
+                    <option value="Plane">Plane</option>
+                    <option value="Train">Train</option>
+                    <option value="Bus">Bus</option>
+                    <option value="Transit">Public Transit</option>
+                    <option value="Bicycle">Bicycle</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <input id="form-logistics-time" class="cockpit-input" type="text" placeholder="Travel time">
+                </div>
+              </div>
+
+              <div>
+                <label class="form-group-label">Estimated Cost</label>
+                <select id="form-cost" class="cockpit-input">
+                  <option value="€">€ (Almost free / local)</option>
+                  <option value="€€">€€ (Budget friendly)</option>
+                  <option value="€€€">€€€ (Moderate / hotel stay)</option>
+                  <option value="€€€€">€€€€ (High / international travel)</option>
+                  <option value="€€€€€">€€€€€ (Extreme / overseas expedition)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Completed specifics: satisfaction & repeat -->
+            <div id="group-details-satisfaction" style="display:none; flex-direction:column; gap:8px;">
+              <div>
+                <label class="form-group-label">Performance satisfaction: <span id="satisfaction-val" style="color:#34c759; font-weight:800;">7</span> / 10</label>
+                <div class="form-slider-wrap">
+                  <span style="font-size:0.75rem; color:#666;">1</span>
+                  <input type="range" id="form-satisfaction" min="1" max="10" value="7" oninput="document.getElementById('satisfaction-val').textContent = this.value">
+                  <span style="font-size:0.75rem; color:#666;">10</span>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div>
+                  <label class="form-group-label">Met expectations?</label>
+                  <select id="form-expectations" class="cockpit-input">
+                    <option value="met">Met expectations</option>
+                    <option value="exceeded">Exceeded expectations</option>
+                    <option value="below">Below expectations</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-group-label">Would I run it again?</label>
+                  <div class="chips-group" id="chips-repeat">
+                    <div class="chip-btn active" data-val="yes" onclick="selectChip('repeat', 'yes')">Yes</div>
+                    <div class="chip-btn" data-val="maybe" onclick="selectChip('repeat', 'maybe')">Maybe</div>
+                    <div class="chip-btn" data-val="no" onclick="selectChip('repeat', 'no')">No</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Multi Photos (up to 10) -->
+          <div>
+            <label class="form-group-label">Activity Photos (Optional, up to 10):</label>
+            <input type="file" id="input-images" accept="image/*" multiple onchange="handleMultipleImagesPreview(this.files)" style="font-size:0.8rem; color:#aaa;">
+            <div id="images-preview" class="gallery-preview-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div style="display:flex; justify-content:flex-end; gap:10px; border-top:1px solid #2e2e32; padding-top:14px; margin-top:4px;">
+        <button class="pill-btn" style="padding:10px 18px;" onclick="closeModals()">Cancel</button>
+        <button id="btn-save-race" class="open-detail-btn" style="padding:10px 22px;" onclick="saveActivityToSupabase()">Save Activity</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. MODAL: SETTINGS & HOME BASE             -->
+  <!-- ========================================== -->
+  <div id="modal-settings" class="modal-backdrop">
+    <div class="modal-card" style="max-width:460px; background:#1c1c1e; border:1px solid #333; border-radius:18px; padding:26px;">
+      <h3 style="font-size:1.25rem; font-weight:700;">Home Base & Settings</h3>
+      <div style="margin:12px 0;">
+        <label class="form-group-label">Your Home Base Location:</label>
+        <div style="display:flex; gap:8px;">
+          <input id="setting-home-query" class="cockpit-input" type="text" placeholder="City or address (e.g. Slaný, Czechia)">
+          <button class="pill-btn" style="background:#007aff; color:#fff;" onclick="geocodeAndSaveHome()">Search</button>
+        </div>
+        <small style="font-size:0.72rem; color:#888; display:block; margin-top:6px;">Or enter latitude, longitude manually below:</small>
+        <input id="setting-home-coords" class="cockpit-input" type="text" placeholder="50.2305, 14.0888" style="margin-top:6px;">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:14px;">
+        <button class="pill-btn" onclick="closeModals()">Close</button>
+        <button class="open-detail-btn" onclick="saveUserSettingsManual()">Save Home Base</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 4. MODAL: ABOUT & SUPPORT                  -->
+  <!-- ========================================== -->
+  <div id="modal-info" class="modal-backdrop">
+    <div class="modal-card" style="text-align:center; max-width:440px; background:#1c1c1e; border:1px solid #333; border-radius:18px; padding:28px;">
+      <h3 id="info-modal-title" style="font-size:1.25rem; font-weight:700; margin-bottom:6px;"></h3>
+      <div id="info-modal-body" style="font-size:0.88rem; color:#c7c7cc; line-height:1.6; margin-bottom:16px;"></div>
+      <button class="pill-btn" style="justify-content:center; width:100%;" onclick="closeModals()">Close</button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 5. JAVASCRIPT & SUPABASE ARCHITECTURE      -->
   <!-- ========================================== -->
   <script>
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
@@ -670,7 +717,7 @@
 
     let currentUser = null;
     let isDemoMode = false;
-    let currentMode = 'races'; // 'races' | 'memorable'
+    let currentMode = 'races';
     let currentRouteLayer = null;
 
     let races = [];
@@ -679,7 +726,14 @@
     const statusFilters = { done: true, planned: true, bucket: true };
     let surfaceFilter = 'all';
     let searchQuery = '';
-    let selectedRepeatValue = 'yes';
+
+    // Selected chips
+    let chipSelections = {
+      status: '',
+      surface: 'mixed',
+      difficulty: 'stredni',
+      repeat: 'yes'
+    };
 
     // Home Base: null by default if not set
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
@@ -797,9 +851,6 @@
       }
     }
 
-    // ==========================================
-    // PAGE MODES: RACE ATLAS vs MEMORABLE RUNS
-    // ==========================================
     function switchPageMode(mode, updateUrl = true) {
       currentMode = mode;
       document.getElementById('rail-races').classList.toggle('active', mode === 'races');
@@ -820,9 +871,6 @@
       renderAll();
     }
 
-    // ==========================================
-    // RENDER LIST & MAP MARKERS
-    // ==========================================
     function renderAll() {
       markerLayerGroup.clearLayers();
       const content = document.getElementById('content');
@@ -894,9 +942,6 @@
       });
     }
 
-    // ==========================================
-    // DETAIL VIEW & MULTI-IMAGE GALLERY
-    // ==========================================
     function showDetail(item) {
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
 
@@ -939,18 +984,23 @@
     }
 
     // ==========================================
-    // RESTRUCTURED MODAL LOGIC & FORM RESETS
+    // RESTRUCTURED COCKPIT MODAL LOGIC
     // ==========================================
     let parsedGpxCoords = null;
     let parsedCenterCoords = null;
     let selectedImageFiles = [];
 
+    function selectChip(category, value) {
+      chipSelections[category] = value;
+      document.querySelectorAll(`#chips-${category} .chip-btn`).forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.val === value);
+      });
+      if (category === 'status') handleStatusChange(value);
+    }
+
     function resetActivityForm() {
       document.getElementById('form-name').value = '';
       document.getElementById('form-date').value = '';
-      document.getElementById('form-status').value = '';
-      document.getElementById('form-surface').value = '';
-      document.getElementById('form-difficulty').value = '';
       document.getElementById('form-distance').value = '';
       document.getElementById('form-elevation').value = '';
       document.getElementById('form-importance').value = '5';
@@ -958,7 +1008,6 @@
       document.getElementById('form-why').value = '';
       document.getElementById('form-notes').value = '';
       
-      // Reset timing boxes
       document.getElementById('ambition-h').value = '';
       document.getElementById('ambition-m').value = '';
       document.getElementById('ambition-s').value = '';
@@ -977,11 +1026,17 @@
       document.getElementById('form-cost').value = '€€';
       document.getElementById('input-images').value = '';
       document.getElementById('images-preview').innerHTML = '';
-      document.getElementById('gpx-label').textContent = '📁 Drag & drop watch .GPX file (Optional, or click to browse)';
+      document.getElementById('gpx-label').textContent = '📁 Drag & drop watch .GPX file (Optional)';
       
       parsedGpxCoords = null;
       parsedCenterCoords = null;
       selectedImageFiles = [];
+
+      // Reset chips
+      selectChip('status', '');
+      selectChip('surface', 'mixed');
+      selectChip('difficulty', 'stredni');
+      selectChip('repeat', 'yes');
 
       document.getElementById('details-accordion-content').style.display = 'none';
       document.getElementById('details-accordion-chevron').textContent = '▾';
@@ -996,45 +1051,44 @@
       document.getElementById('add-modal').style.display = 'flex';
 
       if (isMemorable) {
-        document.getElementById('form-status').value = 'done';
-        handleStatusChange('done');
+        selectChip('status', 'done');
         document.getElementById('label-why').textContent = "What made this run memorable? (Optional)";
-      } else {
-        handleStatusChange('');
       }
     }
 
     function closeModals() {
-      document.querySelectorAll('.modal-backdrop').forEach(el => el.style.display = 'none');
+      document.getElementById('add-modal').style.display = 'none';
+      document.getElementById('modal-settings').style.display = 'none';
+      document.getElementById('modal-info').style.display = 'none';
       resetActivityForm();
     }
 
     function handleStatusChange(status) {
       const whyInput = document.getElementById('form-why');
-      const notesInput = document.getElementById('form-notes');
-      const completedGroup = document.getElementById('group-details-completed');
-      const planningGroup = document.getElementById('group-details-planning');
+      const completedTiming = document.getElementById('group-details-completed');
+      const planningDetails = document.getElementById('group-details-planning');
+      const satisfactionGroup = document.getElementById('group-details-satisfaction');
 
       if (status === 'done') {
         whyInput.placeholder = "Why did I run this? What did the challenge mean to me?";
-        notesInput.placeholder = "How the race played out, nutrition, cramps, weather, highs & lows...";
-        completedGroup.style.display = 'flex';
-        planningGroup.style.display = 'none';
+        completedTiming.style.display = 'flex';
+        satisfactionGroup.style.display = 'flex';
+        planningDetails.style.display = 'none';
       } else if (status === 'planned') {
         whyInput.placeholder = "Why this race? What is the main ambition?";
-        notesInput.placeholder = "Training phase notes, target splits, course profile quirks...";
-        completedGroup.style.display = 'none';
-        planningGroup.style.display = 'flex';
+        completedTiming.style.display = 'none';
+        satisfactionGroup.style.display = 'none';
+        planningDetails.style.display = 'flex';
       } else if (status === 'bucket') {
         whyInput.placeholder = "Why is this on my dream bucket list?";
-        notesInput.placeholder = "Lottery dates, qualification criteria, season timing...";
-        completedGroup.style.display = 'none';
-        planningGroup.style.display = 'flex';
+        completedTiming.style.display = 'none';
+        satisfactionGroup.style.display = 'none';
+        planningDetails.style.display = 'flex';
       } else {
         whyInput.placeholder = "Personal motivation or quote (Optional)...";
-        notesInput.placeholder = "Notes on terrain, feelings, gear...";
-        completedGroup.style.display = 'none';
-        planningGroup.style.display = 'none';
+        completedTiming.style.display = 'none';
+        satisfactionGroup.style.display = 'none';
+        planningDetails.style.display = 'none';
       }
     }
 
@@ -1046,30 +1100,18 @@
       chevron.textContent = isOpen ? '▾' : '▴';
     }
 
-    function setRepeatValue(val, btn) {
-      selectedRepeatValue = val;
-      document.querySelectorAll('.segmented-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
-
-    // HH:MM:SS TIMING CALCULATOR
     function getBoxSeconds(prefix) {
       const hVal = document.getElementById(`${prefix}-h`).value;
       const mVal = document.getElementById(`${prefix}-m`).value;
       const sVal = document.getElementById(`${prefix}-s`).value;
-
       if (!hVal && !mVal && !sVal) return null;
-      const h = parseInt(hVal) || 0;
-      const m = parseInt(mVal) || 0;
-      const s = parseInt(sVal) || 0;
-      return h * 3600 + m * 60 + s;
+      return (parseInt(hVal) || 0) * 3600 + (parseInt(mVal) || 0) * 60 + (parseInt(sVal) || 0);
     }
 
     function formatBoxesToTime(prefix) {
       const hVal = document.getElementById(`${prefix}-h`).value;
       const mVal = document.getElementById(`${prefix}-m`).value;
       const sVal = document.getElementById(`${prefix}-s`).value;
-
       if (!hVal && !mVal && !sVal) return '';
       const h = parseInt(hVal) || 0;
       const m = parseInt(mVal) || 0;
@@ -1107,7 +1149,6 @@
       }
     }
 
-    // MULTIPLE IMAGES PREVIEW
     function handleMultipleImagesPreview(files) {
       selectedImageFiles = Array.from(files).slice(0, 10);
       const previewGrid = document.getElementById('images-preview');
@@ -1125,7 +1166,6 @@
       });
     }
 
-    // GPX Upload
     document.getElementById('drop-gpx').addEventListener('click', () => {
       document.getElementById('input-gpx').click();
     });
@@ -1185,13 +1225,11 @@
     async function saveActivityToSupabase() {
       if (!currentUser) return;
       const name = document.getElementById('form-name').value.trim();
-      const status = document.getElementById('form-status').value;
+      const status = chipSelections.status;
       
-      // Strict validation only on essentials
       if (!name) { alert('Please enter activity title.'); return; }
-      if (!status) { alert('Please select activity status.'); return; }
+      if (!status) { alert('Please select activity status (Completed, Planned, or Bucket list).'); return; }
 
-      // Seamless fallback if GPX is not uploaded: uses Home Base or map center
       let finalCoords = parsedCenterCoords;
       if (!finalCoords) {
         finalCoords = userHomeCoords || [map.getCenter().lat, map.getCenter().lng];
@@ -1218,19 +1256,21 @@
         const dateStr = document.getElementById('form-date').value;
         const isMemorable = (currentMode === 'memorable');
 
-        // Formatted times from separate input boxes
         const finishTimeStr = formatBoxesToTime('finish');
         const ambitionTimeStr = formatBoxesToTime('ambition') || document.getElementById('form-target-ambition').value.trim();
+
+        const statusLabels = { done: 'Completed', planned: 'Planned', bucket: 'Bucket list' };
+        const surfaceLabels = { trail: 'Trail', road: 'Road', mixed: 'Mixed' };
 
         const record = {
           user_id: currentUser.id,
           name: name,
           date: dateStr,
           status: status,
-          status_label: document.getElementById('form-status').options[document.getElementById('form-status').selectedIndex].text,
-          surface: document.getElementById('form-surface').value || 'mixed',
-          surface_label: document.getElementById('form-surface').value ? document.getElementById('form-surface').options[document.getElementById('form-surface').selectedIndex].text : 'Mixed',
-          difficulty: document.getElementById('form-difficulty').value || 'snadna',
+          status_label: statusLabels[status] || 'Planned',
+          surface: chipSelections.surface,
+          surface_label: surfaceLabels[chipSelections.surface] || 'Mixed',
+          difficulty: chipSelections.difficulty,
           distance: document.getElementById('form-distance').value,
           elevation: document.getElementById('form-elevation').value,
           importance: parseInt(document.getElementById('form-importance').value),
@@ -1245,7 +1285,7 @@
           placement: document.getElementById('form-placement').value,
           satisfaction: parseInt(document.getElementById('form-satisfaction').value),
           expectations: document.getElementById('form-expectations').value,
-          repeat: selectedRepeatValue,
+          repeat: chipSelections.repeat,
           cost: document.getElementById('form-cost').value,
           logistics_dist: document.getElementById('form-logistics-dist').value,
           logistics_transport: document.getElementById('form-logistics-transport').value,
@@ -1258,6 +1298,7 @@
 
         alert('Activity saved successfully!');
         closeModals();
+        document.getElementById('onboarding-overlay').style.display = 'none';
         await loadActivitiesFromDB(currentUser.id);
       } catch (err) {
         alert('Error: ' + err.message);
@@ -1330,7 +1371,7 @@
 
       if (type === 'about') {
         title.textContent = 'About RunAtlas';
-        body.innerHTML = `RunAtlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.2 &bull; Built with Leaflet & Supabase</span>`;
+        body.innerHTML = `RunAtlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.3 &bull; Built with Leaflet & Supabase</span>`;
       } else {
         title.textContent = 'Help & Support';
         body.innerHTML = `Need help with GPX imports or custom features?<br><br>Reach out at:<br><a href="mailto:support@runatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runatlas.app</a>`;
@@ -1342,6 +1383,7 @@
     // INTERACTIVE TUTORIAL (Driver.js)
     // ==========================================
     function startInteractiveTutorial() {
+      document.getElementById('onboarding-overlay').style.display = 'none';
       closeModals();
       const driverObj = window.driver.js.driver({
         showProgress: true,
