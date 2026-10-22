@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>RunAtlas — Running Atlas & Activity Log</title>
+  <title>Running Atlas — Interactive Map & Route Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Driver.js (Interactive Tutorial) -->
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 
-  <!-- Favicon Topo-Peak -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 10 L14 54 L23 54 L32 30 L41 54 L50 54 Z' fill='%23007aff'/%3E%3Cpath d='M18 38 Q25 30 32 36 T46 34' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M20 45 Q26 38 32 44 T44 42' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <!-- Favicon: Running Atlas Emblém -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23121214'/%3E%3Ccircle cx='32' cy='32' r='28' stroke='%23007aff' stroke-width='1.5' stroke-opacity='0.3' fill='none'/%3E%3Cpath d='M10 38 Q22 30 32 37 T54 34' stroke='%235ac8fa' stroke-width='1.8' stroke-opacity='0.6' fill='none'/%3E%3Cpath d='M12 45 Q24 38 34 44 T52 42' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.4' fill='none'/%3E%3Cpath d='M18 42 L28 22 L36 34 L43 20 L52 42 Z' fill='%23007aff'/%3E%3Cpath d='M28 22 L36 34 L43 20' stroke='%235ac8fa' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='14' cy='45' r='2.5' fill='%2334c759'/%3E%3Ccircle cx='50' cy='42' r='2.5' fill='%23ff3b30'/%3E%3C/svg%3E">
 
   <!-- Leaflet Map CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -41,7 +41,7 @@
     /* Main workspace */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
-    /* Left Runalyze Rail */
+    /* Left Runalyzer Rail */
     #left-rail {
       width: 56px; background: rgba(20, 20, 24, 0.94); backdrop-filter: blur(14px);
       border-right: 1px solid #2c2c2e; display: flex; flex-direction: column; gap: 6px;
@@ -244,20 +244,22 @@
   <div id="app-layout">
     <!-- TOP BAR -->
     <header id="top-bar">
-      <!-- Topo-Peak Logo -->
-      <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
-        <svg width="155" height="30" viewBox="0 0 390 76" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <text x="14" y="54" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="50" font-weight="900" letter-spacing="1">RUN</text>
-          <g>
-            <path d="M 178 8 L 148 54 L 160 54 L 178 26 L 196 54 L 208 54 Z" fill="#007aff"/>
-            <path d="M 142 36 Q 160 25 178 34 T 216 31" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none"/>
-            <path d="M 144 45 Q 161 34 178 43 T 214 40" stroke="#5ac8fa" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-          </g>
-          <text x="214" y="54" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="50" font-weight="900" letter-spacing="1">TLAS</text>
-          <path d="M 16 70 L 285 70 L 295 62 L 303 74 L 312 55 L 322 70 L 376 70" stroke="#007aff" stroke-width="2" stroke-opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="16" cy="70" r="3.5" fill="#34c759"/>
-          <circle cx="376" cy="70" r="3.5" fill="#ff3b30"/>
+      <!-- BRAND LOGO: RUNNING ATLAS -->
+      <a href="index.html" style="display: inline-flex; align-items: center; gap: 11px; text-decoration: none;">
+        <svg width="34" height="34" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="22" cy="22" r="20" stroke="#007aff" stroke-width="1.2" stroke-opacity="0.35"/>
+          <path d="M5 26 Q14 19 22 25 T39 23" stroke="#5ac8fa" stroke-width="1.2" stroke-opacity="0.6" fill="none"/>
+          <path d="M7 32 Q16 26 24 31 T37 29" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.4" fill="none"/>
+          <path d="M11 31 L19 15 L26 25 L32 13 L39 31 Z" fill="#007aff"/>
+          <path d="M19 15 L26 25 L32 13" stroke="#5ac8fa" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <circle cx="8" cy="32" r="2" fill="#34c759"/>
+          <circle cx="36" cy="29" r="2" fill="#ff3b30"/>
         </svg>
+
+        <div style="display: flex; flex-direction: column; line-height: 1;">
+          <span style="font-size: 0.62rem; font-weight: 800; letter-spacing: 2.8px; color: #ffffff; text-transform: uppercase;">RUNNING</span>
+          <span style="font-size: 1.25rem; font-weight: 900; letter-spacing: 0.6px; color: #007aff; margin-top: 1px;">ATLAS</span>
+        </div>
       </a>
 
       <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Search race, route, city..." oninput="handleSearch(this.value)">
@@ -367,7 +369,7 @@
             <h2 style="font-size:1.6rem; font-weight:800; margin-bottom:6px;">Your map is a clean canvas</h2>
             <p style="font-size:0.88rem; color:#a1a1a6; line-height:1.5;">Choose how you want to start logging your running journey:</p>
 
-            <!-- VARIANT A: 2 SPLIT CARDS -->
+            <!-- 2 SPLIT CARDS -->
             <div class="onboarding-split-grid">
               <div class="split-choice-card primary" onclick="openAddModal('race')">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1048,7 +1050,6 @@
         if (surfaceFilter !== 'all' && item.surface !== surfaceFilter) return false;
         if (searchQuery && !item.name.toLowerCase().includes(searchQuery)) return false;
 
-        // Advanced filter checks
         if (advFilterMonth !== 'all') {
           const m = parseActivityMonth(item);
           if (m !== parseInt(advFilterMonth)) return false;
@@ -1542,11 +1543,11 @@
       const body = document.getElementById('info-modal-body');
 
       if (type === 'about') {
-        title.textContent = 'About RunAtlas';
-        body.innerHTML = `RunAtlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.5 &bull; Built with Leaflet & Supabase</span>`;
+        title.textContent = 'About Running Atlas';
+        body.innerHTML = `Running Atlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.5 &bull; Built with Leaflet & Supabase</span>`;
       } else {
         title.textContent = 'Help & Support';
-        body.innerHTML = `Need help with GPX imports or custom features?<br><br>Reach out at:<br><a href="mailto:support@runatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runatlas.app</a>`;
+        body.innerHTML = `Need help with GPX imports or custom features?<br><br>Reach out at:<br><a href="mailto:support@runningatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runningatlas.app</a>`;
       }
       document.getElementById('modal-info').style.display = 'flex';
     }
@@ -1595,7 +1596,7 @@
 
     function handleProfileClick() {
       if (isDemoMode) { window.location.href = 'index.html'; return; }
-      if (confirm('Do you want to log out of RunAtlas?')) {
+      if (confirm('Do you want to log out of Running Atlas?')) {
         supabaseClient.auth.signOut().then(() => { window.location.href = 'index.html'; });
       }
     }
