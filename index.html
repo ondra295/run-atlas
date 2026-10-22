@@ -15,7 +15,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body { height: 100%; width: 100%; overflow: hidden; background: #0c0c0e; color: #f2f2f7; }
 
-    /* Video pozadí s jemným tmavým filtrem */
+    /* Video pozadí s lokálním souborem hero.mp4 */
     #bg-video-wrap {
       position: fixed;
       inset: 0;
@@ -28,13 +28,13 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.38;
-      filter: saturate(1.15) brightness(0.85);
+      opacity: 0.42;
+      filter: saturate(1.1) brightness(0.85);
     }
     .video-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(12, 12, 14, 0.45) 0%, rgba(12, 12, 14, 0.88) 100%);
+      background: radial-gradient(circle at center, rgba(12, 12, 14, 0.4) 0%, rgba(12, 12, 14, 0.88) 100%);
     }
 
     /* Hlavní kontejner */
@@ -51,13 +51,13 @@
     }
 
     .hero-title {
-      font-size: 2.8rem;
+      font-size: 2.7rem;
       font-weight: 800;
       line-height: 1.15;
       margin-bottom: 28px;
       letter-spacing: -0.8px;
       color: #ffffff;
-      max-width: 720px;
+      max-width: 760px;
     }
     .hero-title span {
       color: #007aff;
@@ -161,16 +161,16 @@
     .auth-input:focus { border-color: #007aff; }
 
     @media (max-width: 600px) {
-      .hero-title { font-size: 2.1rem; }
+      .hero-title { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Video na pozadí -->
+  <!-- Lokální video z repozitáře: hero.mp4 -->
   <div id="bg-video-wrap">
-    <video id="bg-video" autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=1600&q=80">
-      <source src="https://assets.mixkit.co/videos/preview/mixkit-man-runs-past-the-camera-in-the-mountains-41006-large.mp4" type="video/mp4">
+    <video id="bg-video" autoplay loop muted playsinline>
+      <source src="hero.mp4" type="video/mp4">
     </video>
     <div class="video-overlay"></div>
   </div>
@@ -206,10 +206,10 @@
       </svg>
     </div>
 
-    <!-- Původní nadpis -->
-    <h1 class="hero-title">Your visual history of every <span>step</span></h1>
+    <!-- Původní autentický nadpis -->
+    <h1 class="hero-title">All your running footsteps on a <span>single map</span></h1>
 
-    <!-- Akční tlačítka pod sebou -->
+    <!-- Tlačítka pod sebou -->
     <div class="hero-actions">
       <button class="btn-primary" onclick="openAuthModal('signup')">Create Free Atlas</button>
       <button class="btn-secondary" onclick="openAuthModal('signin')">Sign In</button>
@@ -300,7 +300,6 @@
       }
     }
 
-    // Automatické přesměrování při existujícím přihlášení
     supabaseClient.auth.getUser().then(({ data: { user } }) => {
       if (user) window.location.href = 'app.html';
     });
