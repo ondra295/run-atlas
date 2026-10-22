@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>RunAtlas — Running Atlas</title>
+  <title>RunAtlas — Running Atlas & Activity Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Driver.js (Interactive Tutorial) -->
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 
-  <!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 10 L14 54 L23 54 L32 30 L41 54 L50 54 Z' fill='%23007aff'/%3E%3Cpath d='M18 38 Q25 30 32 36 T46 34' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M20 45 Q26 38 32 44 T44 42' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <!-- Favicon Topo-Peak -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 10 L14 54 L23 54 L32 30 L41 54 L50 54 Z' fill='%23007aff'/%3E%3Cpath d='M18 38 Q25 30 32 36 T46 34' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M20 45 Q26 38 32 44 T44 42' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+
   <!-- Leaflet Map CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -22,106 +23,65 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body { height: 100%; width: 100%; overflow: hidden; background: #121214; color: #e0e0e0; }
 
-    /* App Layout */
     #app-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; }
 
     /* Top Bar */
     #top-bar {
-      height: 52px;
-      background: rgba(22, 22, 26, 0.9);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid #2c2c2e;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 18px;
-      z-index: 2000;
-      flex-shrink: 0;
+      height: 52px; background: rgba(22, 22, 26, 0.92); backdrop-filter: blur(14px);
+      border-bottom: 1px solid #2c2c2e; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 18px; z-index: 2000; flex-shrink: 0;
     }
     .top-search-input {
-      background: #1c1c1e;
-      border: 1px solid #3a3a3c;
-      border-radius: 8px;
-      padding: 7px 14px;
-      color: #fff;
-      font-size: 0.84rem;
-      width: 290px;
-      outline: none;
-      transition: all 0.2s;
+      background: #1c1c1e; border: 1px solid #3a3a3c; border-radius: 8px;
+      padding: 7px 14px; color: #fff; font-size: 0.84rem; width: 290px; outline: none; transition: all 0.2s;
     }
     .top-search-input:focus { border-color: #007aff; width: 340px; }
     .top-bar-right { display: flex; align-items: center; gap: 10px; }
 
-    /* Main Body */
+    /* Main workspace */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
     /* Left Runalyze Rail */
     #left-rail {
-      width: 56px;
-      background: rgba(20, 20, 24, 0.94);
-      backdrop-filter: blur(14px);
-      border-right: 1px solid #2c2c2e;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 12px 6px;
-      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden;
-      white-space: nowrap;
-      z-index: 1500;
+      width: 56px; background: rgba(20, 20, 24, 0.94); backdrop-filter: blur(14px);
+      border-right: 1px solid #2c2c2e; display: flex; flex-direction: column; gap: 6px;
+      padding: 12px 6px; transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden; white-space: nowrap; z-index: 1500;
     }
     #left-rail:hover { width: 205px; box-shadow: 6px 0 24px rgba(0,0,0,0.6); }
 
     .rail-btn {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      color: #8e8e93;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      font-size: 0.82rem;
-      font-weight: 600;
-      transition: all 0.15s;
+      display: flex; align-items: center; gap: 14px; padding: 10px 12px;
+      border-radius: 8px; color: #8e8e93; cursor: pointer; border: none;
+      background: transparent; font-size: 0.82rem; font-weight: 600; transition: all 0.15s;
     }
     .rail-btn:hover, .rail-btn.active { background: #2c2c2e; color: #fff; }
     .rail-btn .rail-icon {
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-
-    /* Skrytí textu při zavřené liště */
     #left-rail .rail-btn span:not(.rail-icon) {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.18s ease;
-      white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: opacity 0.18s ease; white-space: nowrap;
     }
-    #left-rail:hover .rail-btn span:not(.rail-icon) {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
+    #left-rail:hover .rail-btn span:not(.rail-icon) { opacity: 1; pointer-events: auto; }
     .rail-spacer { flex: 1; min-height: 20px; }
 
     /* Map */
     #map { flex: 1; height: 100%; background: #1a1a1a; z-index: 1; }
 
-    /* Right Sidebar */
+    /* Floating Home Base prompt */
+    #floating-home-prompt {
+      position: absolute; bottom: 24px; left: 74px; z-index: 1400;
+      background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(12px);
+      border: 1px solid #007aff; border-radius: 12px; padding: 12px 18px;
+      display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      cursor: pointer; transition: transform 0.2s, background 0.2s;
+    }
+    #floating-home-prompt:hover { transform: translateY(-2px); background: #242428; }
+
+    /* Sidebar */
     #sidebar {
-      width: 430px;
-      height: 100%;
-      background: #1c1c1e;
-      border-left: 1px solid #2c2c2e;
-      display: flex;
-      flex-direction: column;
-      z-index: 2;
+      width: 440px; height: 100%; background: #1c1c1e; border-left: 1px solid #2c2c2e;
+      display: flex; flex-direction: column; z-index: 2;
     }
     .sidebar-header { padding: 16px 20px; border-bottom: 1px solid #2c2c2e; background: #161618; }
     .sidebar-header h2 { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
@@ -139,12 +99,12 @@
     .status-card-btn.active[data-status="planned"] .indicator { background: #ff9f0a; box-shadow: 0 0 6px #ff9f0a; }
     .status-card-btn.active[data-status="bucket"] .indicator { background: #5ac8fa; box-shadow: 0 0 6px #5ac8fa; }
 
-    .filters-section { padding: 10px 20px; border-bottom: 1px solid #262628; display: flex; flex-direction: column; gap: 8px; }
-    .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filters-section { padding: 10px 20px; border-bottom: 1px solid #262628; display: flex; gap: 6px; flex-wrap: wrap; }
 
     .pill-btn {
       background: #242426; border: 1px solid #333; color: #aaa; padding: 5px 10px;
       border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
     }
     .pill-btn:hover { background: #2c2c2e; color: #fff; }
     .pill-btn.active { background: #007aff; color: #fff; border-color: #007aff; }
@@ -158,9 +118,9 @@
     }
     .race-card:hover { background: #2c2c2e; border-color: #007aff; transform: translateY(-1px); }
     .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .card-title { font-size: 0.95rem; font-weight: 600; color: #fff; display: flex; align-items: center; }
+    .card-title { font-size: 0.95rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 6px; }
     .card-meta { font-size: 0.75rem; color: #aaa; margin-top: 4px; display: flex; gap: 6px; flex-wrap: wrap; }
-    
+
     .badge { display: inline-block; padding: 3px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }
     .badge-done { background: rgba(52, 199, 89, 0.2); color: #34c759; }
     .badge-planned { background: rgba(255, 159, 10, 0.2); color: #ff9f0a; }
@@ -168,8 +128,9 @@
     .badge-memorable { background: rgba(175, 82, 222, 0.2); color: #af52de; }
 
     .open-detail-btn {
-      background: #007aff; color: #fff; border: none; padding: 7px 12px; border-radius: 6px;
-      font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+      background: #007aff; color: #fff; border: none; padding: 8px 14px; border-radius: 6px;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     }
     .open-detail-btn:hover { background: #0062cc; }
 
@@ -178,26 +139,52 @@
       color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px;
     }
 
-    /* Custom Map Pin */
+    /* Custom Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
     .pin-circle {
       border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center;
       justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.6); transition: transform 0.15s ease;
     }
-    .pin-circle:hover { transform: scale(1.18); }
+    .pin-circle:hover { transform: scale(1.2); }
 
     /* Modals */
     .modal-backdrop {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82);
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
     }
     .modal-card {
-      background: #1c1c1e; border: 1px solid #333; border-radius: 16px; padding: 28px;
-      max-width: 480px; width: 100%; color: #fff; display: flex; flex-direction: column; gap: 12px;
+      background: #1c1c1e; border: 1px solid #333; border-radius: 16px; padding: 26px;
+      max-width: 520px; width: 100%; color: #fff; display: flex; flex-direction: column; gap: 12px;
+      max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     }
     .modal-card input, .modal-card select, .modal-card textarea {
-      padding: 10px; background: #2c2c2e; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none;
+      padding: 10px; background: #2c2c2e; border: 1px solid #444; border-radius: 6px;
+      color: #fff; font-size: 0.85rem; outline: none; width: 100%;
     }
+    .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus { border-color: #007aff; }
+
+    .form-group-label { font-size: 0.74rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .form-slider-wrap { display: flex; align-items: center; gap: 12px; background: #242426; padding: 8px 12px; border-radius: 6px; border: 1px solid #333; }
+    .form-slider-wrap input[type=range] { flex: 1; accent-color: #007aff; }
+
+    .details-accordion-btn {
+      background: #242426; border: 1px dashed #444; color: #5ac8fa; padding: 9px 12px;
+      border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-align: left;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .details-accordion-btn:hover { background: #2c2c2e; border-color: #007aff; }
+
+    /* Segmented pill radio */
+    .segmented-control { display: flex; gap: 6px; }
+    .segmented-btn {
+      flex: 1; padding: 7px; background: #2c2c2e; border: 1px solid #444; border-radius: 6px;
+      color: #aaa; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center;
+    }
+    .segmented-btn.active { background: #007aff; color: #fff; border-color: #007aff; }
+
+    /* Image Gallery preview */
+    .gallery-preview-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
+    .gallery-thumb { width: 100%; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #444; }
 
     /* Mobile */
     @media (max-width: 768px) {
@@ -207,6 +194,7 @@
         flex-direction: row; justify-content: space-around; border-right: none; border-top: 1px solid #2c2c2e; z-index: 3000;
       }
       .rail-btn span:not(.rail-icon) { display: none !important; }
+      #floating-home-prompt { bottom: 68px; left: 16px; }
       #sidebar {
         position: fixed; inset: 52px 0 56px 0; width: 100%; transform: translateY(100%);
         transition: transform 0.25s ease; z-index: 2500;
@@ -219,11 +207,19 @@
 <body>
 
   <!-- ========================================== -->
-  <!-- 1. ONBOARDING OVERLAY FOR EMPTY STATE      -->
+  <!-- 1. ONBOARDING OVERLAY (MODERN SVG ICONS)   -->
   <!-- ========================================== -->
   <div id="onboarding-overlay" class="modal-backdrop">
-    <div class="modal-card" style="text-align: center; max-width: 490px; padding: 36px 28px;">
-      <div style="font-size: 2.8rem; margin-bottom: 8px;">🗺️</div>
+    <div class="modal-card" style="text-align: center; max-width: 480px; padding: 36px 28px;">
+      <!-- Clean Topo-Atlas SVG -->
+      <div style="display:flex; justify-content:center; margin-bottom: 12px;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+          <line x1="9" y1="3" x2="9" y2="18"></line>
+          <line x1="15" y1="6" x2="15" y2="21"></line>
+        </svg>
+      </div>
+
       <h2 style="font-size: 1.55rem; font-weight: 800; margin-bottom: 6px;">Welcome to your RunAtlas!</h2>
       <p style="font-size: 0.9rem; color: #a1a1a6; line-height: 1.5; margin-bottom: 24px;">
         Your personal map is a clean canvas. Upload your first race from your GPS watch, log an unforgettable training run, or take a quick tour to explore features.
@@ -231,84 +227,230 @@
 
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <button class="open-detail-btn" style="padding: 13px; font-size: 0.92rem;" onclick="openAddModal('race')">
-          🏁 Add your first race
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+            <line x1="4" y1="22" x2="4" y2="15"></line>
+          </svg>
+          Add your first race
         </button>
+
         <button class="open-detail-btn" style="background:#2c2c2e; border:1px solid #444; padding:13px; font-size:0.92rem;" onclick="openAddModal('memorable')">
-          🏃 Add a memorable run
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
+            <path d="M7 21l3-4"></path>
+            <path d="M16 21l-2-4-3-3 1-6"></path>
+            <path d="M6 12l2-3 4-1 3 3 3 1"></path>
+          </svg>
+          Add a memorable run
         </button>
+
         <button class="pill-btn" style="padding: 11px; font-size: 0.88rem; justify-content: center;" onclick="startInteractiveTutorial()">
-          💡 See tutorial
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="9" y1="18" x2="15" y2="18"></line>
+            <line x1="10" y1="22" x2="14" y2="22"></line>
+            <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+          </svg>
+          See tutorial
         </button>
       </div>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 2. MODAL: ADD RACE / MEMORABLE RUN         -->
+  <!-- 2. RESTRUCTURED ADD ACTIVITY MODAL         -->
   <!-- ========================================== -->
-  <div id="add-modal" class="modal-backdrop" style="overflow-y: auto;">
+  <div id="add-modal" class="modal-backdrop">
     <div class="modal-card">
-      <h3 id="add-modal-title" style="font-size: 1.2rem; font-weight: 700;">Add New Route</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <h3 id="add-modal-title" style="font-size: 1.25rem; font-weight: 700;">Add New Race</h3>
+        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.4rem; cursor:pointer;">&times;</button>
+      </div>
 
-      <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 8px; padding: 16px; text-align: center; background: rgba(0,122,255,0.08); cursor: pointer;">
-        <span id="gpx-label">📁 Drag & drop your .GPX file (or click to browse)</span>
+      <!-- Drag & Drop GPX -->
+      <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 8px; padding: 14px; text-align: center; background: rgba(0,122,255,0.06); cursor: pointer;">
+        <span id="gpx-label">📁 Drag & drop watch .GPX file (or click to browse)</span>
         <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
       </div>
 
-      <input id="form-name" type="text" placeholder="Race or run title *">
+      <input id="form-name" type="text" placeholder="Race title (e.g. Dresden Half Marathon) *">
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <input id="form-date" type="text" placeholder="Date (e.g. Oct 24, 2026)">
-        <select id="form-status">
-          <option value="done">Completed</option>
-          <option value="planned">Planned</option>
-          <option value="bucket">Bucket list</option>
-        </select>
+        <div>
+          <label class="form-group-label">Event Date</label>
+          <input id="form-date" type="date">
+        </div>
+        <div>
+          <label class="form-group-label">Status</label>
+          <select id="form-status" onchange="handleStatusChange(this.value)">
+            <option value="" disabled selected>Choose status</option>
+            <option value="done">Completed</option>
+            <option value="planned">Planned</option>
+            <option value="bucket">Bucket list</option>
+          </select>
+        </div>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <input id="form-distance" type="text" placeholder="Distance (auto from GPX)">
-        <input id="form-elevation" type="text" placeholder="Elevation gain (auto from GPX)">
+        <div>
+          <label class="form-group-label">Surface</label>
+          <select id="form-surface">
+            <option value="" disabled selected>Choose surface</option>
+            <option value="trail">Trail / Mountains</option>
+            <option value="road">Road / Pavement</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-group-label">Difficulty</label>
+          <select id="form-difficulty">
+            <option value="" disabled selected>Choose difficulty</option>
+            <option value="snadna">🟢 Easy</option>
+            <option value="stredni">🟡 Moderate</option>
+            <option value="tezka">🟠 Hard</option>
+            <option value="extremni">🔴 Extreme</option>
+          </select>
+        </div>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <select id="form-surface">
-          <option value="trail">Trail / Mountains</option>
-          <option value="road">Road / Pavement</option>
-        </select>
-        <select id="form-difficulty">
-          <option value="snadna">🟢 Easy</option>
-          <option value="stredni">🟡 Moderate</option>
-          <option value="tezka">🟠 Hard</option>
-          <option value="extremni">🔴 Extreme</option>
-        </select>
+        <input id="form-distance" type="text" placeholder="Distance (e.g. 21.1 km)">
+        <input id="form-elevation" type="text" placeholder="Elevation gain (e.g. +110 m)">
       </div>
 
-      <input id="form-why" type="text" placeholder="My 'Why' (quote or personal motivation)">
-      <textarea id="form-notes" placeholder="Notes on terrain, logistics, feelings..." style="height: 60px;"></textarea>
-
+      <!-- Importance Slider (1-10) -->
       <div>
-        <label style="font-size: 0.75rem; color: #aaa; display: block; margin-bottom: 4px;">Activity photo:</label>
-        <input type="file" id="input-image" accept="image/*" style="font-size: 0.8rem; color: #888;">
+        <label class="form-group-label" id="importance-label">Race Importance: <span id="importance-val" style="color:#007aff; font-weight:800;">5</span> / 10</label>
+        <div class="form-slider-wrap">
+          <span style="font-size:0.75rem; color:#666;">1</span>
+          <input type="range" id="form-importance" min="1" max="10" value="5" oninput="document.getElementById('importance-val').textContent = this.value">
+          <span style="font-size:0.75rem; color:#666;">10</span>
+        </div>
       </div>
 
-      <button id="btn-save-race" class="open-detail-btn" style="padding: 12px; margin-top: 4px;" onclick="saveRaceToSupabase()">Save Route to Atlas</button>
-      <button class="pill-btn" style="align-self: center; justify-content: center;" onclick="closeModals()">Cancel</button>
+      <!-- Tailored Why & Notes -->
+      <div>
+        <label class="form-group-label" id="label-why">My 'Why'</label>
+        <input id="form-why" type="text" placeholder="What motivated me to register for this race?">
+      </div>
+      <div>
+        <label class="form-group-label" id="label-notes">Race & Terrain Notes</label>
+        <textarea id="form-notes" placeholder="Notes on pacing, profile, course quirks..." style="height: 54px;"></textarea>
+      </div>
+
+      <!-- Accordion: More Details -->
+      <button type="button" class="details-accordion-btn" onclick="toggleDetailsAccordion()">
+        <span id="details-accordion-title">+ Add more details (Finish time, logistics, satisfaction...)</span>
+        <span id="details-accordion-chevron">▾</span>
+      </button>
+
+      <div id="details-accordion-content" style="display: none; flex-direction: column; gap: 10px; background:#161618; padding:12px; border-radius:8px; border:1px solid #28282a;">
+        
+        <!-- COMPLETED SPECIFIC -->
+        <div id="group-details-completed" style="display:flex; flex-direction:column; gap:10px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div>
+              <label class="form-group-label">What was my ambition?</label>
+              <input id="form-ambition-time" type="text" placeholder="e.g. 1:30:00 or sub-45" oninput="calculateTimeDifference()">
+            </div>
+            <div>
+              <label class="form-group-label">Official finish time</label>
+              <input id="form-finish-time" type="text" placeholder="e.g. 1:28:45" oninput="calculateTimeDifference()">
+            </div>
+          </div>
+
+          <div id="ambition-diff-box" style="display:none; font-size:0.8rem; padding:8px 10px; border-radius:6px; background:#1c2b20; border:1px solid #34c759;">
+            Difference vs ambition: <strong id="ambition-diff-text"></strong>
+          </div>
+
+          <div>
+            <label class="form-group-label">Overall placement / field size</label>
+            <input id="form-placement" type="text" placeholder="e.g. 42nd of 431 runners">
+          </div>
+
+          <div>
+            <label class="form-group-label">Performance satisfaction: <span id="satisfaction-val" style="color:#34c759; font-weight:800;">7</span> / 10</label>
+            <div class="form-slider-wrap">
+              <span style="font-size:0.75rem; color:#666;">1</span>
+              <input type="range" id="form-satisfaction" min="1" max="10" value="7" oninput="document.getElementById('satisfaction-val').textContent = this.value">
+              <span style="font-size:0.75rem; color:#666;">10</span>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div>
+              <label class="form-group-label">Met expectations?</label>
+              <select id="form-expectations">
+                <option value="met">Met expectations</option>
+                <option value="exceeded">Exceeded expectations</option>
+                <option value="below">Below expectations</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-group-label">Would I run it again?</label>
+              <div class="segmented-control">
+                <div class="segmented-btn active" data-repeat="yes" onclick="setRepeatValue('yes', this)">Yes</div>
+                <div class="segmented-btn" data-repeat="maybe" onclick="setRepeatValue('maybe', this)">Maybe</div>
+                <div class="segmented-btn" data-repeat="no" onclick="setRepeatValue('no', this)">No</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLANNED & BUCKET LIST SPECIFIC -->
+        <div id="group-details-planning" style="display:none; flex-direction:column; gap:10px;">
+          <div>
+            <label class="form-group-label">Target / Ambition</label>
+            <input id="form-target-ambition" type="text" placeholder="e.g. Sub 3:15:00 or Finish without exhaustion">
+          </div>
+
+          <label class="form-group-label">Logistics from Home Base</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+            <input id="form-logistics-dist" type="text" placeholder="Distance (km)">
+            <input id="form-logistics-transport" type="text" placeholder="Car / Flight / Train">
+            <input id="form-logistics-time" type="text" placeholder="Travel time">
+          </div>
+
+          <div>
+            <label class="form-group-label">Estimated Financial Cost</label>
+            <select id="form-cost">
+              <option value="€">€ (Almost free / local)</option>
+              <option value="€€">€€ (Budget friendly)</option>
+              <option value="€€€">€€€ (Moderate / hotel stay)</option>
+              <option value="€€€€">€€€€ (High / international travel)</option>
+              <option value="€€€€€">€€€€€ (Extreme / overseas expedition)</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Multiple Photos (up to 10) -->
+      <div>
+        <label class="form-group-label">Activity Photos (Up to 10 photos):</label>
+        <input type="file" id="input-images" accept="image/*" multiple onchange="handleMultipleImagesPreview(this.files)">
+        <div id="images-preview" class="gallery-preview-grid"></div>
+      </div>
+
+      <button id="btn-save-race" class="open-detail-btn" style="padding: 12px; margin-top: 4px;" onclick="saveActivityToSupabase()">Save Activity</button>
+      <button class="pill-btn" style="align-self: center; justify-content: center; width: 100%;" onclick="closeModals()">Cancel</button>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 3. MODAL: SETTINGS                         -->
+  <!-- 3. MODAL: SETTINGS & HOME BASE             -->
   <!-- ========================================== -->
   <div id="modal-settings" class="modal-backdrop">
     <div class="modal-card">
-      <h3 style="font-size:1.25rem; font-weight:700;">Settings & Preferences</h3>
+      <h3 style="font-size:1.25rem; font-weight:700;">Home Base & Settings</h3>
       <div>
-        <label style="font-size:0.75rem; color:#aaa; display:block; margin-bottom:5px;">Home Base Coordinates (Latitude, Longitude):</label>
-        <input id="setting-home-coords" type="text" placeholder="e.g. 50.2305, 14.0888">
-        <small style="font-size:0.72rem; color:#666; display:block; margin-top:3px;">Your default view centers on these coordinates.</small>
+        <label class="form-group-label">Your Home Base Location:</label>
+        <div style="display:flex; gap:8px;">
+          <input id="setting-home-query" type="text" placeholder="City or full address (e.g. Slaný, Czech Republic)">
+          <button class="pill-btn" style="background:#007aff; color:#fff;" onclick="geocodeAndSaveHome()">Search</button>
+        </div>
+        <small style="font-size:0.72rem; color:#888; display:block; margin-top:4px;">Or enter latitude, longitude coordinates manually below:</small>
+        <input id="setting-home-coords" type="text" placeholder="50.2305, 14.0888" style="margin-top:6px;">
       </div>
-      <button class="open-detail-btn" style="padding:11px;" onclick="saveUserSettings()">Save Settings</button>
+      <button class="open-detail-btn" style="padding:11px;" onclick="saveUserSettingsManual()">Save Home Base</button>
       <button class="pill-btn" style="justify-content:center;" onclick="closeModals()">Close</button>
     </div>
   </div>
@@ -325,12 +467,12 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 5. MAIN APPLICATION INTERFACE              -->
+  <!-- 5. MAIN WORKSPACE                          -->
   <!-- ========================================== -->
   <div id="app-layout">
     <!-- TOP BAR -->
     <header id="top-bar">
-      <!-- Topo-Peak Logo v liště -->
+      <!-- Topo-Peak Logo -->
       <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
         <svg width="155" height="30" viewBox="0 0 390 76" fill="none" xmlns="http://www.w3.org/2000/svg">
           <text x="14" y="54" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="50" font-weight="900" letter-spacing="1">RUN</text>
@@ -349,17 +491,16 @@
       <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Search race, route, city..." oninput="handleSearch(this.value)">
 
       <div class="top-bar-right">
-        <button id="btn-add-race" class="open-detail-btn" style="display: none;" onclick="openAddModal('race')">➕ Add Activity</button>
+        <button id="btn-add-activity" class="open-detail-btn" style="display: none;" onclick="openAddModal()">➕ Add Race</button>
         <button id="btn-profile" class="pill-btn" onclick="handleProfileClick()">👤 <span id="label-user">Profile</span></button>
       </div>
     </header>
 
-    <!-- MAIN WORKSPACE -->
     <div id="main-body">
       <!-- LEVÝ ROZBALOVACÍ PANEL -->
       <nav id="left-rail">
         <!-- 1. Race Atlas -->
-        <button id="rail-races" class="rail-btn active" onclick="switchMode('races')">
+        <button id="rail-races" class="rail-btn active" onclick="switchPageMode('races')">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -370,8 +511,8 @@
           <span>Race Atlas</span>
         </button>
 
-        <!-- 2. Memorable Runs (Čistá atletická silueta) -->
-        <button id="rail-memorable" class="rail-btn" onclick="switchMode('memorable')">
+        <!-- 2. Memorable Runs -->
+        <button id="rail-memorable" class="rail-btn" onclick="switchPageMode('memorable')">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
@@ -383,7 +524,6 @@
           <span>Memorable Runs</span>
         </button>
 
-        <!-- ODDĚLOVACÍ LINKA -->
         <div style="height: 1px; background: #2c2c2e; margin: 10px 4px;"></div>
 
         <!-- 3. Home Base -->
@@ -407,7 +547,6 @@
           <span>Settings</span>
         </button>
 
-        <!-- Pružné odsazení -->
         <div class="rail-spacer"></div>
         <div style="height: 1px; background: #2c2c2e; margin: 4px 4px;"></div>
 
@@ -439,10 +578,21 @@
         </button>
       </nav>
 
-      <!-- MAPA -->
+      <!-- MAP CONTAINER -->
       <div id="map"></div>
 
-      <!-- PRAVÝ PANEL -->
+      <!-- FLOATING SET HOME BASE PROMPT (IF NOT SET) -->
+      <div id="floating-home-prompt" style="display:none;" onclick="openSettingsModal()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+        </svg>
+        <div>
+          <div style="font-size:0.85rem; font-weight:700; color:#fff;">Choose my home base</div>
+          <div style="font-size:0.72rem; color:#aaa;">Click to set your location & auto-center</div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
       <aside id="sidebar">
         <div class="sidebar-header">
           <h2 id="main-title">Race Atlas</h2>
@@ -460,23 +610,19 @@
           </div>
         </div>
 
-        <!-- SURFACE FILTERS -->
         <div class="filters-section">
-          <div class="filter-pills">
-            <button class="pill-btn active" onclick="setSurfaceFilter('all', this)">All</button>
-            <button class="pill-btn" onclick="setSurfaceFilter('trail', this)">Trail</button>
-            <button class="pill-btn" onclick="setSurfaceFilter('road', this)">Road</button>
-          </div>
+          <button class="pill-btn active" onclick="setSurfaceFilter('all', this)">All</button>
+          <button class="pill-btn" onclick="setSurfaceFilter('trail', this)">Trail</button>
+          <button class="pill-btn" onclick="setSurfaceFilter('road', this)">Road</button>
         </div>
 
-        <!-- SEZNAM KARET -->
         <div id="content"></div>
       </aside>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 6. JAVASCRIPT & LOGIKA SUPABASE            -->
+  <!-- 6. JAVASCRIPT & SUPABASE ARCHITECTURE      -->
   <!-- ========================================== -->
   <script>
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
@@ -484,86 +630,68 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentUser = null;
-    let currentProfile = null;
     let isDemoMode = false;
-    let currentMode = 'races';
+    let currentMode = 'races'; // 'races' | 'memorable'
     let currentRouteLayer = null;
 
     let races = [];
-    let memorableRuns = [];
     let zavodniTrasy = {};
 
     const statusFilters = { done: true, planned: true, bucket: true };
     let surfaceFilter = 'all';
     let searchQuery = '';
+    let selectedRepeatValue = 'yes';
 
-    // Domovská základna: čte se z paměti prohlížeče, výchozí Slaný
-    let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || [50.2305, 14.0888];
+    // Home Base logic: null default if not set!
+    let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
-    // Ukázková data POUZE pro demo režim (?demo=true)
-    const demoRaces = [
-      {
-        id: "demo-helsinki", name: "Björn Borg Marathon Helsinki", date: "Aug 22, 2026", month: 8,
-        coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road",
-        distance: "42.2 km", elevation: "+226 m", difficulty: "stredni",
-        why: "First marathon — coastal, flat, and cool northern weather.",
-        notes: "Kept an even split throughout the race, outstanding organization.", result: "3:11:04",
-        image: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=800&q=80"
-      },
-      {
-        id: "demo-dresden", name: "Dresden Half Marathon", date: "Oct 24, 2026", month: 10,
-        coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road",
-        distance: "21.1 km", elevation: "+110 m", difficulty: "snadna",
-        why: "Fast and flat road along the Elbe River, ideal for a new PR.",
-        notes: "Target pace: 4:07 min/km.", result: "Target sub 1:27:00",
-        image: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=800&q=80"
-      },
-      {
-        id: "demo-chianti", name: "Chianti Ultra Trail", date: "Mar 20, 2027", month: 3,
-        coords: [43.490, 11.378], status: "planned", statusLabel: "Planned", surface: "trail", surfaceLabel: "Trail",
-        distance: "73 km", elevation: "+3,000 m", difficulty: "tezka",
-        why: "Sunrise over the Tuscan vineyards and passing through medieval hamlets.",
-        notes: "Runnable course, though hydration management under the sun will be critical.", result: "Finish strong",
-        image: "https://images.unsplash.com/photo-1523348837708-a5d9fc0189fa?auto=format&fit=crop&w=800&q=80"
-      },
-      {
-        id: "demo-nuts", name: "NUTS Karhunkierros", date: "May 2027", month: 5,
-        coords: [66.368, 29.324], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail",
-        distance: "83 km", elevation: "+1,200 m", difficulty: "tezka",
-        why: "Endless midnight sun across the Arctic taiga in Oulanka National Park.",
-        notes: "Suspension bridges over roaring rapids and wild marshes.", result: "Wilderness bucket list",
-        image: "https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=800&q=80"
-      }
-    ];
+    // Map initialization: defaults to WORLD if no home base is set!
+    const defaultCenter = userHomeCoords || [25.0, 10.0];
+    const defaultZoom = userHomeCoords ? 5.2 : 2.5;
 
-    // ==========================================
-    // MAP SETUP (Leaflet s oddáleným centrem 5.2)
-    // ==========================================
-    const map = L.map('map', { center: userHomeCoords, zoom: 5.2 });
+    const map = L.map('map', { center: defaultCenter, zoom: defaultZoom });
     const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 18 }).addTo(map);
     const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Dark', maxZoom: 16 });
     const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Satellite', maxZoom: 18 });
 
     L.control.layers({ "Topographic (Default)": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
     let markerLayerGroup = L.featureGroup().addTo(map);
+    let homeMarker = null;
 
-    // Domovský bod
-    const homeMarker = L.circleMarker(userHomeCoords, {
-      radius: 7, fillColor: '#007aff', color: '#fff', weight: 2, fillOpacity: 1
-    }).addTo(map).bindTooltip("🏠 Home Base", { direction: 'top' });
+    function refreshHomeMarker() {
+      if (userHomeCoords) {
+        if (!homeMarker) {
+          homeMarker = L.circleMarker(userHomeCoords, {
+            radius: 8, fillColor: '#007aff', color: '#fff', weight: 2.5, fillOpacity: 1
+          }).addTo(map).bindTooltip("🏠 Home Base", { direction: 'top' });
+        } else {
+          homeMarker.setLatLng(userHomeCoords);
+        }
+        document.getElementById('floating-home-prompt').style.display = 'none';
+      } else {
+        if (homeMarker) { map.removeLayer(homeMarker); homeMarker = null; }
+        document.getElementById('floating-home-prompt').style.display = 'flex';
+      }
+    }
 
     // ==========================================
-    // AUTHENTICATION & DATA FETCHING
+    // INITIALIZATION & URL VIEW ROUTING
     // ==========================================
     async function initApp() {
       const params = new URLSearchParams(window.location.search);
       isDemoMode = params.get('demo') === 'true';
-      const sharedUser = params.get('u');
+      const urlView = params.get('view');
+      if (urlView === 'memorable') switchPageMode('memorable', false);
+
+      refreshHomeMarker();
 
       if (isDemoMode) {
         document.getElementById('label-user').textContent = "Demo User";
-        document.getElementById('main-title').textContent = "Race Atlas (Demo)";
-        races = [...demoRaces];
+        document.getElementById('main-title').textContent = currentMode === 'races' ? "Race Atlas (Demo)" : "Memorable Runs (Demo)";
+        races = [
+          { id: "demo-1", name: "Dresden Half Marathon", date: "2026-10-24", coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", distance: "21.1 km", elevation: "+110 m", why: "Flat course along Elbe.", notes: "Target 4:07/km." },
+          { id: "demo-2", name: "Helsinki Marathon", date: "2026-08-22", coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", distance: "42.2 km", elevation: "+226 m", resultTime: "3:11:04", why: "First marathon.", notes: "Even split." }
+        ];
         renderAll();
         return;
       }
@@ -573,28 +701,17 @@
 
       if (currentUser) {
         const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
-        currentProfile = profile;
         const name = profile?.username || currentUser.email.split('@')[0];
         document.getElementById('label-user').textContent = name;
-        document.getElementById('btn-add-race').style.display = 'inline-block';
+        document.getElementById('btn-add-activity').style.display = 'inline-flex';
 
-        await loadRacesFromDB(currentUser.id);
-      } else if (sharedUser) {
-        const { data: profile } = await supabaseClient.from('profiles').select('*').eq('username', sharedUser).single();
-        if (profile) {
-          document.getElementById('main-title').textContent = `Atlas: ${profile.display_name || profile.username}`;
-          document.getElementById('label-user').textContent = "Guest";
-          await loadRacesFromDB(profile.id);
-        } else {
-          alert('User profile not found.');
-          window.location.href = 'index.html';
-        }
+        await loadActivitiesFromDB(currentUser.id);
       } else {
         window.location.href = 'index.html';
       }
     }
 
-    async function loadRacesFromDB(userId) {
+    async function loadActivitiesFromDB(userId) {
       const { data, error } = await supabaseClient.from('races').select('*').eq('user_id', userId);
       
       if (!error && data && data.length > 0) {
@@ -602,7 +719,6 @@
           id: item.id,
           name: item.name,
           date: item.date,
-          month: item.month,
           coords: item.coords,
           status: item.status,
           statusLabel: item.status_label,
@@ -611,10 +727,21 @@
           difficulty: item.difficulty,
           distance: item.distance,
           elevation: item.elevation,
+          importance: item.importance,
           why: item.why,
           notes: item.notes,
-          image: item.image_url,
-          result: item.how_it_went
+          images: item.images || (item.image_url ? [item.image_url] : []),
+          resultTime: item.result_time || item.how_it_went,
+          ambitionTime: item.ambition_time,
+          placement: item.placement,
+          satisfaction: item.satisfaction,
+          expectations: item.expectations,
+          repeat: item.repeat,
+          cost: item.cost,
+          logisticsDist: item.logistics_dist,
+          logisticsTransport: item.logistics_transport,
+          logisticsTime: item.logistics_time,
+          isMemorable: item.is_memorable || (item.status === 'memorable')
         }));
 
         data.forEach(item => {
@@ -627,20 +754,46 @@
         renderAll();
         setTimeout(() => {
           document.getElementById('onboarding-overlay').style.display = 'flex';
-        }, 120);
+        }, 150);
       }
     }
 
     // ==========================================
-    // RENDER (MAP + SIDEBAR)
+    // PAGE MODES: RACE ATLAS vs MEMORABLE RUNS
+    // ==========================================
+    function switchPageMode(mode, updateUrl = true) {
+      currentMode = mode;
+      document.getElementById('rail-races').classList.toggle('active', mode === 'races');
+      document.getElementById('rail-memorable').classList.toggle('active', mode === 'memorable');
+
+      const isRace = (mode === 'races');
+      document.getElementById('main-title').textContent = isRace ? 'Race Atlas' : 'Memorable Runs';
+      document.getElementById('status-boxes-wrap').style.display = isRace ? 'flex' : 'none';
+      document.getElementById('btn-add-activity').textContent = isRace ? '➕ Add Race' : '➕ Add Run';
+
+      if (updateUrl && !isDemoMode) {
+        const url = new URL(window.location);
+        if (isRace) url.searchParams.delete('view');
+        else url.searchParams.set('view', 'memorable');
+        window.history.replaceState({}, '', url);
+      }
+
+      renderAll();
+    }
+
+    // ==========================================
+    // RENDER LIST & MAP MARKERS
     // ==========================================
     function renderAll() {
       markerLayerGroup.clearLayers();
       const content = document.getElementById('content');
       content.innerHTML = '';
 
-      const activeList = (currentMode === 'races' ? races : memorableRuns).filter(item => {
-        if (currentMode === 'races' && !statusFilters[item.status]) return false;
+      const isRace = (currentMode === 'races');
+      const activeList = races.filter(item => {
+        const matchesCategory = isRace ? !item.isMemorable : item.isMemorable;
+        if (!matchesCategory) return false;
+        if (isRace && !statusFilters[item.status]) return false;
         if (surfaceFilter !== 'all' && item.surface !== surfaceFilter) return false;
         if (searchQuery && !item.name.toLowerCase().includes(searchQuery)) return false;
         return true;
@@ -648,34 +801,51 @@
 
       document.getElementById('stats-label').textContent = `Showing ${activeList.length} activities`;
 
+      // EMPTY STATE IN SIDEBAR
       if (activeList.length === 0) {
-        content.innerHTML = '<div style="color:#777; text-align:center; margin-top:40%; font-size:0.85rem;">No activities match your filters.</div>';
+        content.innerHTML = `
+          <div style="text-align:center; padding: 40px 10px; color:#888;">
+            <div style="font-size:0.92rem; font-weight:600; color:#ddd; margin-bottom:6px;">No activities match your filters</div>
+            <div style="font-size:0.78rem; margin-bottom:18px;">Your atlas has no records in this view or region.</div>
+            <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+              <button class="open-detail-btn" style="width:200px;" onclick="openAddModal()">
+                ${isRace ? '➕ Add new race' : '➕ Add new run'}
+              </button>
+              <button class="pill-btn" style="width:200px; justify-content:center;" onclick="startInteractiveTutorial()">
+                💡 See how it works
+              </button>
+            </div>
+          </div>
+        `;
         return;
       }
 
       activeList.forEach(item => {
         const colors = { done: '#34c759', planned: '#ff9f0a', bucket: '#5ac8fa', memorable: '#af52de' };
-        const pinColor = colors[item.status] || '#007aff';
+        const pinColor = item.isMemorable ? '#af52de' : (colors[item.status] || '#007aff');
 
         const pinHtml = `<div class="pin-circle" style="width:18px; height:18px; background:${pinColor};"></div>`;
         const icon = L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [18, 18], iconAnchor: [9, 9] });
 
         const marker = L.marker(item.coords, { icon: icon }).addTo(markerLayerGroup);
-        marker.bindTooltip(`<b>${item.name}</b><br>${item.distance} &bull; ${item.surfaceLabel}`);
+        marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} &bull; ${item.surfaceLabel || ''}`);
         marker.on('click', () => showDetail(item));
 
         const card = document.createElement('div');
         card.className = 'race-card';
         card.innerHTML = `
           <div class="card-top">
-            <span class="badge badge-${item.status}">${item.statusLabel || item.status}</span>
+            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
+              ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
+            </span>
             <span style="font-size:0.75rem; color:#888;">${item.date || ''}</span>
           </div>
           <div class="card-title">${item.name}</div>
           <div class="card-meta">
-            <span>🏃 ${item.surfaceLabel}</span><span>&bull;</span>
-            <span>📏 ${item.distance}</span><span>&bull;</span>
-            <span>⛰️ ${item.elevation}</span>
+            <span>🏃 ${item.surfaceLabel || 'Mixed'}</span><span>&bull;</span>
+            <span>📏 ${item.distance || '-'}</span><span>&bull;</span>
+            <span>⛰️ ${item.elevation || '-'}</span>
+            ${item.resultTime ? `<span>&bull;</span><span style="color:#34c759; font-weight:700;">⏱️ ${item.resultTime}</span>` : ''}
           </div>
         `;
         card.onclick = () => {
@@ -687,33 +857,42 @@
     }
 
     // ==========================================
-    // DETAIL & ROUTE DRAWING
+    // DETAIL VIEW & MULTI-IMAGE GALLERY
     // ==========================================
     function showDetail(item) {
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
 
       const content = document.getElementById('content');
-      const photoHtml = item.image ? `<img src="${item.image}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : '';
+      
+      let galleryHtml = '';
+      if (item.images && item.images.length > 0) {
+        galleryHtml = `
+          <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:12px;">
+            ${item.images.map(img => `<img src="${img}" style="height:170px; border-radius:8px; object-fit:cover; flex-shrink:0; cursor:pointer;" onclick="window.open('${img}', '_blank')">`).join('')}
+          </div>
+        `;
+      }
 
       content.innerHTML = `
         <button class="back-btn" onclick="renderAll()">← Back to list</button>
-        ${photoHtml}
-        <h2 style="font-size:1.25rem; font-weight:700; color:#fff; margin-bottom:6px;">${item.name}</h2>
-        <div style="font-size:0.8rem; color:#aaa; margin-bottom:12px;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel}</div>
+        ${galleryHtml}
+        <h2 style="font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:4px;">${item.name}</h2>
+        <div style="font-size:0.8rem; color:#aaa; margin-bottom:14px;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || ''}</div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#242426; padding:12px; border-radius:8px; margin-bottom:12px;">
-          <div><small style="color:#777; font-size:0.7rem; display:block;">DISTANCE</small><strong>${item.distance}</strong></div>
-          <div><small style="color:#777; font-size:0.7rem; display:block;">ELEVATION GAIN</small><strong>${item.elevation}</strong></div>
+          <div><small style="color:#777; font-size:0.7rem; display:block;">DISTANCE</small><strong>${item.distance || '-'}</strong></div>
+          <div><small style="color:#777; font-size:0.7rem; display:block;">ELEVATION GAIN</small><strong>${item.elevation || '-'}</strong></div>
+          ${item.resultTime ? `<div style="grid-column: span 2;"><small style="color:#777; font-size:0.7rem; display:block;">RESULT TIME</small><strong style="color:#34c759; font-size:1rem;">${item.resultTime}</strong></div>` : ''}
         </div>
 
-        ${item.why ? `<div style="background:#1f2733; border-left:3px solid #007aff; padding:10px; border-radius:6px; font-size:0.84rem; margin-bottom:10px;"><em>„${item.why}“</em></div>` : ''}
-        ${item.notes ? `<div style="background:#242426; padding:10px; border-radius:6px; font-size:0.8rem; color:#bbb;">${item.notes}</div>` : ''}
+        ${item.why ? `<div style="background:#1f2733; border-left:3px solid #007aff; padding:10px 12px; border-radius:6px; font-size:0.85rem; margin-bottom:10px;"><em>„${item.why}“</em></div>` : ''}
+        ${item.notes ? `<div style="background:#242426; padding:10px 12px; border-radius:6px; font-size:0.82rem; color:#bbb; line-height:1.5;">${item.notes}</div>` : ''}
       `;
 
       if (zavodniTrasy[item.id]) {
         const coords = zavodniTrasy[item.id];
         currentRouteLayer = L.featureGroup([
-          L.polyline(coords, { color: '#007aff', weight: 4 }),
+          L.polyline(coords, { color: '#007aff', weight: 4.5 }),
           L.circleMarker(coords[0], { radius: 6, fillColor: '#34c759', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Start"),
           L.circleMarker(coords[coords.length - 1], { radius: 6, fillColor: '#ff3b30', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Finish")
         ]).addTo(map);
@@ -722,113 +901,176 @@
     }
 
     // ==========================================
-    // FILTERS & NAVIGATION
-    // ==========================================
-    function toggleStatusFilter(statusKey) {
-      statusFilters[statusKey] = !statusFilters[statusKey];
-      document.querySelector(`.status-card-btn[data-status="${statusKey}"]`).classList.toggle('active', statusFilters[statusKey]);
-      renderAll();
-    }
-
-    function setSurfaceFilter(surface, btn) {
-      surfaceFilter = surface;
-      document.querySelectorAll('.filter-pills .pill-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderAll();
-    }
-
-    function handleSearch(val) {
-      searchQuery = val.trim().toLowerCase();
-      renderAll();
-    }
-
-    function switchMode(mode) {
-      currentMode = mode;
-      document.getElementById('rail-races').classList.toggle('active', mode === 'races');
-      document.getElementById('rail-memorable').classList.toggle('active', mode === 'memorable');
-      document.getElementById('status-boxes-wrap').style.display = mode === 'races' ? 'flex' : 'none';
-      document.getElementById('main-title').textContent = mode === 'races' ? 'Race Atlas' : 'Memorable Runs';
-      renderAll();
-    }
-
-    // ==========================================
-    // HOME BASE & SETTINGS LOGIC
-    // ==========================================
-    function jumpToHomeBase() {
-      if (userHomeCoords && userHomeCoords.length === 2) {
-        map.setView(userHomeCoords, 5.2, { animate: true });
-        if (typeof homeMarker !== 'undefined') {
-          homeMarker.setLatLng(userHomeCoords);
-        }
-      } else {
-        openSettingsModal();
-      }
-    }
-
-    function openSettingsModal() {
-      closeModals();
-      document.getElementById('setting-home-coords').value = userHomeCoords.join(', ');
-      document.getElementById('modal-settings').style.display = 'flex';
-    }
-
-    function saveUserSettings() {
-      const val = document.getElementById('setting-home-coords').value.trim();
-      const parts = val.split(',').map(p => parseFloat(p.trim()));
-      
-      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-        userHomeCoords = parts;
-        localStorage.setItem('runatlas_home_coords', JSON.stringify(parts));
-        homeMarker.setLatLng(parts);
-        alert('Home Base saved successfully!');
-        closeModals();
-        jumpToHomeBase();
-      } else {
-        alert('Please enter valid coordinates in format: latitude, longitude (e.g. 50.2305, 14.0888)');
-      }
-    }
-
-    function openInfoModal(type) {
-      closeModals();
-      const title = document.getElementById('info-modal-title');
-      const body = document.getElementById('info-modal-body');
-
-      if (type === 'about') {
-        title.textContent = 'About RunAtlas';
-        body.innerHTML = `
-          RunAtlas is your personal interactive running atlas and route log. Built for passionate runners to visualize journeys, analyze elevations, and keep a living bucket list of world races.<br><br>
-          <span style="font-size:0.75rem; color:#888;">Version 1.0 &bull; Built with Leaflet & Supabase</span>
-        `;
-      } else {
-        title.textContent = 'Help & Support';
-        body.innerHTML = `
-          Have an issue with GPX imports or account data?<br><br>
-          Drop us a line directly at:<br>
-          <a href="mailto:support@runatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runatlas.app</a><br><br>
-          We'll get back to you as soon as we finish our long run! 🏃
-        `;
-      }
-      document.getElementById('modal-info').style.display = 'flex';
-    }
-
-    // ==========================================
-    // GPX UPLOAD & SAVE TO SUPABASE
+    // RESTRUCTURED MODAL LOGIC & FORM RESETS
     // ==========================================
     let parsedGpxCoords = null;
     let parsedCenterCoords = null;
+    let selectedImageFiles = [];
 
-    function openAddModal(type = 'race') {
+    function resetActivityForm() {
+      document.getElementById('form-name').value = '';
+      document.getElementById('form-date').value = '';
+      document.getElementById('form-status').value = '';
+      document.getElementById('form-surface').value = '';
+      document.getElementById('form-difficulty').value = '';
+      document.getElementById('form-distance').value = '';
+      document.getElementById('form-elevation').value = '';
+      document.getElementById('form-importance').value = '5';
+      document.getElementById('importance-val').textContent = '5';
+      document.getElementById('form-why').value = '';
+      document.getElementById('form-notes').value = '';
+      document.getElementById('form-ambition-time').value = '';
+      document.getElementById('form-finish-time').value = '';
+      document.getElementById('form-placement').value = '';
+      document.getElementById('form-satisfaction').value = '7';
+      document.getElementById('satisfaction-val').textContent = '7';
+      document.getElementById('form-target-ambition').value = '';
+      document.getElementById('form-logistics-dist').value = '';
+      document.getElementById('form-logistics-transport').value = '';
+      document.getElementById('form-logistics-time').value = '';
+      document.getElementById('form-cost').value = '€€';
+      document.getElementById('input-images').value = '';
+      document.getElementById('images-preview').innerHTML = '';
+      document.getElementById('ambition-diff-box').style.display = 'none';
+      document.getElementById('gpx-label').textContent = '📁 Drag & drop watch .GPX file (or click to browse)';
+      
+      parsedGpxCoords = null;
+      parsedCenterCoords = null;
+      selectedImageFiles = [];
+
+      // Hide accordion by default
+      document.getElementById('details-accordion-content').style.display = 'none';
+      document.getElementById('details-accordion-chevron').textContent = '▾';
+    }
+
+    function openAddModal(forcedMode = null) {
       closeModals();
+      resetActivityForm();
+
+      const isMemorable = (forcedMode === 'memorable' || currentMode === 'memorable');
+      document.getElementById('add-modal-title').textContent = isMemorable ? 'Add Memorable Run' : 'Add New Race';
       document.getElementById('add-modal').style.display = 'flex';
-      document.getElementById('add-modal-title').textContent = type === 'memorable' ? 'Add Memorable Run' : 'Add New Race';
+
+      if (isMemorable) {
+        document.getElementById('form-status').value = 'done';
+        handleStatusChange('done');
+        document.getElementById('label-why').textContent = "What made this run memorable?";
+      } else {
+        handleStatusChange('');
+      }
     }
 
     function closeModals() {
-      document.getElementById('onboarding-overlay').style.display = 'none';
-      document.getElementById('add-modal').style.display = 'none';
-      document.getElementById('modal-settings').style.display = 'none';
-      document.getElementById('modal-info').style.display = 'none';
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.style.display = 'none');
+      resetActivityForm();
     }
 
+    function handleStatusChange(status) {
+      const whyInput = document.getElementById('form-why');
+      const notesInput = document.getElementById('form-notes');
+      const completedGroup = document.getElementById('group-details-completed');
+      const planningGroup = document.getElementById('group-details-planning');
+
+      if (status === 'done') {
+        whyInput.placeholder = "Why did I run this? What did the challenge mean to me?";
+        notesInput.placeholder = "How the race played out, nutrition, cramps, weather, highs & lows...";
+        completedGroup.style.display = 'flex';
+        planningGroup.style.display = 'none';
+      } else if (status === 'planned') {
+        whyInput.placeholder = "Why this race? What is the main ambition?";
+        notesInput.placeholder = "Training phase notes, target splits, course profile quirks...";
+        completedGroup.style.display = 'none';
+        planningGroup.style.display = 'flex';
+      } else if (status === 'bucket') {
+        whyInput.placeholder = "Why is this on my dream bucket list?";
+        notesInput.placeholder = "Lottery dates, qualification criteria, season timing...";
+        completedGroup.style.display = 'none';
+        planningGroup.style.display = 'flex';
+      } else {
+        whyInput.placeholder = "Personal motivation or quote...";
+        notesInput.placeholder = "Notes on terrain, feelings, gear...";
+        completedGroup.style.display = 'none';
+        planningGroup.style.display = 'none';
+      }
+    }
+
+    function toggleDetailsAccordion() {
+      const content = document.getElementById('details-accordion-content');
+      const chevron = document.getElementById('details-accordion-chevron');
+      const isOpen = (content.style.display === 'flex');
+      content.style.display = isOpen ? 'none' : 'flex';
+      chevron.textContent = isOpen ? '▾' : '▴';
+    }
+
+    function setRepeatValue(val, btn) {
+      selectedRepeatValue = val;
+      document.querySelectorAll('.segmented-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // TIME DIFFERENCE CALCULATOR
+    function parseTimeToSeconds(timeStr) {
+      if (!timeStr) return null;
+      const parts = timeStr.trim().split(':').map(Number);
+      if (parts.some(isNaN)) return null;
+      if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+      if (parts.length === 2) return parts[0] * 60 + parts[1];
+      return null;
+    }
+
+    function formatSecondsToTime(seconds) {
+      const absSec = Math.abs(seconds);
+      const h = Math.floor(absSec / 3600);
+      const m = Math.floor((absSec % 3600) / 60);
+      const s = absSec % 60;
+      const sign = seconds < 0 ? '-' : '+';
+      if (h > 0) return `${sign}${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      return `${sign}${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function calculateTimeDifference() {
+      const ambitionSec = parseTimeToSeconds(document.getElementById('form-ambition-time').value);
+      const finishSec = parseTimeToSeconds(document.getElementById('form-finish-time').value);
+      const diffBox = document.getElementById('ambition-diff-box');
+      const diffText = document.getElementById('ambition-diff-text');
+
+      if (ambitionSec !== null && finishSec !== null) {
+        const diff = finishSec - ambitionSec;
+        const formatted = formatSecondsToTime(diff);
+        if (diff <= 0) {
+          diffBox.style.background = '#1c2b20';
+          diffBox.style.borderColor = '#34c759';
+          diffText.innerHTML = `<span style="color:#34c759;">${formatted} (Faster than goal 🎉)</span>`;
+        } else {
+          diffBox.style.background = '#2c221a';
+          diffBox.style.borderColor = '#ff9f0a';
+          diffText.innerHTML = `<span style="color:#ff9f0a;">${formatted} (Slower than goal)</span>`;
+        }
+        diffBox.style.display = 'block';
+      } else {
+        diffBox.style.display = 'none';
+      }
+    }
+
+    // MULTIPLE IMAGES PREVIEW
+    function handleMultipleImagesPreview(files) {
+      selectedImageFiles = Array.from(files).slice(0, 10);
+      const previewGrid = document.getElementById('images-preview');
+      previewGrid.innerHTML = '';
+
+      selectedImageFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'gallery-thumb';
+          previewGrid.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // GPX Upload
     document.getElementById('drop-gpx').addEventListener('click', () => {
       document.getElementById('input-gpx').click();
     });
@@ -844,7 +1086,7 @@
         const trkpts = xml.querySelectorAll('trkpt');
 
         if (trkpts.length === 0) {
-          alert('No trackpoints found in the GPX file.');
+          alert('No trackpoints found in GPX.');
           return;
         }
 
@@ -880,15 +1122,17 @@
 
         document.getElementById('form-distance').value = totalDist.toFixed(1) + ' km';
         document.getElementById('form-elevation').value = '+' + Math.round(totalEle) + ' m';
-        document.getElementById('gpx-label').textContent = `✅ Loaded (${latlngs.length} points, ${totalDist.toFixed(1)} km)`;
+        document.getElementById('gpx-label').textContent = `✅ Loaded (${latlngs.length} pts, ${totalDist.toFixed(1)} km)`;
       };
       reader.readAsText(file);
     }
 
-    async function saveRaceToSupabase() {
+    async function saveActivityToSupabase() {
       if (!currentUser) return;
       const name = document.getElementById('form-name').value.trim();
-      if (!name) { alert('Please enter an activity title.'); return; }
+      const status = document.getElementById('form-status').value;
+      if (!name) { alert('Please enter activity title.'); return; }
+      if (!status) { alert('Please select activity status.'); return; }
       if (!parsedCenterCoords) { alert('Please upload a GPX file.'); return; }
 
       const btn = document.getElementById('btn-save-race');
@@ -896,53 +1140,136 @@
       btn.disabled = true;
 
       try {
-        let imageUrl = '';
-        const imageFile = document.getElementById('input-image').files[0];
-        if (imageFile) {
-          const fileExt = imageFile.name.split('.').pop();
-          const filePath = `${currentUser.id}/${Date.now()}.${fileExt}`;
-          const { error: uploadErr } = await supabaseClient.storage.from('race-images').upload(filePath, imageFile);
-          if (!uploadErr) {
-            const { data: { publicUrl } } = supabaseClient.storage.from('race-images').getPublicUrl(filePath);
-            imageUrl = publicUrl;
+        let uploadedImageUrls = [];
+        if (selectedImageFiles.length > 0) {
+          for (let f of selectedImageFiles) {
+            const fileExt = f.name.split('.').pop();
+            const filePath = `${currentUser.id}/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const { error: uploadErr } = await supabaseClient.storage.from('race-images').upload(filePath, f);
+            if (!uploadErr) {
+              const { data: { publicUrl } } = supabaseClient.storage.from('race-images').getPublicUrl(filePath);
+              uploadedImageUrls.push(publicUrl);
+            }
           }
         }
 
-        const dateStr = document.getElementById('form-date').value.trim();
-        const parts = dateStr.split('.');
-        const month = parts.length >= 2 ? parseInt(parts[1].trim()) : 1;
+        const dateStr = document.getElementById('form-date').value;
+        const isMemorable = (currentMode === 'memorable');
 
         const record = {
           user_id: currentUser.id,
           name: name,
           date: dateStr,
-          month: month,
-          status: document.getElementById('form-status').value,
+          status: status,
           status_label: document.getElementById('form-status').options[document.getElementById('form-status').selectedIndex].text,
-          surface: document.getElementById('form-surface').value,
-          surface_label: document.getElementById('form-surface').options[document.getElementById('form-surface').selectedIndex].text,
-          difficulty: document.getElementById('form-difficulty').value,
+          surface: document.getElementById('form-surface').value || 'mixed',
+          surface_label: document.getElementById('form-surface').value ? document.getElementById('form-surface').options[document.getElementById('form-surface').selectedIndex].text : 'Mixed',
+          difficulty: document.getElementById('form-difficulty').value || 'snadna',
           distance: document.getElementById('form-distance').value,
           elevation: document.getElementById('form-elevation').value,
+          importance: parseInt(document.getElementById('form-importance').value),
           why: document.getElementById('form-why').value,
           notes: document.getElementById('form-notes').value,
-          image_url: imageUrl,
+          images: uploadedImageUrls,
+          image_url: uploadedImageUrls[0] || null,
           coords: parsedCenterCoords,
-          route_coords: parsedGpxCoords
+          route_coords: parsedGpxCoords,
+          result_time: document.getElementById('form-finish-time').value,
+          ambition_time: document.getElementById('form-ambition-time').value || document.getElementById('form-target-ambition').value,
+          placement: document.getElementById('form-placement').value,
+          satisfaction: parseInt(document.getElementById('form-satisfaction').value),
+          expectations: document.getElementById('form-expectations').value,
+          repeat: selectedRepeatValue,
+          cost: document.getElementById('form-cost').value,
+          logistics_dist: document.getElementById('form-logistics-dist').value,
+          logistics_transport: document.getElementById('form-logistics-transport').value,
+          logistics_time: document.getElementById('form-logistics-time').value,
+          is_memorable: isMemorable
         };
 
         const { error: insertErr } = await supabaseClient.from('races').insert([record]);
         if (insertErr) throw insertErr;
 
-        alert('Route saved successfully!');
+        alert('Activity saved successfully!');
         closeModals();
-        await loadRacesFromDB(currentUser.id);
+        await loadActivitiesFromDB(currentUser.id);
       } catch (err) {
         alert('Error: ' + err.message);
       } finally {
-        btn.textContent = 'Save Route to Atlas';
+        btn.textContent = 'Save Activity';
         btn.disabled = false;
       }
+    }
+
+    // ==========================================
+    // GEOCODING & HOME BASE PREFERENCES
+    // ==========================================
+    function jumpToHomeBase() {
+      if (userHomeCoords) {
+        map.setView(userHomeCoords, 5.2, { animate: true });
+        refreshHomeMarker();
+      } else {
+        openSettingsModal();
+      }
+    }
+
+    function openSettingsModal() {
+      closeModals();
+      document.getElementById('setting-home-coords').value = userHomeCoords ? userHomeCoords.join(', ') : '';
+      document.getElementById('modal-settings').style.display = 'flex';
+    }
+
+    async function geocodeAndSaveHome() {
+      const q = document.getElementById('setting-home-query').value.trim();
+      if (!q) return;
+
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+          saveHomeCoords([lat, lon]);
+        } else {
+          alert('Address not found. Please try entering a different city or coordinates.');
+        }
+      } catch (e) {
+        alert('Geocoding request failed. Please enter coordinates manually.');
+      }
+    }
+
+    function saveUserSettingsManual() {
+      const val = document.getElementById('setting-home-coords').value.trim();
+      const parts = val.split(',').map(p => parseFloat(p.trim()));
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        saveHomeCoords(parts);
+      } else {
+        alert('Please enter valid coordinates (e.g. 50.2305, 14.0888)');
+      }
+    }
+
+    function saveHomeCoords(coords) {
+      userHomeCoords = coords;
+      localStorage.setItem('runatlas_home_coords', JSON.stringify(coords));
+      refreshHomeMarker();
+      alert('Home Base saved!');
+      closeModals();
+      jumpToHomeBase();
+    }
+
+    function openInfoModal(type) {
+      closeModals();
+      const title = document.getElementById('info-modal-title');
+      const body = document.getElementById('info-modal-body');
+
+      if (type === 'about') {
+        title.textContent = 'About RunAtlas';
+        body.innerHTML = `RunAtlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.1 &bull; Built with Leaflet & Supabase</span>`;
+      } else {
+        title.textContent = 'Help & Support';
+        body.innerHTML = `Need help with GPX imports or custom features?<br><br>Reach out at:<br><a href="mailto:support@runatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runatlas.app</a>`;
+      }
+      document.getElementById('modal-info').style.display = 'flex';
     }
 
     // ==========================================
@@ -959,11 +1286,29 @@
         steps: [
           { element: '#left-rail', popover: { title: 'Navigation', description: 'Switch easily between official Races and Memorable Runs, or jump to your Home Base.', side: "right" } },
           { element: '#global-search', popover: { title: 'Quick Search', description: 'Find activities by title, mountain range, or city.', side: "bottom" } },
-          { element: '#btn-add-race', popover: { title: 'Add Activity', description: 'Upload .GPX files straight from your watch along with course photos.', side: "bottom" } },
-          { element: '#sidebar', popover: { title: 'List & Filtering', description: 'Click any card to pan the map and display the elevation profile and route line.', side: "left" } }
+          { element: '#btn-add-activity', popover: { title: 'Add Activity', description: 'Upload watch .GPX files along with course photos and custom metrics.', side: "bottom" } },
+          { element: '#sidebar', popover: { title: 'List & Filtering', description: 'Click any card to pan the map and display elevation curves and route lines.', side: "left" } }
         ]
       });
       driverObj.drive();
+    }
+
+    function toggleStatusFilter(statusKey) {
+      statusFilters[statusKey] = !statusFilters[statusKey];
+      document.querySelector(`.status-card-btn[data-status="${statusKey}"]`).classList.toggle('active', statusFilters[statusKey]);
+      renderAll();
+    }
+
+    function setSurfaceFilter(surface, btn) {
+      surfaceFilter = surface;
+      document.querySelectorAll('.filters-section .pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderAll();
+    }
+
+    function handleSearch(val) {
+      searchQuery = val.trim().toLowerCase();
+      renderAll();
     }
 
     function handleProfileClick() {
@@ -973,7 +1318,7 @@
       }
     }
 
-    // Start application
+    // Start
     initApp();
   </script>
 </body>
