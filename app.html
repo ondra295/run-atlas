@@ -9,8 +9,8 @@
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 
-  <!-- Favicon: Running Atlas Emblém -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23121214'/%3E%3Ccircle cx='32' cy='32' r='28' stroke='%23007aff' stroke-width='1.5' stroke-opacity='0.3' fill='none'/%3E%3Cpath d='M10 38 Q22 30 32 37 T54 34' stroke='%235ac8fa' stroke-width='1.8' stroke-opacity='0.6' fill='none'/%3E%3Cpath d='M12 45 Q24 38 34 44 T52 42' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.4' fill='none'/%3E%3Cpath d='M18 42 L28 22 L36 34 L43 20 L52 42 Z' fill='%23007aff'/%3E%3Cpath d='M28 22 L36 34 L43 20' stroke='%235ac8fa' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='14' cy='45' r='2.5' fill='%2334c759'/%3E%3Ccircle cx='50' cy='42' r='2.5' fill='%23ff3b30'/%3E%3C/svg%3E">
+  <!-- Favicon: Running Atlas Topo-Peak -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
   <!-- Leaflet Map CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -41,7 +41,7 @@
     /* Main workspace */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
-    /* Left Runalyzer Rail */
+    /* Left Runalyze Rail */
     #left-rail {
       width: 56px; background: rgba(20, 20, 24, 0.94); backdrop-filter: blur(14px);
       border-right: 1px solid #2c2c2e; display: flex; flex-direction: column; gap: 6px;
@@ -244,22 +244,34 @@
   <div id="app-layout">
     <!-- TOP BAR -->
     <header id="top-bar">
-      <!-- BRAND LOGO: RUNNING ATLAS -->
-      <a href="index.html" style="display: inline-flex; align-items: center; gap: 11px; text-decoration: none;">
-        <svg width="34" height="34" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="22" cy="22" r="20" stroke="#007aff" stroke-width="1.2" stroke-opacity="0.35"/>
-          <path d="M5 26 Q14 19 22 25 T39 23" stroke="#5ac8fa" stroke-width="1.2" stroke-opacity="0.6" fill="none"/>
-          <path d="M7 32 Q16 26 24 31 T37 29" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.4" fill="none"/>
-          <path d="M11 31 L19 15 L26 25 L32 13 L39 31 Z" fill="#007aff"/>
-          <path d="M19 15 L26 25 L32 13" stroke="#5ac8fa" stroke-width="2" stroke-linecap="round" fill="none"/>
-          <circle cx="8" cy="32" r="2" fill="#34c759"/>
-          <circle cx="36" cy="29" r="2" fill="#ff3b30"/>
-        </svg>
+      <!-- BRAND LOGO: RUNNING ATLAS (TOPO-PEAK) -->
+      <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0;">
+        <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+          <defs>
+            <filter id="barRidgeGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
 
-        <div style="display: flex; flex-direction: column; line-height: 1;">
-          <span style="font-size: 0.62rem; font-weight: 800; letter-spacing: 2.8px; color: #ffffff; text-transform: uppercase;">RUNNING</span>
-          <span style="font-size: 1.25rem; font-weight: 900; letter-spacing: 0.6px; color: #007aff; margin-top: 1px;">ATLAS</span>
-        </div>
+          <!-- Horní nápis: RUNNING -->
+          <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
+
+          <!-- Masiv hory a písmeno A -->
+          <g transform="translate(6, 36)">
+            <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
+            <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#barRidgeGlow)"/>
+            <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </g>
+
+          <!-- Nápis TLAS -->
+          <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
+
+          <!-- Spodní linka profilu -->
+          <path d="M 6 102 L 205 102 L 216 95 L 225 106 L 235 89 L 246 102 L 368 102" stroke="#007aff" stroke-width="2.2" stroke-opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="6" cy="102" r="4" fill="#34c759"/>
+          <circle cx="368" cy="102" r="4" fill="#ff3b30"/>
+        </svg>
       </a>
 
       <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Search race, route, city..." oninput="handleSearch(this.value)">
