@@ -154,7 +154,7 @@
     }
     .modal-card {
       background: #1c1c1e; border: 1px solid #333; border-radius: 16px; padding: 26px;
-      max-width: 520px; width: 100%; color: #fff; display: flex; flex-direction: column; gap: 12px;
+      max-width: 530px; width: 100%; color: #fff; display: flex; flex-direction: column; gap: 12px;
       max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     }
     .modal-card input, .modal-card select, .modal-card textarea {
@@ -168,9 +168,9 @@
     .form-slider-wrap input[type=range] { flex: 1; accent-color: #007aff; }
 
     .details-accordion-btn {
-      background: #242426; border: 1px dashed #444; color: #5ac8fa; padding: 9px 12px;
-      border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-align: left;
-      display: flex; justify-content: space-between; align-items: center;
+      background: #242426; border: 1px dashed #444; color: #5ac8fa; padding: 10px 14px;
+      border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: pointer; text-align: left;
+      display: flex; justify-content: space-between; align-items: center; margin-top: 4px;
     }
     .details-accordion-btn:hover { background: #2c2c2e; border-color: #007aff; }
 
@@ -181,6 +181,12 @@
       color: #aaa; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-align: center;
     }
     .segmented-btn.active { background: #007aff; color: #fff; border-color: #007aff; }
+
+    /* Time picker cluster */
+    .time-inputs-cluster { display: flex; gap: 6px; align-items: center; }
+    .time-box-input {
+      width: 62px !important; text-align: center; font-weight: 700; padding: 8px 4px !important;
+    }
 
     /* Image Gallery preview */
     .gallery-preview-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
@@ -211,7 +217,6 @@
   <!-- ========================================== -->
   <div id="onboarding-overlay" class="modal-backdrop">
     <div class="modal-card" style="text-align: center; max-width: 480px; padding: 36px 28px;">
-      <!-- Clean Topo-Atlas SVG -->
       <div style="display:flex; justify-content:center; margin-bottom: 12px;">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
@@ -266,13 +271,16 @@
         <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.4rem; cursor:pointer;">&times;</button>
       </div>
 
-      <!-- Drag & Drop GPX -->
+      <!-- Drag & Drop GPX (Optional) -->
       <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 8px; padding: 14px; text-align: center; background: rgba(0,122,255,0.06); cursor: pointer;">
-        <span id="gpx-label">📁 Drag & drop watch .GPX file (or click to browse)</span>
+        <span id="gpx-label">📁 Drag & drop watch .GPX file (Optional, or click to browse)</span>
         <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
       </div>
 
-      <input id="form-name" type="text" placeholder="Race title (e.g. Dresden Half Marathon) *">
+      <div>
+        <label class="form-group-label">Activity Title *</label>
+        <input id="form-name" type="text" placeholder="e.g. Dresden Half Marathon">
+      </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
         <div>
@@ -280,7 +288,7 @@
           <input id="form-date" type="date">
         </div>
         <div>
-          <label class="form-group-label">Status</label>
+          <label class="form-group-label">Status *</label>
           <select id="form-status" onchange="handleStatusChange(this.value)">
             <option value="" disabled selected>Choose status</option>
             <option value="done">Completed</option>
@@ -312,8 +320,14 @@
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <input id="form-distance" type="text" placeholder="Distance (e.g. 21.1 km)">
-        <input id="form-elevation" type="text" placeholder="Elevation gain (e.g. +110 m)">
+        <div>
+          <label class="form-group-label">Distance</label>
+          <input id="form-distance" type="text" placeholder="e.g. 21.1 km">
+        </div>
+        <div>
+          <label class="form-group-label">Elevation Gain</label>
+          <input id="form-elevation" type="text" placeholder="e.g. +110 m">
+        </div>
       </div>
 
       <!-- Importance Slider (1-10) -->
@@ -326,39 +340,47 @@
         </div>
       </div>
 
-      <!-- Tailored Why & Notes -->
+      <!-- Tailored Why (Optional) -->
       <div>
-        <label class="form-group-label" id="label-why">My 'Why'</label>
+        <label class="form-group-label" id="label-why">My 'Why' (Optional)</label>
         <input id="form-why" type="text" placeholder="What motivated me to register for this race?">
       </div>
-      <div>
-        <label class="form-group-label" id="label-notes">Race & Terrain Notes</label>
-        <textarea id="form-notes" placeholder="Notes on pacing, profile, course quirks..." style="height: 54px;"></textarea>
-      </div>
 
-      <!-- Accordion: More Details -->
+      <!-- Accordion: More Details (Notes, Timing, Logistics) -->
       <button type="button" class="details-accordion-btn" onclick="toggleDetailsAccordion()">
-        <span id="details-accordion-title">+ Add more details (Finish time, logistics, satisfaction...)</span>
+        <span id="details-accordion-title">+ Add more details (Exact times, notes, logistics, satisfaction...)</span>
         <span id="details-accordion-chevron">▾</span>
       </button>
 
-      <div id="details-accordion-content" style="display: none; flex-direction: column; gap: 10px; background:#161618; padding:12px; border-radius:8px; border:1px solid #28282a;">
+      <div id="details-accordion-content" style="display: none; flex-direction: column; gap: 12px; background:#161618; padding:14px; border-radius:8px; border:1px solid #28282a;">
         
         <!-- COMPLETED SPECIFIC -->
-        <div id="group-details-completed" style="display:flex; flex-direction:column; gap:10px;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div id="group-details-completed" style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <div>
-              <label class="form-group-label">What was my ambition?</label>
-              <input id="form-ambition-time" type="text" placeholder="e.g. 1:30:00 or sub-45" oninput="calculateTimeDifference()">
+              <label class="form-group-label">Target ambition time</label>
+              <div class="time-inputs-cluster">
+                <input id="ambition-h" class="time-box-input" type="number" min="0" max="99" placeholder="HH" oninput="calculateTimeDifference()">
+                <span style="color:#666;">:</span>
+                <input id="ambition-m" class="time-box-input" type="number" min="0" max="59" placeholder="MM" oninput="calculateTimeDifference()">
+                <span style="color:#666;">:</span>
+                <input id="ambition-s" class="time-box-input" type="number" min="0" max="59" placeholder="SS" oninput="calculateTimeDifference()">
+              </div>
             </div>
             <div>
               <label class="form-group-label">Official finish time</label>
-              <input id="form-finish-time" type="text" placeholder="e.g. 1:28:45" oninput="calculateTimeDifference()">
+              <div class="time-inputs-cluster">
+                <input id="finish-h" class="time-box-input" type="number" min="0" max="99" placeholder="HH" oninput="calculateTimeDifference()">
+                <span style="color:#666;">:</span>
+                <input id="finish-m" class="time-box-input" type="number" min="0" max="59" placeholder="MM" oninput="calculateTimeDifference()">
+                <span style="color:#666;">:</span>
+                <input id="finish-s" class="time-box-input" type="number" min="0" max="59" placeholder="SS" oninput="calculateTimeDifference()">
+              </div>
             </div>
           </div>
 
-          <div id="ambition-diff-box" style="display:none; font-size:0.8rem; padding:8px 10px; border-radius:6px; background:#1c2b20; border:1px solid #34c759;">
-            Difference vs ambition: <strong id="ambition-diff-text"></strong>
+          <div id="ambition-diff-box" style="display:none; font-size:0.82rem; padding:8px 12px; border-radius:6px; background:#1c2b20; border:1px solid #34c759;">
+            Difference vs goal: <strong id="ambition-diff-text"></strong>
           </div>
 
           <div>
@@ -396,17 +418,28 @@
         </div>
 
         <!-- PLANNED & BUCKET LIST SPECIFIC -->
-        <div id="group-details-planning" style="display:none; flex-direction:column; gap:10px;">
+        <div id="group-details-planning" style="display:none; flex-direction:column; gap:12px;">
           <div>
             <label class="form-group-label">Target / Ambition</label>
             <input id="form-target-ambition" type="text" placeholder="e.g. Sub 3:15:00 or Finish without exhaustion">
           </div>
 
-          <label class="form-group-label">Logistics from Home Base</label>
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
-            <input id="form-logistics-dist" type="text" placeholder="Distance (km)">
-            <input id="form-logistics-transport" type="text" placeholder="Car / Flight / Train">
-            <input id="form-logistics-time" type="text" placeholder="Travel time">
+          <div>
+            <label class="form-group-label">Logistics</label>
+            <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:6px;">
+              <input id="form-logistics-dist" type="text" placeholder="Distance from home (km)">
+              <select id="form-logistics-transport">
+                <option value="" disabled selected>Transport</option>
+                <option value="Car">Car</option>
+                <option value="Plane">Plane</option>
+                <option value="Train">Train</option>
+                <option value="Bus">Bus</option>
+                <option value="Transit">Public Transit</option>
+                <option value="Bicycle">Bicycle</option>
+                <option value="Other">Other</option>
+              </select>
+              <input id="form-logistics-time" type="text" placeholder="Travel time (e.g. 2h)">
+            </div>
           </div>
 
           <div>
@@ -421,11 +454,17 @@
           </div>
         </div>
 
+        <!-- NOTES INSIDE ACCORDION -->
+        <div>
+          <label class="form-group-label" id="label-notes">Race & Terrain Notes (Optional)</label>
+          <textarea id="form-notes" placeholder="Notes on pacing, profile, course quirks, fueling..." style="height: 64px;"></textarea>
+        </div>
+
       </div>
 
-      <!-- Multiple Photos (up to 10) -->
+      <!-- Multiple Photos (Optional, up to 10) -->
       <div>
-        <label class="form-group-label">Activity Photos (Up to 10 photos):</label>
+        <label class="form-group-label">Activity Photos (Optional, up to 10 photos):</label>
         <input type="file" id="input-images" accept="image/*" multiple onchange="handleMultipleImagesPreview(this.files)">
         <div id="images-preview" class="gallery-preview-grid"></div>
       </div>
@@ -444,10 +483,10 @@
       <div>
         <label class="form-group-label">Your Home Base Location:</label>
         <div style="display:flex; gap:8px;">
-          <input id="setting-home-query" type="text" placeholder="City or full address (e.g. Slaný, Czech Republic)">
+          <input id="setting-home-query" type="text" placeholder="City or address (e.g. Slaný, Czech Republic)">
           <button class="pill-btn" style="background:#007aff; color:#fff;" onclick="geocodeAndSaveHome()">Search</button>
         </div>
-        <small style="font-size:0.72rem; color:#888; display:block; margin-top:4px;">Or enter latitude, longitude coordinates manually below:</small>
+        <small style="font-size:0.72rem; color:#888; display:block; margin-top:5px;">Or enter latitude, longitude coordinates manually below:</small>
         <input id="setting-home-coords" type="text" placeholder="50.2305, 14.0888" style="margin-top:6px;">
       </div>
       <button class="open-detail-btn" style="padding:11px;" onclick="saveUserSettingsManual()">Save Home Base</button>
@@ -642,10 +681,10 @@
     let searchQuery = '';
     let selectedRepeatValue = 'yes';
 
-    // Home Base logic: null default if not set!
+    // Home Base: null by default if not set
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
-    // Map initialization: defaults to WORLD if no home base is set!
+    // Initial map view: defaults to WORLD if no home base is configured
     const defaultCenter = userHomeCoords || [25.0, 10.0];
     const defaultZoom = userHomeCoords ? 5.2 : 2.5;
 
@@ -801,7 +840,6 @@
 
       document.getElementById('stats-label').textContent = `Showing ${activeList.length} activities`;
 
-      // EMPTY STATE IN SIDEBAR
       if (activeList.length === 0) {
         content.innerHTML = `
           <div style="text-align:center; padding: 40px 10px; color:#888;">
@@ -919,8 +957,16 @@
       document.getElementById('importance-val').textContent = '5';
       document.getElementById('form-why').value = '';
       document.getElementById('form-notes').value = '';
-      document.getElementById('form-ambition-time').value = '';
-      document.getElementById('form-finish-time').value = '';
+      
+      // Reset timing boxes
+      document.getElementById('ambition-h').value = '';
+      document.getElementById('ambition-m').value = '';
+      document.getElementById('ambition-s').value = '';
+      document.getElementById('finish-h').value = '';
+      document.getElementById('finish-m').value = '';
+      document.getElementById('finish-s').value = '';
+      document.getElementById('ambition-diff-box').style.display = 'none';
+
       document.getElementById('form-placement').value = '';
       document.getElementById('form-satisfaction').value = '7';
       document.getElementById('satisfaction-val').textContent = '7';
@@ -931,14 +977,12 @@
       document.getElementById('form-cost').value = '€€';
       document.getElementById('input-images').value = '';
       document.getElementById('images-preview').innerHTML = '';
-      document.getElementById('ambition-diff-box').style.display = 'none';
-      document.getElementById('gpx-label').textContent = '📁 Drag & drop watch .GPX file (or click to browse)';
+      document.getElementById('gpx-label').textContent = '📁 Drag & drop watch .GPX file (Optional, or click to browse)';
       
       parsedGpxCoords = null;
       parsedCenterCoords = null;
       selectedImageFiles = [];
 
-      // Hide accordion by default
       document.getElementById('details-accordion-content').style.display = 'none';
       document.getElementById('details-accordion-chevron').textContent = '▾';
     }
@@ -954,7 +998,7 @@
       if (isMemorable) {
         document.getElementById('form-status').value = 'done';
         handleStatusChange('done');
-        document.getElementById('label-why').textContent = "What made this run memorable?";
+        document.getElementById('label-why').textContent = "What made this run memorable? (Optional)";
       } else {
         handleStatusChange('');
       }
@@ -987,7 +1031,7 @@
         completedGroup.style.display = 'none';
         planningGroup.style.display = 'flex';
       } else {
-        whyInput.placeholder = "Personal motivation or quote...";
+        whyInput.placeholder = "Personal motivation or quote (Optional)...";
         notesInput.placeholder = "Notes on terrain, feelings, gear...";
         completedGroup.style.display = 'none';
         planningGroup.style.display = 'none';
@@ -1008,35 +1052,46 @@
       btn.classList.add('active');
     }
 
-    // TIME DIFFERENCE CALCULATOR
-    function parseTimeToSeconds(timeStr) {
-      if (!timeStr) return null;
-      const parts = timeStr.trim().split(':').map(Number);
-      if (parts.some(isNaN)) return null;
-      if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-      if (parts.length === 2) return parts[0] * 60 + parts[1];
-      return null;
+    // HH:MM:SS TIMING CALCULATOR
+    function getBoxSeconds(prefix) {
+      const hVal = document.getElementById(`${prefix}-h`).value;
+      const mVal = document.getElementById(`${prefix}-m`).value;
+      const sVal = document.getElementById(`${prefix}-s`).value;
+
+      if (!hVal && !mVal && !sVal) return null;
+      const h = parseInt(hVal) || 0;
+      const m = parseInt(mVal) || 0;
+      const s = parseInt(sVal) || 0;
+      return h * 3600 + m * 60 + s;
     }
 
-    function formatSecondsToTime(seconds) {
-      const absSec = Math.abs(seconds);
-      const h = Math.floor(absSec / 3600);
-      const m = Math.floor((absSec % 3600) / 60);
-      const s = absSec % 60;
-      const sign = seconds < 0 ? '-' : '+';
-      if (h > 0) return `${sign}${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-      return `${sign}${m}:${s.toString().padStart(2, '0')}`;
+    function formatBoxesToTime(prefix) {
+      const hVal = document.getElementById(`${prefix}-h`).value;
+      const mVal = document.getElementById(`${prefix}-m`).value;
+      const sVal = document.getElementById(`${prefix}-s`).value;
+
+      if (!hVal && !mVal && !sVal) return '';
+      const h = parseInt(hVal) || 0;
+      const m = parseInt(mVal) || 0;
+      const s = parseInt(sVal) || 0;
+      return `${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     }
 
     function calculateTimeDifference() {
-      const ambitionSec = parseTimeToSeconds(document.getElementById('form-ambition-time').value);
-      const finishSec = parseTimeToSeconds(document.getElementById('form-finish-time').value);
+      const ambitionSec = getBoxSeconds('ambition');
+      const finishSec = getBoxSeconds('finish');
       const diffBox = document.getElementById('ambition-diff-box');
       const diffText = document.getElementById('ambition-diff-text');
 
       if (ambitionSec !== null && finishSec !== null) {
         const diff = finishSec - ambitionSec;
-        const formatted = formatSecondsToTime(diff);
+        const absSec = Math.abs(diff);
+        const h = Math.floor(absSec / 3600);
+        const m = Math.floor((absSec % 3600) / 60);
+        const s = absSec % 60;
+        const sign = diff <= 0 ? '-' : '+';
+        const formatted = `${sign}${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
         if (diff <= 0) {
           diffBox.style.background = '#1c2b20';
           diffBox.style.borderColor = '#34c759';
@@ -1131,9 +1186,16 @@
       if (!currentUser) return;
       const name = document.getElementById('form-name').value.trim();
       const status = document.getElementById('form-status').value;
+      
+      // Strict validation only on essentials
       if (!name) { alert('Please enter activity title.'); return; }
       if (!status) { alert('Please select activity status.'); return; }
-      if (!parsedCenterCoords) { alert('Please upload a GPX file.'); return; }
+
+      // Seamless fallback if GPX is not uploaded: uses Home Base or map center
+      let finalCoords = parsedCenterCoords;
+      if (!finalCoords) {
+        finalCoords = userHomeCoords || [map.getCenter().lat, map.getCenter().lng];
+      }
 
       const btn = document.getElementById('btn-save-race');
       btn.textContent = 'Saving to cloud...';
@@ -1156,6 +1218,10 @@
         const dateStr = document.getElementById('form-date').value;
         const isMemorable = (currentMode === 'memorable');
 
+        // Formatted times from separate input boxes
+        const finishTimeStr = formatBoxesToTime('finish');
+        const ambitionTimeStr = formatBoxesToTime('ambition') || document.getElementById('form-target-ambition').value.trim();
+
         const record = {
           user_id: currentUser.id,
           name: name,
@@ -1172,10 +1238,10 @@
           notes: document.getElementById('form-notes').value,
           images: uploadedImageUrls,
           image_url: uploadedImageUrls[0] || null,
-          coords: parsedCenterCoords,
+          coords: finalCoords,
           route_coords: parsedGpxCoords,
-          result_time: document.getElementById('form-finish-time').value,
-          ambition_time: document.getElementById('form-ambition-time').value || document.getElementById('form-target-ambition').value,
+          result_time: finishTimeStr,
+          ambition_time: ambitionTimeStr,
           placement: document.getElementById('form-placement').value,
           satisfaction: parseInt(document.getElementById('form-satisfaction').value),
           expectations: document.getElementById('form-expectations').value,
@@ -1264,7 +1330,7 @@
 
       if (type === 'about') {
         title.textContent = 'About RunAtlas';
-        body.innerHTML = `RunAtlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.1 &bull; Built with Leaflet & Supabase</span>`;
+        body.innerHTML = `RunAtlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.2 &bull; Built with Leaflet & Supabase</span>`;
       } else {
         title.textContent = 'Help & Support';
         body.innerHTML = `Need help with GPX imports or custom features?<br><br>Reach out at:<br><a href="mailto:support@runatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runatlas.app</a>`;
