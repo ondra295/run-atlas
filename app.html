@@ -67,7 +67,7 @@
 
     /* Map Area Wrapper */
     #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; }
-    #map { width: 100%; height: 100%; background: #1a1a1a; z-index: 1; }
+    #map { width: 100%; height: 100%; background: #121214; z-index: 1; }
 
     /* Onboarding Overlay over Map */
     #onboarding-overlay {
@@ -126,7 +126,8 @@
     .status-card-btn.active[data-status="planned"] .indicator { background: #ff9f0a; box-shadow: 0 0 6px #ff9f0a; }
     .status-card-btn.active[data-status="bucket"] .indicator { background: #5ac8fa; box-shadow: 0 0 6px #5ac8fa; }
 
-    .filters-section { padding: 10px 20px; border-bottom: 1px solid #262628; display: flex; gap: 6px; flex-wrap: wrap; }
+    /* Filters Section & Drawer */
+    .filters-section { padding: 10px 18px; border-bottom: 1px solid #262628; display: flex; flex-direction: column; gap: 8px; }
 
     .pill-btn {
       background: #242426; border: 1px solid #333; color: #aaa; padding: 6px 12px;
@@ -135,6 +136,11 @@
     }
     .pill-btn:hover { background: #2c2c2e; color: #fff; }
     .pill-btn.active { background: #007aff; color: #fff; border-color: #007aff; }
+
+    #advanced-filters-drawer {
+      display: none; flex-direction: column; gap: 10px; width: 100%; padding: 12px;
+      background: #161618; border-radius: 8px; border: 1px solid #2e2e34; margin-top: 4px;
+    }
 
     #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 
@@ -420,10 +426,69 @@
           </div>
         </div>
 
+        <!-- FILTRY (ZÁKLADNÍ + ADVANCED DRAWER) -->
         <div class="filters-section">
-          <button class="pill-btn active" onclick="setSurfaceFilter('all', this)">All</button>
-          <button class="pill-btn" onclick="setSurfaceFilter('trail', this)">Trail</button>
-          <button class="pill-btn" onclick="setSurfaceFilter('road', this)">Road</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+            <div style="display:flex; gap:6px;">
+              <button class="pill-btn active" onclick="setSurfaceFilter('all', this)">All</button>
+              <button class="pill-btn" onclick="setSurfaceFilter('trail', this)">Trail</button>
+              <button class="pill-btn" onclick="setSurfaceFilter('road', this)">Road</button>
+            </div>
+            <button id="btn-toggle-advanced-filters" class="pill-btn" style="background:#202024; border-color:#3a3a3c; color:#5ac8fa;" onclick="toggleAdvancedFilters()">
+              ⚙️ More filters <span id="adv-filter-count" style="display:none; background:#007aff; color:#fff; font-size:0.68rem; padding:1px 6px; border-radius:10px; margin-left:2px;">0</span>
+            </button>
+          </div>
+
+          <!-- POKROČILÉ FILTRY -->
+          <div id="advanced-filters-drawer">
+            <!-- Měsíc konání -->
+            <div>
+              <label class="form-group-label" style="font-size:0.7rem;">Month of Event</label>
+              <select id="filter-month" class="stepped-input" style="padding:6px 10px; font-size:0.8rem;" onchange="applyAdvancedFilters()">
+                <option value="all">All months</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+            </div>
+
+            <!-- Obtížnost -->
+            <div>
+              <label class="form-group-label" style="font-size:0.7rem;">Difficulty</label>
+              <div class="chips-group" id="filter-difficulty-chips">
+                <div class="chip-btn active" data-val="all" onclick="setDifficultyFilter('all', this)">All</div>
+                <div class="chip-btn" data-val="snadna" onclick="setDifficultyFilter('snadna', this)">🟢 Easy</div>
+                <div class="chip-btn" data-val="stredni" onclick="setDifficultyFilter('stredni', this)">🟡 Moderate</div>
+                <div class="chip-btn" data-val="tezka" onclick="setDifficultyFilter('tezka', this)">🟠 Hard</div>
+                <div class="chip-btn" data-val="extremni" onclick="setDifficultyFilter('extremni', this)">🔴 Extreme</div>
+              </div>
+            </div>
+
+            <!-- Finanční náročnost -->
+            <div>
+              <label class="form-group-label" style="font-size:0.7rem;">Estimated Cost</label>
+              <div class="chips-group" id="filter-cost-chips">
+                <div class="chip-btn active" data-val="all" onclick="setCostFilter('all', this)">All</div>
+                <div class="chip-btn" data-val="€" onclick="setCostFilter('€', this)">€</div>
+                <div class="chip-btn" data-val="€€" onclick="setCostFilter('€€', this)">€€</div>
+                <div class="chip-btn" data-val="€€€" onclick="setCostFilter('€€€', this)">€€€</div>
+                <div class="chip-btn" data-val="€€€€" onclick="setCostFilter('€€€€', this)">€€€€+</div>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:4px;">
+              <button class="pill-btn" style="padding:4px 10px; font-size:0.74rem;" onclick="resetAdvancedFilters()">Reset filters</button>
+            </div>
+          </div>
         </div>
 
         <div id="content"></div>
@@ -640,7 +705,7 @@
           </div>
         </div>
 
-        <!-- Notes (Moved to Step 2) -->
+        <!-- Notes (Step 2) -->
         <div>
           <label class="form-group-label">Race & Terrain Notes (Optional)</label>
           <textarea id="form-notes" class="stepped-input" placeholder="Notes on pacing, profile, quirks, fueling..." style="height:62px;"></textarea>
@@ -716,7 +781,12 @@
     let surfaceFilter = 'all';
     let searchQuery = '';
 
-    // Selected chips
+    // Advanced filters state
+    let advFilterMonth = 'all';
+    let advFilterDifficulty = 'all';
+    let advFilterCost = 'all';
+
+    // Selected chips in modal
     let chipSelections = {
       status: '',
       surface: 'mixed',
@@ -727,14 +797,43 @@
     // Home Base: null by default if not set
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
-    // Initial map view: defaults to WORLD if no home base is configured
+    // Strict world bounds: limits map strictly to [-85..85, -180..180] (one world only)
+    const southWest = L.latLng(-85, -180);
+    const northEast = L.latLng(85, 180);
+    const worldBounds = L.latLngBounds(southWest, northEast);
+
     const defaultCenter = userHomeCoords || [25.0, 10.0];
     const defaultZoom = userHomeCoords ? 5.2 : 2.5;
 
-    const map = L.map('map', { center: defaultCenter, zoom: defaultZoom });
-    const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 18 }).addTo(map);
-    const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Dark', maxZoom: 16 });
-    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Satellite', maxZoom: 18 });
+    const map = L.map('map', {
+      center: defaultCenter,
+      zoom: defaultZoom,
+      minZoom: 2,
+      maxBounds: worldBounds,
+      maxBoundsViscosity: 1.0,
+      worldCopyJump: false
+    });
+
+    const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; Esri',
+      maxZoom: 18,
+      noWrap: true,
+      bounds: worldBounds
+    }).addTo(map);
+
+    const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; Esri Dark',
+      maxZoom: 16,
+      noWrap: true,
+      bounds: worldBounds
+    });
+
+    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; Esri Satellite',
+      maxZoom: 18,
+      noWrap: true,
+      bounds: worldBounds
+    });
 
     L.control.layers({ "Topographic (Default)": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
     let markerLayerGroup = L.featureGroup().addTo(map);
@@ -771,8 +870,8 @@
         document.getElementById('label-user').textContent = "Demo User";
         document.getElementById('main-title').textContent = currentMode === 'races' ? "Race Atlas (Demo)" : "Memorable Runs (Demo)";
         races = [
-          { id: "demo-1", name: "Dresden Half Marathon", date: "2026-10-24", coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", distance: "21.1 km", elevation: "+110 m", why: "Flat course along Elbe.", notes: "Target 4:07/km." },
-          { id: "demo-2", name: "Helsinki Marathon", date: "2026-08-22", coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", distance: "42.2 km", elevation: "+226 m", resultTime: "3:11:04", why: "First marathon.", notes: "Even split." }
+          { id: "demo-1", name: "Dresden Half Marathon", date: "2026-10-24", month: 10, coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€", distance: "21.1 km", elevation: "+110 m", why: "Flat course along Elbe.", notes: "Target 4:07/km." },
+          { id: "demo-2", name: "Helsinki Marathon", date: "2026-08-22", month: 8, coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€€€", distance: "42.2 km", elevation: "+226 m", resultTime: "3:11:04", why: "First marathon.", notes: "Even split." }
         ];
         renderAll();
         return;
@@ -801,6 +900,7 @@
           id: item.id,
           name: item.name,
           date: item.date,
+          month: item.month,
           coords: item.coords,
           status: item.status,
           statusLabel: item.status_label,
@@ -860,6 +960,81 @@
       renderAll();
     }
 
+    // ==========================================
+    // PARSING MONTH & ADVANCED FILTRATION LOGIC
+    // ==========================================
+    function parseActivityMonth(item) {
+      if (item.month && !isNaN(item.month)) return parseInt(item.month);
+      if (item.date) {
+        if (item.date.includes('-')) {
+          const parts = item.date.split('-');
+          if (parts.length >= 2) return parseInt(parts[1]);
+        }
+        const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+        const lower = item.date.toLowerCase();
+        for (let i = 0; i < monthNames.length; i++) {
+          if (lower.includes(monthNames[i])) return i + 1;
+        }
+      }
+      return null;
+    }
+
+    function toggleAdvancedFilters() {
+      const drawer = document.getElementById('advanced-filters-drawer');
+      const isVisible = (drawer.style.display === 'flex');
+      drawer.style.display = isVisible ? 'none' : 'flex';
+      document.getElementById('btn-toggle-advanced-filters').classList.toggle('active', !isVisible);
+    }
+
+    function updateAdvancedFiltersCount() {
+      let count = 0;
+      if (advFilterMonth !== 'all') count++;
+      if (advFilterDifficulty !== 'all') count++;
+      if (advFilterCost !== 'all') count++;
+
+      const badge = document.getElementById('adv-filter-count');
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function setDifficultyFilter(val, btn) {
+      advFilterDifficulty = val;
+      document.querySelectorAll('#filter-difficulty-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
+      updateAdvancedFiltersCount();
+      renderAll();
+    }
+
+    function setCostFilter(val, btn) {
+      advFilterCost = val;
+      document.querySelectorAll('#filter-cost-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
+      updateAdvancedFiltersCount();
+      renderAll();
+    }
+
+    function applyAdvancedFilters() {
+      advFilterMonth = document.getElementById('filter-month').value;
+      updateAdvancedFiltersCount();
+      renderAll();
+    }
+
+    function resetAdvancedFilters() {
+      advFilterMonth = 'all';
+      advFilterDifficulty = 'all';
+      advFilterCost = 'all';
+      document.getElementById('filter-month').value = 'all';
+      document.querySelectorAll('#filter-difficulty-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
+      document.querySelectorAll('#filter-cost-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
+      updateAdvancedFiltersCount();
+      renderAll();
+    }
+
+    // ==========================================
+    // RENDER LIST & MAP MARKERS
+    // ==========================================
     function renderAll() {
       markerLayerGroup.clearLayers();
       const content = document.getElementById('content');
@@ -872,6 +1047,19 @@
         if (isRace && !statusFilters[item.status]) return false;
         if (surfaceFilter !== 'all' && item.surface !== surfaceFilter) return false;
         if (searchQuery && !item.name.toLowerCase().includes(searchQuery)) return false;
+
+        // Advanced filter checks
+        if (advFilterMonth !== 'all') {
+          const m = parseActivityMonth(item);
+          if (m !== parseInt(advFilterMonth)) return false;
+        }
+        if (advFilterDifficulty !== 'all') {
+          if (item.difficulty !== advFilterDifficulty) return false;
+        }
+        if (advFilterCost !== 'all') {
+          if (item.cost !== advFilterCost) return false;
+        }
+
         return true;
       });
 
@@ -881,7 +1069,7 @@
         content.innerHTML = `
           <div style="text-align:center; padding: 40px 10px; color:#888;">
             <div style="font-size:0.92rem; font-weight:600; color:#ddd; margin-bottom:6px;">No activities match your filters</div>
-            <div style="font-size:0.78rem; margin-bottom:18px;">Your atlas has no records in this view or region.</div>
+            <div style="font-size:0.78rem; margin-bottom:18px;">Your atlas has no records matching these criteria.</div>
             <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
               <button class="open-detail-btn" style="width:200px;" onclick="openAddModal()">
                 ${isRace ? '➕ Add new race' : '➕ Add new run'}
@@ -920,6 +1108,7 @@
             <span>🏃 ${item.surfaceLabel || 'Mixed'}</span><span>&bull;</span>
             <span>📏 ${item.distance || '-'}</span><span>&bull;</span>
             <span>⛰️ ${item.elevation || '-'}</span>
+            ${item.cost ? `<span>&bull;</span><span>💰 ${item.cost}</span>` : ''}
             ${item.resultTime ? `<span>&bull;</span><span style="color:#34c759; font-weight:700;">⏱️ ${item.resultTime}</span>` : ''}
           </div>
         `;
@@ -949,7 +1138,7 @@
         <button class="back-btn" onclick="renderAll()">← Back to list</button>
         ${galleryHtml}
         <h2 style="font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:4px;">${item.name}</h2>
-        <div style="font-size:0.8rem; color:#aaa; margin-bottom:14px;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || ''}</div>
+        <div style="font-size:0.8rem; color:#aaa; margin-bottom:14px;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || ''} ${item.cost ? `&bull; Cost: ${item.cost}` : ''}</div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#242426; padding:12px; border-radius:8px; margin-bottom:12px;">
           <div><small style="color:#777; font-size:0.7rem; display:block;">DISTANCE</small><strong>${item.distance || '-'}</strong></div>
@@ -1026,7 +1215,6 @@
       parsedCenterCoords = null;
       selectedImageFiles = [];
 
-      // Reset chips
       selectChip('status', '');
       selectChip('surface', 'mixed');
       selectChip('difficulty', 'stredni');
@@ -1233,8 +1421,13 @@
         }
 
         const dateStr = document.getElementById('form-date').value;
-        const isMemorable = (currentMode === 'memorable');
+        let monthInt = null;
+        if (dateStr) {
+          const parts = dateStr.split('-');
+          if (parts.length >= 2) monthInt = parseInt(parts[1]);
+        }
 
+        const isMemorable = (currentMode === 'memorable');
         const finishTimeStr = formatBoxesToTime('finish');
         const ambitionTimeStr = formatBoxesToTime('ambition') || document.getElementById('form-target-ambition').value.trim();
 
@@ -1245,6 +1438,7 @@
           user_id: currentUser.id,
           name: name,
           date: dateStr,
+          month: monthInt,
           status: status,
           status_label: statusLabels[status] || 'Planned',
           surface: chipSelections.surface,
@@ -1349,7 +1543,7 @@
 
       if (type === 'about') {
         title.textContent = 'About RunAtlas';
-        body.innerHTML = `RunAtlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.4 &bull; Built with Leaflet & Supabase</span>`;
+        body.innerHTML = `RunAtlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.5 &bull; Built with Leaflet & Supabase</span>`;
       } else {
         title.textContent = 'Help & Support';
         body.innerHTML = `Need help with GPX imports or custom features?<br><br>Reach out at:<br><a href="mailto:support@runatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runatlas.app</a>`;
@@ -1387,7 +1581,9 @@
 
     function setSurfaceFilter(surface, btn) {
       surfaceFilter = surface;
-      document.querySelectorAll('.filters-section .pill-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.filters-section .pill-btn').forEach(b => {
+        if (b.id !== 'btn-toggle-advanced-filters') b.classList.remove('active');
+      });
       btn.classList.add('active');
       renderAll();
     }
