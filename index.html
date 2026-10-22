@@ -2,314 +2,277 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Running Atlas — Interactive Map & Route Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RunAtlas — Your Running Atlas & Route Log</title>
- <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 10 L14 54 L23 54 L32 30 L41 54 L50 54 Z' fill='%23007aff'/%3E%3Cpath d='M18 38 Q25 30 32 36 T46 34' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M20 45 Q26 38 32 44 T44 42' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+
+  <!-- Favicon: Running Atlas Emblém -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23121214'/%3E%3Ccircle cx='32' cy='32' r='28' stroke='%23007aff' stroke-width='1.5' stroke-opacity='0.3' fill='none'/%3E%3Cpath d='M10 38 Q22 30 32 37 T54 34' stroke='%235ac8fa' stroke-width='1.8' stroke-opacity='0.6' fill='none'/%3E%3Cpath d='M12 45 Q24 38 34 44 T52 42' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.4' fill='none'/%3E%3Cpath d='M18 42 L28 22 L36 34 L43 20 L52 42 Z' fill='%23007aff'/%3E%3Cpath d='M28 22 L36 34 L43 20' stroke='%235ac8fa' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='14' cy='45' r='2.5' fill='%2334c759'/%3E%3Ccircle cx='50' cy='42' r='2.5' fill='%23ff3b30'/%3E%3C/svg%3E">
+
+  <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #0c0c0e; color: #fff; }
+    html, body { height: 100%; width: 100%; overflow-x: hidden; background: #0c0c0e; color: #f2f2f7; }
 
-    .hero-container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
+    /* Background with subtle topography */
+    body {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       align-items: center;
-      padding: 40px 20px;
-      overflow: hidden;
+      justify-content: space-between;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 20%, #1c1c24 0%, #0c0c0e 85%);
+      position: relative;
+      padding: 24px;
     }
 
-    /* Video pozadí */
-    .bg-video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      min-width: 100%;
-      min-height: 100%;
-      width: auto;
-      height: auto;
-      transform: translate(-50%, -50%);
-      object-fit: cover;
-      z-index: 1;
-    }
-
-    /* Tmavý gradientní filtr */
-    .video-overlay {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at center, rgba(12,12,14,0.4) 0%, rgba(12,12,14,0.85) 100%);
+    .hero-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 680px;
+      margin-top: auto;
+      margin-bottom: auto;
       z-index: 2;
     }
 
-    /* Vycentrování hlavního obsahu */
-    .hero-center {
-      position: relative;
-      z-index: 3;
-      text-align: center;
-      max-width: 820px;
-      width: 100%;
-      margin: auto 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* Logo uprostřed nad nadpisem */
-    .brand-logo {
-      font-size: 2rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-      color: #fff;
-      margin-bottom: 20px;
-      text-shadow: 0 4px 16px rgba(0,0,0,0.6);
-    }
-    .brand-logo span { color: #007aff; }
-
-    /* Hlavní nadpis */
     .hero-title {
-      font-size: 3.5rem;
+      font-size: 2.2rem;
       font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 34px;
+      line-height: 1.25;
+      margin-bottom: 14px;
       letter-spacing: -0.5px;
-      text-shadow: 0 4px 24px rgba(0,0,0,0.7);
     }
 
-    /* Tlačítka seřazená vertikálně pod sebou */
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: #a1a1a6;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
     .hero-actions {
       display: flex;
-      flex-direction: column;
-      align-items: center;
       gap: 12px;
-      width: 100%;
-      max-width: 310px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .btn {
-      width: 100%;
-      padding: 14px 24px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
     .btn-primary {
       background: #007aff;
       color: #fff;
-      border: 1px solid #007aff;
-      box-shadow: 0 4px 20px rgba(0, 122, 255, 0.4);
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 13px 26px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
-    .btn-primary:hover { background: #0062cc; transform: translateY(-2px); }
+    .btn-primary:hover {
+      background: #0062cc;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
+    }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #fff;
+      background: rgba(44, 44, 46, 0.8);
+      color: #f2f2f7;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 13px 24px;
+      border-radius: 10px;
+      border: 1px solid #3a3a3c;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
-    .btn-secondary:hover { background: rgba(255, 255, 255, 0.22); transform: translateY(-2px); }
-
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #c7c7cc;
+    .btn-secondary:hover {
+      background: #3a3a3c;
+      transform: translateY(-2px);
     }
-    .btn-ghost:hover { background: rgba(255,255,255,0.08); color: #fff; }
 
-    /* Patička */
     .hero-footer {
-      position: relative;
-      z-index: 3;
       font-size: 0.78rem;
-      color: #8e8e93;
+      color: #636366;
+      text-align: center;
+      padding: 16px 0;
+      z-index: 2;
     }
 
-    /* Přihlašovací a registrační modal */
+    /* Modal for Login / Registration */
     .auth-modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(10px);
-      z-index: 1000;
+      z-index: 9999;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
-    .auth-box {
+    .auth-card {
       background: #1c1c1e;
-      border: 1px solid #333;
-      border-radius: 16px;
-      width: 380px;
-      max-width: 100%;
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      border: 1px solid #38383a;
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.85);
+      color: #fff;
     }
-    .auth-box h3 { font-size: 1.3rem; font-weight: 700; color: #fff; }
-    .auth-box input {
-      padding: 12px;
+    .auth-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: #242426;
+      border: 1px solid #3a3a3c;
       border-radius: 8px;
-      background: #2c2c2e;
-      border: 1px solid #444;
       color: #fff;
       font-size: 0.9rem;
+      margin-bottom: 12px;
       outline: none;
     }
-    .auth-box input:focus { border-color: #007aff; }
+    .auth-input:focus { border-color: #007aff; }
 
-    /* Mobilní zobrazení */
-    @media (max-width: 768px) {
-      .brand-logo { font-size: 1.6rem; margin-bottom: 16px; }
-      .hero-title { font-size: 2.3rem; margin-bottom: 28px; }
-      .hero-actions { max-width: 100%; }
+    @media (max-width: 600px) {
+      .hero-title { font-size: 1.8rem; }
+      .brand-logo svg { width: 58px; height: 58px; }
+      .brand-logo div span:nth-child(2) { font-size: 2.2rem !important; }
     }
   </style>
 </head>
 <body>
 
-  <div class="hero-container">
-    <!-- Video na pozadí -->
-    <video autoplay muted loop playsinline class="bg-video">
-      <source src="hero.mp4" type="video/mp4">
-    </video>
-    <div class="video-overlay"></div>
+  <main class="hero-container">
+    <!-- HERO LOGO: RUNNING ATLAS -->
+    <div class="brand-logo" style="margin-bottom: 28px; display: inline-flex; align-items: center; justify-content: center; gap: 20px;">
+      <svg width="76" height="76" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+        <circle cx="32" cy="32" r="30" stroke="#007aff" stroke-width="1.6" stroke-opacity="0.35"/>
+        <circle cx="32" cy="32" r="25" stroke="#5ac8fa" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="3 3"/>
+        <path d="M8 38 Q20 28 32 36 T56 33" stroke="#5ac8fa" stroke-width="1.6" stroke-opacity="0.6" fill="none"/>
+        <path d="M11 46 Q22 38 34 44 T53 41" stroke="#ffffff" stroke-width="1.4" stroke-opacity="0.4" fill="none"/>
+        <path d="M15 44 L27 20 L36 32 L44 17 L54 44 Z" fill="#007aff"/>
+        <path d="M27 20 L36 32 L44 17" stroke="#5ac8fa" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <circle cx="12" cy="46" r="2.8" fill="#34c759"/>
+        <circle cx="51" cy="41" r="2.8" fill="#ff3b30"/>
+      </svg>
 
-    <!-- Prázdný spacer pro vyvážení flexboxu -->
-    <div style="height: 10px;"></div>
-
-    <!-- Středový blok: Logo -> Nadpis -> 3 Tlačítka -->
-    <main class="hero-center">
-      <!-- NOVÉ LOGO TOPO-PEAK -->
-      <div class="brand-logo" style="margin-bottom: 24px; display: inline-flex; justify-content: center;">
-        <svg width="360" height="74" viewBox="0 0 390 76" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;">
-          <defs>
-            <!-- Jemná záře bílé hřebenové křivky -->
-            <filter id="ridgeGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="1.8" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-            </filter>
-          </defs>
-
-          <!-- Text RUN (bílá, ultra bold) -->
-          <text x="14" y="54" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="50" font-weight="900" letter-spacing="1">RUN</text>
-
-          <!-- Vrcholové písmeno 'A' s výškovým profilem -->
-          <g>
-            <!-- Silueta hory / tělo písmene A -->
-            <path d="M 178 8 L 148 54 L 160 54 L 178 26 L 196 54 L 208 54 Z" fill="#007aff"/>
-            
-            <!-- 1. Vrcholová linie (bílá hřebenovka s vlnou) -->
-            <path d="M 142 36 Q 160 25 178 34 T 216 31" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none" filter="url(#ridgeGlow)"/>
-            
-            <!-- 2. Terénní vrstevnice (azurová) -->
-            <path d="M 144 45 Q 161 34 178 43 T 214 40" stroke="#5ac8fa" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-          </g>
-
-          <!-- Text TLAS (elektrická modrá) -->
-          <text x="214" y="54" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="50" font-weight="900" letter-spacing="1">TLAS</text>
-
-          <!-- Spodní vodicí linka s výškovým profilem -->
-          <path d="M 16 70 L 285 70 L 295 62 L 303 74 L 312 55 L 322 70 L 376 70" stroke="#007aff" stroke-width="1.8" stroke-opacity="0.45" stroke-linecap="round" stroke-linejoin="round"/>
-          
-          <!-- Startovací (zelený) a cílový (červený) bod -->
-          <circle cx="16" cy="70" r="3" fill="#34c759"/>
-          <circle cx="376" cy="70" r="3" fill="#ff3b30"/>
-        </svg>
+      <div style="display: flex; flex-direction: column; text-align: left; line-height: 1;">
+        <span style="font-size: 1.15rem; font-weight: 800; letter-spacing: 5px; color: #ffffff; text-transform: uppercase;">RUNNING</span>
+        <span style="font-size: 3rem; font-weight: 900; letter-spacing: 1.2px; color: #007aff; margin-top: 2px;">ATLAS</span>
+        <span style="font-size: 0.62rem; font-weight: 700; letter-spacing: 2px; color: #8e8e93; text-transform: uppercase; margin-top: 4px;">RUNNING ATLAS &bull; ACTIVITY LOG</span>
       </div>
-      <h1 class="hero-title">All your running footsteps on a single map</h1>
+    </div>
 
-      <div class="hero-actions">
-        <button class="btn btn-primary" onclick="openAuth('signup')">Create an account</button>
-        <button class="btn btn-secondary" onclick="openAuth('login')">Sign In</button>
-        <a href="app.html?demo=true" class="btn btn-ghost">See how it works ➔</a>
-      </div>
-    </main>
+    <h1 class="hero-title">Your personal map of world races & mountain trails</h1>
+    <p class="hero-subtitle">
+      Log your lifetime journey across road and trail races, visualize elevation curves from your watch GPS files, and build an inspiring global bucket list.
+    </p>
 
-    <footer class="hero-footer">
-      &copy; 2026 RunAtlas. All rights reserved.
-    </footer>
-  </div>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openAuthModal('signup')">Create Free Atlas</button>
+      <button class="btn-secondary" onclick="openAuthModal('signin')">Sign In</button>
+      <a class="btn-secondary" href="app.html?demo=true">Try Live Demo ➔</a>
+    </div>
+  </main>
 
   <!-- AUTH MODAL -->
-  <div id="modal-auth" class="auth-modal">
-    <div class="auth-box">
-      <h3 id="modal-title">Sign in to RunAtlas</h3>
-      <input type="email" id="auth-email" placeholder="Email address">
-      <input type="password" id="auth-password" placeholder="Password">
-      <input type="text" id="auth-username" placeholder="Username (e.g. ondra)" style="display:none;">
-      
-      <button id="btn-submit-auth" class="btn btn-primary" style="margin-top: 6px;" onclick="submitAuth()">Continue</button>
-      <button class="btn btn-ghost" onclick="closeAuth()">Cancel</button>
+  <div id="auth-modal" class="auth-modal">
+    <div class="auth-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <h3 id="auth-title" style="font-size:1.3rem; font-weight:800;">Sign In</h3>
+        <button onclick="closeAuthModal()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <input id="auth-email" class="auth-input" type="email" placeholder="Email address">
+      <input id="auth-pass" class="auth-input" type="password" placeholder="Password (min 6 characters)">
+
+      <button id="btn-auth-submit" class="btn-primary" style="width:100%; justify-content:center; margin-top:6px;" onclick="handleAuthSubmit()">
+        Sign In
+      </button>
+
+      <div style="margin-top:16px; text-align:center; font-size:0.84rem; color:#8e8e93;">
+        <span id="auth-switch-text">Don't have an account yet?</span>
+        <a href="javascript:void(0)" id="auth-switch-link" style="color:#007aff; font-weight:600; text-decoration:none; margin-left:4px;" onclick="toggleAuthMode()">Sign up</a>
+      </div>
     </div>
   </div>
+
+  <footer class="hero-footer">
+    &copy; 2026 Running Atlas. All rights reserved.
+  </footer>
 
   <script>
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbm96Z3BudGdhdWxkdnB2c3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTA0MzUsImV4cCI6MjEwODA4NjQzNX0.TfmHE3zkVgVjupOFLA8_egRGwmVx5BDljHggk3H1ohc";
-    
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let authMode = 'login';
+    let authMode = 'signin';
 
-    function openAuth(mode) {
+    function openAuthModal(mode = 'signin') {
       authMode = mode;
-      const modal = document.getElementById('modal-auth');
-      if (modal) modal.style.display = 'flex';
-      
-      const title = document.getElementById('modal-title');
-      if (title) title.textContent = mode === 'signup' ? 'Create a new account' : 'Sign in to RunAtlas';
-      
-      const userInp = document.getElementById('auth-username');
-      if (userInp) userInp.style.display = mode === 'signup' ? 'block' : 'none';
-      
-      const submitBtn = document.getElementById('btn-submit-auth');
-      if (submitBtn) submitBtn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
+      document.getElementById('auth-modal').style.display = 'flex';
+      const isUp = (mode === 'signup');
+      document.getElementById('auth-title').textContent = isUp ? 'Create Your Atlas' : 'Welcome Back';
+      document.getElementById('btn-auth-submit').textContent = isUp ? 'Create Free Account' : 'Sign In';
+      document.getElementById('auth-switch-text').textContent = isUp ? 'Already have an account?' : "Don't have an account yet?";
+      document.getElementById('auth-switch-link').textContent = isUp ? 'Sign In' : 'Sign Up';
     }
 
-    function closeAuth() {
-      const modal = document.getElementById('modal-auth');
-      if (modal) modal.style.display = 'none';
+    function closeAuthModal() {
+      document.getElementById('auth-modal').style.display = 'none';
     }
 
-    async function submitAuth() {
-      const email = document.getElementById('auth-email').value;
-      const password = document.getElementById('auth-password').value;
-      const username = document.getElementById('auth-username').value.trim().toLowerCase();
+    function toggleAuthMode() {
+      openAuthModal(authMode === 'signin' ? 'signup' : 'signin');
+    }
 
-      if (authMode === 'signup') {
-        if (!username) { alert('Please enter your chosen username.'); return; }
-        const { data, error } = await supabaseClient.auth.signUp({ email, password });
-        if (error) { alert(error.message); return; }
-        
-        if (data.user) {
-          await supabaseClient.from('profiles').insert([{ id: data.user.id, username: username, display_name: username }]);
+    async function handleAuthSubmit() {
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-pass').value.trim();
+
+      if (!email || !password) {
+        alert('Please fill in both email and password.');
+        return;
+      }
+
+      const btn = document.getElementById('btn-auth-submit');
+      btn.textContent = 'Authenticating...';
+      btn.disabled = true;
+
+      try {
+        if (authMode === 'signup') {
+          const { data, error } = await supabaseClient.auth.signUp({ email, password });
+          if (error) throw error;
+          alert('Registration successful! Logging into your atlas...');
+          window.location.href = 'app.html';
+        } else {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          if (error) throw error;
           window.location.href = 'app.html';
         }
-      } else {
-        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if (error) { alert(error.message); return; }
-        window.location.href = 'app.html';
+      } catch (err) {
+        alert('Auth Error: ' + err.message);
+      } finally {
+        btn.textContent = (authMode === 'signup') ? 'Create Free Account' : 'Sign In';
+        btn.disabled = false;
       }
     }
 
-    // Automatické přesměrování do aplikace, pokud je uživatel již přihlášený
+    // Auto-redirect if already logged in
     supabaseClient.auth.getUser().then(({ data: { user } }) => {
       if (user) window.location.href = 'app.html';
     });
   </script>
-  
 </body>
 </html>
