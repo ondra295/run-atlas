@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account & Settings — Running Atlas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #121214; color: #f2f2f7; min-height: 100vh; padding: 32px 20px; display: flex; justify-content: center; }
+    .page-card { max-width: 680px; width: 100%; display: flex; flex-direction: column; gap: 24px; }
+    .header-nav { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2c2c2e; padding-bottom: 16px; }
+    .back-link { color: #5ac8fa; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+    .back-link:hover { text-decoration: underline; }
+    .setting-section { background: #1c1c1e; border: 1px solid #2e2e32; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+    .setting-section h3 { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .setting-section p { font-size: 0.8rem; color: #8e8e93; line-height: 1.4; }
+    .form-group-label { font-size: 0.74rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .input-field { width: 100%; padding: 11px 14px; background: #242426; border: 1px solid #3a3a3c; border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none; }
+    .input-field:focus { border-color: #007aff; }
+    .btn-action { background: #007aff; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: background 0.15s; }
+    .btn-action:hover { background: #0062cc; }
+    .btn-secondary { background: #2c2c30; color: #fff; border: 1px solid #3e3e42; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+    .btn-danger { background: rgba(255, 59, 48, 0.15); border: 1px solid #ff3b30; color: #ff3b30; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="page-card">
+    <div class="header-nav">
+      <a href="app.html" class="back-link">← Back to Map</a>
+      <h2 style="font-size:1.4rem; font-weight:800;">Settings & Profile</h2>
+      <button class="btn-danger" onclick="handleLogout()">Sign Out</button>
+    </div>
+
+    <!-- 1. Identity & Public Profile -->
+    <div class="setting-section">
+      <div>
+        <h3>Runner Profile & Public Atlas</h3>
+        <p>Set how your identity appears and share your running history with friends.</p>
+      </div>
+      <div>
+        <label class="form-group-label">Username / Handle</label>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="profile-username" class="input-field" placeholder="e.g. Ondrej">
+          <button class="btn-action" onclick="saveUsername()">Update</button>
+        </div>
+      </div>
+      <div>
+        <label class="form-group-label">Shareable Public Link</label>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="profile-share-link" class="input-field" readonly style="color:#5ac8fa; cursor:pointer;" onclick="this.select()">
+          <button class="btn-secondary" onclick="copyShareUrl()">📋 Copy Link</button>
+        </div>
+        <small style="font-size:0.75rem; color:#8e8e93; display:block; margin-top:4px;">Anyone with this link can view your completed and planned routes without editing permissions.</small>
+      </div>
+    </div>
+
+    <!-- 2. Home Base Location -->
+    <div class="setting-section">
+      <div>
+        <h3>Home Base Location</h3>
+        <p>Determines your default map focus and logistics distances to races.</p>
+      </div>
+      <div>
+        <label class="form-group-label">City or Address Search</label>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="home-city-query" class="input-field" placeholder="e.g. Slaný, Czechia">
+          <button class="btn-action" onclick="geocodeAndSaveHome()">Search City</button>
+        </div>
+      </div>
+      <div>
+        <label class="form-group-label">Coordinates (Latitude, Longitude)</label>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="home-coords-input" class="input-field" placeholder="50.2305, 14.0888">
+          <button class="btn-secondary" onclick="saveManualCoords()">Save Coords</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Data & Privacy -->
+    <div class="setting-section">
+      <div>
+        <h3>Data Backup & Account</h3>
+        <p>Your running data belongs to you. Export all activities at any time.</p>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; background:#161618; padding:14px; border-radius:8px;">
+        <div>
+          <strong style="font-size:0.9rem; color:#fff; display:block;">Export All Activities</strong>
+          <span style="font-size:0.75rem; color:#888;">Download all logged races, notes and GPX points as JSON.</span>
+        </div>
+        <button class="btn-secondary" onclick="exportDataJson()">📦 Export JSON</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px;">
+        <span style="font-size:0.8rem; color:#888;">Logged in as: <strong id="user-email-text" style="color:#fff;">-</strong></span>
+        <button class="btn-danger" onclick="handleLogout()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbm96Z3BudGdhdWxkdnB2c3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTA0MzUsImV4cCI6MjEwODA4NjQzNX0.TfmHE3zkVgVjupOFLA8_egRGwmVx5BDljHggk3H1ohc";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentUser = null;
+
+    async function initSettings() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) { window.location.href = 'index.html'; return; }
+      currentUser = user;
+      document.getElementById('user-email-text').textContent = user.email;
+
+      const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+      const username = profile?.username || user.email.split('@')[0];
+      document.getElementById('profile-username').value = username;
+      document.getElementById('profile-share-link').value = `${window.location.origin}/app.html?u=${encodeURIComponent(username)}`;
+
+      const homeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords'));
+      if (homeCoords) {
+        document.getElementById('home-coords-input').value = homeCoords.join(', ');
+      }
+    }
+
+    async function saveUsername() {
+      const username = document.getElementById('profile-username').value.trim();
+      if (!username) return;
+      const { error } = await supabaseClient.from('profiles').upsert({ id: currentUser.id, username: username });
+      if (!error) {
+        alert('Username updated!');
+        document.getElementById('profile-share-link').value = `${window.location.origin}/app.html?u=${encodeURIComponent(username)}`;
+      } else {
+        alert('Could not update username: ' + error.message);
+      }
+    }
+
+    function copyShareUrl() {
+      const input = document.getElementById('profile-share-link');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      alert('Public link copied to clipboard!');
+    }
+
+    async function geocodeAndSaveHome() {
+      const q = document.getElementById('home-city-query').value.trim();
+      if (!q) return;
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+          localStorage.setItem('runatlas_home_coords', JSON.stringify(coords));
+          document.getElementById('home-coords-input').value = coords.join(', ');
+          alert(`Home Base set to ${data[0].display_name.split(',')[0]}!`);
+        } else {
+          alert('Address not found.');
+        }
+      } catch (e) {
+        alert('Search failed. Please enter coordinates manually.');
+      }
+    }
+
+    function saveManualCoords() {
+      const val = document.getElementById('home-coords-input').value.trim();
+      const parts = val.split(',').map(p => parseFloat(p.trim()));
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        localStorage.setItem('runatlas_home_coords', JSON.stringify(parts));
+        alert('Coordinates saved!');
+      } else {
+        alert('Please enter valid coordinates (e.g. 50.2305, 14.0888)');
+      }
+    }
+
+    async function exportDataJson() {
+      const { data, error } = await supabaseClient.from('races').select('*').eq('user_id', currentUser.id);
+      if (error || !data || data.length === 0) { alert('No activities found to export.'); return; }
+      const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute("href", str);
+      a.setAttribute("download", `running_atlas_${Date.now()}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    async function handleLogout() {
+      if (confirm('Do you want to log out of Running Atlas?')) {
+        await supabaseClient.auth.signOut();
+        window.location.href = 'index.html';
+      }
+    }
+
+    initSettings();
+  </script>
+</body>
+</html>
