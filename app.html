@@ -300,7 +300,6 @@
     <div id="main-body">
       <!-- LEVÝ RUNALYZER PANEL -->
       <nav id="left-rail">
-        <!-- 1. Race Atlas -->
         <button id="rail-races" class="rail-btn active" onclick="switchPageMode('races')">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -312,7 +311,6 @@
           <span>Race Atlas</span>
         </button>
 
-        <!-- 2. Memorable Runs -->
         <button id="rail-memorable" class="rail-btn" onclick="switchPageMode('memorable')">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -327,7 +325,7 @@
 
         <div style="height: 1px; background: #2c2c2e; margin: 10px 4px;"></div>
 
-        <!-- 3. Home Base (Vycentrovat nebo nastavit) -->
+        <!-- Home Base (Vycentrovat nebo nastavit) -->
         <button class="rail-btn" onclick="handleHomeBaseClick()">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -337,7 +335,7 @@
           <span>Home Base</span>
         </button>
 
-        <!-- 4. Settings (Odkaz na podstránku) -->
+        <!-- Settings (Podstránka) -->
         <a class="rail-btn" href="settings.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -351,7 +349,7 @@
         <div class="rail-spacer"></div>
         <div style="height: 1px; background: #2c2c2e; margin: 4px 4px;"></div>
 
-        <!-- 5. About Us (Odkaz na podstránku) -->
+        <!-- About Us (Podstránka) -->
         <a class="rail-btn" href="about.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -363,7 +361,7 @@
           <span>About Us</span>
         </a>
 
-        <!-- 6. Support & Feedback (Odkaz na podstránku) -->
+        <!-- Support & Ideas (Podstránka) -->
         <a class="rail-btn" href="support.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -588,7 +586,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 4. TWO-STEP ACTIVITY MODAL (STRAVA STYLE)  -->
+  <!-- 4. TWO-STEP ACTIVITY MODAL                 -->
   <!-- ========================================== -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
@@ -608,11 +606,34 @@
           <input id="form-name" class="stepped-input" type="text" placeholder="e.g. Dresden Half Marathon">
         </div>
 
+        <!-- DYNAMICKÉ PŘEPÍNÁNÍ EVENT DATE VS TYPICAL MONTH -->
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <div>
+          <!-- Konkrétní datum (pro Completed & Planned) -->
+          <div id="wrap-field-date">
             <label class="form-group-label">Event Date</label>
             <input id="form-date" class="stepped-input" type="date">
           </div>
+
+          <!-- Měsíc konání (pouze pro Bucket list) -->
+          <div id="wrap-field-month" style="display:none;">
+            <label class="form-group-label">Typical Month</label>
+            <select id="form-month-select" class="stepped-input">
+              <option value="" disabled selected>Select month...</option>
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+          </div>
+
           <div>
             <label class="form-group-label">Status *</label>
             <div class="chips-group" id="chips-status" style="margin-top:2px;">
@@ -1021,12 +1042,12 @@
           featuredRacesList = data;
         } else {
           featuredRacesList = [
-            { id: "c-1", name: "Berlin Marathon", category: "majors", location: "Berlin, Germany", distance: "42.2 km", elevation: "+45 m", coords: [52.5163, 13.3777], image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-2", name: "Boston Marathon", category: "majors", location: "Boston, USA", distance: "42.2 km", elevation: "+240 m", coords: [42.3601, -71.0589], image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-3", name: "UTMB Mont-Blanc", category: "trail", location: "Chamonix, France", distance: "171 km", elevation: "+10000 m", coords: [45.9237, 6.8694], image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-4", name: "Chianti Ultra Trail", category: "trail", location: "Radda in Chianti, Italy", distance: "73 km", elevation: "+3000 m", coords: [43.4900, 11.3780], image_url: "https://images.unsplash.com/photo-1523348837708-a5d9fc0189fa?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-5", name: "Pražský maraton (PIM)", category: "czech", location: "Praha, Česko", distance: "42.2 km", elevation: "+130 m", coords: [50.0875, 14.4211], image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-6", name: "Běchovice–Praha", category: "czech", location: "Praha, Česko", distance: "10 km", elevation: "+85 m", coords: [50.0818, 14.6186], image_url: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80" }
+            { id: "c-1", name: "Berlin Marathon", category: "majors", month: 9, location: "Berlin, Germany", distance: "42.2 km", elevation: "+45 m", coords: [52.5163, 13.3777], image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-2", name: "Boston Marathon", category: "majors", month: 4, location: "Boston, USA", distance: "42.2 km", elevation: "+240 m", coords: [42.3601, -71.0589], image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-3", name: "UTMB Mont-Blanc", category: "trail", month: 8, location: "Chamonix, France", distance: "171 km", elevation: "+10000 m", coords: [45.9237, 6.8694], image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-4", name: "Chianti Ultra Trail", category: "trail", month: 3, location: "Radda in Chianti, Italy", distance: "73 km", elevation: "+3000 m", coords: [43.4900, 11.3780], image_url: "https://images.unsplash.com/photo-1523348837708-a5d9fc0189fa?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-5", name: "Pražský maraton (PIM)", category: "czech", month: 5, location: "Praha, Česko", distance: "42.2 km", elevation: "+130 m", coords: [50.0875, 14.4211], image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-6", name: "Běchovice–Praha", category: "czech", month: 9, location: "Praha, Česko", distance: "10 km", elevation: "+85 m", coords: [50.0818, 14.6186], image_url: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80" }
           ];
         }
       }
@@ -1092,7 +1113,7 @@
       });
     }
 
-    // PŘEDVYPLNĚNÍ FORMULÁŘE ZE ZÁVODU Z KATALOGU PRO PERSONALIZACI
+    // PŘEDVYPLNĚNÍ FORMULÁŘE ZE ZÁVODU Z KATALOGU
     let pendingCatalogImageUrl = null;
 
     function openCustomizeCatalogRace(raceId, statusChoice) {
@@ -1108,11 +1129,14 @@
       document.getElementById('form-elevation').value = race.elevation || '';
       document.getElementById('form-notes').value = race.description || '';
 
-      // Geografické souřadnice závodu
+      // Pokud je to Bucket list, předvyplníme typický měsíc
+      if (statusChoice === 'bucket' && race.month) {
+        document.getElementById('form-month-select').value = String(race.month);
+      }
+
       parsedCenterCoords = Array.isArray(race.coords) ? race.coords : JSON.parse(race.coords);
       pendingCatalogImageUrl = race.image_url || null;
 
-      // Výběr čipů
       selectChip('status', statusChoice);
       selectChip('surface', race.surface || 'road');
       selectChip('difficulty', race.difficulty || 'stredni');
@@ -1243,7 +1267,7 @@
     }
 
     // ==========================================
-    // MODAL STEPPER & GPX UPLOAD
+    // MODAL STEPPER & DYNAMICKÉ DATUM / MĚSÍC
     // ==========================================
     let parsedGpxCoords = null;
     let parsedCenterCoords = null;
@@ -1265,6 +1289,7 @@
     function resetActivityForm() {
       document.getElementById('form-name').value = '';
       document.getElementById('form-date').value = '';
+      document.getElementById('form-month-select').value = '';
       document.getElementById('form-distance').value = '';
       document.getElementById('form-elevation').value = '';
       document.getElementById('form-importance').value = '5';
@@ -1317,19 +1342,32 @@
       resetActivityForm();
     }
 
+    // PŘEPÍNÁNÍ KALENDÁŘE VS MĚSÍCE PODLE STATUSU
     function handleStatusChange(status) {
       const whyInput = document.getElementById('form-why');
       const completedTiming = document.getElementById('group-details-completed');
       const planningDetails = document.getElementById('group-details-planning');
+      const wrapDate = document.getElementById('wrap-field-date');
+      const wrapMonth = document.getElementById('wrap-field-month');
 
-      if (status === 'done') {
-        whyInput.placeholder = "Why did I run this? What did the challenge mean to me?";
-        completedTiming.style.display = 'flex';
-        planningDetails.style.display = 'none';
-      } else {
-        whyInput.placeholder = status === 'planned' ? "Why this race? What is the main ambition?" : "Why is this on my dream bucket list?";
+      if (status === 'bucket') {
+        wrapDate.style.display = 'none';
+        wrapMonth.style.display = 'block';
+        whyInput.placeholder = "Why is this on my dream bucket list?";
         completedTiming.style.display = 'none';
         planningDetails.style.display = 'flex';
+      } else {
+        wrapDate.style.display = 'block';
+        wrapMonth.style.display = 'none';
+        if (status === 'done') {
+          whyInput.placeholder = "Why did I run this? What did the challenge mean to me?";
+          completedTiming.style.display = 'flex';
+          planningDetails.style.display = 'none';
+        } else {
+          whyInput.placeholder = "Why this race? What is the main ambition?";
+          completedTiming.style.display = 'none';
+          planningDetails.style.display = 'flex';
+        }
       }
     }
 
@@ -1451,8 +1489,25 @@
           uploadedImageUrls.push(pendingCatalogImageUrl);
         }
 
-        const dateStr = document.getElementById('form-date').value;
-        const monthInt = dateStr ? parseInt(dateStr.split('-')[1]) : null;
+        // Datum vs. Měsíc podle statusu
+        let dateStr = '';
+        let monthInt = null;
+        const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        if (status === 'bucket') {
+          const selectedMonthVal = document.getElementById('form-month-select').value;
+          if (selectedMonthVal) {
+            monthInt = parseInt(selectedMonthVal);
+            dateStr = monthNames[monthInt];
+          } else {
+            dateStr = 'Bucket list';
+          }
+        } else {
+          dateStr = document.getElementById('form-date').value;
+          if (dateStr && dateStr.includes('-')) {
+            monthInt = parseInt(dateStr.split('-')[1]);
+          }
+        }
 
         const formatTime = (p) => {
           const h = parseInt(document.getElementById(`${p}-h`).value) || 0;
@@ -1516,7 +1571,14 @@
     // ==========================================
     function parseActivityMonth(item) {
       if (item.month) return parseInt(item.month);
-      if (item.date && item.date.includes('-')) return parseInt(item.date.split('-')[1]);
+      if (item.date) {
+        if (item.date.includes('-')) return parseInt(item.date.split('-')[1]);
+        const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+        const low = item.date.toLowerCase();
+        for (let i = 0; i < mNames.length; i++) {
+          if (low.includes(mNames[i])) return i + 1;
+        }
+      }
       return null;
     }
 
