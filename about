@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Us — Running Atlas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #0c0c0e; color: #f2f2f7; min-height: 100vh; padding: 40px 20px; display: flex; justify-content: center; }
+    .page-wrap { max-width: 720px; width: 100%; display: flex; flex-direction: column; gap: 32px; }
+    .header-nav { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #242428; padding-bottom: 18px; }
+    .back-link { color: #5ac8fa; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+    .back-link:hover { text-decoration: underline; }
+    .prose-section { display: flex; flex-direction: column; gap: 18px; font-size: 1rem; line-height: 1.7; color: #c7c7cc; }
+    .prose-section h1 { font-size: 2.2rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1.2; }
+    .prose-section h2 { font-size: 1.35rem; font-weight: 700; color: #fff; margin-top: 14px; }
+    .quote-box { background: #16161a; border-left: 3px solid #007aff; padding: 18px 20px; border-radius: 8px; font-style: italic; color: #e5e5ea; }
+    .feature-card { background: #16161a; border: 1px solid #26262a; border-radius: 12px; padding: 20px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <div class="header-nav">
+      <a href="app.html" class="back-link">← Back to Atlas</a>
+      <span style="font-size:0.8rem; color:#8e8e93; font-weight:700; letter-spacing:1px;">MANIFESTO</span>
+    </div>
+
+    <div class="prose-section">
+      <h1>A runner’s life shouldn't be buried in a social feed.</h1>
+
+      <p>
+        Modern running apps are great at calculating your weekly training load, heart rate zones, and split paces. But they are surprisingly poor at preserving your personal running journey. In a fast-moving social stream, the marathon you spent sixteen weeks training for — or the high-altitude mountain pass you crossed at dawn — disappears behind yesterday's recovery jogs within days.
+      </p>
+
+      <div class="quote-box">
+        „We don't just run to collect kilometers. We run to explore landscapes, conquer summits, and mark our footsteps across the world.“
+      </div>
+
+      <h2>The Philosophy of Running Atlas</h2>
+      <p>
+        <strong>Running Atlas</strong> was created to give every runner a permanent digital canvas. An interactive atlas where every finish line, official race result, and dream bucket-list destination has its exact geographic coordinates.
+      </p>
+
+      <div class="feature-card">
+        <h3 style="font-size:1.05rem; font-weight:700; color:#fff; margin-bottom:6px;">🗺️ Geographic Memory Over Algorithm Feeds</h3>
+        <p style="font-size:0.88rem; color:#a1a1a6; line-height:1.55;">
+          No like counts, no influencer leaderboards, no sponsored posts. Just your own visual map of asphalt, trails, and contour lines connecting where you've been with where you are heading next.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <h3 style="font-size:1.05rem; font-weight:700; color:#fff; margin-bottom:6px;">🏔️ Watch Tracks & Topography</h3>
+        <p style="font-size:0.88rem; color:#a1a1a6; line-height:1.55;">
+          Directly upload watch GPS files (.GPX) from Garmin, Apple Watch, Coros, or Strava to display real elevation curves, finish times, and race memories in high definition.
+        </p>
+      </div>
+
+      <h2>Independent & Built for Runners</h2>
+      <p>
+        Running Atlas is designed and developed independently for road marathoners, trail enthusiasts, and mountain runners. Your data is yours, exportable at any moment.
+      </p>
+    </div>
+
+    <div style="border-top:1px solid #242428; padding-top:20px; display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:#636366;">
+      <span>&copy; 2026 Running Atlas</span>
+      <a href="support.html" style="color:#5ac8fa; text-decoration:none;">Need Help or Have an Idea? ➔</a>
+    </div>
+  </div>
+</body>
+</html>
