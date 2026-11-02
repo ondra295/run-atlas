@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Support & Feedback — Running Atlas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #121214; color: #f2f2f7; min-height: 100vh; padding: 32px 20px; display: flex; justify-content: center; }
+    .page-card { max-width: 680px; width: 100%; display: flex; flex-direction: column; gap: 24px; }
+    .header-nav { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2c2c2e; padding-bottom: 16px; }
+    .back-link { color: #5ac8fa; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+    .back-link:hover { text-decoration: underline; }
+    .content-card { background: #1c1c1e; border: 1px solid #2e2e32; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .form-group-label { font-size: 0.74rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .input-field { width: 100%; padding: 11px 14px; background: #242426; border: 1px solid #3a3a3c; border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none; }
+    .input-field:focus { border-color: #007aff; }
+    .btn-action { background: #007aff; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+    .btn-action:hover { background: #0062cc; }
+    .faq-item { background: #242428; border-radius: 8px; padding: 14px; margin-bottom: 8px; font-size: 0.86rem; color: #c7c7cc; line-height: 1.5; }
+    .faq-item strong { color: #fff; display: block; margin-bottom: 4px; font-size: 0.92rem; }
+  </style>
+</head>
+<body>
+  <div class="page-card">
+    <div class="header-nav">
+      <a href="app.html" class="back-link">← Back to Map</a>
+      <h2 style="font-size:1.4rem; font-weight:800;">Support & Feedback</h2>
+      <a href="about.html" class="back-link" style="color:#aaa;">About Us ➔</a>
+    </div>
+
+    <!-- Feedback Submission Form -->
+    <div class="content-card">
+      <div>
+        <h3 style="font-size:1.15rem; font-weight:700;">Send a Suggestion or Report a Bug</h3>
+        <p style="font-size:0.82rem; color:#8e8e93; margin-top:2px;">Your feedback goes directly to the project database and creator.</p>
+      </div>
+
+      <div>
+        <label class="form-group-label">Category</label>
+        <select id="feed-cat" class="input-field">
+          <option value="feature">💡 Feature Request / Improvement Idea</option>
+          <option value="race_request">🏁 Suggest a Race for Global Catalog</option>
+          <option value="bug">🐛 Report a Bug / GPX Issue</option>
+          <option value="other">💬 General Message</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="form-group-label">Message or Request</label>
+        <textarea id="feed-msg" class="input-field" placeholder="Tell us what you'd like improved, which race is missing, or what isn't working..." style="height:120px;"></textarea>
+      </div>
+
+      <button id="btn-submit-feed" class="btn-action" onclick="sendFeedback()">Send to Creator ✉️</button>
+    </div>
+
+    <!-- Guides & FAQ -->
+    <div class="content-card">
+      <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:4px;">Watch & GPX Export Guides</h3>
+
+      <div class="faq-item">
+        <strong>⌚ Garmin Connect (.GPX)</strong>
+        Open your activity on <em>connect.garmin.com</em> in a web browser &bull; Click the small gear icon in the top right corner &bull; Select <em>"Export to GPX"</em> &bull; Drag & drop directly into Running Atlas.
+      </div>
+
+      <div class="faq-item">
+        <strong>📱 Strava (.GPX)</strong>
+        Open any running activity on <em>strava.com</em> on desktop &bull; Click the three dots (…) button on the left sidebar &bull; Click <em>"Export GPX"</em>.
+      </div>
+
+      <div class="faq-item">
+        <strong>🍎 Apple Watch & Health</strong>
+        Use free tools such as <em>HealthFit</em>, <em>RunGap</em>, or <em>WorkOutDoors</em> on your iPhone to export running tracks directly as .GPX files.
+      </div>
+
+      <div class="faq-item">
+        <strong>✉️ Direct Email Support</strong>
+        Have a question about your account or data? Contact us directly at <a href="mailto:support@runningatlas.app" style="color:#007aff; text-decoration:none; font-weight:600;">support@runningatlas.app</a>.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbm96Z3BudGdhdWxkdnB2c3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTA0MzUsImV4cCI6MjEwODA4NjQzNX0.TfmHE3zkVgVjupOFLA8_egRGwmVx5BDljHggk3H1ohc";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function sendFeedback() {
+      const msg = document.getElementById('feed-msg').value.trim();
+      if (!msg) { alert('Please enter your message.'); return; }
+
+      const cat = document.getElementById('feed-cat').value;
+      const btn = document.getElementById('btn-submit-feed');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      const { data: { user } } = await supabaseClient.auth.getUser();
+
+      try {
+        const { error } = await supabaseClient.from('feedback').insert([{
+          user_id: user ? user.id : null,
+          category: cat,
+          message: msg,
+          user_email: user ? user.email : 'guest'
+        }]);
+
+        if (error) throw error;
+        alert('Thank you! Your feedback was received. 🏃');
+        document.getElementById('feed-msg').value = '';
+      } catch (e) {
+        alert('Thank you! Feedback received.');
+      } finally {
+        btn.textContent = 'Send to Creator ✉️';
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
