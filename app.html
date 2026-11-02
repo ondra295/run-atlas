@@ -33,15 +33,15 @@
     }
     .top-search-input {
       background: #1c1c1e; border: 1px solid #3a3a3c; border-radius: 8px;
-      padding: 7px 14px; color: #fff; font-size: 0.84rem; width: 290px; outline: none; transition: all 0.2s;
+      padding: 7px 14px; color: #fff; font-size: 0.84rem; width: 280px; outline: none; transition: all 0.2s;
     }
-    .top-search-input:focus { border-color: #007aff; width: 340px; }
-    .top-bar-right { display: flex; align-items: center; gap: 10px; }
+    .top-search-input:focus { border-color: #007aff; width: 320px; }
+    .top-bar-right { display: flex; align-items: center; gap: 8px; }
 
     /* Main workspace */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
-    /* Left Runalyze Rail */
+    /* Left Runalyzer Rail */
     #left-rail {
       width: 56px; background: rgba(20, 20, 24, 0.94); backdrop-filter: blur(14px);
       border-right: 1px solid #2c2c2e; display: flex; flex-direction: column; gap: 6px;
@@ -76,24 +76,24 @@
     }
     .onboarding-card {
       background: rgba(28, 28, 30, 0.94); border: 1px solid #38383a; border-radius: 20px;
-      padding: 36px 32px; max-width: 580px; width: 100%; text-align: center; color: #fff;
+      padding: 34px 30px; max-width: 620px; width: 100%; text-align: center; color: #fff;
       box-shadow: 0 24px 60px rgba(0,0,0,0.85); backdrop-filter: blur(16px);
     }
     .onboarding-split-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 24px 0 16px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 22px 0 16px;
     }
     .split-choice-card {
-      background: #242428; border: 1px solid #3a3a3c; border-radius: 14px; padding: 20px 16px;
-      cursor: pointer; transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1); text-align: center;
+      background: #242428; border: 1px solid #3a3a3c; border-radius: 12px; padding: 18px 12px;
+      cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); text-align: center;
       display: flex; flex-direction: column; align-items: center; gap: 8px;
     }
     .split-choice-card:hover {
       background: #2c2c32; border-color: #007aff; transform: translateY(-3px);
-      box-shadow: 0 10px 24px rgba(0,122,255,0.25);
+      box-shadow: 0 8px 20px rgba(0,122,255,0.25);
     }
-    .split-choice-card.primary { border-color: rgba(0,122,255,0.4); }
-    .split-card-title { font-size: 1rem; font-weight: 700; color: #fff; }
-    .split-card-sub { font-size: 0.74rem; color: #8e8e93; line-height: 1.4; }
+    .split-choice-card.highlight { border-color: #34c759; background: rgba(52, 199, 89, 0.08); }
+    .split-card-title { font-size: 0.9rem; font-weight: 700; color: #fff; }
+    .split-card-sub { font-size: 0.72rem; color: #8e8e93; line-height: 1.35; }
 
     /* Floating Home Base prompt */
     #floating-home-prompt {
@@ -182,14 +182,13 @@
 
     /* Modals */
     .modal-backdrop {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82);
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.84);
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
     }
     
-    /* PROGRESSIVE DISCLOSURE MODAL */
     .stepped-modal-card {
       background: #1c1c1e; border: 1px solid #38383a; border-radius: 20px; padding: 26px;
-      max-width: 560px; width: 100%; color: #fff; display: flex; flex-direction: column; gap: 14px;
+      max-width: 580px; width: 100%; color: #fff; display: flex; flex-direction: column; gap: 14px;
       max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.85);
     }
     .form-group-label { font-size: 0.74rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; margin-bottom: 4px; display: block; }
@@ -219,6 +218,26 @@
     .gallery-preview-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
     .gallery-thumb { width: 100%; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #444; }
 
+    /* Catalog Cards Grid */
+    .catalog-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-right: 4px; }
+    .catalog-item-card {
+      background: #242428; border: 1px solid #3a3a3c; border-radius: 10px; padding: 12px;
+      display: flex; gap: 14px; align-items: center; justify-content: space-between;
+    }
+    .catalog-item-card img { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; }
+    .catalog-info { flex: 1; }
+    .catalog-info h4 { font-size: 0.92rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .catalog-info p { font-size: 0.74rem; color: #aaa; }
+    .catalog-actions { display: flex; flex-direction: column; gap: 5px; }
+
+    /* Modal Navigation Tabs */
+    .modal-tabs { display: flex; gap: 8px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 8px; }
+    .modal-tab-btn {
+      background: transparent; border: none; color: #888; font-weight: 700; font-size: 0.85rem;
+      cursor: pointer; padding: 4px 8px; border-radius: 6px;
+    }
+    .modal-tab-btn.active { color: #007aff; background: rgba(0,122,255,0.1); }
+
     /* Mobile */
     @media (max-width: 768px) {
       .top-search-input { display: none; }
@@ -233,6 +252,7 @@
       }
       #sidebar.mobile-open { transform: translateY(0); }
       #map-wrapper { width: 100%; height: calc(100vh - 108px); }
+      .onboarding-split-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -253,21 +273,13 @@
               <feComposite in="SourceGraphic" in2="blur" operator="over"/>
             </filter>
           </defs>
-
-          <!-- Horní nápis: RUNNING -->
           <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
-
-          <!-- Masiv hory a písmeno A -->
           <g transform="translate(6, 36)">
             <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
             <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#barRidgeGlow)"/>
             <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
           </g>
-
-          <!-- Nápis TLAS -->
           <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
-
-          <!-- Spodní linka profilu -->
           <path d="M 6 102 L 205 102 L 216 95 L 225 106 L 235 89 L 246 102 L 368 102" stroke="#007aff" stroke-width="2.2" stroke-opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="6" cy="102" r="4" fill="#34c759"/>
           <circle cx="368" cy="102" r="4" fill="#ff3b30"/>
@@ -277,8 +289,11 @@
       <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Search race, route, city..." oninput="handleSearch(this.value)">
 
       <div class="top-bar-right">
+        <button id="btn-browse-catalog" class="pill-btn" style="background:rgba(52,199,89,0.15); border-color:#34c759; color:#34c759;" onclick="openCatalogModal()">
+          🌍 Race Catalog
+        </button>
         <button id="btn-add-activity" class="open-detail-btn" style="display: none;" onclick="openAddModal()">➕ Add Race</button>
-        <button id="btn-profile" class="pill-btn" onclick="handleProfileClick()">👤 <span id="label-user">Profile</span></button>
+        <button id="btn-profile" class="pill-btn" onclick="openSettingsModal()">👤 <span id="label-user">Profile</span></button>
       </div>
     </header>
 
@@ -336,8 +351,8 @@
         <div class="rail-spacer"></div>
         <div style="height: 1px; background: #2c2c2e; margin: 4px 4px;"></div>
 
-        <!-- 5. About -->
-        <button class="rail-btn" onclick="openInfoModal('about')">
+        <!-- 5. About Us -->
+        <button class="rail-btn" onclick="openAboutModal()">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -345,11 +360,11 @@
               <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
           </span>
-          <span>About</span>
+          <span>About Us</span>
         </button>
 
-        <!-- 6. Support -->
-        <button class="rail-btn" onclick="openInfoModal('support')">
+        <!-- 6. Support & Feedback -->
+        <button class="rail-btn" onclick="openSupportModal()">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -360,7 +375,7 @@
               <line x1="4.93" y1="19.07" x2="9.17" y2="14.83"></line>
             </svg>
           </span>
-          <span>Support</span>
+          <span>Support & Ideas</span>
         </button>
       </nav>
 
@@ -371,36 +386,42 @@
         <!-- ONBOARDING OVERLAY: covers ONLY the map -->
         <div id="onboarding-overlay">
           <div class="onboarding-card">
-            <div style="display:inline-flex; padding:10px; border-radius:50%; background:rgba(0,122,255,0.12); margin-bottom:12px;">
+            <div style="display:inline-flex; padding:10px; border-radius:50%; background:rgba(0,122,255,0.12); margin-bottom:8px;">
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
                 <line x1="9" y1="3" x2="9" y2="18"></line>
                 <line x1="15" y1="6" x2="15" y2="21"></line>
               </svg>
             </div>
-            <h2 style="font-size:1.6rem; font-weight:800; margin-bottom:6px;">Your map is a clean canvas</h2>
-            <p style="font-size:0.88rem; color:#a1a1a6; line-height:1.5;">Choose how you want to start logging your running journey:</p>
+            <h2 style="font-size:1.5rem; font-weight:800; margin-bottom:4px;">Your map is a clean canvas</h2>
+            <p style="font-size:0.84rem; color:#a1a1a6; line-height:1.45;">Choose how to populate your visual running history:</p>
 
-            <!-- 2 SPLIT CARDS -->
+            <!-- 3 SPLIT CARDS (VČETNĚ KATALOGU) -->
             <div class="onboarding-split-grid">
-              <div class="split-choice-card primary" onclick="openAddModal('race')">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <div class="split-choice-card highlight" onclick="openCatalogModal()">
+                <div style="font-size:1.5rem;">🌍</div>
+                <div class="split-card-title">Race Catalog</div>
+                <div class="split-card-sub">Select world majors & CZ races in 1 click</div>
+              </div>
+
+              <div class="split-choice-card" onclick="openAddModal('race')">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
                   <line x1="4" y1="22" x2="4" y2="15"></line>
                 </svg>
-                <div class="split-card-title">Official Race</div>
-                <div class="split-card-sub">Marathons, trail races, results & bib numbers</div>
+                <div class="split-card-title">Upload GPX</div>
+                <div class="split-card-sub">Import track from Garmin or Strava</div>
               </div>
 
               <div class="split-choice-card" onclick="openAddModal('memorable')">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#af52de" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#af52de" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
                   <path d="M7 21l3-4"></path>
                   <path d="M16 21l-2-4-3-3 1-6"></path>
                   <path d="M6 12l2-3 4-1 3 3 3 1"></path>
                 </svg>
                 <div class="split-card-title">Memorable Run</div>
-                <div class="split-card-sub">Mountain summits, milestones & epic trainings</div>
+                <div class="split-card-sub">Summits, vacations & trail milestones</div>
               </div>
             </div>
 
@@ -440,7 +461,7 @@
           </div>
         </div>
 
-        <!-- FILTRY (ZÁKLADNÍ + ADVANCED DRAWER) -->
+        <!-- FILTRY -->
         <div class="filters-section">
           <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
             <div style="display:flex; gap:6px;">
@@ -455,27 +476,17 @@
 
           <!-- POKROČILÉ FILTRY -->
           <div id="advanced-filters-drawer">
-            <!-- Měsíc konání -->
             <div>
               <label class="form-group-label" style="font-size:0.7rem;">Month of Event</label>
               <select id="filter-month" class="stepped-input" style="padding:6px 10px; font-size:0.8rem;" onchange="applyAdvancedFilters()">
                 <option value="all">All months</option>
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
+                <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+                <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+                <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+                <option value="10">October</option><option value="11">November</option><option value="12">December</option>
               </select>
             </div>
 
-            <!-- Obtížnost -->
             <div>
               <label class="form-group-label" style="font-size:0.7rem;">Difficulty</label>
               <div class="chips-group" id="filter-difficulty-chips">
@@ -487,7 +498,6 @@
               </div>
             </div>
 
-            <!-- Finanční náročnost -->
             <div>
               <label class="form-group-label" style="font-size:0.7rem;">Estimated Cost</label>
               <div class="chips-group" id="filter-cost-chips">
@@ -511,19 +521,46 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 2. TWO-STEP ACTIVITY MODAL (STRAVA STYLE)  -->
+  <!-- 2. KATALOG ZÁVODŮ MODAL                    -->
+  <!-- ========================================== -->
+  <div id="modal-catalog" class="modal-backdrop">
+    <div class="stepped-modal-card" style="max-width: 660px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3 style="font-size: 1.3rem; font-weight: 800;">Global Race Catalog</h3>
+          <p style="font-size: 0.76rem; color: #8e8e93;">Add iconic races to your map in 1 click without GPX files.</p>
+        </div>
+        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" onclick="switchCatalogCategory('all', this)">All Races</button>
+        <button class="modal-tab-btn" onclick="switchCatalogCategory('majors', this)">World Majors</button>
+        <button class="modal-tab-btn" onclick="switchCatalogCategory('trail', this)">Trail Legends</button>
+        <button class="modal-tab-btn" onclick="switchCatalogCategory('czech', this)">Czech Classic</button>
+      </div>
+
+      <div id="catalog-list-container" class="catalog-grid">
+        <div style="text-align:center; padding:20px; color:#888;">Loading catalog races...</div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; border-top:1px solid #333; padding-top:12px;">
+        <button class="pill-btn" onclick="closeModals()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. TWO-STEP ACTIVITY MODAL (STRAVA STYLE)  -->
   <!-- ========================================== -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
-      
-      <!-- STEP 1: QUICK ESSENTIAL LOG -->
       <div id="modal-step-1" style="display:flex; flex-direction:column; gap:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h3 id="step1-modal-title" style="font-size: 1.25rem; font-weight: 700;">Add New Race</h3>
           <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
         </div>
 
-        <!-- Optional GPX Dropzone -->
         <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 14px; text-align: center; background: rgba(0,122,255,0.06); cursor: pointer;">
           <span id="gpx-label">📁 Drag & drop watch .GPX track (Optional)</span>
           <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
@@ -579,31 +616,22 @@
           </div>
         </div>
 
-        <!-- Action Bar: Save Immediately OR Go Deep -->
         <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #2e2e32; padding-top:14px; margin-top:6px;">
           <button class="pill-btn" onclick="closeModals()">Cancel</button>
-          
           <div style="display:flex; gap:8px;">
-            <button type="button" class="pill-btn" style="background:#2c2c32; color:#5ac8fa; border-color:#444;" onclick="goToStep(2)">
-              Add Details ➔
-            </button>
-            <button id="btn-save-step1" class="open-detail-btn" onclick="saveActivityToSupabase()">
-              Save Activity
-            </button>
+            <button type="button" class="pill-btn" style="background:#2c2c32; color:#5ac8fa; border-color:#444;" onclick="goToStep(2)">Add Details ➔</button>
+            <button id="btn-save-step1" class="open-detail-btn" onclick="saveActivityToSupabase()">Save Activity</button>
           </div>
         </div>
       </div>
 
-      <!-- STEP 2: DEEP DIVE / ADVANCED DETAILS -->
+      <!-- STEP 2: DEEP DIVE -->
       <div id="modal-step-2" style="display:none; flex-direction:column; gap:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <button type="button" class="pill-btn" style="background:transparent; border:none; color:#5ac8fa; padding:0;" onclick="goToStep(1)">
-            ← Back to Quick Log
-          </button>
+          <button type="button" class="pill-btn" style="background:transparent; border:none; color:#5ac8fa; padding:0;" onclick="goToStep(1)">← Back to Quick Log</button>
           <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
         </div>
 
-        <!-- Importance Slider (1-10) -->
         <div>
           <label class="form-group-label">Race Importance: <span id="importance-val" style="color:#007aff; font-weight:800;">5</span> / 10</label>
           <div class="form-slider-wrap">
@@ -613,13 +641,11 @@
           </div>
         </div>
 
-        <!-- My 'Why' (Optional) -->
         <div>
           <label class="form-group-label" id="label-why">My 'Why' (Optional)</label>
           <input id="form-why" class="stepped-input" type="text" placeholder="What motivated me to run this?">
         </div>
 
-        <!-- COMPLETED SPECIFIC: TIMINGS & SATISFACTION -->
         <div id="group-details-completed" style="display:none; flex-direction:column; gap:10px;">
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <div>
@@ -682,7 +708,6 @@
           </div>
         </div>
 
-        <!-- PLANNED & BUCKET LIST SPECIFIC -->
         <div id="group-details-planning" style="display:none; flex-direction:column; gap:10px;">
           <div>
             <label class="form-group-label">Target Ambition</label>
@@ -695,13 +720,9 @@
               <input id="form-logistics-dist" class="stepped-input" type="text" placeholder="Distance from home (km)">
               <select id="form-logistics-transport" class="stepped-input">
                 <option value="" disabled selected>Transport</option>
-                <option value="Car">Car</option>
-                <option value="Plane">Plane</option>
-                <option value="Train">Train</option>
-                <option value="Bus">Bus</option>
-                <option value="Transit">Public Transit</option>
-                <option value="Bicycle">Bicycle</option>
-                <option value="Other">Other</option>
+                <option value="Car">Car</option><option value="Plane">Plane</option>
+                <option value="Train">Train</option><option value="Bus">Bus</option>
+                <option value="Transit">Public Transit</option><option value="Bicycle">Bicycle</option><option value="Other">Other</option>
               </select>
               <input id="form-logistics-time" class="stepped-input" type="text" placeholder="Travel time">
             </div>
@@ -719,64 +740,188 @@
           </div>
         </div>
 
-        <!-- Notes (Step 2) -->
         <div>
           <label class="form-group-label">Race & Terrain Notes (Optional)</label>
           <textarea id="form-notes" class="stepped-input" placeholder="Notes on pacing, profile, quirks, fueling..." style="height:62px;"></textarea>
         </div>
 
-        <!-- Photos (Optional, up to 10) -->
         <div>
           <label class="form-group-label">Activity Photos (Optional, up to 10):</label>
           <input type="file" id="input-images" accept="image/*" multiple onchange="handleMultipleImagesPreview(this.files)" style="font-size:0.8rem; color:#aaa;">
           <div id="images-preview" class="gallery-preview-grid"></div>
         </div>
 
-        <!-- Action Bar in Step 2 -->
         <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #2e2e32; padding-top:14px; margin-top:6px;">
           <button type="button" class="pill-btn" onclick="goToStep(1)">← Back</button>
           <button id="btn-save-step2" class="open-detail-btn" onclick="saveActivityToSupabase()">Save Activity</button>
         </div>
       </div>
-
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 3. MODAL: SETTINGS & HOME BASE             -->
+  <!-- 4. PROFILE & SETTINGS MODAL                -->
   <!-- ========================================== -->
   <div id="modal-settings" class="modal-backdrop">
-    <div class="stepped-modal-card" style="max-width:460px;">
-      <h3 style="font-size:1.25rem; font-weight:700;">Home Base & Settings</h3>
-      <div style="margin:8px 0;">
-        <label class="form-group-label">Your Home Base Location:</label>
-        <div style="display:flex; gap:8px;">
-          <input id="setting-home-query" class="stepped-input" type="text" placeholder="City or address (e.g. Slaný, Czechia)">
-          <button class="pill-btn" style="background:#007aff; color:#fff;" onclick="geocodeAndSaveHome()">Search</button>
+    <div class="stepped-modal-card" style="max-width:520px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:1.25rem; font-weight:700;">Account & Settings</h3>
+        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button id="tab-btn-set-profile" class="modal-tab-btn active" onclick="switchSettingsTab('profile', this)">Profile & Share</button>
+        <button id="tab-btn-set-home" class="modal-tab-btn" onclick="switchSettingsTab('home', this)">Home Base</button>
+        <button id="tab-btn-set-data" class="modal-tab-btn" onclick="switchSettingsTab('data', this)">Data & Security</button>
+      </div>
+
+      <!-- Tab 1: Profile & Share -->
+      <div id="set-tab-profile" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label class="form-group-label">Display Name / Handle</label>
+          <input id="setting-username" class="stepped-input" type="text" placeholder="e.g. Ondrej">
         </div>
-        <small style="font-size:0.72rem; color:#888; display:block; margin-top:6px;">Or enter latitude, longitude manually below:</small>
-        <input id="setting-home-coords" class="stepped-input" type="text" placeholder="50.2305, 14.0888" style="margin-top:6px;">
+        <div>
+          <label class="form-group-label">Public Atlas Share Link</label>
+          <div style="display:flex; gap:8px;">
+            <input id="setting-share-link" class="stepped-input" type="text" readonly style="color:#5ac8fa; cursor:pointer;" onclick="this.select()">
+            <button class="pill-btn" onclick="copyShareLink()">📋 Copy</button>
+          </div>
+          <small style="font-size:0.72rem; color:#8e8e93; display:block; margin-top:4px;">Anyone with this link can explore your public race map without editing permissions.</small>
+        </div>
       </div>
-      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+
+      <!-- Tab 2: Home Base -->
+      <div id="set-tab-home" style="display:none; flex-direction:column; gap:12px;">
+        <div>
+          <label class="form-group-label">City or Address search:</label>
+          <div style="display:flex; gap:8px;">
+            <input id="setting-home-query" class="stepped-input" type="text" placeholder="e.g. Slaný, Czechia">
+            <button class="pill-btn" style="background:#007aff; color:#fff;" onclick="geocodeAndSaveHome()">Search City</button>
+          </div>
+        </div>
+        <div>
+          <label class="form-group-label">Manual Coordinates (Lat, Lon):</label>
+          <input id="setting-home-coords" class="stepped-input" type="text" placeholder="50.2305, 14.0888">
+          <small style="font-size:0.72rem; color:#8e8e93; display:block; margin-top:4px;">Home base determines the center of your map and travel distances.</small>
+        </div>
+      </div>
+
+      <!-- Tab 3: Data & Security -->
+      <div id="set-tab-data" style="display:none; flex-direction:column; gap:14px;">
+        <div style="background:#242428; border:1px solid #333; padding:12px; border-radius:8px;">
+          <h4 style="font-size:0.86rem; font-weight:700; margin-bottom:4px;">Export My Running History</h4>
+          <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">Download your logged races, notes, and milestones as a backup JSON file.</p>
+          <button class="pill-btn" style="background:#2c2c30; color:#fff;" onclick="exportUserAtlasData()">📦 Export All to JSON</button>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #2e2e32; padding-top:12px;">
+          <span style="font-size:0.8rem; color:#888;">Session: <strong id="setting-email-label" style="color:#fff;">-</strong></span>
+          <button class="pill-btn" style="background:rgba(255,59,48,0.15); border-color:#ff3b30; color:#ff3b30;" onclick="handleProfileLogout()">Sign Out</button>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px solid #333; padding-top:14px; margin-top:6px;">
         <button class="pill-btn" onclick="closeModals()">Close</button>
-        <button class="open-detail-btn" onclick="saveUserSettingsManual()">Save Home Base</button>
+        <button class="open-detail-btn" onclick="saveUserSettingsManual()">Save Settings</button>
       </div>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 4. MODAL: ABOUT & SUPPORT                  -->
+  <!-- 5. ABOUT US MODAL (AUTENTICKÝ PŘÍBĚH)     -->
   <!-- ========================================== -->
-  <div id="modal-info" class="modal-backdrop">
-    <div class="stepped-modal-card" style="text-align:center; max-width:440px;">
-      <h3 id="info-modal-title" style="font-size:1.25rem; font-weight:700; margin-bottom:6px;"></h3>
-      <div id="info-modal-body" style="font-size:0.88rem; color:#c7c7cc; line-height:1.6; margin-bottom:16px;"></div>
-      <button class="pill-btn" style="justify-content:center; width:100%;" onclick="closeModals()">Close</button>
+  <div id="modal-about" class="modal-backdrop">
+    <div class="stepped-modal-card" style="max-width:540px; text-align:left;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;">
+        <h3 style="font-size:1.25rem; font-weight:800;">About Running Atlas</h3>
+        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <div style="font-size:0.88rem; color:#d1d1d6; line-height:1.65; display:flex; flex-direction:column; gap:12px; margin-top:6px;">
+        <p>
+          <strong>Running Atlas</strong> was born out of a simple frustration: modern sports apps are great at tracking weekly mileage, but terrible at preserving your personal running journey. In a fast-moving social feed, the marathon you trained four months for or the unforgettable ridge trail you ran at sunrise disappear within days.
+        </p>
+        <p>
+          We built this atlas as a digital, interactive canvas — a place where every finish line, high-altitude summit, and dream race has its permanent geographic coordinates. No likes, no algorithmic feeds, just your own visual map of mountains, asphalt, and memories.
+        </p>
+        <div style="background:#242428; border-left:3px solid #007aff; padding:12px; border-radius:6px; font-size:0.82rem; color:#a1a1a6;">
+          <em>„A runner’s life shouldn’t be buried in an activity stream. It deserves an atlas.“</em>
+        </div>
+        <p style="font-size:0.78rem; color:#8e8e93;">
+          Crafted independently for road maratoners, ultra-trail runners, and mountain wanderers. Version 1.6 &bull; Leaflet & Supabase Cloud.
+        </p>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; border-top:1px solid #333; padding-top:12px; margin-top:6px;">
+        <button class="pill-btn" onclick="closeModals()">Close</button>
+      </div>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 5. JAVASCRIPT & SUPABASE ARCHITECTURE      -->
+  <!-- 6. SUPPORT & FEEDBACK MODAL                -->
+  <!-- ========================================== -->
+  <div id="modal-support" class="modal-backdrop">
+    <div class="stepped-modal-card" style="max-width:540px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:1.25rem; font-weight:800;">Support & Feedback</h3>
+        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" onclick="switchSupportTab('form', this)">Send Feedback / Ideas</button>
+        <button class="modal-tab-btn" onclick="switchSupportTab('faq', this)">GPX & Watch Guides</button>
+      </div>
+
+      <!-- Tab 1: Feedback Form -->
+      <div id="sup-tab-form" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label class="form-group-label">Category</label>
+          <select id="feedback-category" class="stepped-input">
+            <option value="feature">💡 Feature Request / Idea</option>
+            <option value="race_request">🏁 Suggest a Race for Global Catalog</option>
+            <option value="bug">🐛 Report a Bug / GPX Issue</option>
+            <option value="other">💬 General Feedback</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-group-label">Your Message or Suggestion</label>
+          <textarea id="feedback-message" class="stepped-input" placeholder="Tell us what you would love to see in Running Atlas..." style="height:110px;"></textarea>
+        </div>
+        <button id="btn-send-feedback" class="open-detail-btn" style="padding:11px;" onclick="submitFeedbackForm()">
+          Send Directly to Creator ✉️
+        </button>
+      </div>
+
+      <!-- Tab 2: FAQ & GPX Guides -->
+      <div id="sup-tab-faq" style="display:none; flex-direction:column; gap:10px; font-size:0.84rem; color:#bbb; max-height:50vh; overflow-y:auto;">
+        <div style="background:#242428; padding:10px 12px; border-radius:8px;">
+          <strong style="color:#fff; display:block; margin-bottom:3px;">⌚ How to export .GPX from Garmin Connect?</strong>
+          Open activity in Garmin Connect on web &bull; Click gear icon in top right &bull; Select <em>"Export to GPX"</em> &bull; Drag & drop directly here.
+        </div>
+        <div style="background:#242428; padding:10px 12px; border-radius:8px;">
+          <strong style="color:#fff; display:block; margin-bottom:3px;">📱 How to export from Strava?</strong>
+          Open activity on strava.com &bull; Click three dots (…) on the left &bull; Select <em>"Export GPX"</em>.
+        </div>
+        <div style="background:#242428; padding:10px 12px; border-radius:8px;">
+          <strong style="color:#fff; display:block; margin-bottom:3px;">🍎 Apple Watch / Health app</strong>
+          Use free tools like <em>HealthFit</em> or <em>WorkOutDoors</em> on iPhone to export any run directly to .GPX.
+        </div>
+        <div style="background:#242428; padding:10px 12px; border-radius:8px;">
+          <strong style="color:#fff; display:block; margin-bottom:3px;">✉️ Direct email contact</strong>
+          Need help with your data? Reach out directly to <a href="mailto:support@runningatlas.app" style="color:#007aff;">support@runningatlas.app</a>.
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; border-top:1px solid #333; padding-top:12px; margin-top:4px;">
+        <button class="pill-btn" onclick="closeModals()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 7. JAVASCRIPT & SUPABASE ARCHITECTURE      -->
   <!-- ========================================== -->
   <script>
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
@@ -789,67 +934,35 @@
     let currentRouteLayer = null;
 
     let races = [];
+    let featuredRacesList = [];
     let zavodniTrasy = {};
 
     const statusFilters = { done: true, planned: true, bucket: true };
     let surfaceFilter = 'all';
     let searchQuery = '';
 
-    // Advanced filters state
     let advFilterMonth = 'all';
     let advFilterDifficulty = 'all';
     let advFilterCost = 'all';
 
-    // Selected chips in modal
-    let chipSelections = {
-      status: '',
-      surface: 'mixed',
-      difficulty: 'stredni',
-      repeat: 'yes'
-    };
-
-    // Home Base: null by default if not set
+    let chipSelections = { status: '', surface: 'mixed', difficulty: 'stredni', repeat: 'yes' };
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
-    // Strict world bounds: limits map strictly to [-85..85, -180..180] (one world only)
-    const southWest = L.latLng(-85, -180);
-    const northEast = L.latLng(85, 180);
-    const worldBounds = L.latLngBounds(southWest, northEast);
-
+    // Strict world bounds
+    const worldBounds = L.latLngBounds(L.latLng(-85, -180), L.latLng(85, 180));
     const defaultCenter = userHomeCoords || [25.0, 10.0];
     const defaultZoom = userHomeCoords ? 5.2 : 2.5;
 
     const map = L.map('map', {
-      center: defaultCenter,
-      zoom: defaultZoom,
-      minZoom: 2,
-      maxBounds: worldBounds,
-      maxBoundsViscosity: 1.0,
-      worldCopyJump: false
+      center: defaultCenter, zoom: defaultZoom, minZoom: 2,
+      maxBounds: worldBounds, maxBoundsViscosity: 1.0, worldCopyJump: false
     });
 
-    const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-      attribution: '&copy; Esri',
-      maxZoom: 18,
-      noWrap: true,
-      bounds: worldBounds
-    }).addTo(map);
+    const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 18, noWrap: true, bounds: worldBounds }).addTo(map);
+    const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Dark', maxZoom: 16, noWrap: true, bounds: worldBounds });
+    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Sat', maxZoom: 18, noWrap: true, bounds: worldBounds });
 
-    const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      attribution: '&copy; Esri Dark',
-      maxZoom: 16,
-      noWrap: true,
-      bounds: worldBounds
-    });
-
-    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: '&copy; Esri Satellite',
-      maxZoom: 18,
-      noWrap: true,
-      bounds: worldBounds
-    });
-
-    L.control.layers({ "Topographic (Default)": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
+    L.control.layers({ "Topographic": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
     let markerLayerGroup = L.featureGroup().addTo(map);
     let homeMarker = null;
 
@@ -870,19 +983,18 @@
     }
 
     // ==========================================
-    // INITIALIZATION & URL VIEW ROUTING
+    // INITIALIZATION
     // ==========================================
     async function initApp() {
       const params = new URLSearchParams(window.location.search);
       isDemoMode = params.get('demo') === 'true';
-      const urlView = params.get('view');
-      if (urlView === 'memorable') switchPageMode('memorable', false);
+      const sharedUser = params.get('u');
 
       refreshHomeMarker();
 
       if (isDemoMode) {
         document.getElementById('label-user').textContent = "Demo User";
-        document.getElementById('main-title').textContent = currentMode === 'races' ? "Race Atlas (Demo)" : "Memorable Runs (Demo)";
+        document.getElementById('main-title').textContent = "Race Atlas (Demo)";
         races = [
           { id: "demo-1", name: "Dresden Half Marathon", date: "2026-10-24", month: 10, coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€", distance: "21.1 km", elevation: "+110 m", why: "Flat course along Elbe.", notes: "Target 4:07/km." },
           { id: "demo-2", name: "Helsinki Marathon", date: "2026-08-22", month: 8, coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€€€", distance: "42.2 km", elevation: "+226 m", resultTime: "3:11:04", why: "First marathon.", notes: "Even split." }
@@ -896,11 +1008,24 @@
 
       if (currentUser) {
         const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
-        const name = profile?.username || currentUser.email.split('@')[0];
-        document.getElementById('label-user').textContent = name;
+        const username = profile?.username || currentUser.email.split('@')[0];
+        document.getElementById('label-user').textContent = username;
+        document.getElementById('setting-username').value = username;
+        document.getElementById('setting-email-label').textContent = currentUser.email;
+        document.getElementById('setting-share-link').value = `${window.location.origin}/app.html?u=${encodeURIComponent(username)}`;
         document.getElementById('btn-add-activity').style.display = 'inline-flex';
 
         await loadActivitiesFromDB(currentUser.id);
+      } else if (sharedUser) {
+        const { data: profile } = await supabaseClient.from('profiles').select('*').eq('username', sharedUser).single();
+        if (profile) {
+          document.getElementById('main-title').textContent = `Atlas: ${profile.display_name || profile.username}`;
+          document.getElementById('label-user').textContent = "Guest";
+          await loadActivitiesFromDB(profile.id);
+        } else {
+          alert('User profile not found.');
+          window.location.href = 'index.html';
+        }
       } else {
         window.location.href = 'index.html';
       }
@@ -954,100 +1079,241 @@
       }
     }
 
-    function switchPageMode(mode, updateUrl = true) {
-      currentMode = mode;
-      document.getElementById('rail-races').classList.toggle('active', mode === 'races');
-      document.getElementById('rail-memorable').classList.toggle('active', mode === 'memorable');
-
-      const isRace = (mode === 'races');
-      document.getElementById('main-title').textContent = isRace ? 'Race Atlas' : 'Memorable Runs';
-      document.getElementById('status-boxes-wrap').style.display = isRace ? 'flex' : 'none';
-      document.getElementById('btn-add-activity').textContent = isRace ? '➕ Add Race' : '➕ Add Run';
-
-      if (updateUrl && !isDemoMode) {
-        const url = new URL(window.location);
-        if (isRace) url.searchParams.delete('view');
-        else url.searchParams.set('view', 'memorable');
-        window.history.replaceState({}, '', url);
-      }
-
-      renderAll();
-    }
-
     // ==========================================
-    // PARSING MONTH & ADVANCED FILTRATION LOGIC
+    // GLOBAL RACE CATALOG LOGIC
     // ==========================================
-    function parseActivityMonth(item) {
-      if (item.month && !isNaN(item.month)) return parseInt(item.month);
-      if (item.date) {
-        if (item.date.includes('-')) {
-          const parts = item.date.split('-');
-          if (parts.length >= 2) return parseInt(parts[1]);
-        }
-        const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-        const lower = item.date.toLowerCase();
-        for (let i = 0; i < monthNames.length; i++) {
-          if (lower.includes(monthNames[i])) return i + 1;
+    async function openCatalogModal() {
+      closeModals();
+      document.getElementById('modal-catalog').style.display = 'flex';
+
+      if (featuredRacesList.length === 0) {
+        const { data, error } = await supabaseClient.from('featured_races').select('*');
+        if (!error && data && data.length > 0) {
+          featuredRacesList = data;
+        } else {
+          // Fallback if table not queried yet
+          featuredRacesList = [
+            { id: "c-1", name: "Berlin Marathon", category: "majors", location: "Berlin, Germany", distance: "42.2 km", elevation: "+45 m", coords: [52.5163, 13.3777], image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-2", name: "UTMB Mont-Blanc", category: "trail", location: "Chamonix, France", distance: "171 km", elevation: "+10000 m", coords: [45.9237, 6.8694], image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-3", name: "Pražský maraton (PIM)", category: "czech", location: "Praha, Česko", distance: "42.2 km", elevation: "+130 m", coords: [50.0875, 14.4211], image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=400&q=80" }
+          ];
         }
       }
-      return null;
+      renderCatalogGrid('all');
     }
 
-    function toggleAdvancedFilters() {
-      const drawer = document.getElementById('advanced-filters-drawer');
-      const isVisible = (drawer.style.display === 'flex');
-      drawer.style.display = isVisible ? 'none' : 'flex';
-      document.getElementById('btn-toggle-advanced-filters').classList.toggle('active', !isVisible);
+    function renderCatalogGrid(category = 'all') {
+      const container = document.getElementById('catalog-list-container');
+      container.innerHTML = '';
+
+      const filtered = (category === 'all') ? featuredRacesList : featuredRacesList.filter(r => r.category === category);
+
+      filtered.forEach(race => {
+        const item = document.createElement('div');
+        item.className = 'catalog-item-card';
+        item.innerHTML = `
+          <img src="${race.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80'}" alt="">
+          <div class="catalog-info">
+            <h4>${race.name}</h4>
+            <p>📍 ${race.location || ''} &bull; 📏 ${race.distance || ''} &bull; ⛰️ ${race.elevation || ''}</p>
+          </div>
+          <div class="catalog-actions">
+            <button class="pill-btn" style="background:rgba(52,199,89,0.15); border-color:#34c759; color:#34c759; padding:4px 8px; font-size:0.72rem;" onclick="addFeaturedRaceToMyAtlas('${race.id}', 'done')">
+              🏁 I ran this
+            </button>
+            <button class="pill-btn" style="background:rgba(90,200,250,0.15); border-color:#5ac8fa; color:#5ac8fa; padding:4px 8px; font-size:0.72rem;" onclick="addFeaturedRaceToMyAtlas('${race.id}', 'bucket')">
+              ⭐️ Bucket list
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
     }
 
-    function updateAdvancedFiltersCount() {
-      let count = 0;
-      if (advFilterMonth !== 'all') count++;
-      if (advFilterDifficulty !== 'all') count++;
-      if (advFilterCost !== 'all') count++;
+    function switchCatalogCategory(cat, btn) {
+      document.querySelectorAll('#modal-catalog .modal-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCatalogGrid(cat);
+    }
 
-      const badge = document.getElementById('adv-filter-count');
-      if (count > 0) {
-        badge.textContent = count;
-        badge.style.display = 'inline-block';
+    async function addFeaturedRaceToMyAtlas(raceId, statusChoice) {
+      if (!currentUser) return;
+      const race = featuredRacesList.find(r => r.id === raceId);
+      if (!race) return;
+
+      const record = {
+        user_id: currentUser.id,
+        name: race.name,
+        date: statusChoice === 'done' ? 'Completed' : 'Dream Goal',
+        month: race.month || 1,
+        status: statusChoice,
+        status_label: statusChoice === 'done' ? 'Completed' : 'Bucket list',
+        surface: race.surface || 'road',
+        surface_label: race.surface_label || 'Road',
+        difficulty: race.difficulty || 'stredni',
+        distance: race.distance || '-',
+        elevation: race.elevation || '-',
+        importance: 8,
+        why: statusChoice === 'done' ? 'Personal race highlight.' : 'Legendary race on my bucket list.',
+        notes: race.description || '',
+        image_url: race.image_url || '',
+        coords: race.coords,
+        is_memorable: false
+      };
+
+      const { error } = await supabaseClient.from('races').insert([record]);
+      if (!error) {
+        alert(`Added "${race.name}" to your Atlas! 🎉`);
+        document.getElementById('onboarding-overlay').style.display = 'none';
+        await loadActivitiesFromDB(currentUser.id);
+        map.panTo(race.coords, { animate: true });
       } else {
-        badge.style.display = 'none';
+        alert('Could not add race: ' + error.message);
       }
     }
 
-    function setDifficultyFilter(val, btn) {
-      advFilterDifficulty = val;
-      document.querySelectorAll('#filter-difficulty-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
-      updateAdvancedFiltersCount();
-      renderAll();
+    // ==========================================
+    // SUPPORT & FEEDBACK SUBMISSION
+    // ==========================================
+    function openSupportModal() {
+      closeModals();
+      document.getElementById('modal-support').style.display = 'flex';
     }
 
-    function setCostFilter(val, btn) {
-      advFilterCost = val;
-      document.querySelectorAll('#filter-cost-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
-      updateAdvancedFiltersCount();
-      renderAll();
+    function openAboutModal() {
+      closeModals();
+      document.getElementById('modal-about').style.display = 'flex';
     }
 
-    function applyAdvancedFilters() {
-      advFilterMonth = document.getElementById('filter-month').value;
-      updateAdvancedFiltersCount();
-      renderAll();
+    function switchSupportTab(tabName, btn) {
+      document.querySelectorAll('#modal-support .modal-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('sup-tab-form').style.display = (tabName === 'form') ? 'flex' : 'none';
+      document.getElementById('sup-tab-faq').style.display = (tabName === 'faq') ? 'flex' : 'none';
     }
 
-    function resetAdvancedFilters() {
-      advFilterMonth = 'all';
-      advFilterDifficulty = 'all';
-      advFilterCost = 'all';
-      document.getElementById('filter-month').value = 'all';
-      document.querySelectorAll('#filter-difficulty-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
-      document.querySelectorAll('#filter-cost-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
-      updateAdvancedFiltersCount();
-      renderAll();
+    async function submitFeedbackForm() {
+      const msg = document.getElementById('feedback-message').value.trim();
+      if (!msg) { alert('Please enter your message or idea.'); return; }
+
+      const cat = document.getElementById('feedback-category').value;
+      const btn = document.getElementById('btn-send-feedback');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        const { error } = await supabaseClient.from('feedback').insert([{
+          user_id: currentUser ? currentUser.id : null,
+          category: cat,
+          message: msg,
+          user_email: currentUser ? currentUser.email : 'guest'
+        }]);
+
+        if (error) throw error;
+        alert('Thank you! Your suggestion was sent directly to the creator. 🏃');
+        document.getElementById('feedback-message').value = '';
+        closeModals();
+      } catch (err) {
+        alert('Thank you! Feedback received.');
+        closeModals();
+      } finally {
+        btn.textContent = 'Send Directly to Creator ✉️';
+        btn.disabled = false;
+      }
     }
 
     // ==========================================
-    // RENDER LIST & MAP MARKERS
+    // SETTINGS, EXPORT & SHARING
+    // ==========================================
+    function openSettingsModal() {
+      closeModals();
+      document.getElementById('setting-home-coords').value = userHomeCoords ? userHomeCoords.join(', ') : '';
+      document.getElementById('modal-settings').style.display = 'flex';
+    }
+
+    function switchSettingsTab(tabName, btn) {
+      document.querySelectorAll('#modal-settings .modal-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('set-tab-profile').style.display = (tabName === 'profile') ? 'flex' : 'none';
+      document.getElementById('set-tab-home').style.display = (tabName === 'home') ? 'flex' : 'none';
+      document.getElementById('set-tab-data').style.display = (tabName === 'data') ? 'flex' : 'none';
+    }
+
+    function copyShareLink() {
+      const el = document.getElementById('setting-share-link');
+      el.select();
+      navigator.clipboard.writeText(el.value);
+      alert('Public profile link copied to clipboard!');
+    }
+
+    function exportUserAtlasData() {
+      if (races.length === 0) { alert('No activities to export.'); return; }
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(races, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `running_atlas_backup_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    async function geocodeAndSaveHome() {
+      const q = document.getElementById('setting-home-query').value.trim();
+      if (!q) return;
+
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+          saveHomeCoords([lat, lon]);
+        } else {
+          alert('Address not found. Please try another city.');
+        }
+      } catch (e) {
+        alert('Geocoding request failed. Please enter coordinates manually.');
+      }
+    }
+
+    function saveUserSettingsManual() {
+      const val = document.getElementById('setting-home-coords').value.trim();
+      if (val) {
+        const parts = val.split(',').map(p => parseFloat(p.trim()));
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+          saveHomeCoords(parts);
+          return;
+        }
+      }
+      closeModals();
+    }
+
+    function saveHomeCoords(coords) {
+      userHomeCoords = coords;
+      localStorage.setItem('runatlas_home_coords', JSON.stringify(coords));
+      refreshHomeMarker();
+      alert('Home Base saved!');
+      closeModals();
+      jumpToHomeBase();
+    }
+
+    function jumpToHomeBase() {
+      if (userHomeCoords) {
+        map.setView(userHomeCoords, 5.2, { animate: true });
+        refreshHomeMarker();
+      } else {
+        openSettingsModal();
+      }
+    }
+
+    function handleProfileLogout() {
+      if (confirm('Do you want to log out of Running Atlas?')) {
+        supabaseClient.auth.signOut().then(() => { window.location.href = 'index.html'; });
+      }
+    }
+
+    // ==========================================
+    // RENDER MAP & SIDEBAR
     // ==========================================
     function renderAll() {
       markerLayerGroup.clearLayers();
@@ -1066,12 +1332,8 @@
           const m = parseActivityMonth(item);
           if (m !== parseInt(advFilterMonth)) return false;
         }
-        if (advFilterDifficulty !== 'all') {
-          if (item.difficulty !== advFilterDifficulty) return false;
-        }
-        if (advFilterCost !== 'all') {
-          if (item.cost !== advFilterCost) return false;
-        }
+        if (advFilterDifficulty !== 'all' && item.difficulty !== advFilterDifficulty) return false;
+        if (advFilterCost !== 'all' && item.cost !== advFilterCost) return false;
 
         return true;
       });
@@ -1080,15 +1342,15 @@
 
       if (activeList.length === 0) {
         content.innerHTML = `
-          <div style="text-align:center; padding: 40px 10px; color:#888;">
+          <div style="text-align:center; padding: 36px 10px; color:#888;">
             <div style="font-size:0.92rem; font-weight:600; color:#ddd; margin-bottom:6px;">No activities match your filters</div>
-            <div style="font-size:0.78rem; margin-bottom:18px;">Your atlas has no records matching these criteria.</div>
+            <div style="font-size:0.78rem; margin-bottom:16px;">Pick a race from the catalog or upload a watch track.</div>
             <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
-              <button class="open-detail-btn" style="width:200px;" onclick="openAddModal()">
-                ${isRace ? '➕ Add new race' : '➕ Add new run'}
+              <button class="open-detail-btn" style="width:200px; background:#34c759;" onclick="openCatalogModal()">
+                🌍 Choose from Catalog
               </button>
-              <button class="pill-btn" style="width:200px; justify-content:center;" onclick="startInteractiveTutorial()">
-                💡 See how it works
+              <button class="pill-btn" style="width:200px; justify-content:center;" onclick="openAddModal()">
+                ➕ Upload own track
               </button>
             </div>
           </div>
@@ -1099,7 +1361,6 @@
       activeList.forEach(item => {
         const colors = { done: '#34c759', planned: '#ff9f0a', bucket: '#5ac8fa', memorable: '#af52de' };
         const pinColor = item.isMemorable ? '#af52de' : (colors[item.status] || '#007aff');
-
         const pinHtml = `<div class="pin-circle" style="width:18px; height:18px; background:${pinColor};"></div>`;
         const icon = L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [18, 18], iconAnchor: [9, 9] });
 
@@ -1135,7 +1396,6 @@
 
     function showDetail(item) {
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
-
       const content = document.getElementById('content');
       
       let galleryHtml = '';
@@ -1175,15 +1435,15 @@
     }
 
     // ==========================================
-    // PROGRESSIVE DISCLOSURE (TWO-STEP MODAL)
+    // MODAL STEPPER & GPX UPLOAD
     // ==========================================
     let parsedGpxCoords = null;
     let parsedCenterCoords = null;
     let selectedImageFiles = [];
 
-    function goToStep(stepNumber) {
-      document.getElementById('modal-step-1').style.display = (stepNumber === 1) ? 'flex' : 'none';
-      document.getElementById('modal-step-2').style.display = (stepNumber === 2) ? 'flex' : 'none';
+    function goToStep(step) {
+      document.getElementById('modal-step-1').style.display = (step === 1) ? 'flex' : 'none';
+      document.getElementById('modal-step-2').style.display = (step === 2) ? 'flex' : 'none';
     }
 
     function selectChip(category, value) {
@@ -1203,7 +1463,6 @@
       document.getElementById('importance-val').textContent = '5';
       document.getElementById('form-why').value = '';
       document.getElementById('form-notes').value = '';
-      
       document.getElementById('ambition-h').value = '';
       document.getElementById('ambition-m').value = '';
       document.getElementById('ambition-s').value = '';
@@ -1211,10 +1470,7 @@
       document.getElementById('finish-m').value = '';
       document.getElementById('finish-s').value = '';
       document.getElementById('ambition-diff-box').style.display = 'none';
-
       document.getElementById('form-placement').value = '';
-      document.getElementById('form-satisfaction').value = '7';
-      document.getElementById('satisfaction-val').textContent = '7';
       document.getElementById('form-target-ambition').value = '';
       document.getElementById('form-logistics-dist').value = '';
       document.getElementById('form-logistics-transport').value = '';
@@ -1232,18 +1488,15 @@
       selectChip('surface', 'mixed');
       selectChip('difficulty', 'stredni');
       selectChip('repeat', 'yes');
-
       goToStep(1);
     }
 
     function openAddModal(forcedMode = null) {
       closeModals();
       resetActivityForm();
-
       const isMemorable = (forcedMode === 'memorable' || currentMode === 'memorable');
       document.getElementById('step1-modal-title').textContent = isMemorable ? 'Add Memorable Run' : 'Add New Race';
       document.getElementById('add-modal').style.display = 'flex';
-
       if (isMemorable) {
         selectChip('status', 'done');
         document.getElementById('label-why').textContent = "What made this run memorable? (Optional)";
@@ -1251,9 +1504,7 @@
     }
 
     function closeModals() {
-      document.getElementById('add-modal').style.display = 'none';
-      document.getElementById('modal-settings').style.display = 'none';
-      document.getElementById('modal-info').style.display = 'none';
+      document.querySelectorAll('.modal-backdrop').forEach(m => m.style.display = 'none');
       resetActivityForm();
     }
 
@@ -1266,111 +1517,73 @@
         whyInput.placeholder = "Why did I run this? What did the challenge mean to me?";
         completedTiming.style.display = 'flex';
         planningDetails.style.display = 'none';
-      } else if (status === 'planned') {
-        whyInput.placeholder = "Why this race? What is the main ambition?";
-        completedTiming.style.display = 'none';
-        planningDetails.style.display = 'flex';
-      } else if (status === 'bucket') {
-        whyInput.placeholder = "Why is this on my dream bucket list?";
-        completedTiming.style.display = 'none';
-        planningDetails.style.display = 'flex';
       } else {
-        whyInput.placeholder = "Personal motivation or quote (Optional)...";
+        whyInput.placeholder = status === 'planned' ? "Why this race? What is the main ambition?" : "Why is this on my dream bucket list?";
         completedTiming.style.display = 'none';
-        planningDetails.style.display = 'none';
+        planningDetails.style.display = 'flex';
       }
     }
 
-    function getBoxSeconds(prefix) {
-      const hVal = document.getElementById(`${prefix}-h`).value;
-      const mVal = document.getElementById(`${prefix}-m`).value;
-      const sVal = document.getElementById(`${prefix}-s`).value;
-      if (!hVal && !mVal && !sVal) return null;
-      return (parseInt(hVal) || 0) * 3600 + (parseInt(mVal) || 0) * 60 + (parseInt(sVal) || 0);
-    }
-
-    function formatBoxesToTime(prefix) {
-      const hVal = document.getElementById(`${prefix}-h`).value;
-      const mVal = document.getElementById(`${prefix}-m`).value;
-      const sVal = document.getElementById(`${prefix}-s`).value;
-      if (!hVal && !mVal && !sVal) return '';
-      const h = parseInt(hVal) || 0;
-      const m = parseInt(mVal) || 0;
-      const s = parseInt(sVal) || 0;
-      return `${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-    }
-
     function calculateTimeDifference() {
-      const ambitionSec = getBoxSeconds('ambition');
-      const finishSec = getBoxSeconds('finish');
-      const diffBox = document.getElementById('ambition-diff-box');
-      const diffText = document.getElementById('ambition-diff-text');
+      const getSec = (p) => {
+        const h = parseInt(document.getElementById(`${p}-h`).value) || 0;
+        const m = parseInt(document.getElementById(`${p}-m`).value) || 0;
+        const s = parseInt(document.getElementById(`${p}-s`).value) || 0;
+        return (h || m || s) ? h * 3600 + m * 60 + s : null;
+      };
 
-      if (ambitionSec !== null && finishSec !== null) {
-        const diff = finishSec - ambitionSec;
-        const absSec = Math.abs(diff);
-        const h = Math.floor(absSec / 3600);
-        const m = Math.floor((absSec % 3600) / 60);
-        const s = absSec % 60;
+      const amb = getSec('ambition');
+      const fin = getSec('finish');
+      const box = document.getElementById('ambition-diff-box');
+      const txt = document.getElementById('ambition-diff-text');
+
+      if (amb !== null && fin !== null) {
+        const diff = fin - amb;
+        const abs = Math.abs(diff);
+        const h = Math.floor(abs / 3600);
+        const m = Math.floor((abs % 3600) / 60);
+        const s = abs % 60;
         const sign = diff <= 0 ? '-' : '+';
-        const formatted = `${sign}${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        const formatted = `${sign}${h ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 
-        if (diff <= 0) {
-          diffBox.style.background = '#1c2b20';
-          diffBox.style.borderColor = '#34c759';
-          diffText.innerHTML = `<span style="color:#34c759;">${formatted} (Faster than goal 🎉)</span>`;
-        } else {
-          diffBox.style.background = '#2c221a';
-          diffBox.style.borderColor = '#ff9f0a';
-          diffText.innerHTML = `<span style="color:#ff9f0a;">${formatted} (Slower than goal)</span>`;
-        }
-        diffBox.style.display = 'block';
+        box.style.background = diff <= 0 ? '#1c2b20' : '#2c221a';
+        box.style.borderColor = diff <= 0 ? '#34c759' : '#ff9f0a';
+        txt.innerHTML = `<span style="color:${diff <= 0 ? '#34c759' : '#ff9f0a'};">${formatted} (${diff <= 0 ? 'Faster than goal 🎉' : 'Slower than goal'})</span>`;
+        box.style.display = 'block';
       } else {
-        diffBox.style.display = 'none';
+        box.style.display = 'none';
       }
     }
 
     function handleMultipleImagesPreview(files) {
       selectedImageFiles = Array.from(files).slice(0, 10);
-      const previewGrid = document.getElementById('images-preview');
-      previewGrid.innerHTML = '';
-
+      const grid = document.getElementById('images-preview');
+      grid.innerHTML = '';
       selectedImageFiles.forEach(file => {
         const reader = new FileReader();
         reader.onload = e => {
           const img = document.createElement('img');
           img.src = e.target.result;
           img.className = 'gallery-thumb';
-          previewGrid.appendChild(img);
+          grid.appendChild(img);
         };
         reader.readAsDataURL(file);
       });
     }
 
-    document.getElementById('drop-gpx').addEventListener('click', () => {
-      document.getElementById('input-gpx').click();
-    });
+    document.getElementById('drop-gpx').addEventListener('click', () => document.getElementById('input-gpx').click());
 
     function handleGpxUpload(file) {
       if (!file) return;
       document.getElementById('gpx-label').textContent = 'Loading: ' + file.name;
-
       const reader = new FileReader();
       reader.onload = function(e) {
         const parser = new DOMParser();
         const xml = parser.parseFromString(e.target.result, 'text/xml');
         const trkpts = xml.querySelectorAll('trkpt');
+        if (trkpts.length === 0) { alert('No trackpoints found.'); return; }
 
-        if (trkpts.length === 0) {
-          alert('No trackpoints found in GPX.');
-          return;
-        }
-
-        let latlngs = [];
-        let totalDist = 0;
-        let totalEle = 0;
-        let prevEle = null;
-
+        let latlngs = [], totalDist = 0, totalEle = 0, prevEle = null;
         for (let i = 0; i < trkpts.length; i++) {
           const lat = parseFloat(trkpts[i].getAttribute('lat'));
           const lon = parseFloat(trkpts[i].getAttribute('lon'));
@@ -1388,14 +1601,13 @@
             const rad = Math.PI / 180;
             const dLat = (lat - prev[0]) * rad;
             const dLon = (lon - prev[1]) * rad;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(prev[0] * rad) * Math.cos(lat * rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const a = Math.sin(dLat / 2)**2 + Math.cos(prev[0] * rad) * Math.cos(lat * rad) * Math.sin(dLon / 2)**2;
             totalDist += 6371 * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
           }
         }
 
         parsedGpxCoords = latlngs;
         parsedCenterCoords = latlngs[0];
-
         document.getElementById('form-distance').value = totalDist.toFixed(1) + ' km';
         document.getElementById('form-elevation').value = '+' + Math.round(totalEle) + ' m';
         document.getElementById('gpx-label').textContent = `✅ Loaded (${latlngs.length} pts, ${totalDist.toFixed(1)} km)`;
@@ -1407,42 +1619,34 @@
       if (!currentUser) return;
       const name = document.getElementById('form-name').value.trim();
       const status = chipSelections.status;
-      
       if (!name) { alert('Please enter activity title.'); return; }
-      if (!status) { alert('Please select activity status (Completed, Planned, or Bucket list).'); return; }
+      if (!status) { alert('Please select activity status.'); return; }
 
-      let finalCoords = parsedCenterCoords;
-      if (!finalCoords) {
-        finalCoords = userHomeCoords || [map.getCenter().lat, map.getCenter().lng];
-      }
-
+      let finalCoords = parsedCenterCoords || userHomeCoords || [map.getCenter().lat, map.getCenter().lng];
       const saveBtns = [document.getElementById('btn-save-step1'), document.getElementById('btn-save-step2')];
       saveBtns.forEach(b => { if (b) { b.textContent = 'Saving...'; b.disabled = true; } });
 
       try {
         let uploadedImageUrls = [];
-        if (selectedImageFiles.length > 0) {
-          for (let f of selectedImageFiles) {
-            const fileExt = f.name.split('.').pop();
-            const filePath = `${currentUser.id}/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-            const { error: uploadErr } = await supabaseClient.storage.from('race-images').upload(filePath, f);
-            if (!uploadErr) {
-              const { data: { publicUrl } } = supabaseClient.storage.from('race-images').getPublicUrl(filePath);
-              uploadedImageUrls.push(publicUrl);
-            }
+        for (let f of selectedImageFiles) {
+          const fileExt = f.name.split('.').pop();
+          const filePath = `${currentUser.id}/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const { error: upErr } = await supabaseClient.storage.from('race-images').upload(filePath, f);
+          if (!upErr) {
+            const { data: { publicUrl } } = supabaseClient.storage.from('race-images').getPublicUrl(filePath);
+            uploadedImageUrls.push(publicUrl);
           }
         }
 
         const dateStr = document.getElementById('form-date').value;
-        let monthInt = null;
-        if (dateStr) {
-          const parts = dateStr.split('-');
-          if (parts.length >= 2) monthInt = parseInt(parts[1]);
-        }
+        const monthInt = dateStr ? parseInt(dateStr.split('-')[1]) : null;
 
-        const isMemorable = (currentMode === 'memorable');
-        const finishTimeStr = formatBoxesToTime('finish');
-        const ambitionTimeStr = formatBoxesToTime('ambition') || document.getElementById('form-target-ambition').value.trim();
+        const formatTime = (p) => {
+          const h = parseInt(document.getElementById(`${p}-h`).value) || 0;
+          const m = parseInt(document.getElementById(`${p}-m`).value) || 0;
+          const s = parseInt(document.getElementById(`${p}-s`).value) || 0;
+          return (h || m || s) ? `${h ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}` : '';
+        };
 
         const statusLabels = { done: 'Completed', planned: 'Planned', bucket: 'Bucket list' };
         const surfaceLabels = { trail: 'Trail', road: 'Road', mixed: 'Mixed' };
@@ -1466,8 +1670,8 @@
           image_url: uploadedImageUrls[0] || null,
           coords: finalCoords,
           route_coords: parsedGpxCoords,
-          result_time: finishTimeStr,
-          ambition_time: ambitionTimeStr,
+          result_time: formatTime('finish'),
+          ambition_time: formatTime('ambition') || document.getElementById('form-target-ambition').value.trim(),
           placement: document.getElementById('form-placement').value,
           satisfaction: parseInt(document.getElementById('form-satisfaction').value),
           expectations: document.getElementById('form-expectations').value,
@@ -1476,11 +1680,11 @@
           logistics_dist: document.getElementById('form-logistics-dist').value,
           logistics_transport: document.getElementById('form-logistics-transport').value,
           logistics_time: document.getElementById('form-logistics-time').value,
-          is_memorable: isMemorable
+          is_memorable: (currentMode === 'memorable')
         };
 
-        const { error: insertErr } = await supabaseClient.from('races').insert([record]);
-        if (insertErr) throw insertErr;
+        const { error: insErr } = await supabaseClient.from('races').insert([record]);
+        if (insErr) throw insErr;
 
         alert('Activity saved successfully!');
         closeModals();
@@ -1494,109 +1698,62 @@
     }
 
     // ==========================================
-    // GEOCODING & HOME BASE PREFERENCES
+    // INTERACTIVE TUTORIAL & FILTERS
     // ==========================================
-    function jumpToHomeBase() {
-      if (userHomeCoords) {
-        map.setView(userHomeCoords, 5.2, { animate: true });
-        refreshHomeMarker();
-      } else {
-        openSettingsModal();
-      }
+    function parseActivityMonth(item) {
+      if (item.month) return parseInt(item.month);
+      if (item.date && item.date.includes('-')) return parseInt(item.date.split('-')[1]);
+      return null;
     }
 
-    function openSettingsModal() {
-      closeModals();
-      document.getElementById('setting-home-coords').value = userHomeCoords ? userHomeCoords.join(', ') : '';
-      document.getElementById('modal-settings').style.display = 'flex';
+    function toggleAdvancedFilters() {
+      const d = document.getElementById('advanced-filters-drawer');
+      const show = d.style.display !== 'flex';
+      d.style.display = show ? 'flex' : 'none';
+      document.getElementById('btn-toggle-advanced-filters').classList.toggle('active', show);
     }
 
-    async function geocodeAndSaveHome() {
-      const q = document.getElementById('setting-home-query').value.trim();
-      if (!q) return;
-
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
-        const data = await res.json();
-        if (data && data.length > 0) {
-          const lat = parseFloat(data[0].lat);
-          const lon = parseFloat(data[0].lon);
-          saveHomeCoords([lat, lon]);
-        } else {
-          alert('Address not found. Please try entering a different city or coordinates.');
-        }
-      } catch (e) {
-        alert('Geocoding request failed. Please enter coordinates manually.');
-      }
+    function updateAdvancedFiltersCount() {
+      let count = (advFilterMonth !== 'all' ? 1 : 0) + (advFilterDifficulty !== 'all' ? 1 : 0) + (advFilterCost !== 'all' ? 1 : 0);
+      const b = document.getElementById('adv-filter-count');
+      b.style.display = count > 0 ? 'inline-block' : 'none';
+      b.textContent = count;
     }
 
-    function saveUserSettingsManual() {
-      const val = document.getElementById('setting-home-coords').value.trim();
-      const parts = val.split(',').map(p => parseFloat(p.trim()));
-      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-        saveHomeCoords(parts);
-      } else {
-        alert('Please enter valid coordinates (e.g. 50.2305, 14.0888)');
-      }
+    function setDifficultyFilter(val, btn) {
+      advFilterDifficulty = val;
+      document.querySelectorAll('#filter-difficulty-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
+      updateAdvancedFiltersCount(); renderAll();
     }
 
-    function saveHomeCoords(coords) {
-      userHomeCoords = coords;
-      localStorage.setItem('runatlas_home_coords', JSON.stringify(coords));
-      refreshHomeMarker();
-      alert('Home Base saved!');
-      closeModals();
-      jumpToHomeBase();
+    function setCostFilter(val, btn) {
+      advFilterCost = val;
+      document.querySelectorAll('#filter-cost-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
+      updateAdvancedFiltersCount(); renderAll();
     }
 
-    function openInfoModal(type) {
-      closeModals();
-      const title = document.getElementById('info-modal-title');
-      const body = document.getElementById('info-modal-body');
-
-      if (type === 'about') {
-        title.textContent = 'About Running Atlas';
-        body.innerHTML = `Running Atlas is your personal interactive running atlas and route log.<br><br><span style="font-size:0.75rem; color:#888;">Version 1.5 &bull; Built with Leaflet & Supabase</span>`;
-      } else {
-        title.textContent = 'Help & Support';
-        body.innerHTML = `Need help with GPX imports or custom features?<br><br>Reach out at:<br><a href="mailto:support@runningatlas.app" style="color:#007aff; font-weight:600; text-decoration:none;">support@runningatlas.app</a>`;
-      }
-      document.getElementById('modal-info').style.display = 'flex';
+    function applyAdvancedFilters() {
+      advFilterMonth = document.getElementById('filter-month').value;
+      updateAdvancedFiltersCount(); renderAll();
     }
 
-    // ==========================================
-    // INTERACTIVE TUTORIAL (Driver.js)
-    // ==========================================
-    function startInteractiveTutorial() {
-      document.getElementById('onboarding-overlay').style.display = 'none';
-      closeModals();
-      const driverObj = window.driver.js.driver({
-        showProgress: true,
-        animate: true,
-        nextBtnText: 'Next ➔',
-        prevBtnText: '⬅ Back',
-        doneBtnText: "Ready, let's run!",
-        steps: [
-          { element: '#left-rail', popover: { title: 'Navigation', description: 'Switch easily between official Races and Memorable Runs, or jump to your Home Base.', side: "right" } },
-          { element: '#global-search', popover: { title: 'Quick Search', description: 'Find activities by title, mountain range, or city.', side: "bottom" } },
-          { element: '#btn-add-activity', popover: { title: 'Add Activity', description: 'Upload watch .GPX files along with course photos and custom metrics.', side: "bottom" } },
-          { element: '#sidebar', popover: { title: 'List & Filtering', description: 'Click any card to pan the map and display elevation curves and route lines.', side: "left" } }
-        ]
-      });
-      driverObj.drive();
+    function resetAdvancedFilters() {
+      advFilterMonth = 'all'; advFilterDifficulty = 'all'; advFilterCost = 'all';
+      document.getElementById('filter-month').value = 'all';
+      document.querySelectorAll('#filter-difficulty-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
+      document.querySelectorAll('#filter-cost-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
+      updateAdvancedFiltersCount(); renderAll();
     }
 
-    function toggleStatusFilter(statusKey) {
-      statusFilters[statusKey] = !statusFilters[statusKey];
-      document.querySelector(`.status-card-btn[data-status="${statusKey}"]`).classList.toggle('active', statusFilters[statusKey]);
+    function toggleStatusFilter(key) {
+      statusFilters[key] = !statusFilters[key];
+      document.querySelector(`.status-card-btn[data-status="${key}"]`).classList.toggle('active', statusFilters[key]);
       renderAll();
     }
 
     function setSurfaceFilter(surface, btn) {
       surfaceFilter = surface;
-      document.querySelectorAll('.filters-section .pill-btn').forEach(b => {
-        if (b.id !== 'btn-toggle-advanced-filters') b.classList.remove('active');
-      });
+      document.querySelectorAll('.filters-section .pill-btn').forEach(b => { if (b.id !== 'btn-toggle-advanced-filters') b.classList.remove('active'); });
       btn.classList.add('active');
       renderAll();
     }
@@ -1606,11 +1763,28 @@
       renderAll();
     }
 
-    function handleProfileClick() {
-      if (isDemoMode) { window.location.href = 'index.html'; return; }
-      if (confirm('Do you want to log out of Running Atlas?')) {
-        supabaseClient.auth.signOut().then(() => { window.location.href = 'index.html'; });
-      }
+    function switchPageMode(mode) {
+      currentMode = mode;
+      document.getElementById('rail-races').classList.toggle('active', mode === 'races');
+      document.getElementById('rail-memorable').classList.toggle('active', mode === 'memorable');
+      document.getElementById('main-title').textContent = mode === 'races' ? 'Race Atlas' : 'Memorable Runs';
+      document.getElementById('status-boxes-wrap').style.display = mode === 'races' ? 'flex' : 'none';
+      document.getElementById('btn-add-activity').textContent = mode === 'races' ? '➕ Add Race' : '➕ Add Run';
+      renderAll();
+    }
+
+    function startInteractiveTutorial() {
+      document.getElementById('onboarding-overlay').style.display = 'none';
+      closeModals();
+      const driverObj = window.driver.js.driver({
+        showProgress: true, animate: true,
+        steps: [
+          { element: '#left-rail', popover: { title: 'Navigation', description: 'Switch between Races and Memorable Runs, or jump to your Home Base.', side: "right" } },
+          { element: '#btn-browse-catalog', popover: { title: 'Race Catalog', description: 'Populate your map in seconds by selecting iconic world and Czech races.', side: "bottom" } },
+          { element: '#btn-add-activity', popover: { title: 'Upload Tracks', description: 'Import your own .GPX files with precision pace and elevation curves.', side: "bottom" } }
+        ]
+      });
+      driverObj.drive();
     }
 
     // Start
