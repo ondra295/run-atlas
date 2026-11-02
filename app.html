@@ -54,6 +54,7 @@
       display: flex; align-items: center; gap: 14px; padding: 10px 12px;
       border-radius: 8px; color: #8e8e93; cursor: pointer; border: none;
       background: transparent; font-size: 0.82rem; font-weight: 600; transition: all 0.15s;
+      text-decoration: none;
     }
     .rail-btn:hover, .rail-btn.active { background: #2c2c2e; color: #fff; }
     .rail-btn .rail-icon {
@@ -132,7 +133,7 @@
     .pill-btn {
       background: #242426; border: 1px solid #333; color: #aaa; padding: 6px 12px;
       border-radius: 6px; font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
-      display: inline-flex; align-items: center; gap: 6px;
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
     }
     .pill-btn:hover { background: #2c2c2e; color: #fff; }
     .pill-btn.active { background: #007aff; color: #fff; border-color: #007aff; }
@@ -219,7 +220,7 @@
     .gallery-thumb { width: 100%; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #444; }
 
     /* Catalog Cards Grid */
-    .catalog-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-right: 4px; }
+    .catalog-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; max-height: 52vh; overflow-y: auto; padding-right: 4px; }
     .catalog-item-card {
       background: #242428; border: 1px solid #3a3a3c; border-radius: 10px; padding: 12px;
       display: flex; gap: 14px; align-items: center; justify-content: space-between;
@@ -230,8 +231,7 @@
     .catalog-info p { font-size: 0.74rem; color: #aaa; }
     .catalog-actions { display: flex; flex-direction: column; gap: 5px; }
 
-    /* Modal Navigation Tabs */
-    .modal-tabs { display: flex; gap: 8px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 8px; }
+    .modal-tabs { display: flex; gap: 8px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 4px; }
     .modal-tab-btn {
       background: transparent; border: none; color: #888; font-weight: 700; font-size: 0.85rem;
       cursor: pointer; padding: 4px 8px; border-radius: 6px;
@@ -293,7 +293,7 @@
           🌍 Race Catalog
         </button>
         <button id="btn-add-activity" class="open-detail-btn" style="display: none;" onclick="openAddModal()">➕ Add Race</button>
-        <button id="btn-profile" class="pill-btn" onclick="openSettingsModal()">👤 <span id="label-user">Profile</span></button>
+        <a id="btn-profile" class="pill-btn" href="settings.html">👤 <span id="label-user">Profile</span></a>
       </div>
     </header>
 
@@ -327,8 +327,8 @@
 
         <div style="height: 1px; background: #2c2c2e; margin: 10px 4px;"></div>
 
-        <!-- 3. Home Base -->
-        <button class="rail-btn" onclick="jumpToHomeBase()">
+        <!-- 3. Home Base (Vycentrovat nebo nastavit) -->
+        <button class="rail-btn" onclick="handleHomeBaseClick()">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
@@ -337,8 +337,8 @@
           <span>Home Base</span>
         </button>
 
-        <!-- 4. Settings -->
-        <button class="rail-btn" onclick="openSettingsModal()">
+        <!-- 4. Settings (Odkaz na podstránku) -->
+        <a class="rail-btn" href="settings.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
@@ -346,13 +346,13 @@
             </svg>
           </span>
           <span>Settings</span>
-        </button>
+        </a>
 
         <div class="rail-spacer"></div>
         <div style="height: 1px; background: #2c2c2e; margin: 4px 4px;"></div>
 
-        <!-- 5. About Us -->
-        <button class="rail-btn" onclick="openAboutModal()">
+        <!-- 5. About Us (Odkaz na podstránku) -->
+        <a class="rail-btn" href="about.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -361,10 +361,10 @@
             </svg>
           </span>
           <span>About Us</span>
-        </button>
+        </a>
 
-        <!-- 6. Support & Feedback -->
-        <button class="rail-btn" onclick="openSupportModal()">
+        <!-- 6. Support & Feedback (Odkaz na podstránku) -->
+        <a class="rail-btn" href="support.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -376,7 +376,7 @@
             </svg>
           </span>
           <span>Support & Ideas</span>
-        </button>
+        </a>
       </nav>
 
       <!-- MAP CONTAINER & ONBOARDING -->
@@ -396,7 +396,6 @@
             <h2 style="font-size:1.5rem; font-weight:800; margin-bottom:4px;">Your map is a clean canvas</h2>
             <p style="font-size:0.84rem; color:#a1a1a6; line-height:1.45;">Choose how to populate your visual running history:</p>
 
-            <!-- 3 SPLIT CARDS (VČETNĚ KATALOGU) -->
             <div class="onboarding-split-grid">
               <div class="split-choice-card highlight" onclick="openCatalogModal()">
                 <div style="font-size:1.5rem;">🌍</div>
@@ -432,7 +431,7 @@
         </div>
 
         <!-- FLOATING SET HOME BASE PROMPT -->
-        <div id="floating-home-prompt" style="display:none;" onclick="openSettingsModal()">
+        <div id="floating-home-prompt" style="display:none;" onclick="openHomeBaseOnlyModal()">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
           </svg>
@@ -461,7 +460,6 @@
           </div>
         </div>
 
-        <!-- FILTRY -->
         <div class="filters-section">
           <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
             <div style="display:flex; gap:6px;">
@@ -521,7 +519,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 2. KATALOG ZÁVODŮ MODAL                    -->
+  <!-- 2. KATALOG ZÁVODŮ S VYHLEDÁVÁNÍM           -->
   <!-- ========================================== -->
   <div id="modal-catalog" class="modal-backdrop">
     <div class="stepped-modal-card" style="max-width: 660px;">
@@ -531,6 +529,11 @@
           <p style="font-size: 0.76rem; color: #8e8e93;">Add iconic races to your map in 1 click without GPX files.</p>
         </div>
         <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <!-- Vyhledávací lišta v katalogu -->
+      <div style="position:relative;">
+        <input type="text" id="catalog-search-input" class="stepped-input" placeholder="🔍 Search by race name, city or country (e.g. Boston, Chamonix)..." oninput="handleCatalogSearch(this.value)">
       </div>
 
       <div class="modal-tabs">
@@ -551,7 +554,41 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 3. TWO-STEP ACTIVITY MODAL (STRAVA STYLE)  -->
+  <!-- 3. RYCHLÝ MODAL: POUZE NASTAVENÍ HOME BASE -->
+  <!-- ========================================== -->
+  <div id="modal-homebase-only" class="modal-backdrop">
+    <div class="stepped-modal-card" style="max-width:460px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:1.25rem; font-weight:700;">Set Your Home Base</h3>
+        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <p style="font-size:0.8rem; color:#aaa; line-height:1.45;">
+        Your home base is used to center your map and calculate distances to races.
+      </p>
+
+      <div>
+        <label class="form-group-label">Search city or address:</label>
+        <div style="display:flex; gap:8px;">
+          <input id="quick-home-query" class="stepped-input" type="text" placeholder="e.g. Slaný, Czechia">
+          <button class="pill-btn" style="background:#007aff; color:#fff;" onclick="geocodeAndSaveHomeQuick()">Search</button>
+        </div>
+      </div>
+
+      <div style="margin-top:4px;">
+        <label class="form-group-label">Or enter latitude, longitude:</label>
+        <input id="quick-home-coords" class="stepped-input" type="text" placeholder="50.2305, 14.0888">
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px solid #333; padding-top:12px; margin-top:8px;">
+        <button class="pill-btn" onclick="closeModals()">Cancel</button>
+        <button class="open-detail-btn" onclick="saveHomeCoordsFromQuick()">Save Home Base</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 4. TWO-STEP ACTIVITY MODAL (STRAVA STYLE)  -->
   <!-- ========================================== -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
@@ -760,168 +797,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 4. PROFILE & SETTINGS MODAL                -->
-  <!-- ========================================== -->
-  <div id="modal-settings" class="modal-backdrop">
-    <div class="stepped-modal-card" style="max-width:520px;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:1.25rem; font-weight:700;">Account & Settings</h3>
-        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
-      </div>
-
-      <div class="modal-tabs">
-        <button id="tab-btn-set-profile" class="modal-tab-btn active" onclick="switchSettingsTab('profile', this)">Profile & Share</button>
-        <button id="tab-btn-set-home" class="modal-tab-btn" onclick="switchSettingsTab('home', this)">Home Base</button>
-        <button id="tab-btn-set-data" class="modal-tab-btn" onclick="switchSettingsTab('data', this)">Data & Security</button>
-      </div>
-
-      <!-- Tab 1: Profile & Share -->
-      <div id="set-tab-profile" style="display:flex; flex-direction:column; gap:12px;">
-        <div>
-          <label class="form-group-label">Display Name / Handle</label>
-          <input id="setting-username" class="stepped-input" type="text" placeholder="e.g. Ondrej">
-        </div>
-        <div>
-          <label class="form-group-label">Public Atlas Share Link</label>
-          <div style="display:flex; gap:8px;">
-            <input id="setting-share-link" class="stepped-input" type="text" readonly style="color:#5ac8fa; cursor:pointer;" onclick="this.select()">
-            <button class="pill-btn" onclick="copyShareLink()">📋 Copy</button>
-          </div>
-          <small style="font-size:0.72rem; color:#8e8e93; display:block; margin-top:4px;">Anyone with this link can explore your public race map without editing permissions.</small>
-        </div>
-      </div>
-
-      <!-- Tab 2: Home Base -->
-      <div id="set-tab-home" style="display:none; flex-direction:column; gap:12px;">
-        <div>
-          <label class="form-group-label">City or Address search:</label>
-          <div style="display:flex; gap:8px;">
-            <input id="setting-home-query" class="stepped-input" type="text" placeholder="e.g. Slaný, Czechia">
-            <button class="pill-btn" style="background:#007aff; color:#fff;" onclick="geocodeAndSaveHome()">Search City</button>
-          </div>
-        </div>
-        <div>
-          <label class="form-group-label">Manual Coordinates (Lat, Lon):</label>
-          <input id="setting-home-coords" class="stepped-input" type="text" placeholder="50.2305, 14.0888">
-          <small style="font-size:0.72rem; color:#8e8e93; display:block; margin-top:4px;">Home base determines the center of your map and travel distances.</small>
-        </div>
-      </div>
-
-      <!-- Tab 3: Data & Security -->
-      <div id="set-tab-data" style="display:none; flex-direction:column; gap:14px;">
-        <div style="background:#242428; border:1px solid #333; padding:12px; border-radius:8px;">
-          <h4 style="font-size:0.86rem; font-weight:700; margin-bottom:4px;">Export My Running History</h4>
-          <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">Download your logged races, notes, and milestones as a backup JSON file.</p>
-          <button class="pill-btn" style="background:#2c2c30; color:#fff;" onclick="exportUserAtlasData()">📦 Export All to JSON</button>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #2e2e32; padding-top:12px;">
-          <span style="font-size:0.8rem; color:#888;">Session: <strong id="setting-email-label" style="color:#fff;">-</strong></span>
-          <button class="pill-btn" style="background:rgba(255,59,48,0.15); border-color:#ff3b30; color:#ff3b30;" onclick="handleProfileLogout()">Sign Out</button>
-        </div>
-      </div>
-
-      <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px solid #333; padding-top:14px; margin-top:6px;">
-        <button class="pill-btn" onclick="closeModals()">Close</button>
-        <button class="open-detail-btn" onclick="saveUserSettingsManual()">Save Settings</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- 5. ABOUT US MODAL (AUTENTICKÝ PŘÍBĚH)     -->
-  <!-- ========================================== -->
-  <div id="modal-about" class="modal-backdrop">
-    <div class="stepped-modal-card" style="max-width:540px; text-align:left;">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;">
-        <h3 style="font-size:1.25rem; font-weight:800;">About Running Atlas</h3>
-        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
-      </div>
-
-      <div style="font-size:0.88rem; color:#d1d1d6; line-height:1.65; display:flex; flex-direction:column; gap:12px; margin-top:6px;">
-        <p>
-          <strong>Running Atlas</strong> was born out of a simple frustration: modern sports apps are great at tracking weekly mileage, but terrible at preserving your personal running journey. In a fast-moving social feed, the marathon you trained four months for or the unforgettable ridge trail you ran at sunrise disappear within days.
-        </p>
-        <p>
-          We built this atlas as a digital, interactive canvas — a place where every finish line, high-altitude summit, and dream race has its permanent geographic coordinates. No likes, no algorithmic feeds, just your own visual map of mountains, asphalt, and memories.
-        </p>
-        <div style="background:#242428; border-left:3px solid #007aff; padding:12px; border-radius:6px; font-size:0.82rem; color:#a1a1a6;">
-          <em>„A runner’s life shouldn’t be buried in an activity stream. It deserves an atlas.“</em>
-        </div>
-        <p style="font-size:0.78rem; color:#8e8e93;">
-          Crafted independently for road maratoners, ultra-trail runners, and mountain wanderers. Version 1.6 &bull; Leaflet & Supabase Cloud.
-        </p>
-      </div>
-
-      <div style="display:flex; justify-content:flex-end; border-top:1px solid #333; padding-top:12px; margin-top:6px;">
-        <button class="pill-btn" onclick="closeModals()">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- 6. SUPPORT & FEEDBACK MODAL                -->
-  <!-- ========================================== -->
-  <div id="modal-support" class="modal-backdrop">
-    <div class="stepped-modal-card" style="max-width:540px;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:1.25rem; font-weight:800;">Support & Feedback</h3>
-        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
-      </div>
-
-      <div class="modal-tabs">
-        <button class="modal-tab-btn active" onclick="switchSupportTab('form', this)">Send Feedback / Ideas</button>
-        <button class="modal-tab-btn" onclick="switchSupportTab('faq', this)">GPX & Watch Guides</button>
-      </div>
-
-      <!-- Tab 1: Feedback Form -->
-      <div id="sup-tab-form" style="display:flex; flex-direction:column; gap:12px;">
-        <div>
-          <label class="form-group-label">Category</label>
-          <select id="feedback-category" class="stepped-input">
-            <option value="feature">💡 Feature Request / Idea</option>
-            <option value="race_request">🏁 Suggest a Race for Global Catalog</option>
-            <option value="bug">🐛 Report a Bug / GPX Issue</option>
-            <option value="other">💬 General Feedback</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-group-label">Your Message or Suggestion</label>
-          <textarea id="feedback-message" class="stepped-input" placeholder="Tell us what you would love to see in Running Atlas..." style="height:110px;"></textarea>
-        </div>
-        <button id="btn-send-feedback" class="open-detail-btn" style="padding:11px;" onclick="submitFeedbackForm()">
-          Send Directly to Creator ✉️
-        </button>
-      </div>
-
-      <!-- Tab 2: FAQ & GPX Guides -->
-      <div id="sup-tab-faq" style="display:none; flex-direction:column; gap:10px; font-size:0.84rem; color:#bbb; max-height:50vh; overflow-y:auto;">
-        <div style="background:#242428; padding:10px 12px; border-radius:8px;">
-          <strong style="color:#fff; display:block; margin-bottom:3px;">⌚ How to export .GPX from Garmin Connect?</strong>
-          Open activity in Garmin Connect on web &bull; Click gear icon in top right &bull; Select <em>"Export to GPX"</em> &bull; Drag & drop directly here.
-        </div>
-        <div style="background:#242428; padding:10px 12px; border-radius:8px;">
-          <strong style="color:#fff; display:block; margin-bottom:3px;">📱 How to export from Strava?</strong>
-          Open activity on strava.com &bull; Click three dots (…) on the left &bull; Select <em>"Export GPX"</em>.
-        </div>
-        <div style="background:#242428; padding:10px 12px; border-radius:8px;">
-          <strong style="color:#fff; display:block; margin-bottom:3px;">🍎 Apple Watch / Health app</strong>
-          Use free tools like <em>HealthFit</em> or <em>WorkOutDoors</em> on iPhone to export any run directly to .GPX.
-        </div>
-        <div style="background:#242428; padding:10px 12px; border-radius:8px;">
-          <strong style="color:#fff; display:block; margin-bottom:3px;">✉️ Direct email contact</strong>
-          Need help with your data? Reach out directly to <a href="mailto:support@runningatlas.app" style="color:#007aff;">support@runningatlas.app</a>.
-        </div>
-      </div>
-
-      <div style="display:flex; justify-content:flex-end; border-top:1px solid #333; padding-top:12px; margin-top:4px;">
-        <button class="pill-btn" onclick="closeModals()">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- 7. JAVASCRIPT & SUPABASE ARCHITECTURE      -->
+  <!-- 5. JAVASCRIPT & SUPABASE ARCHITECTURE      -->
   <!-- ========================================== -->
   <script>
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
@@ -935,6 +811,8 @@
 
     let races = [];
     let featuredRacesList = [];
+    let currentCatalogCategory = 'all';
+    let currentCatalogQuery = '';
     let zavodniTrasy = {};
 
     const statusFilters = { done: true, planned: true, bucket: true };
@@ -982,6 +860,60 @@
       }
     }
 
+    function handleHomeBaseClick() {
+      if (userHomeCoords) {
+        map.flyTo(userHomeCoords, 5.5, { animate: true, duration: 1.2 });
+        refreshHomeMarker();
+      } else {
+        openHomeBaseOnlyModal();
+      }
+    }
+
+    function openHomeBaseOnlyModal() {
+      closeModals();
+      document.getElementById('quick-home-coords').value = userHomeCoords ? userHomeCoords.join(', ') : '';
+      document.getElementById('modal-homebase-only').style.display = 'flex';
+    }
+
+    async function geocodeAndSaveHomeQuick() {
+      const q = document.getElementById('quick-home-query').value.trim();
+      if (!q) return;
+
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+          saveHomeCoordsQuick([lat, lon]);
+        } else {
+          alert('City or address not found.');
+        }
+      } catch (e) {
+        alert('Geocoding request failed. Please enter coordinates manually.');
+      }
+    }
+
+    function saveHomeCoordsFromQuick() {
+      const val = document.getElementById('quick-home-coords').value.trim();
+      if (val) {
+        const parts = val.split(',').map(p => parseFloat(p.trim()));
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+          saveHomeCoordsQuick(parts);
+          return;
+        }
+      }
+      alert('Please enter valid coordinates or search for a city.');
+    }
+
+    function saveHomeCoordsQuick(coords) {
+      userHomeCoords = coords;
+      localStorage.setItem('runatlas_home_coords', JSON.stringify(coords));
+      refreshHomeMarker();
+      closeModals();
+      map.flyTo(userHomeCoords, 5.5, { animate: true, duration: 1.2 });
+    }
+
     // ==========================================
     // INITIALIZATION
     // ==========================================
@@ -1010,9 +942,6 @@
         const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
         const username = profile?.username || currentUser.email.split('@')[0];
         document.getElementById('label-user').textContent = username;
-        document.getElementById('setting-username').value = username;
-        document.getElementById('setting-email-label').textContent = currentUser.email;
-        document.getElementById('setting-share-link').value = `${window.location.origin}/app.html?u=${encodeURIComponent(username)}`;
         document.getElementById('btn-add-activity').style.display = 'inline-flex';
 
         await loadActivitiesFromDB(currentUser.id);
@@ -1048,17 +977,17 @@
           difficulty: item.difficulty,
           distance: item.distance,
           elevation: item.elevation,
-          importance: item.importance,
+          importance: item.importance || 5,
           why: item.why,
           notes: item.notes,
           images: item.images || (item.image_url ? [item.image_url] : []),
           resultTime: item.result_time || item.how_it_went,
           ambitionTime: item.ambition_time,
           placement: item.placement,
-          satisfaction: item.satisfaction,
+          satisfaction: item.satisfaction || 7,
           expectations: item.expectations,
-          repeat: item.repeat,
-          cost: item.cost,
+          repeat: item.repeat || 'yes',
+          cost: item.cost || '€€',
           logisticsDist: item.logistics_dist,
           logisticsTransport: item.logistics_transport,
           logisticsTime: item.logistics_time,
@@ -1080,7 +1009,7 @@
     }
 
     // ==========================================
-    // GLOBAL RACE CATALOG LOGIC
+    // GLOBAL RACE CATALOG S VYHLEDÁVÁNÍM
     // ==========================================
     async function openCatalogModal() {
       closeModals();
@@ -1091,22 +1020,55 @@
         if (!error && data && data.length > 0) {
           featuredRacesList = data;
         } else {
-          // Fallback if table not queried yet
           featuredRacesList = [
             { id: "c-1", name: "Berlin Marathon", category: "majors", location: "Berlin, Germany", distance: "42.2 km", elevation: "+45 m", coords: [52.5163, 13.3777], image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-2", name: "UTMB Mont-Blanc", category: "trail", location: "Chamonix, France", distance: "171 km", elevation: "+10000 m", coords: [45.9237, 6.8694], image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-3", name: "Pražský maraton (PIM)", category: "czech", location: "Praha, Česko", distance: "42.2 km", elevation: "+130 m", coords: [50.0875, 14.4211], image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=400&q=80" }
+            { id: "c-2", name: "Boston Marathon", category: "majors", location: "Boston, USA", distance: "42.2 km", elevation: "+240 m", coords: [42.3601, -71.0589], image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-3", name: "UTMB Mont-Blanc", category: "trail", location: "Chamonix, France", distance: "171 km", elevation: "+10000 m", coords: [45.9237, 6.8694], image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-4", name: "Chianti Ultra Trail", category: "trail", location: "Radda in Chianti, Italy", distance: "73 km", elevation: "+3000 m", coords: [43.4900, 11.3780], image_url: "https://images.unsplash.com/photo-1523348837708-a5d9fc0189fa?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-5", name: "Pražský maraton (PIM)", category: "czech", location: "Praha, Česko", distance: "42.2 km", elevation: "+130 m", coords: [50.0875, 14.4211], image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=400&q=80" },
+            { id: "c-6", name: "Běchovice–Praha", category: "czech", location: "Praha, Česko", distance: "10 km", elevation: "+85 m", coords: [50.0818, 14.6186], image_url: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80" }
           ];
         }
       }
-      renderCatalogGrid('all');
+      renderCatalogGrid();
     }
 
-    function renderCatalogGrid(category = 'all') {
+    function handleCatalogSearch(query) {
+      currentCatalogQuery = query.trim().toLowerCase();
+      renderCatalogGrid();
+    }
+
+    function switchCatalogCategory(cat, btn) {
+      document.querySelectorAll('#modal-catalog .modal-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCatalogCategory = cat;
+      renderCatalogGrid();
+    }
+
+    function renderCatalogGrid() {
       const container = document.getElementById('catalog-list-container');
       container.innerHTML = '';
 
-      const filtered = (category === 'all') ? featuredRacesList : featuredRacesList.filter(r => r.category === category);
+      const filtered = featuredRacesList.filter(race => {
+        const matchesCategory = (currentCatalogCategory === 'all') || (race.category === currentCatalogCategory);
+        if (!matchesCategory) return false;
+
+        if (currentCatalogQuery) {
+          const nameMatch = race.name.toLowerCase().includes(currentCatalogQuery);
+          const locMatch = (race.location || '').toLowerCase().includes(currentCatalogQuery);
+          if (!nameMatch && !locMatch) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:30px; color:#888;">
+            No races found matching "${currentCatalogQuery}".
+          </div>
+        `;
+        return;
+      }
 
       filtered.forEach(race => {
         const item = document.createElement('div');
@@ -1118,10 +1080,10 @@
             <p>📍 ${race.location || ''} &bull; 📏 ${race.distance || ''} &bull; ⛰️ ${race.elevation || ''}</p>
           </div>
           <div class="catalog-actions">
-            <button class="pill-btn" style="background:rgba(52,199,89,0.15); border-color:#34c759; color:#34c759; padding:4px 8px; font-size:0.72rem;" onclick="addFeaturedRaceToMyAtlas('${race.id}', 'done')">
+            <button class="pill-btn" style="background:rgba(52,199,89,0.15); border-color:#34c759; color:#34c759; padding:4px 8px; font-size:0.72rem;" onclick="openCustomizeCatalogRace('${race.id}', 'done')">
               🏁 I ran this
             </button>
-            <button class="pill-btn" style="background:rgba(90,200,250,0.15); border-color:#5ac8fa; color:#5ac8fa; padding:4px 8px; font-size:0.72rem;" onclick="addFeaturedRaceToMyAtlas('${race.id}', 'bucket')">
+            <button class="pill-btn" style="background:rgba(90,200,250,0.15); border-color:#5ac8fa; color:#5ac8fa; padding:4px 8px; font-size:0.72rem;" onclick="openCustomizeCatalogRace('${race.id}', 'bucket')">
               ⭐️ Bucket list
             </button>
           </div>
@@ -1130,186 +1092,32 @@
       });
     }
 
-    function switchCatalogCategory(cat, btn) {
-      document.querySelectorAll('#modal-catalog .modal-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderCatalogGrid(cat);
-    }
+    // PŘEDVYPLNĚNÍ FORMULÁŘE ZE ZÁVODU Z KATALOGU PRO PERSONALIZACI
+    let pendingCatalogImageUrl = null;
 
-    async function addFeaturedRaceToMyAtlas(raceId, statusChoice) {
-      if (!currentUser) return;
+    function openCustomizeCatalogRace(raceId, statusChoice) {
       const race = featuredRacesList.find(r => r.id === raceId);
       if (!race) return;
 
-      const record = {
-        user_id: currentUser.id,
-        name: race.name,
-        date: statusChoice === 'done' ? 'Completed' : 'Dream Goal',
-        month: race.month || 1,
-        status: statusChoice,
-        status_label: statusChoice === 'done' ? 'Completed' : 'Bucket list',
-        surface: race.surface || 'road',
-        surface_label: race.surface_label || 'Road',
-        difficulty: race.difficulty || 'stredni',
-        distance: race.distance || '-',
-        elevation: race.elevation || '-',
-        importance: 8,
-        why: statusChoice === 'done' ? 'Personal race highlight.' : 'Legendary race on my bucket list.',
-        notes: race.description || '',
-        image_url: race.image_url || '',
-        coords: race.coords,
-        is_memorable: false
-      };
-
-      const { error } = await supabaseClient.from('races').insert([record]);
-      if (!error) {
-        alert(`Added "${race.name}" to your Atlas! 🎉`);
-        document.getElementById('onboarding-overlay').style.display = 'none';
-        await loadActivitiesFromDB(currentUser.id);
-        map.panTo(race.coords, { animate: true });
-      } else {
-        alert('Could not add race: ' + error.message);
-      }
-    }
-
-    // ==========================================
-    // SUPPORT & FEEDBACK SUBMISSION
-    // ==========================================
-    function openSupportModal() {
       closeModals();
-      document.getElementById('modal-support').style.display = 'flex';
-    }
+      resetActivityForm();
 
-    function openAboutModal() {
-      closeModals();
-      document.getElementById('modal-about').style.display = 'flex';
-    }
+      document.getElementById('step1-modal-title').textContent = `Personalize: ${race.name}`;
+      document.getElementById('form-name').value = race.name;
+      document.getElementById('form-distance').value = race.distance || '';
+      document.getElementById('form-elevation').value = race.elevation || '';
+      document.getElementById('form-notes').value = race.description || '';
 
-    function switchSupportTab(tabName, btn) {
-      document.querySelectorAll('#modal-support .modal-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('sup-tab-form').style.display = (tabName === 'form') ? 'flex' : 'none';
-      document.getElementById('sup-tab-faq').style.display = (tabName === 'faq') ? 'flex' : 'none';
-    }
+      // Geografické souřadnice závodu
+      parsedCenterCoords = Array.isArray(race.coords) ? race.coords : JSON.parse(race.coords);
+      pendingCatalogImageUrl = race.image_url || null;
 
-    async function submitFeedbackForm() {
-      const msg = document.getElementById('feedback-message').value.trim();
-      if (!msg) { alert('Please enter your message or idea.'); return; }
+      // Výběr čipů
+      selectChip('status', statusChoice);
+      selectChip('surface', race.surface || 'road');
+      selectChip('difficulty', race.difficulty || 'stredni');
 
-      const cat = document.getElementById('feedback-category').value;
-      const btn = document.getElementById('btn-send-feedback');
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
-
-      try {
-        const { error } = await supabaseClient.from('feedback').insert([{
-          user_id: currentUser ? currentUser.id : null,
-          category: cat,
-          message: msg,
-          user_email: currentUser ? currentUser.email : 'guest'
-        }]);
-
-        if (error) throw error;
-        alert('Thank you! Your suggestion was sent directly to the creator. 🏃');
-        document.getElementById('feedback-message').value = '';
-        closeModals();
-      } catch (err) {
-        alert('Thank you! Feedback received.');
-        closeModals();
-      } finally {
-        btn.textContent = 'Send Directly to Creator ✉️';
-        btn.disabled = false;
-      }
-    }
-
-    // ==========================================
-    // SETTINGS, EXPORT & SHARING
-    // ==========================================
-    function openSettingsModal() {
-      closeModals();
-      document.getElementById('setting-home-coords').value = userHomeCoords ? userHomeCoords.join(', ') : '';
-      document.getElementById('modal-settings').style.display = 'flex';
-    }
-
-    function switchSettingsTab(tabName, btn) {
-      document.querySelectorAll('#modal-settings .modal-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('set-tab-profile').style.display = (tabName === 'profile') ? 'flex' : 'none';
-      document.getElementById('set-tab-home').style.display = (tabName === 'home') ? 'flex' : 'none';
-      document.getElementById('set-tab-data').style.display = (tabName === 'data') ? 'flex' : 'none';
-    }
-
-    function copyShareLink() {
-      const el = document.getElementById('setting-share-link');
-      el.select();
-      navigator.clipboard.writeText(el.value);
-      alert('Public profile link copied to clipboard!');
-    }
-
-    function exportUserAtlasData() {
-      if (races.length === 0) { alert('No activities to export.'); return; }
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(races, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `running_atlas_backup_${Date.now()}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    async function geocodeAndSaveHome() {
-      const q = document.getElementById('setting-home-query').value.trim();
-      if (!q) return;
-
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
-        const data = await res.json();
-        if (data && data.length > 0) {
-          const lat = parseFloat(data[0].lat);
-          const lon = parseFloat(data[0].lon);
-          saveHomeCoords([lat, lon]);
-        } else {
-          alert('Address not found. Please try another city.');
-        }
-      } catch (e) {
-        alert('Geocoding request failed. Please enter coordinates manually.');
-      }
-    }
-
-    function saveUserSettingsManual() {
-      const val = document.getElementById('setting-home-coords').value.trim();
-      if (val) {
-        const parts = val.split(',').map(p => parseFloat(p.trim()));
-        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-          saveHomeCoords(parts);
-          return;
-        }
-      }
-      closeModals();
-    }
-
-    function saveHomeCoords(coords) {
-      userHomeCoords = coords;
-      localStorage.setItem('runatlas_home_coords', JSON.stringify(coords));
-      refreshHomeMarker();
-      alert('Home Base saved!');
-      closeModals();
-      jumpToHomeBase();
-    }
-
-    function jumpToHomeBase() {
-      if (userHomeCoords) {
-        map.setView(userHomeCoords, 5.2, { animate: true });
-        refreshHomeMarker();
-      } else {
-        openSettingsModal();
-      }
-    }
-
-    function handleProfileLogout() {
-      if (confirm('Do you want to log out of Running Atlas?')) {
-        supabaseClient.auth.signOut().then(() => { window.location.href = 'index.html'; });
-      }
+      document.getElementById('add-modal').style.display = 'flex';
     }
 
     // ==========================================
@@ -1483,6 +1291,7 @@
       parsedGpxCoords = null;
       parsedCenterCoords = null;
       selectedImageFiles = [];
+      pendingCatalogImageUrl = null;
 
       selectChip('status', '');
       selectChip('surface', 'mixed');
@@ -1638,6 +1447,10 @@
           }
         }
 
+        if (uploadedImageUrls.length === 0 && pendingCatalogImageUrl) {
+          uploadedImageUrls.push(pendingCatalogImageUrl);
+        }
+
         const dateStr = document.getElementById('form-date').value;
         const monthInt = dateStr ? parseInt(dateStr.split('-')[1]) : null;
 
@@ -1663,7 +1476,7 @@
           difficulty: chipSelections.difficulty,
           distance: document.getElementById('form-distance').value,
           elevation: document.getElementById('form-elevation').value,
-          importance: parseInt(document.getElementById('form-importance').value),
+          importance: parseInt(document.getElementById('form-importance').value) || 5,
           why: document.getElementById('form-why').value,
           notes: document.getElementById('form-notes').value,
           images: uploadedImageUrls,
@@ -1673,7 +1486,7 @@
           result_time: formatTime('finish'),
           ambition_time: formatTime('ambition') || document.getElementById('form-target-ambition').value.trim(),
           placement: document.getElementById('form-placement').value,
-          satisfaction: parseInt(document.getElementById('form-satisfaction').value),
+          satisfaction: parseInt(document.getElementById('form-satisfaction').value) || 7,
           expectations: document.getElementById('form-expectations').value,
           repeat: chipSelections.repeat,
           cost: document.getElementById('form-cost').value,
@@ -1690,6 +1503,7 @@
         closeModals();
         document.getElementById('onboarding-overlay').style.display = 'none';
         await loadActivitiesFromDB(currentUser.id);
+        map.panTo(finalCoords, { animate: true });
       } catch (err) {
         alert('Error: ' + err.message);
       } finally {
