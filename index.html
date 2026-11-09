@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Favicon: Running Atlas Topo-Peak -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23007aff'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23ffffff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23007aff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
   <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -17,7 +17,7 @@
     body { background: #f8f9fb; color: #1e293b; overflow-x: hidden; }
 
     /* ========================================== */
-    /* 1. HERO FOLD WITH VIDEO (100vh)            */
+    /* 1. CINEMATIC DARK HERO FOLD (100vh)        */
     /* ========================================== */
     .hero-fold {
       position: relative;
@@ -29,6 +29,7 @@
       justify-content: center;
       padding: 32px 20px 48px;
       overflow: hidden;
+      background: #0c0c0e;
     }
 
     #bg-video-wrap {
@@ -43,13 +44,13 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.62;
-      filter: saturate(1.1) brightness(0.95);
+      opacity: 0.58;
+      filter: saturate(1.1) brightness(0.92);
     }
     .video-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0.75) 75%, #f8f9fb 100%);
+      background: radial-gradient(circle at center, rgba(12, 12, 14, 0.25) 0%, rgba(12, 12, 14, 0.82) 100%);
     }
 
     .hero-content {
@@ -70,10 +71,10 @@
       margin-bottom: 28px;
       letter-spacing: -0.8px;
       color: #ffffff;
-      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.65);
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
     .hero-title span {
-      color: #5ac8fa;
+      color: #007aff;
     }
 
     .hero-actions {
@@ -99,23 +100,23 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
     }
     .btn-primary:hover {
       background: #0062cc;
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.45);
+      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(10px);
-      color: #0f172a;
+      background: rgba(36, 36, 40, 0.88);
+      backdrop-filter: blur(8px);
+      color: #f2f2f7;
       font-size: 0.9rem;
-      font-weight: 700;
+      font-weight: 600;
       padding: 12px 24px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.8);
+      border: 1px solid #3a3a3c;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.2s;
@@ -123,19 +124,17 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     }
     .btn-secondary:hover {
-      background: #ffffff;
+      background: #3a3a3c;
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
 
     .btn-scroll-down {
-      background: rgba(15, 23, 42, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      backdrop-filter: blur(8px);
-      color: #f1f5f9;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #a1a1a6;
       font-size: 0.84rem;
       font-weight: 600;
       padding: 11px 20px;
@@ -151,17 +150,17 @@
     .btn-scroll-down:hover {
       color: #fff;
       border-color: #5ac8fa;
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(90, 200, 250, 0.08);
       transform: translateY(2px);
     }
 
     /* ========================================== */
-    /* 2. BELOW THE FOLD (CLEAN LIGHT THEME)      */
+    /* 2. CRISP LIGHT CONTENT SECTION             */
     /* ========================================== */
     .content-wrap {
       max-width: 1040px;
       margin: 0 auto;
-      padding: 40px 24px 70px;
+      padding: 80px 24px 70px;
       display: flex;
       flex-direction: column;
       gap: 72px;
@@ -279,7 +278,7 @@
       line-height: 1.55;
     }
 
-    /* Creator Card (Light & Warm) */
+    /* Creator Medallion Card */
     .creator-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -439,7 +438,7 @@
       .hero-title { font-size: 2.1rem; }
       .pillars-grid, .steps-grid { grid-template-columns: 1fr; }
       .creator-card { flex-direction: column; text-align: center; gap: 20px; padding: 28px 20px; }
-      .content-wrap { padding: 30px 16px 40px; gap: 50px; }
+      .content-wrap { padding: 40px 16px 40px; gap: 50px; }
       footer { flex-direction: column; gap: 14px; text-align: center; }
       footer a { margin: 0 8px; }
     }
@@ -448,7 +447,7 @@
 <body>
 
   <!-- ========================================== -->
-  <!-- 1. FULLSCREEN HERO FOLD                    -->
+  <!-- 1. FULLSCREEN CINEMATIC HERO (DARK)        -->
   <!-- ========================================== -->
   <section class="hero-fold">
     <div id="bg-video-wrap">
@@ -459,7 +458,7 @@
     </div>
 
     <div class="hero-content">
-      <!-- HIERARCHICKÉ LOGO RUNNING ATLAS -->
+      <!-- LOGO RUNNING ATLAS -->
       <div class="brand-logo" style="margin-bottom: 24px; display: inline-flex; justify-content: center; width: 100%;">
         <svg width="390" height="130" viewBox="0 0 380 125" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; overflow: visible;">
           <defs>
@@ -469,20 +468,16 @@
             </filter>
           </defs>
 
-          <!-- Horní nápis: RUNNING -->
           <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
 
-          <!-- Masiv hory a písmeno A -->
           <g transform="translate(6, 36)">
             <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
             <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#heroRidgeGlow)"/>
             <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
           </g>
 
-          <!-- Nápis TLAS -->
           <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
 
-          <!-- Spodní linka profilu s body -->
           <path d="M 6 102 L 205 102 L 216 95 L 225 106 L 235 89 L 246 102 L 368 102" stroke="#007aff" stroke-width="2" stroke-opacity="0.45" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="6" cy="102" r="3.5" fill="#34c759"/>
           <circle cx="368" cy="102" r="3.5" fill="#ff3b30"/>
@@ -501,7 +496,7 @@
   </section>
 
   <!-- ========================================== -->
-  <!-- 2. BELOW-THE-FOLD INFO (LIGHT DESIGN)      -->
+  <!-- 2. BELOW-THE-FOLD INFO (CRISP LIGHT)       -->
   <!-- ========================================== -->
   <main id="explore" class="content-wrap">
 
