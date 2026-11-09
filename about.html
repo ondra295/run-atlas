@@ -17,6 +17,52 @@
     .prose-section h2 { font-size: 1.35rem; font-weight: 700; color: #fff; margin-top: 14px; }
     .quote-box { background: #16161a; border-left: 3px solid #007aff; padding: 18px 20px; border-radius: 8px; font-style: italic; color: #e5e5ea; }
     .feature-card { background: #16161a; border: 1px solid #26262a; border-radius: 12px; padding: 20px; margin-top: 6px; }
+
+    /* Creator Profile Card */
+    .author-card {
+      background: #141418;
+      border: 1px solid #28282e;
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin: 14px 0 6px;
+    }
+    .author-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #007aff;
+      box-shadow: 0 6px 20px rgba(0, 122, 255, 0.25);
+      flex-shrink: 0;
+      background: #1c1c20;
+    }
+    .author-info h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .author-role {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #5ac8fa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .author-bio {
+      font-size: 0.88rem;
+      color: #a1a1a6;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 600px) {
+      .author-card { flex-direction: column; text-align: center; gap: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -56,9 +102,22 @@
         </p>
       </div>
 
-      <h2>Independent & Built for Runners</h2>
+      <h2>Creator & Independence</h2>
+      
+      <!-- MEDAILONEK O SOBĚ -->
+      <div class="author-card">
+        <img class="author-avatar" src="ondrej.jpg" alt="Ondřej Hradecký" onerror="this.src='https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=300&q=80'">
+        <div class="author-info">
+          <h3>Ondřej Hradecký</h3>
+          <span class="author-role">Founder & Developer &bull; Runner</span>
+          <p class="author-bio">
+            Dlouholetý běžec se zaměřením na silniční maratony a horské ultramaratony. Running Atlas jsem vytvořil s cílem nabídnout běžecké komunitě nezávislý, čistý a přehledný nástroj, kde má každá trasa a každý zážitek své trvalé místo.
+          </p>
+        </div>
+      </div>
+
       <p>
-        Running Atlas is designed and developed independently for road marathoners, trail enthusiasts, and mountain runners. Your data is yours, exportable at any moment.
+        Running Atlas je nezávislý projekt postavený běžcem pro běžce. Žádný agresivní tracking, žádné reklamy. Vaše data patří vám a můžete je kdykoliv kompletně exportovat.
       </p>
     </div>
 
