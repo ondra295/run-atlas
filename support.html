@@ -4,80 +4,200 @@
   <meta charset="UTF-8">
   <title>Support & Feedback — Running Atlas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%2338bdf8' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: #121214; color: #f2f2f7; min-height: 100vh; padding: 32px 20px; display: flex; justify-content: center; }
-    .page-card { max-width: 680px; width: 100%; display: flex; flex-direction: column; gap: 24px; }
-    .header-nav { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2c2c2e; padding-bottom: 16px; }
-    .back-link { color: #5ac8fa; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
-    .back-link:hover { text-decoration: underline; }
-    .content-card { background: #1c1c1e; border: 1px solid #2e2e32; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
-    .form-group-label { font-size: 0.74rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; margin-bottom: 4px; display: block; }
-    .input-field { width: 100%; padding: 11px 14px; background: #242426; border: 1px solid #3a3a3c; border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none; }
-    .input-field:focus { border-color: #007aff; }
-    .btn-action { background: #007aff; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
-    .btn-action:hover { background: #0062cc; }
-    .faq-item { background: #242428; border-radius: 8px; padding: 14px; margin-bottom: 8px; font-size: 0.86rem; color: #c7c7cc; line-height: 1.5; }
-    .faq-item strong { color: #fff; display: block; margin-bottom: 4px; font-size: 0.92rem; }
+    html, body { height: 100%; width: 100%; overflow: hidden; background: #0f172a; color: #0f172a; }
+    #app-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; }
+
+    #top-bar {
+      height: 54px; background: #0f172a; border-bottom: 1px solid #1e293b;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 18px; z-index: 2000; flex-shrink: 0;
+    }
+    #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
+
+    #left-rail {
+      width: 56px; background: #1e293b; border-right: 1px solid #334155;
+      display: flex; flex-direction: column; gap: 6px; padding: 12px 6px;
+      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden; white-space: nowrap; z-index: 1500; flex-shrink: 0;
+    }
+    #left-rail:hover { width: 205px; box-shadow: 6px 0 24px rgba(0, 0, 0, 0.35); }
+
+    .rail-btn {
+      display: flex; align-items: center; gap: 14px; padding: 10px 12px;
+      border-radius: 8px; color: #94a3b8; cursor: pointer; border: none;
+      background: transparent; font-size: 0.82rem; font-weight: 700; transition: all 0.15s;
+      text-decoration: none; width: 100%; text-align: left;
+    }
+    .rail-btn:hover, .rail-btn.active { background: #0f172a; color: #38bdf8; }
+    .rail-btn .rail-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    #left-rail .rail-btn span:not(.rail-icon) { opacity: 0; pointer-events: none; transition: opacity 0.18s ease; }
+    #left-rail:hover .rail-btn span:not(.rail-icon) { opacity: 1; pointer-events: auto; }
+    .rail-spacer { flex: 1; min-height: 20px; }
+
+    .view-content-pane { flex: 1; height: 100%; overflow-y: auto; background: #f8f9fb; padding: 36px 24px; }
+    .inner-page-card { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+    .inner-section {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 26px;
+      display: flex; flex-direction: column; gap: 14px; box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+    }
+    .inner-section h3 { font-size: 1.18rem; font-weight: 800; color: #0f172a; }
+    .inner-section p { font-size: 0.88rem; color: #64748b; line-height: 1.6; }
+    .form-group-label { font-size: 0.74rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .inner-input-field {
+      width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid #cbd5e1;
+      border-radius: 8px; color: #0f172a; font-size: 0.9rem; outline: none; transition: border-color 0.2s;
+    }
+    .inner-input-field:focus { border-color: #007aff; background: #ffffff; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15); }
+    .open-detail-btn {
+      background: #007aff; color: #fff; border: none; padding: 8px 14px; border-radius: 6px;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1;
+      color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; text-decoration: none; font-weight: 700;
+    }
+    .back-btn:hover { background: #f8fafc; }
   </style>
 </head>
 <body>
-  <div class="page-card">
-    <div class="header-nav">
-      <a href="app.html" class="back-link">← Back to Map</a>
-      <h2 style="font-size:1.4rem; font-weight:800;">Support & Feedback</h2>
-      <a href="about.html" class="back-link" style="color:#aaa;">About Us ➔</a>
-    </div>
-
-    <!-- Feedback Submission Form -->
-    <div class="content-card">
-      <div>
-        <h3 style="font-size:1.15rem; font-weight:700;">Send a Suggestion or Report a Bug</h3>
-        <p style="font-size:0.82rem; color:#8e8e93; margin-top:2px;">Your feedback goes directly to the project database and creator.</p>
+  <div id="app-layout">
+    <header id="top-bar">
+      <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none;">
+        <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
+          <g transform="translate(6, 36)">
+            <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
+            <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </g>
+          <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
+        </svg>
+      </a>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <a class="back-btn" href="app.html">← Back to Map</a>
       </div>
+    </header>
 
-      <div>
-        <label class="form-group-label">Category</label>
-        <select id="feed-cat" class="input-field">
-          <option value="feature">💡 Feature Request / Improvement Idea</option>
-          <option value="race_request">🏁 Suggest a Race for Global Catalog</option>
-          <option value="bug">🐛 Report a Bug / GPX Issue</option>
-          <option value="other">💬 General Message</option>
-        </select>
-      </div>
+    <div id="main-body">
+      <nav id="left-rail">
+        <a class="rail-btn" href="app.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </span>
+          <span>Race Atlas</span>
+        </a>
 
-      <div>
-        <label class="form-group-label">Message or Request</label>
-        <textarea id="feed-msg" class="input-field" placeholder="Tell us what you'd like improved, which race is missing, or what isn't working..." style="height:120px;"></textarea>
-      </div>
+        <a class="rail-btn" href="app.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
+              <path d="M7 21l3-4"></path><path d="M16 21l-2-4-3-3 1-6"></path><path d="M6 12l2-3 4-1 3 3 1"></path>
+            </svg>
+          </span>
+          <span>Memorable Runs</span>
+        </a>
 
-      <button id="btn-submit-feed" class="btn-action" onclick="sendFeedback()">Send to Creator ✉️</button>
-    </div>
+        <div style="height: 1px; background: #334155; margin: 10px 4px;"></div>
 
-    <!-- Guides & FAQ -->
-    <div class="content-card">
-      <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:4px;">Watch & GPX Export Guides</h3>
+        <a class="rail-btn" href="app.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+            </svg>
+          </span>
+          <span>Home Base</span>
+        </a>
 
-      <div class="faq-item">
-        <strong>⌚ Garmin Connect (.GPX)</strong>
-        Open your activity on <em>connect.garmin.com</em> in a web browser &bull; Click the small gear icon in the top right corner &bull; Select <em>"Export to GPX"</em> &bull; Drag & drop directly into Running Atlas.
-      </div>
+        <a class="rail-btn" href="settings.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
 
-      <div class="faq-item">
-        <strong>📱 Strava (.GPX)</strong>
-        Open any running activity on <em>strava.com</em> on desktop &bull; Click the three dots (…) button on the left sidebar &bull; Click <em>"Export GPX"</em>.
-      </div>
+        <div class="rail-spacer"></div>
+        <div style="height: 1px; background: #334155; margin: 4px 4px;"></div>
 
-      <div class="faq-item">
-        <strong>🍎 Apple Watch & Health</strong>
-        Use free tools such as <em>HealthFit</em>, <em>RunGap</em>, or <em>WorkOutDoors</em> on your iPhone to export running tracks directly as .GPX files.
-      </div>
+        <a class="rail-btn" href="about.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </span>
+          <span>About Us</span>
+        </a>
 
-      <div class="faq-item">
-        <strong>✉️ Direct Email Support</strong>
-        Have a question about your account or data? Contact us directly at <a href="mailto:support@runningatlas.app" style="color:#007aff; text-decoration:none; font-weight:600;">support@runningatlas.app</a>.
+        <a class="rail-btn active" href="support.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle>
+              <line x1="4.93" y1="4.93" x2="9.17" y2="9.17"></line><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"></line>
+            </svg>
+          </span>
+          <span>Support & Ideas</span>
+        </a>
+      </nav>
+
+      <!-- BÍLÝ OBSAH SEKCE -->
+      <div class="view-content-pane">
+        <div class="inner-page-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px;">
+            <a class="back-btn" href="app.html">← Back to Map</a>
+            <h2 style="font-size:1.4rem; font-weight:800; color:#0f172a;">Support & Ideas</h2>
+          </div>
+
+          <div class="inner-section">
+            <div>
+              <h3>Send a Suggestion or Report a Bug</h3>
+              <p>Your feedback goes directly to the project database and creator.</p>
+            </div>
+
+            <div>
+              <label class="form-group-label">Category</label>
+              <select id="feed-cat" class="inner-input-field">
+                <option value="feature">💡 Feature Request / Improvement Idea</option>
+                <option value="race_request">🏁 Suggest a Race for Global Catalog</option>
+                <option value="bug">🐛 Report a Bug / GPX Issue</option>
+                <option value="other">💬 General Message</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="form-group-label">Message or Request</label>
+              <textarea id="feed-msg" class="inner-input-field" placeholder="Tell us what you'd like improved, which race is missing, or what isn't working..." style="height:120px;"></textarea>
+            </div>
+
+            <button id="btn-submit-feed" class="open-detail-btn" style="padding:12px; width:100%; justify-content:center;" onclick="submitFeedbackForm()">
+              Send Directly to Creator ✉️
+            </button>
+          </div>
+
+          <div class="inner-section">
+            <h3>Watch & GPX Export Guides</h3>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px; margin-bottom:8px; font-size:0.86rem; color:#334155;">
+              <strong style="color:#0f172a; display:block; margin-bottom:4px;">⌚ Garmin Connect (.GPX)</strong>
+              Open your activity on <em>connect.garmin.com</em> in a web browser &bull; Click the small gear icon in the top right &bull; Select <em>"Export to GPX"</em> &bull; Drag & drop directly into Running Atlas.
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px; margin-bottom:8px; font-size:0.86rem; color:#334155;">
+              <strong style="color:#0f172a; display:block; margin-bottom:4px;">📱 Strava (.GPX)</strong>
+              Open any running activity on <em>strava.com</em> on desktop &bull; Click the three dots (…) button on the left sidebar &bull; Click <em>"Export GPX"</em>.
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px; font-size:0.86rem; color:#334155;">
+              <strong style="color:#0f172a; display:block; margin-bottom:4px;">✉️ Direct Email Support</strong>
+              Need help with your data? Contact us directly at <a href="mailto:support@runningatlas.app" style="color:#007aff; text-decoration:none; font-weight:700;">support@runningatlas.app</a>.
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -87,7 +207,7 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbm96Z3BudGdhdWxkdnB2c3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTA0MzUsImV4cCI6MjEwODA4NjQzNX0.TfmHE3zkVgVjupOFLA8_egRGwmVx5BDljHggk3H1ohc";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function sendFeedback() {
+    async function submitFeedbackForm() {
       const msg = document.getElementById('feed-msg').value.trim();
       if (!msg) { alert('Please enter your message.'); return; }
 
@@ -109,10 +229,11 @@
         if (error) throw error;
         alert('Thank you! Your feedback was received. 🏃');
         document.getElementById('feed-msg').value = '';
+        window.location.href = 'app.html';
       } catch (e) {
         alert('Thank you! Feedback received.');
       } finally {
-        btn.textContent = 'Send to Creator ✉️';
+        btn.textContent = 'Send Directly to Creator ✉️';
         btn.disabled = false;
       }
     }
