@@ -4,126 +4,176 @@
   <meta charset="UTF-8">
   <title>About Us — Running Atlas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%2338bdf8' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: #0c0c0e; color: #f2f2f7; min-height: 100vh; padding: 40px 20px; display: flex; justify-content: center; }
-    .page-wrap { max-width: 720px; width: 100%; display: flex; flex-direction: column; gap: 32px; }
-    .header-nav { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #242428; padding-bottom: 18px; }
-    .back-link { color: #5ac8fa; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
-    .back-link:hover { text-decoration: underline; }
-    .prose-section { display: flex; flex-direction: column; gap: 18px; font-size: 1rem; line-height: 1.7; color: #c7c7cc; }
-    .prose-section h1 { font-size: 2.2rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1.2; }
-    .prose-section h2 { font-size: 1.35rem; font-weight: 700; color: #fff; margin-top: 14px; }
-    .quote-box { background: #16161a; border-left: 3px solid #007aff; padding: 18px 20px; border-radius: 8px; font-style: italic; color: #e5e5ea; }
-    .feature-card { background: #16161a; border: 1px solid #26262a; border-radius: 12px; padding: 20px; margin-top: 6px; }
+    html, body { height: 100%; width: 100%; overflow: hidden; background: #0f172a; color: #0f172a; }
+    #app-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; }
 
-    /* Creator Profile Card */
-    .author-card {
-      background: #141418;
-      border: 1px solid #28282e;
-      border-radius: 16px;
-      padding: 28px 24px;
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      margin: 14px 0 6px;
+    #top-bar {
+      height: 54px; background: #0f172a; border-bottom: 1px solid #1e293b;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 18px; z-index: 2000; flex-shrink: 0;
     }
-    .author-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #007aff;
-      box-shadow: 0 6px 20px rgba(0, 122, 255, 0.25);
-      flex-shrink: 0;
-      background: #1c1c20;
-    }
-    .author-info h3 {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 2px;
-    }
-    .author-role {
-      font-size: 0.76rem;
-      font-weight: 700;
-      color: #5ac8fa;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-      display: block;
-    }
-    .author-bio {
-      font-size: 0.88rem;
-      color: #a1a1a6;
-      line-height: 1.55;
-    }
+    #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
-    @media (max-width: 600px) {
-      .author-card { flex-direction: column; text-align: center; gap: 16px; }
+    #left-rail {
+      width: 56px; background: #1e293b; border-right: 1px solid #334155;
+      display: flex; flex-direction: column; gap: 6px; padding: 12px 6px;
+      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden; white-space: nowrap; z-index: 1500; flex-shrink: 0;
     }
+    #left-rail:hover { width: 205px; box-shadow: 6px 0 24px rgba(0, 0, 0, 0.35); }
+
+    .rail-btn {
+      display: flex; align-items: center; gap: 14px; padding: 10px 12px;
+      border-radius: 8px; color: #94a3b8; cursor: pointer; border: none;
+      background: transparent; font-size: 0.82rem; font-weight: 700; transition: all 0.15s;
+      text-decoration: none; width: 100%; text-align: left;
+    }
+    .rail-btn:hover, .rail-btn.active { background: #0f172a; color: #38bdf8; }
+    .rail-btn .rail-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    #left-rail .rail-btn span:not(.rail-icon) { opacity: 0; pointer-events: none; transition: opacity 0.18s ease; }
+    #left-rail:hover .rail-btn span:not(.rail-icon) { opacity: 1; pointer-events: auto; }
+    .rail-spacer { flex: 1; min-height: 20px; }
+
+    .view-content-pane { flex: 1; height: 100%; overflow-y: auto; background: #f8f9fb; padding: 36px 24px; }
+    .inner-page-card { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+    .inner-section {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 26px;
+      display: flex; flex-direction: column; gap: 14px; box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+    }
+    .inner-section h3 { font-size: 1.18rem; font-weight: 800; color: #0f172a; }
+    .inner-section p { font-size: 0.9rem; color: #64748b; line-height: 1.65; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1;
+      color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; text-decoration: none; font-weight: 700;
+    }
+    .back-btn:hover { background: #f8fafc; }
   </style>
 </head>
 <body>
-  <div class="page-wrap">
-    <div class="header-nav">
-      <a href="app.html" class="back-link">← Back to Atlas</a>
-      <span style="font-size:0.8rem; color:#8e8e93; font-weight:700; letter-spacing:1px;">MANIFESTO</span>
-    </div>
-
-    <div class="prose-section">
-      <h1>A runner’s life shouldn't be buried in a social feed.</h1>
-
-      <p>
-        Modern running apps are great at calculating your weekly training load, heart rate zones, and split paces. But they are surprisingly poor at preserving your personal running journey. In a fast-moving social stream, the marathon you spent sixteen weeks training for — or the high-altitude mountain pass you crossed at dawn — disappears behind yesterday's recovery jogs within days.
-      </p>
-
-      <div class="quote-box">
-        „We don't just run to collect kilometers. We run to explore landscapes, conquer summits, and mark our footsteps across the world.“
+  <div id="app-layout">
+    <header id="top-bar">
+      <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none;">
+        <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
+          <g transform="translate(6, 36)">
+            <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
+            <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </g>
+          <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
+        </svg>
+      </a>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <a class="back-btn" href="app.html">← Back to Map</a>
       </div>
+    </header>
 
-      <h2>The Philosophy of Running Atlas</h2>
-      <p>
-        <strong>Running Atlas</strong> was created to give every runner a permanent digital canvas. An interactive atlas where every finish line, official race result, and dream bucket-list destination has its exact geographic coordinates.
-      </p>
+    <div id="main-body">
+      <nav id="left-rail">
+        <a class="rail-btn" href="app.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </span>
+          <span>Race Atlas</span>
+        </a>
 
-      <div class="feature-card">
-        <h3 style="font-size:1.05rem; font-weight:700; color:#fff; margin-bottom:6px;">🗺️ Geographic Memory Over Algorithm Feeds</h3>
-        <p style="font-size:0.88rem; color:#a1a1a6; line-height:1.55;">
-          No like counts, no influencer leaderboards, no sponsored posts. Just your own visual map of asphalt, trails, and contour lines connecting where you've been with where you are heading next.
-        </p>
-      </div>
+        <a class="rail-btn" href="app.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
+              <path d="M7 21l3-4"></path><path d="M16 21l-2-4-3-3 1-6"></path><path d="M6 12l2-3 4-1 3 3 1"></path>
+            </svg>
+          </span>
+          <span>Memorable Runs</span>
+        </a>
 
-      <div class="feature-card">
-        <h3 style="font-size:1.05rem; font-weight:700; color:#fff; margin-bottom:6px;">🏔️ Watch Tracks & Topography</h3>
-        <p style="font-size:0.88rem; color:#a1a1a6; line-height:1.55;">
-          Directly upload watch GPS files (.GPX) from Garmin, Apple Watch, Coros, or Strava to display real elevation curves, finish times, and race memories in high definition.
-        </p>
-      </div>
+        <div style="height: 1px; background: #334155; margin: 10px 4px;"></div>
 
-      <h2>Creator & Independence</h2>
-      
-      <!-- MEDAILONEK O SOBĚ -->
-      <div class="author-card">
-        <img class="author-avatar" src="ondrej.jpg" alt="Ondřej Hradecký" onerror="this.src='https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=300&q=80'">
-        <div class="author-info">
-          <h3>Ondřej Hradecký</h3>
-          <span class="author-role">Founder & Developer &bull; Runner</span>
-          <p class="author-bio">
-            Dlouholetý běžec se zaměřením na silniční maratony a horské ultramaratony. Running Atlas jsem vytvořil s cílem nabídnout běžecké komunitě nezávislý, čistý a přehledný nástroj, kde má každá trasa a každý zážitek své trvalé místo.
-          </p>
+        <a class="rail-btn" href="app.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+            </svg>
+          </span>
+          <span>Home Base</span>
+        </a>
+
+        <a class="rail-btn" href="settings.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
+
+        <div class="rail-spacer"></div>
+        <div style="height: 1px; background: #334155; margin: 4px 4px;"></div>
+
+        <a class="rail-btn active" href="about.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </span>
+          <span>About Us</span>
+        </a>
+
+        <a class="rail-btn" href="support.html">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle>
+              <line x1="4.93" y1="4.93" x2="9.17" y2="9.17"></line><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"></line>
+            </svg>
+          </span>
+          <span>Support & Ideas</span>
+        </a>
+      </nav>
+
+      <!-- BÍLÝ OBSAH SEKCE -->
+      <div class="view-content-pane">
+        <div class="inner-page-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px;">
+            <a class="back-btn" href="app.html">← Back to Map</a>
+            <span style="font-size:0.8rem; font-weight:800; color:#007aff; letter-spacing:1.5px;">MANIFESTO</span>
+          </div>
+
+          <div class="inner-section">
+            <h1 style="font-size:1.8rem; font-weight:800; color:#0f172a; line-height:1.25;">A runner’s life shouldn't be buried in a social feed.</h1>
+            <p>
+              Modern running apps are great at calculating weekly training load and heart rate zones, but terrible at preserving your personal running journey. In a fast-moving social stream, the marathon you trained four months for disappears behind yesterday's recovery runs within days.
+            </p>
+
+            <div style="background:#eff6ff; border-left:3px solid #007aff; padding:16px 18px; border-radius:8px; font-style:italic; color:#1e40af; font-size:0.92rem;">
+              „We don't just run to collect kilometers. We run to explore landscapes, conquer summits, and mark our footsteps across the world.“
+            </div>
+
+            <h3 style="margin-top:10px;">The Philosophy of Running Atlas</h3>
+            <p>
+              Running Atlas gives every runner a permanent digital canvas — an interactive world map where every finish line, official result, and dream bucket-list destination has its exact geographic coordinates.
+            </p>
+          </div>
+
+          <div class="inner-section" style="flex-direction:row; align-items:center; gap:24px;">
+            <img src="ondrej.jpg" alt="Ondřej Hradecký" onerror="this.src='https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=300&q=80'" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid #007aff; flex-shrink:0;">
+            <div>
+              <span style="font-size:0.72rem; font-weight:800; color:#007aff; letter-spacing:1px; text-transform:uppercase;">Creator & Runner</span>
+              <h3 style="margin:2px 0 6px;">Ondřej Hradecký</h3>
+              <p style="font-size:0.86rem; color:#475569; line-height:1.55;">
+                Dlouholetý běžec se zaměřením na maratony a horské traily. Running Atlas jsem vytvořil s cílem nabídnout běžecké komunitě nezávislý a čistý prostor bez algoritmů a reklam.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-
-      <p>
-        Running Atlas je nezávislý projekt postavený běžcem pro běžce. Žádný agresivní tracking, žádné reklamy. Vaše data patří vám a můžete je kdykoliv kompletně exportovat.
-      </p>
-    </div>
-
-    <div style="border-top:1px solid #242428; padding-top:20px; display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:#636366;">
-      <span>&copy; 2026 Running Atlas</span>
-      <a href="support.html" style="color:#5ac8fa; text-decoration:none;">Need Help or Have an Idea? ➔</a>
     </div>
   </div>
 </body>
