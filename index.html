@@ -154,7 +154,7 @@
     }
 
     /* ========================================== */
-    /* 2. BELOW THE FOLD (RUNALYZE STYLE INFO)    */
+    /* 2. BELOW THE FOLD CONTENT                  */
     /* ========================================== */
     .content-wrap {
       max-width: 1040px;
@@ -236,12 +236,11 @@
       line-height: 1.6;
     }
 
-    /* Steps / Showcase row */
+    /* Steps */
     .steps-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
-      counter-reset: steps-counter;
     }
     .step-card {
       position: relative;
@@ -273,6 +272,71 @@
       font-size: 0.85rem;
       color: #8e8e93;
       line-height: 1.55;
+    }
+
+    /* Creator Medallion Card */
+    .creator-card {
+      background: #141418;
+      border: 1px solid #28282e;
+      border-radius: 20px;
+      padding: 36px 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      transition: border-color 0.2s ease;
+    }
+    .creator-card:hover {
+      border-color: #383842;
+    }
+    .creator-avatar-wrap {
+      flex-shrink: 0;
+      position: relative;
+    }
+    .creator-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #007aff;
+      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.25);
+      background: #1c1c20;
+      display: block;
+    }
+    .creator-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .creator-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #5ac8fa;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .creator-name {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .creator-bio {
+      font-size: 0.92rem;
+      color: #a1a1a6;
+      line-height: 1.6;
+    }
+    .creator-link {
+      color: #007aff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .creator-link:hover {
+      text-decoration: underline;
     }
 
     /* Bottom CTA Banner */
@@ -364,6 +428,7 @@
     @media (max-width: 768px) {
       .hero-title { font-size: 2rem; }
       .pillars-grid, .steps-grid { grid-template-columns: 1fr; }
+      .creator-card { flex-direction: column; text-align: center; gap: 20px; padding: 28px 20px; }
       .content-wrap { padding: 60px 16px 40px; gap: 60px; }
       footer { flex-direction: column; gap: 14px; text-align: center; }
       footer a { margin: 0 8px; }
@@ -414,10 +479,8 @@
         </svg>
       </div>
 
-      <!-- Nadpis -->
       <h1 class="hero-title">All your running footsteps<br>on a <span>single map</span></h1>
 
-      <!-- Akční tlačítka v banneru -->
       <div class="hero-actions">
         <button class="btn-primary" onclick="openAuthModal('signup')">Create Free Atlas</button>
         <button class="btn-secondary" onclick="openAuthModal('signin')">Sign In</button>
@@ -432,7 +495,7 @@
   <!-- ========================================== -->
   <main id="explore" class="content-wrap">
 
-    <!-- SEKCE 1: TŘI PILÍŘE (S ČISTÝMI SVG IKONAMI) -->
+    <!-- SEKCE 1: TŘI PILÍŘE -->
     <section>
       <div class="section-header">
         <span class="section-tag">A dedicated home for your runs</span>
@@ -464,7 +527,7 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="2" y1="12" x2="22" y2="12"></line>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"></path>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
             </svg>
           </div>
           <h3>1-Click Race Catalog</h3>
@@ -526,7 +589,24 @@
       </div>
     </section>
 
-    <!-- SEKCE 3: SPODNÍ CTA BANNER -->
+    <!-- SEKCE 3: MEDAILONEK TVŮRCE -->
+    <section>
+      <div class="creator-card">
+        <div class="creator-avatar-wrap">
+          <img class="creator-avatar" src="ondrej.jpg" alt="Ondřej Hradecký" onerror="this.src='https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=300&q=80'">
+        </div>
+        <div class="creator-info">
+          <span class="creator-badge">Behind the Project</span>
+          <h3 class="creator-name">Ondřej Hradecký</h3>
+          <p class="creator-bio">
+            Maratonec, milovník strmých horských trailů a tvůrce Running Atlasu. Aplikaci jsem začal stavět pro sebe, protože mi chyběl klidný prostor bez sociálního hluku a algoritmů — místo, kde se člověk podívá na mapu a vidí každé pohoří, kterým proběhl, i každý cíl, o kterém zatím jenom sní.
+          </p>
+          <a href="about.html" class="creator-link">Read the full manifesto & story ➔</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEKCE 4: SPODNÍ CTA BANNER -->
     <section class="cta-banner">
       <h2>Ready to see your running world?</h2>
       <p>
