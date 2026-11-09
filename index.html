@@ -13,11 +13,26 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    html, body { height: 100%; width: 100%; overflow: hidden; background: #0c0c0e; color: #f2f2f7; }
+    html { scroll-behavior: smooth; }
+    body { background: #0c0c0e; color: #f2f2f7; overflow-x: hidden; }
 
-    /* Video pozadí s projasněným overlayem */
+    /* ========================================== */
+    /* 1. HERO FOLD WITH VIDEO (100vh)            */
+    /* ========================================== */
+    .hero-fold {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px 48px;
+      overflow: hidden;
+    }
+
     #bg-video-wrap {
-      position: fixed;
+      position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
@@ -34,20 +49,18 @@
     .video-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(12, 12, 14, 0.2) 0%, rgba(12, 12, 14, 0.72) 100%);
+      background: radial-gradient(circle at center, rgba(12, 12, 14, 0.25) 0%, rgba(12, 12, 14, 0.82) 100%);
     }
 
-    /* Hlavní kontejner */
-    .hero-container {
+    .hero-content {
       position: relative;
       z-index: 2;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 24px;
       text-align: center;
+      max-width: 780px;
+      margin: auto 0;
     }
 
     .hero-title {
@@ -57,18 +70,16 @@
       margin-bottom: 28px;
       letter-spacing: -0.8px;
       color: #ffffff;
-      max-width: 760px;
-      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
     .hero-title span {
       color: #007aff;
     }
 
-    /* Tlačítka svisle pod sebou */
     .hero-actions {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
       max-width: 320px;
     }
@@ -78,7 +89,7 @@
       color: #fff;
       font-size: 0.95rem;
       font-weight: 700;
-      padding: 14px 24px;
+      padding: 13px 24px;
       border-radius: 12px;
       border: none;
       cursor: pointer;
@@ -100,9 +111,9 @@
       background: rgba(36, 36, 40, 0.88);
       backdrop-filter: blur(8px);
       color: #f2f2f7;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      padding: 13px 24px;
+      padding: 12px 24px;
       border-radius: 12px;
       border: 1px solid #3a3a3c;
       cursor: pointer;
@@ -119,13 +130,200 @@
       transform: translateY(-2px);
     }
 
-    .hero-footer {
-      position: absolute;
-      bottom: 16px;
-      font-size: 0.78rem;
-      color: #8e8e93;
+    .btn-scroll-down {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #a1a1a6;
+      font-size: 0.84rem;
+      font-weight: 600;
+      padding: 11px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-scroll-down:hover {
+      color: #fff;
+      border-color: #5ac8fa;
+      background: rgba(90, 200, 250, 0.08);
+      transform: translateY(2px);
+    }
+
+    /* ========================================== */
+    /* 2. BELOW THE FOLD (RUNALYZE STYLE INFO)    */
+    /* ========================================== */
+    .content-wrap {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 80px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 80px;
+    }
+
+    .section-header {
       text-align: center;
-      z-index: 2;
+      max-width: 660px;
+      margin: 0 auto 36px;
+    }
+    .section-tag {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #007aff;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #fff;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    .section-sub {
+      font-size: 0.95rem;
+      color: #8e8e93;
+      line-height: 1.6;
+    }
+
+    /* Pillars Grid */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .pillar-card {
+      background: #141418;
+      border: 1px solid #28282e;
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: all 0.2s ease;
+    }
+    .pillar-card:hover {
+      border-color: #007aff;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+    .pillar-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(0, 122, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: #007aff;
+    }
+    .pillar-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .pillar-card p {
+      font-size: 0.86rem;
+      color: #a1a1a6;
+      line-height: 1.6;
+    }
+
+    /* Steps / Showcase row */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      counter-reset: steps-counter;
+    }
+    .step-card {
+      position: relative;
+      background: #141418;
+      border: 1px solid #28282e;
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .step-number {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #5ac8fa;
+      background: rgba(90, 200, 250, 0.12);
+      display: inline-block;
+      width: fit-content;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+    }
+    .step-card h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .step-card p {
+      font-size: 0.85rem;
+      color: #8e8e93;
+      line-height: 1.55;
+    }
+
+    /* Bottom CTA Banner */
+    .cta-banner {
+      background: linear-gradient(135deg, #1c1c24 0%, #101014 100%);
+      border: 1px solid #33333c;
+      border-radius: 20px;
+      padding: 48px 32px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .cta-banner h2 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .cta-banner p {
+      font-size: 0.95rem;
+      color: #8e8e93;
+      max-width: 520px;
+      line-height: 1.6;
+    }
+    .cta-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid #202024;
+      padding: 32px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1040px;
+      margin: 0 auto;
+      font-size: 0.82rem;
+      color: #636366;
+    }
+    footer a {
+      color: #8e8e93;
+      text-decoration: none;
+      margin-left: 18px;
+    }
+    footer a:hover {
+      color: #5ac8fa;
     }
 
     /* Auth modal */
@@ -163,68 +361,181 @@
     }
     .auth-input:focus { border-color: #007aff; }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       .hero-title { font-size: 2rem; }
+      .pillars-grid, .steps-grid { grid-template-columns: 1fr; }
+      .content-wrap { padding: 60px 16px 40px; gap: 60px; }
+      footer { flex-direction: column; gap: 14px; text-align: center; }
+      footer a { margin: 0 8px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Lokální video z repozitáře: hero.mp4 -->
-  <div id="bg-video-wrap">
-    <video id="bg-video" autoplay loop muted playsinline>
-      <source src="hero.mp4" type="video/mp4">
-    </video>
-    <div class="video-overlay"></div>
-  </div>
-
-  <main class="hero-container">
-    <!-- HIERARCHICKÉ LOGO RUNNING ATLAS -->
-    <div class="brand-logo" style="margin-bottom: 24px; display: inline-flex; justify-content: center; width: 100%;">
-      <svg width="390" height="130" viewBox="0 0 380 125" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; overflow: visible;">
-        <defs>
-          <filter id="heroRidgeGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-          </filter>
-        </defs>
-
-        <!-- Horní nápis: RUNNING -->
-        <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
-
-        <!-- Masiv hory a písmeno A -->
-        <g transform="translate(6, 36)">
-          <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
-          <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#heroRidgeGlow)"/>
-          <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
-        </g>
-
-        <!-- Nápis TLAS -->
-        <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
-
-        <!-- Spodní linka profilu s body -->
-        <path d="M 6 102 L 205 102 L 216 95 L 225 106 L 235 89 L 246 102 L 368 102" stroke="#007aff" stroke-width="2" stroke-opacity="0.45" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="6" cy="102" r="3.5" fill="#34c759"/>
-        <circle cx="368" cy="102" r="3.5" fill="#ff3b30"/>
-      </svg>
+  <!-- ========================================== -->
+  <!-- 1. FULLSCREEN HERO FOLD                    -->
+  <!-- ========================================== -->
+  <section class="hero-fold">
+    <!-- Lokální video: hero.mp4 -->
+    <div id="bg-video-wrap">
+      <video id="bg-video" autoplay loop muted playsinline>
+        <source src="hero.mp4" type="video/mp4">
+      </video>
+      <div class="video-overlay"></div>
     </div>
 
-    <!-- Správně rozložený nadpis na 2 řádky -->
-    <h1 class="hero-title">All your running footsteps<br>on a <span>single map</span></h1>
+    <div class="hero-content">
+      <!-- HIERARCHICKÉ LOGO RUNNING ATLAS -->
+      <div class="brand-logo" style="margin-bottom: 24px; display: inline-flex; justify-content: center; width: 100%;">
+        <svg width="390" height="130" viewBox="0 0 380 125" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; overflow: visible;">
+          <defs>
+            <filter id="heroRidgeGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
 
-    <!-- Tlačítka pod sebou -->
-    <div class="hero-actions">
-      <button class="btn-primary" onclick="openAuthModal('signup')">Create Free Atlas</button>
-      <button class="btn-secondary" onclick="openAuthModal('signin')">Sign In</button>
-      <a class="btn-secondary" href="app.html?demo=true">Try Live Demo ➔</a>
+          <!-- Horní nápis: RUNNING -->
+          <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
+
+          <!-- Masiv hory a písmeno A -->
+          <g transform="translate(6, 36)">
+            <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
+            <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#heroRidgeGlow)"/>
+            <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </g>
+
+          <!-- Nápis TLAS -->
+          <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
+
+          <!-- Spodní linka profilu s body -->
+          <path d="M 6 102 L 205 102 L 216 95 L 225 106 L 235 89 L 246 102 L 368 102" stroke="#007aff" stroke-width="2" stroke-opacity="0.45" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="6" cy="102" r="3.5" fill="#34c759"/>
+          <circle cx="368" cy="102" r="3.5" fill="#ff3b30"/>
+        </svg>
+      </div>
+
+      <!-- Nadpis -->
+      <h1 class="hero-title">All your running footsteps<br>on a <span>single map</span></h1>
+
+      <!-- Akční tlačítka v banneru -->
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="openAuthModal('signup')">Create Free Atlas</button>
+        <button class="btn-secondary" onclick="openAuthModal('signin')">Sign In</button>
+        <a class="btn-secondary" href="app.html?demo=true">Try Live Demo ➔</a>
+        <a class="btn-scroll-down" href="#explore">What is Running Atlas? ↓</a>
+      </div>
     </div>
+  </section>
 
-    <footer class="hero-footer">
-      &copy; 2026 Running Atlas. All rights reserved.
-    </footer>
+  <!-- ========================================== -->
+  <!-- 2. BELOW-THE-FOLD INFO (RUNALYZE STYLE)    -->
+  <!-- ========================================== -->
+  <main id="explore" class="content-wrap">
+
+    <!-- SEKCE 1: TŘI PILÍŘE -->
+    <section>
+      <div class="section-header">
+        <span class="section-tag">A dedicated home for your runs</span>
+        <h2 class="section-title">Built for runners who remember where they've been</h2>
+        <p class="section-sub">
+          Unlike algorithmic social feeds that bury your greatest finish lines after 48 hours, Running Atlas preserves your running history on an interactive global map.
+        </p>
+      </div>
+
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-icon">🗺️</div>
+          <h3>Geographic Memory</h3>
+          <p>
+            Every road marathon, trail summit, and vacation long run on a single topographic canvas. Zoom into city streets or survey your lifetime footprint across mountain ranges.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon">🌍</div>
+          <h3>1-Click Race Catalog</h3>
+          <p>
+            No need to search for old GPX files. Select from curated World Marathon Majors, European alpine sky-races, and regional classics to light up your map in seconds.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon">⛰️</div>
+          <h3>Watch Tracks & Elevation</h3>
+          <p>
+            Import .GPX tracks from Garmin, Apple Watch, or Strava. Relive elevation profiles, official split targets vs. finish times, and memorable photos in clean dark mode.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEKCE 2: JAK TO FUNGUJE (3 KROKY) -->
+    <section>
+      <div class="section-header">
+        <span class="section-tag">Simple & Independent</span>
+        <h2 class="section-title">How Running Atlas works</h2>
+        <p class="section-sub">
+          Three simple steps to curate your personal running autobiography.
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <span class="step-number">STEP 01</span>
+          <h4>Select or Upload</h4>
+          <p>
+            Pick races you've completed from our database, or drag and drop your watch's original GPX files for elevation curves and course routes.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-number">STEP 02</span>
+          <h4>Log Context & 'The Why'</h4>
+          <p>
+            Record what made the day memorable: official finish times, pacing satisfaction, photos, terrain notes, or future ambitions.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-number">STEP 03</span>
+          <h4>Map Your Future Bucket List</h4>
+          <p>
+            Pin races you dream of running. View travel logistics, estimated costs, and distance from your Home Base on the map.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEKCE 3: SPODNÍ CTA BANNER -->
+    <section class="cta-banner">
+      <h2>Ready to see your running world?</h2>
+      <p>
+        Free to use, built independently with zero ad clutter. Start building your visual running archive today.
+      </p>
+      <div class="cta-actions">
+        <button class="btn-primary" onclick="openAuthModal('signup')">Create Free Atlas</button>
+        <a class="btn-secondary" href="app.html?demo=true">Try Live Demo ➔</a>
+      </div>
+    </section>
+
   </main>
 
-  <!-- AUTH MODAL -->
+  <!-- ========================================== -->
+  <!-- 3. FOOTER                                  -->
+  <!-- ========================================== -->
+  <footer>
+    <div>&copy; 2026 Running Atlas. All rights reserved.</div>
+    <div>
+      <a href="about.html">About Us</a>
+      <a href="support.html">Support & Ideas</a>
+      <a href="settings.html">Account</a>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- 4. AUTH MODAL (LOGIN / REGISTER)           -->
+  <!-- ========================================== -->
   <div id="auth-modal" class="auth-modal">
     <div class="auth-card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
