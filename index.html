@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Favicon: Running Atlas Topo-Peak -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23007aff'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23ffffff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23007aff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
   <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -14,7 +14,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html { scroll-behavior: smooth; }
-    body { background: #0c0c0e; color: #f2f2f7; overflow-x: hidden; }
+    body { background: #f8f9fb; color: #1e293b; overflow-x: hidden; }
 
     /* ========================================== */
     /* 1. HERO FOLD WITH VIDEO (100vh)            */
@@ -43,13 +43,13 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.58;
-      filter: saturate(1.1) brightness(0.92);
+      opacity: 0.62;
+      filter: saturate(1.1) brightness(0.95);
     }
     .video-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(12, 12, 14, 0.25) 0%, rgba(12, 12, 14, 0.82) 100%);
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0.75) 75%, #f8f9fb 100%);
     }
 
     .hero-content {
@@ -70,10 +70,10 @@
       margin-bottom: 28px;
       letter-spacing: -0.8px;
       color: #ffffff;
-      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.65);
     }
     .hero-title span {
-      color: #007aff;
+      color: #5ac8fa;
     }
 
     .hero-actions {
@@ -99,23 +99,23 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
     }
     .btn-primary:hover {
       background: #0062cc;
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
+      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.45);
     }
 
     .btn-secondary {
-      background: rgba(36, 36, 40, 0.88);
-      backdrop-filter: blur(8px);
-      color: #f2f2f7;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      color: #0f172a;
       font-size: 0.9rem;
-      font-weight: 600;
+      font-weight: 700;
       padding: 12px 24px;
       border-radius: 12px;
-      border: 1px solid #3a3a3c;
+      border: 1px solid rgba(255, 255, 255, 0.8);
       cursor: pointer;
       text-decoration: none;
       transition: all 0.2s;
@@ -123,17 +123,19 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     }
     .btn-secondary:hover {
-      background: #3a3a3c;
+      background: #ffffff;
       transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
 
     .btn-scroll-down {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #a1a1a6;
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(8px);
+      color: #f1f5f9;
       font-size: 0.84rem;
       font-weight: 600;
       padding: 11px 20px;
@@ -149,20 +151,20 @@
     .btn-scroll-down:hover {
       color: #fff;
       border-color: #5ac8fa;
-      background: rgba(90, 200, 250, 0.08);
+      background: rgba(15, 23, 42, 0.65);
       transform: translateY(2px);
     }
 
     /* ========================================== */
-    /* 2. BELOW THE FOLD CONTENT                  */
+    /* 2. BELOW THE FOLD (CLEAN LIGHT THEME)      */
     /* ========================================== */
     .content-wrap {
       max-width: 1040px;
       margin: 0 auto;
-      padding: 80px 24px 60px;
+      padding: 40px 24px 70px;
       display: flex;
       flex-direction: column;
-      gap: 80px;
+      gap: 72px;
     }
 
     .section-header {
@@ -180,16 +182,16 @@
       margin-bottom: 8px;
     }
     .section-title {
-      font-size: 2.1rem;
+      font-size: 2.15rem;
       font-weight: 800;
       line-height: 1.25;
-      color: #fff;
+      color: #0f172a;
       margin-bottom: 12px;
       letter-spacing: -0.5px;
     }
     .section-sub {
-      font-size: 0.95rem;
-      color: #8e8e93;
+      font-size: 0.98rem;
+      color: #64748b;
       line-height: 1.6;
     }
 
@@ -197,29 +199,30 @@
     .pillars-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: 22px;
     }
     .pillar-card {
-      background: #141418;
-      border: 1px solid #28282e;
-      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
       padding: 28px 24px;
       display: flex;
       flex-direction: column;
       gap: 14px;
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+      transition: all 0.22s ease;
     }
     .pillar-card:hover {
       border-color: #007aff;
       transform: translateY(-3px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 12px 28px rgba(0, 122, 255, 0.12);
     }
     .pillar-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: rgba(0, 122, 255, 0.08);
-      border: 1px solid rgba(0, 122, 255, 0.2);
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -228,11 +231,11 @@
     .pillar-card h3 {
       font-size: 1.15rem;
       font-weight: 700;
-      color: #fff;
+      color: #0f172a;
     }
     .pillar-card p {
-      font-size: 0.86rem;
-      color: #a1a1a6;
+      font-size: 0.88rem;
+      color: #64748b;
       line-height: 1.6;
     }
 
@@ -240,66 +243,69 @@
     .steps-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: 22px;
     }
     .step-card {
       position: relative;
-      background: #141418;
-      border: 1px solid #28282e;
-      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
       padding: 28px 24px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
     }
     .step-number {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 800;
-      color: #5ac8fa;
-      background: rgba(90, 200, 250, 0.12);
+      color: #007aff;
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
       display: inline-block;
       width: fit-content;
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 20px;
       letter-spacing: 1px;
     }
     .step-card h4 {
-      font-size: 1.05rem;
+      font-size: 1.08rem;
       font-weight: 700;
-      color: #fff;
+      color: #0f172a;
     }
     .step-card p {
-      font-size: 0.85rem;
-      color: #8e8e93;
+      font-size: 0.86rem;
+      color: #64748b;
       line-height: 1.55;
     }
 
-    /* Creator Medallion Card */
+    /* Creator Card (Light & Warm) */
     .creator-card {
-      background: #141418;
-      border: 1px solid #28282e;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 20px;
       padding: 36px 32px;
       display: flex;
       align-items: center;
       gap: 32px;
+      box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
       transition: border-color 0.2s ease;
     }
     .creator-card:hover {
-      border-color: #383842;
+      border-color: #cbd5e1;
     }
     .creator-avatar-wrap {
       flex-shrink: 0;
       position: relative;
     }
     .creator-avatar {
-      width: 120px;
-      height: 120px;
+      width: 124px;
+      height: 124px;
       border-radius: 50%;
       object-fit: cover;
       border: 3px solid #007aff;
-      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.25);
-      background: #1c1c20;
+      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.22);
+      background: #e2e8f0;
       display: block;
     }
     .creator-info {
@@ -308,28 +314,28 @@
       gap: 8px;
     }
     .creator-badge {
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       font-weight: 800;
-      color: #5ac8fa;
+      color: #007aff;
       letter-spacing: 1.5px;
       text-transform: uppercase;
     }
     .creator-name {
-      font-size: 1.45rem;
+      font-size: 1.5rem;
       font-weight: 800;
-      color: #fff;
+      color: #0f172a;
       letter-spacing: -0.3px;
     }
     .creator-bio {
-      font-size: 0.92rem;
-      color: #a1a1a6;
-      line-height: 1.6;
+      font-size: 0.94rem;
+      color: #475569;
+      line-height: 1.65;
     }
     .creator-link {
       color: #007aff;
       text-decoration: none;
-      font-weight: 600;
-      font-size: 0.85rem;
+      font-weight: 700;
+      font-size: 0.88rem;
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -341,24 +347,26 @@
 
     /* Bottom CTA Banner */
     .cta-banner {
-      background: linear-gradient(135deg, #1c1c24 0%, #101014 100%);
-      border: 1px solid #33333c;
-      border-radius: 20px;
-      padding: 48px 32px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: 22px;
+      padding: 52px 32px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 20px;
+      color: #ffffff;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
     }
     .cta-banner h2 {
-      font-size: 1.9rem;
+      font-size: 2rem;
       font-weight: 800;
-      color: #fff;
+      color: #ffffff;
+      letter-spacing: -0.4px;
     }
     .cta-banner p {
-      font-size: 0.95rem;
-      color: #8e8e93;
+      font-size: 0.96rem;
+      color: #94a3b8;
       max-width: 520px;
       line-height: 1.6;
     }
@@ -371,65 +379,67 @@
 
     /* Footer */
     footer {
-      border-top: 1px solid #202024;
+      border-top: 1px solid #e2e8f0;
       padding: 32px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       max-width: 1040px;
       margin: 0 auto;
-      font-size: 0.82rem;
-      color: #636366;
+      font-size: 0.84rem;
+      color: #64748b;
     }
     footer a {
-      color: #8e8e93;
+      color: #475569;
+      font-weight: 600;
       text-decoration: none;
       margin-left: 18px;
     }
     footer a:hover {
-      color: #5ac8fa;
+      color: #007aff;
     }
 
-    /* Auth modal */
+    /* Auth modal (Light Design) */
     .auth-modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
       z-index: 9999;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
     .auth-card {
-      background: #1c1c1e;
-      border: 1px solid #38383a;
-      border-radius: 20px;
-      padding: 32px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 22px;
+      padding: 34px;
       max-width: 420px;
       width: 100%;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.85);
-      color: #fff;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+      color: #0f172a;
     }
     .auth-input {
       width: 100%;
       padding: 12px 14px;
-      background: #242426;
-      border: 1px solid #3a3a3c;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 0.9rem;
+      background: #f8f9fb;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      color: #0f172a;
+      font-size: 0.92rem;
       margin-bottom: 12px;
       outline: none;
+      transition: border-color 0.2s;
     }
-    .auth-input:focus { border-color: #007aff; }
+    .auth-input:focus { border-color: #007aff; background: #ffffff; }
 
     @media (max-width: 768px) {
-      .hero-title { font-size: 2rem; }
+      .hero-title { font-size: 2.1rem; }
       .pillars-grid, .steps-grid { grid-template-columns: 1fr; }
       .creator-card { flex-direction: column; text-align: center; gap: 20px; padding: 28px 20px; }
-      .content-wrap { padding: 60px 16px 40px; gap: 60px; }
+      .content-wrap { padding: 30px 16px 40px; gap: 50px; }
       footer { flex-direction: column; gap: 14px; text-align: center; }
       footer a { margin: 0 8px; }
     }
@@ -491,7 +501,7 @@
   </section>
 
   <!-- ========================================== -->
-  <!-- 2. BELOW-THE-FOLD INFO                     -->
+  <!-- 2. BELOW-THE-FOLD INFO (LIGHT DESIGN)      -->
   <!-- ========================================== -->
   <main id="explore" class="content-wrap">
 
@@ -633,13 +643,13 @@
   </footer>
 
   <!-- ========================================== -->
-  <!-- 4. AUTH MODAL                              -->
+  <!-- 4. AUTH MODAL (LIGHT DESIGN)               -->
   <!-- ========================================== -->
   <div id="auth-modal" class="auth-modal">
     <div class="auth-card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
-        <h3 id="auth-title" style="font-size:1.3rem; font-weight:800;">Sign In</h3>
-        <button onclick="closeAuthModal()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h3 id="auth-title" style="font-size:1.35rem; font-weight:800; color:#0f172a;">Sign In</h3>
+        <button onclick="closeAuthModal()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer; line-height:1;">&times;</button>
       </div>
 
       <input id="auth-email" class="auth-input" type="email" placeholder="Email address">
@@ -649,9 +659,9 @@
         Sign In
       </button>
 
-      <div style="margin-top:16px; text-align:center; font-size:0.84rem; color:#8e8e93;">
+      <div style="margin-top:16px; text-align:center; font-size:0.86rem; color:#64748b;">
         <span id="auth-switch-text">Don't have an account yet?</span>
-        <a href="javascript:void(0)" id="auth-switch-link" style="color:#007aff; font-weight:600; text-decoration:none; margin-left:4px;" onclick="toggleAuthMode()">Sign up</a>
+        <a href="javascript:void(0)" id="auth-switch-link" style="color:#007aff; font-weight:700; text-decoration:none; margin-left:4px;" onclick="toggleAuthMode()">Sign up</a>
       </div>
     </div>
   </div>
