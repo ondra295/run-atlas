@@ -5,11 +5,11 @@
   <title>Running Atlas — Interactive Map & Route Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Driver.js (Interactive Tutorial) -->
+  <!-- Driver.js -->
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 
-  <!-- Favicon: Running Atlas Topo-Peak -->
+  <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%2338bdf8' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
   <!-- Leaflet Map CSS & JS -->
@@ -40,7 +40,7 @@
     .top-search-input::placeholder { color: #64748b; }
     .top-bar-right { display: flex; align-items: center; gap: 8px; }
 
-    /* Main workspace */
+    /* Main Workspace */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
     /* Left Rail: Slate Navy */
@@ -49,7 +49,7 @@
       display: flex; flex-direction: column; gap: 6px; padding: 12px 6px;
       transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden; white-space: nowrap; z-index: 1500;
-      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15); flex-shrink: 0;
     }
     #left-rail:hover { width: 205px; box-shadow: 6px 0 24px rgba(0, 0, 0, 0.35); }
 
@@ -57,7 +57,7 @@
       display: flex; align-items: center; gap: 14px; padding: 10px 12px;
       border-radius: 8px; color: #94a3b8; cursor: pointer; border: none;
       background: transparent; font-size: 0.82rem; font-weight: 700; transition: all 0.15s;
-      text-decoration: none;
+      text-decoration: none; width: 100%; text-align: left;
     }
     .rail-btn:hover, .rail-btn.active { background: #0f172a; color: #38bdf8; }
     .rail-btn .rail-icon {
@@ -69,11 +69,10 @@
     #left-rail:hover .rail-btn span:not(.rail-icon) { opacity: 1; pointer-events: auto; }
     .rail-spacer { flex: 1; min-height: 20px; }
 
-    /* Map Area Wrapper */
+    /* Map & Sidebar */
     #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #e2e8f0; }
     #map { width: 100%; height: 100%; background: #e2e8f0; z-index: 1; }
 
-    /* Onboarding Overlay over Map */
     #onboarding-overlay {
       display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(8px); z-index: 1100; align-items: center; justify-content: center; padding: 24px;
@@ -99,7 +98,6 @@
     .split-card-title { font-size: 0.9rem; font-weight: 800; color: #0f172a; }
     .split-card-sub { font-size: 0.74rem; color: #64748b; line-height: 1.35; }
 
-    /* Floating Home Base prompt */
     #floating-home-prompt {
       position: absolute; bottom: 24px; left: 24px; z-index: 1050;
       background: #0f172a; border: 2px solid #38bdf8; border-radius: 12px; padding: 12px 18px;
@@ -108,7 +106,6 @@
     }
     #floating-home-prompt:hover { transform: translateY(-2px); background: #1e293b; }
 
-    /* Sidebar: Crisp Slate Canvas */
     #sidebar {
       width: 440px; height: 100%; background: #ffffff; border-left: 1px solid #cbd5e1;
       display: flex; flex-direction: column; z-index: 2;
@@ -130,7 +127,6 @@
     .status-card-btn.active[data-status="planned"] .indicator { background: #d97706; box-shadow: 0 0 6px #d97706; }
     .status-card-btn.active[data-status="bucket"] .indicator { background: #0284c7; box-shadow: 0 0 6px #0284c7; }
 
-    /* Filters Section */
     .filters-section { padding: 10px 18px; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 8px; background: #f8fafc; }
 
     .pill-btn {
@@ -148,7 +144,6 @@
 
     #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; background: #f1f5f9; }
 
-    /* Cards */
     .race-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
       padding: 13px 15px; cursor: pointer; transition: all 0.2s ease;
@@ -178,7 +173,6 @@
     }
     .back-btn:hover { background: #f8fafc; }
 
-    /* Map Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
     .pin-circle {
       border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center;
@@ -191,7 +185,6 @@
       display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
     }
-    
     .stepped-modal-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 26px;
       max-width: 580px; width: 100%; color: #0f172a; display: flex; flex-direction: column; gap: 14px;
@@ -204,7 +197,6 @@
     }
     .stepped-input:focus { border-color: #007aff; background: #ffffff; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15); }
 
-    /* Chips */
     .chips-group { display: flex; gap: 6px; flex-wrap: wrap; }
     .chip-btn {
       padding: 6px 12px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px;
@@ -217,14 +209,11 @@
     .form-slider-wrap input[type=range] { flex: 1; accent-color: #007aff; }
 
     .time-inputs-cluster { display: flex; gap: 6px; align-items: center; }
-    .time-box-input {
-      width: 56px !important; text-align: center; font-weight: 700; padding: 8px 4px !important;
-    }
+    .time-box-input { width: 56px !important; text-align: center; font-weight: 700; padding: 8px 4px !important; }
 
     .gallery-preview-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
     .gallery-thumb { width: 100%; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; }
 
-    /* Catalog Cards Grid */
     .catalog-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; max-height: 52vh; overflow-y: auto; padding-right: 4px; }
     .catalog-item-card {
       background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;
@@ -243,7 +232,6 @@
     }
     .modal-tab-btn.active { color: #007aff; background: #e0f2fe; }
 
-    /* Mobile */
     @media (max-width: 768px) {
       .top-search-input { display: none; }
       #left-rail {
@@ -263,11 +251,9 @@
 </head>
 <body>
 
-  <!-- 1. FULL APP LAYOUT -->
   <div id="app-layout">
-    <!-- TOP BAR (MIDNIGHT NAVY) -->
+    <!-- TOP BAR -->
     <header id="top-bar">
-      <!-- BRAND LOGO: RUNNING ATLAS (TOPO-PEAK) -->
       <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0;">
         <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
           <defs>
@@ -296,12 +282,14 @@
           🌍 Race Catalog
         </button>
         <button id="btn-add-activity" class="open-detail-btn" style="display: none;" onclick="openAddModal()">➕ Add Race</button>
-        <a id="btn-profile" class="pill-btn" href="settings.html" style="background:#1e293b; border-color:#334155; color:#f8fafc;">👤 <span id="label-user">Profile</span></a>
+        <a id="btn-profile" class="pill-btn" href="settings.html" style="background:#1e293b; border-color:#334155; color:#f8fafc;">
+          👤 <span id="label-user">Profile</span>
+        </a>
       </div>
     </header>
 
     <div id="main-body">
-      <!-- LEVÝ PANEL (SLATE NAVY) -->
+      <!-- LEVÝ PANEL -->
       <nav id="left-rail">
         <button id="rail-races" class="rail-btn active" onclick="switchPageMode('races')">
           <span class="rail-icon">
@@ -320,7 +308,7 @@
               <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
               <path d="M7 21l3-4"></path>
               <path d="M16 21l-2-4-3-3 1-6"></path>
-              <path d="M6 12l2-3 4-1 3 3 3 1"></path>
+              <path d="M6 12l2-3 4-1 3 3 1"></path>
             </svg>
           </span>
           <span>Memorable Runs</span>
@@ -328,7 +316,6 @@
 
         <div style="height: 1px; background: #334155; margin: 10px 4px;"></div>
 
-        <!-- Home Base -->
         <button class="rail-btn" onclick="handleHomeBaseClick()">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -338,7 +325,7 @@
           <span>Home Base</span>
         </button>
 
-        <!-- Settings -->
+        <!-- ODKAZ NA UNIKÁTNÍ STRÁNKU SETTINGS -->
         <a class="rail-btn" href="settings.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -352,7 +339,7 @@
         <div class="rail-spacer"></div>
         <div style="height: 1px; background: #334155; margin: 4px 4px;"></div>
 
-        <!-- About Us -->
+        <!-- ODKAZ NA UNIKÁTNÍ STRÁNKU ABOUT US -->
         <a class="rail-btn" href="about.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -364,7 +351,7 @@
           <span>About Us</span>
         </a>
 
-        <!-- Support -->
+        <!-- ODKAZ NA UNIKÁTNÍ STRÁNKU SUPPORT -->
         <a class="rail-btn" href="support.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -380,11 +367,10 @@
         </a>
       </nav>
 
-      <!-- MAP CONTAINER & ONBOARDING -->
+      <!-- MAPA & SIDEBAR -->
       <div id="map-wrapper">
         <div id="map"></div>
 
-        <!-- ONBOARDING OVERLAY -->
         <div id="onboarding-overlay">
           <div class="onboarding-card">
             <div style="display:inline-flex; padding:10px; border-radius:50%; background:#eff6ff; margin-bottom:8px;">
@@ -418,7 +404,7 @@
                   <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
                   <path d="M7 21l3-4"></path>
                   <path d="M16 21l-2-4-3-3 1-6"></path>
-                  <path d="M6 12l2-3 4-1 3 3 3 1"></path>
+                  <path d="M6 12l2-3 4-1 3 3 1"></path>
                 </svg>
                 <div class="split-card-title">Memorable Run</div>
                 <div class="split-card-sub">Summits, vacations & trail milestones</div>
@@ -431,7 +417,6 @@
           </div>
         </div>
 
-        <!-- FLOATING SET HOME BASE PROMPT -->
         <div id="floating-home-prompt" style="display:none;" onclick="openHomeBaseOnlyModal()">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
@@ -443,7 +428,6 @@
         </div>
       </div>
 
-      <!-- SIDEBAR (CRISP WHITE ON SLATE) -->
       <aside id="sidebar">
         <div class="sidebar-header">
           <h2 id="main-title">Race Atlas</h2>
@@ -473,7 +457,6 @@
             </button>
           </div>
 
-          <!-- POKROČILÉ FILTRY -->
           <div id="advanced-filters-drawer">
             <div>
               <label class="form-group-label" style="font-size:0.7rem;">Month of Event</label>
@@ -519,7 +502,7 @@
     </div>
   </div>
 
-  <!-- 2. KATALOG ZÁVODŮ -->
+  <!-- Modals -->
   <div id="modal-catalog" class="modal-backdrop">
     <div class="stepped-modal-card" style="max-width: 660px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -551,7 +534,6 @@
     </div>
   </div>
 
-  <!-- 3. RYCHLÝ MODAL: HOME BASE -->
   <div id="modal-homebase-only" class="modal-backdrop">
     <div class="stepped-modal-card" style="max-width:460px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -583,7 +565,6 @@
     </div>
   </div>
 
-  <!-- 4. TWO-STEP ACTIVITY MODAL -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
       <div id="modal-step-1" style="display:flex; flex-direction:column; gap:14px;">
@@ -668,7 +649,6 @@
         </div>
       </div>
 
-      <!-- STEP 2: DEEP DIVE -->
       <div id="modal-step-2" style="display:none; flex-direction:column; gap:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <button type="button" class="pill-btn" style="background:transparent; border:none; color:#007aff; padding:0; font-weight:700;" onclick="goToStep(1)">← Back to Quick Log</button>
@@ -802,7 +782,6 @@
     </div>
   </div>
 
-  <!-- 5. JAVASCRIPT & SUPABASE ARCHITECTURE -->
   <script>
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbm96Z3BudGdhdWxkdnB2c3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTA0MzUsImV4cCI6MjEwODA4NjQzNX0.TfmHE3zkVgVjupOFLA8_egRGwmVx5BDljHggk3H1ohc";
@@ -917,7 +896,6 @@
       map.flyTo(userHomeCoords, 5.5, { animate: true, duration: 1.2 });
     }
 
-    // INITIALIZATION
     async function initApp() {
       const params = new URLSearchParams(window.location.search);
       isDemoMode = params.get('demo') === 'true';
@@ -1009,7 +987,6 @@
       }
     }
 
-    // GLOBAL RACE CATALOG
     async function openCatalogModal() {
       closeModals();
       document.getElementById('modal-catalog').style.display = 'flex';
@@ -1120,7 +1097,6 @@
       document.getElementById('add-modal').style.display = 'flex';
     }
 
-    // RENDER MAP & SIDEBAR
     function renderAll() {
       markerLayerGroup.clearLayers();
       const content = document.getElementById('content');
@@ -1240,7 +1216,6 @@
       }
     }
 
-    // MODAL STEPPER
     let parsedGpxCoords = null;
     let parsedCenterCoords = null;
     let selectedImageFiles = [];
@@ -1576,61 +1551,4 @@
     }
 
     function applyAdvancedFilters() {
-      advFilterMonth = document.getElementById('filter-month').value;
-      updateAdvancedFiltersCount(); renderAll();
-    }
-
-    function resetAdvancedFilters() {
-      advFilterMonth = 'all'; advFilterDifficulty = 'all'; advFilterCost = 'all';
-      document.getElementById('filter-month').value = 'all';
-      document.querySelectorAll('#filter-difficulty-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
-      document.querySelectorAll('#filter-cost-chips .chip-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
-      updateAdvancedFiltersCount(); renderAll();
-    }
-
-    function toggleStatusFilter(key) {
-      statusFilters[key] = !statusFilters[key];
-      document.querySelector(`.status-card-btn[data-status="${key}"]`).classList.toggle('active', statusFilters[key]);
-      renderAll();
-    }
-
-    function setSurfaceFilter(surface, btn) {
-      surfaceFilter = surface;
-      document.querySelectorAll('.filters-section .pill-btn').forEach(b => { if (b.id !== 'btn-toggle-advanced-filters') b.classList.remove('active'); });
-      btn.classList.add('active');
-      renderAll();
-    }
-
-    function handleSearch(val) {
-      searchQuery = val.trim().toLowerCase();
-      renderAll();
-    }
-
-    function switchPageMode(mode) {
-      currentMode = mode;
-      document.getElementById('rail-races').classList.toggle('active', mode === 'races');
-      document.getElementById('rail-memorable').classList.toggle('active', mode === 'memorable');
-      document.getElementById('main-title').textContent = mode === 'races' ? 'Race Atlas' : 'Memorable Runs';
-      document.getElementById('status-boxes-wrap').style.display = mode === 'races' ? 'flex' : 'none';
-      document.getElementById('btn-add-activity').textContent = mode === 'races' ? '➕ Add Race' : '➕ Add Run';
-      renderAll();
-    }
-
-    function startInteractiveTutorial() {
-      document.getElementById('onboarding-overlay').style.display = 'none';
-      closeModals();
-      const driverObj = window.driver.js.driver({
-        showProgress: true, animate: true,
-        steps: [
-          { element: '#left-rail', popover: { title: 'Navigation', description: 'Switch between Races and Memorable Runs, or jump to your Home Base.', side: "right" } },
-          { element: '#btn-browse-catalog', popover: { title: 'Race Catalog', description: 'Populate your map in seconds by selecting iconic world and Czech races.', side: "bottom" } },
-          { element: '#btn-add-activity', popover: { title: 'Upload Tracks', description: 'Import your own .GPX files with precision pace and elevation curves.', side: "bottom" } }
-        ]
-      });
-      driverObj.drive();
-    }
-
-    initApp();
-  </script>
-</body>
-</html>
+      advFilterMonth = document.getElementById('
