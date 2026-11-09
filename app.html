@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 
   <!-- Favicon: Running Atlas Topo-Peak -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121214'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23007aff'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23ffffff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23007aff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%235ac8fa' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
   <!-- Leaflet Map CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -21,42 +21,43 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    html, body { height: 100%; width: 100%; overflow: hidden; background: #121214; color: #e0e0e0; }
+    html, body { height: 100%; width: 100%; overflow: hidden; background: #f8f9fb; color: #1e293b; }
 
     #app-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; }
 
     /* Top Bar */
     #top-bar {
-      height: 52px; background: rgba(22, 22, 26, 0.95); backdrop-filter: blur(14px);
-      border-bottom: 1px solid #2c2c2e; display: flex; align-items: center;
+      height: 54px; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(14px);
+      border-bottom: 1px solid #e2e8f0; display: flex; align-items: center;
       justify-content: space-between; padding: 0 18px; z-index: 2000; flex-shrink: 0;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
     }
     .top-search-input {
-      background: #1c1c1e; border: 1px solid #3a3a3c; border-radius: 8px;
-      padding: 7px 14px; color: #fff; font-size: 0.84rem; width: 280px; outline: none; transition: all 0.2s;
+      background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px;
+      padding: 7px 14px; color: #0f172a; font-size: 0.84rem; width: 280px; outline: none; transition: all 0.2s;
     }
-    .top-search-input:focus { border-color: #007aff; width: 320px; }
+    .top-search-input:focus { border-color: #007aff; background: #ffffff; width: 320px; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12); }
     .top-bar-right { display: flex; align-items: center; gap: 8px; }
 
     /* Main workspace */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
-    /* Left Runalyzer Rail */
+    /* Left Rail */
     #left-rail {
-      width: 56px; background: rgba(20, 20, 24, 0.94); backdrop-filter: blur(14px);
-      border-right: 1px solid #2c2c2e; display: flex; flex-direction: column; gap: 6px;
+      width: 56px; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(14px);
+      border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 6px;
       padding: 12px 6px; transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden; white-space: nowrap; z-index: 1500;
     }
-    #left-rail:hover { width: 205px; box-shadow: 6px 0 24px rgba(0,0,0,0.6); }
+    #left-rail:hover { width: 205px; box-shadow: 6px 0 24px rgba(15, 23, 42, 0.08); }
 
     .rail-btn {
       display: flex; align-items: center; gap: 14px; padding: 10px 12px;
-      border-radius: 8px; color: #8e8e93; cursor: pointer; border: none;
+      border-radius: 8px; color: #64748b; cursor: pointer; border: none;
       background: transparent; font-size: 0.82rem; font-weight: 600; transition: all 0.15s;
       text-decoration: none;
     }
-    .rail-btn:hover, .rail-btn.active { background: #2c2c2e; color: #fff; }
+    .rail-btn:hover, .rail-btn.active { background: #eff6ff; color: #007aff; }
     .rail-btn .rail-icon {
       width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
@@ -67,99 +68,100 @@
     .rail-spacer { flex: 1; min-height: 20px; }
 
     /* Map Area Wrapper */
-    #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; }
-    #map { width: 100%; height: 100%; background: #121214; z-index: 1; }
+    #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #f8f9fb; }
+    #map { width: 100%; height: 100%; background: #f8f9fb; z-index: 1; }
 
     /* Onboarding Overlay over Map */
     #onboarding-overlay {
-      display: none; position: absolute; inset: 0; background: rgba(12, 12, 14, 0.78);
+      display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.45);
       backdrop-filter: blur(8px); z-index: 1100; align-items: center; justify-content: center; padding: 24px;
     }
     .onboarding-card {
-      background: rgba(28, 28, 30, 0.94); border: 1px solid #38383a; border-radius: 20px;
-      padding: 34px 30px; max-width: 620px; width: 100%; text-align: center; color: #fff;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.85); backdrop-filter: blur(16px);
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px;
+      padding: 34px 30px; max-width: 620px; width: 100%; text-align: center; color: #0f172a;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2); backdrop-filter: blur(16px);
     }
     .onboarding-split-grid {
       display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 22px 0 16px;
     }
     .split-choice-card {
-      background: #242428; border: 1px solid #3a3a3c; border-radius: 12px; padding: 18px 12px;
+      background: #f8f9fb; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 12px;
       cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); text-align: center;
       display: flex; flex-direction: column; align-items: center; gap: 8px;
     }
     .split-choice-card:hover {
-      background: #2c2c32; border-color: #007aff; transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,122,255,0.25);
+      background: #ffffff; border-color: #007aff; transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 122, 255, 0.15);
     }
     .split-choice-card.highlight { border-color: #34c759; background: rgba(52, 199, 89, 0.08); }
-    .split-card-title { font-size: 0.9rem; font-weight: 700; color: #fff; }
-    .split-card-sub { font-size: 0.72rem; color: #8e8e93; line-height: 1.35; }
+    .split-card-title { font-size: 0.9rem; font-weight: 700; color: #0f172a; }
+    .split-card-sub { font-size: 0.74rem; color: #64748b; line-height: 1.35; }
 
     /* Floating Home Base prompt */
     #floating-home-prompt {
       position: absolute; bottom: 24px; left: 24px; z-index: 1050;
-      background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(12px);
+      background: #ffffff; backdrop-filter: blur(12px);
       border: 1px solid #007aff; border-radius: 12px; padding: 12px 18px;
-      display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
       cursor: pointer; transition: transform 0.2s, background 0.2s;
     }
-    #floating-home-prompt:hover { transform: translateY(-2px); background: #242428; }
+    #floating-home-prompt:hover { transform: translateY(-2px); background: #f8f9fb; }
 
     /* Sidebar */
     #sidebar {
-      width: 440px; height: 100%; background: #1c1c1e; border-left: 1px solid #2c2c2e;
+      width: 440px; height: 100%; background: #ffffff; border-left: 1px solid #e2e8f0;
       display: flex; flex-direction: column; z-index: 2;
     }
-    .sidebar-header { padding: 16px 20px; border-bottom: 1px solid #2c2c2e; background: #161618; }
-    .sidebar-header h2 { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
-    .sidebar-header p { font-size: 0.78rem; color: #8e8e93; }
+    .sidebar-header { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #ffffff; }
+    .sidebar-header h2 { font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 2px; }
+    .sidebar-header p { font-size: 0.78rem; color: #64748b; }
 
     .status-boxes { display: flex; gap: 6px; margin-top: 12px; }
     .status-card-btn {
       flex: 1; display: flex; align-items: center; justify-content: space-between;
-      padding: 7px 10px; border-radius: 6px; border: 1px solid #2c2c2e; background: #141416;
-      color: #777; cursor: pointer; font-size: 0.76rem; font-weight: 600; transition: all 0.2s;
+      padding: 7px 10px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8f9fb;
+      color: #64748b; cursor: pointer; font-size: 0.76rem; font-weight: 600; transition: all 0.2s;
     }
-    .status-card-btn.active { background: #2a2a2d; border-color: #444; color: #fff; }
-    .status-card-btn .indicator { width: 7px; height: 7px; border-radius: 50%; background: #444; }
-    .status-card-btn.active[data-status="done"] .indicator { background: #34c759; box-shadow: 0 0 6px #34c759; }
-    .status-card-btn.active[data-status="planned"] .indicator { background: #ff9f0a; box-shadow: 0 0 6px #ff9f0a; }
-    .status-card-btn.active[data-status="bucket"] .indicator { background: #5ac8fa; box-shadow: 0 0 6px #5ac8fa; }
+    .status-card-btn.active { background: #ffffff; border-color: #cbd5e1; color: #0f172a; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05); }
+    .status-card-btn .indicator { width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; }
+    .status-card-btn.active[data-status="done"] .indicator { background: #16a34a; box-shadow: 0 0 6px rgba(22, 163, 74, 0.4); }
+    .status-card-btn.active[data-status="planned"] .indicator { background: #d97706; box-shadow: 0 0 6px rgba(217, 119, 6, 0.4); }
+    .status-card-btn.active[data-status="bucket"] .indicator { background: #0284c7; box-shadow: 0 0 6px rgba(2, 132, 199, 0.4); }
 
     /* Filters Section & Drawer */
-    .filters-section { padding: 10px 18px; border-bottom: 1px solid #262628; display: flex; flex-direction: column; gap: 8px; }
+    .filters-section { padding: 10px 18px; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 8px; background: #ffffff; }
 
     .pill-btn {
-      background: #242426; border: 1px solid #333; color: #aaa; padding: 6px 12px;
+      background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; padding: 6px 12px;
       border-radius: 6px; font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
       display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
     }
-    .pill-btn:hover { background: #2c2c2e; color: #fff; }
+    .pill-btn:hover { background: #e2e8f0; color: #0f172a; }
     .pill-btn.active { background: #007aff; color: #fff; border-color: #007aff; }
 
     #advanced-filters-drawer {
       display: none; flex-direction: column; gap: 10px; width: 100%; padding: 12px;
-      background: #161618; border-radius: 8px; border: 1px solid #2e2e34; margin-top: 4px;
+      background: #f8f9fb; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 4px;
     }
 
-    #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; background: #f8f9fb; }
 
     /* Cards */
     .race-card {
-      background: #242426; border: 1px solid #2c2c2e; border-radius: 8px;
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;
       padding: 12px 14px; cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
     }
-    .race-card:hover { background: #2c2c2e; border-color: #007aff; transform: translateY(-1px); }
+    .race-card:hover { border-color: #007aff; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 122, 255, 0.1); }
     .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .card-title { font-size: 0.95rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 6px; }
-    .card-meta { font-size: 0.75rem; color: #aaa; margin-top: 4px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .card-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px; }
+    .card-meta { font-size: 0.76rem; color: #64748b; margin-top: 4px; display: flex; gap: 6px; flex-wrap: wrap; }
 
     .badge { display: inline-block; padding: 3px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }
-    .badge-done { background: rgba(52, 199, 89, 0.2); color: #34c759; }
-    .badge-planned { background: rgba(255, 159, 10, 0.2); color: #ff9f0a; }
-    .badge-bucket { background: rgba(90, 200, 250, 0.2); color: #5ac8fa; }
-    .badge-memorable { background: rgba(175, 82, 222, 0.2); color: #af52de; }
+    .badge-done { background: rgba(52, 199, 89, 0.14); color: #15803d; }
+    .badge-planned { background: rgba(255, 159, 10, 0.15); color: #b45309; }
+    .badge-bucket { background: rgba(0, 122, 255, 0.12); color: #0284c7; }
+    .badge-memorable { background: rgba(175, 82, 222, 0.14); color: #7e22ce; }
 
     .open-detail-btn {
       background: #007aff; color: #fff; border: none; padding: 8px 14px; border-radius: 6px;
@@ -169,46 +171,47 @@
     .open-detail-btn:hover { background: #0062cc; }
 
     .back-btn {
-      display: inline-flex; align-items: center; gap: 6px; background: #2c2c2e; border: 1px solid #3a3a3c;
-      color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px;
+      display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1;
+      color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px; font-weight: 600;
     }
+    .back-btn:hover { background: #f1f5f9; }
 
     /* Map Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
     .pin-circle {
       border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.6); transition: transform 0.15s ease;
+      justify-content: center; box-shadow: 0 3px 8px rgba(15, 23, 42, 0.35); transition: transform 0.15s ease;
     }
-    .pin-circle:hover { transform: scale(1.2); }
+    .pin-circle:hover { transform: scale(1.25); }
 
     /* Modals */
     .modal-backdrop {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.84);
+      display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55);
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
     }
     
     .stepped-modal-card {
-      background: #1c1c1e; border: 1px solid #38383a; border-radius: 20px; padding: 26px;
-      max-width: 580px; width: 100%; color: #fff; display: flex; flex-direction: column; gap: 14px;
-      max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.85);
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 26px;
+      max-width: 580px; width: 100%; color: #0f172a; display: flex; flex-direction: column; gap: 14px;
+      max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
     }
-    .form-group-label { font-size: 0.74rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .form-group-label { font-size: 0.74rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; display: block; }
     .stepped-input {
-      padding: 10px 12px; background: #242426; border: 1px solid #3a3a3c; border-radius: 8px;
-      color: #fff; font-size: 0.86rem; outline: none; width: 100%; transition: border-color 0.2s;
+      padding: 10px 12px; background: #f8f9fb; border: 1px solid #cbd5e1; border-radius: 8px;
+      color: #0f172a; font-size: 0.86rem; outline: none; width: 100%; transition: border-color 0.2s;
     }
-    .stepped-input:focus { border-color: #007aff; }
+    .stepped-input:focus { border-color: #007aff; background: #ffffff; }
 
     /* Chips */
     .chips-group { display: flex; gap: 6px; flex-wrap: wrap; }
     .chip-btn {
-      padding: 6px 12px; background: #242426; border: 1px solid #3a3a3c; border-radius: 8px;
-      color: #aaa; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.15s; user-select: none;
+      padding: 6px 12px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px;
+      color: #475569; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.15s; user-select: none;
     }
-    .chip-btn:hover { background: #2c2c30; color: #fff; }
+    .chip-btn:hover { background: #e2e8f0; color: #0f172a; }
     .chip-btn.active { background: #007aff; border-color: #007aff; color: #fff; }
 
-    .form-slider-wrap { display: flex; align-items: center; gap: 12px; background: #242426; padding: 8px 12px; border-radius: 8px; border: 1px solid #3a3a3c; }
+    .form-slider-wrap { display: flex; align-items: center; gap: 12px; background: #f8f9fb; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; }
     .form-slider-wrap input[type=range] { flex: 1; accent-color: #007aff; }
 
     .time-inputs-cluster { display: flex; gap: 6px; align-items: center; }
@@ -217,41 +220,41 @@
     }
 
     .gallery-preview-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
-    .gallery-thumb { width: 100%; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #444; }
+    .gallery-thumb { width: 100%; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; }
 
     /* Catalog Cards Grid */
     .catalog-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; max-height: 52vh; overflow-y: auto; padding-right: 4px; }
     .catalog-item-card {
-      background: #242428; border: 1px solid #3a3a3c; border-radius: 10px; padding: 12px;
+      background: #f8f9fb; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;
       display: flex; gap: 14px; align-items: center; justify-content: space-between;
     }
     .catalog-item-card img { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; }
     .catalog-info { flex: 1; }
-    .catalog-info h4 { font-size: 0.92rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
-    .catalog-info p { font-size: 0.74rem; color: #aaa; }
+    .catalog-info h4 { font-size: 0.94rem; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+    .catalog-info p { font-size: 0.74rem; color: #64748b; }
     .catalog-actions { display: flex; flex-direction: column; gap: 5px; }
 
-    .modal-tabs { display: flex; gap: 8px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 4px; }
+    .modal-tabs { display: flex; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 4px; }
     .modal-tab-btn {
-      background: transparent; border: none; color: #888; font-weight: 700; font-size: 0.85rem;
+      background: transparent; border: none; color: #64748b; font-weight: 700; font-size: 0.85rem;
       cursor: pointer; padding: 4px 8px; border-radius: 6px;
     }
-    .modal-tab-btn.active { color: #007aff; background: rgba(0,122,255,0.1); }
+    .modal-tab-btn.active { color: #007aff; background: rgba(0, 122, 255, 0.1); }
 
     /* Mobile */
     @media (max-width: 768px) {
       .top-search-input { display: none; }
       #left-rail {
         position: fixed; bottom: 0; left: 0; right: 0; width: 100% !important; height: 56px;
-        flex-direction: row; justify-content: space-around; border-right: none; border-top: 1px solid #2c2c2e; z-index: 3000;
+        flex-direction: row; justify-content: space-around; border-right: none; border-top: 1px solid #e2e8f0; z-index: 3000;
       }
       #floating-home-prompt { bottom: 68px; left: 16px; }
       #sidebar {
-        position: fixed; inset: 52px 0 56px 0; width: 100%; transform: translateY(100%);
+        position: fixed; inset: 54px 0 56px 0; width: 100%; transform: translateY(100%);
         transition: transform 0.25s ease; z-index: 2500;
       }
       #sidebar.mobile-open { transform: translateY(0); }
-      #map-wrapper { width: 100%; height: calc(100vh - 108px); }
+      #map-wrapper { width: 100%; height: calc(100vh - 110px); }
       .onboarding-split-grid { grid-template-columns: 1fr; }
     }
   </style>
@@ -262,7 +265,7 @@
   <!-- 1. FULL APP LAYOUT                         -->
   <!-- ========================================== -->
   <div id="app-layout">
-    <!-- TOP BAR -->
+    <!-- TOP BAR (LIGHT) -->
     <header id="top-bar">
       <!-- BRAND LOGO: RUNNING ATLAS (TOPO-PEAK) -->
       <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0;">
@@ -273,7 +276,7 @@
               <feComposite in="SourceGraphic" in2="blur" operator="over"/>
             </filter>
           </defs>
-          <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
+          <text x="8" y="22" fill="#0f172a" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
           <g transform="translate(6, 36)">
             <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
             <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#barRidgeGlow)"/>
@@ -289,7 +292,7 @@
       <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Search race, route, city..." oninput="handleSearch(this.value)">
 
       <div class="top-bar-right">
-        <button id="btn-browse-catalog" class="pill-btn" style="background:rgba(52,199,89,0.15); border-color:#34c759; color:#34c759;" onclick="openCatalogModal()">
+        <button id="btn-browse-catalog" class="pill-btn" style="background:#eff6ff; border-color:#dbeafe; color:#007aff;" onclick="openCatalogModal()">
           🌍 Race Catalog
         </button>
         <button id="btn-add-activity" class="open-detail-btn" style="display: none;" onclick="openAddModal()">➕ Add Race</button>
@@ -298,7 +301,7 @@
     </header>
 
     <div id="main-body">
-      <!-- LEVÝ RUNALYZER PANEL -->
+      <!-- LEVÝ PANEL -->
       <nav id="left-rail">
         <button id="rail-races" class="rail-btn active" onclick="switchPageMode('races')">
           <span class="rail-icon">
@@ -323,9 +326,9 @@
           <span>Memorable Runs</span>
         </button>
 
-        <div style="height: 1px; background: #2c2c2e; margin: 10px 4px;"></div>
+        <div style="height: 1px; background: #e2e8f0; margin: 10px 4px;"></div>
 
-        <!-- Home Base (Vycentrovat nebo nastavit) -->
+        <!-- Home Base -->
         <button class="rail-btn" onclick="handleHomeBaseClick()">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -335,7 +338,7 @@
           <span>Home Base</span>
         </button>
 
-        <!-- Settings (Podstránka) -->
+        <!-- Settings -->
         <a class="rail-btn" href="settings.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -347,9 +350,9 @@
         </a>
 
         <div class="rail-spacer"></div>
-        <div style="height: 1px; background: #2c2c2e; margin: 4px 4px;"></div>
+        <div style="height: 1px; background: #e2e8f0; margin: 4px 4px;"></div>
 
-        <!-- About Us (Podstránka) -->
+        <!-- About Us -->
         <a class="rail-btn" href="about.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -361,7 +364,7 @@
           <span>About Us</span>
         </a>
 
-        <!-- Support & Ideas (Podstránka) -->
+        <!-- Support -->
         <a class="rail-btn" href="support.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -381,10 +384,10 @@
       <div id="map-wrapper">
         <div id="map"></div>
 
-        <!-- ONBOARDING OVERLAY: covers ONLY the map -->
+        <!-- ONBOARDING OVERLAY -->
         <div id="onboarding-overlay">
           <div class="onboarding-card">
-            <div style="display:inline-flex; padding:10px; border-radius:50%; background:rgba(0,122,255,0.12); margin-bottom:8px;">
+            <div style="display:inline-flex; padding:10px; border-radius:50%; background:#eff6ff; margin-bottom:8px;">
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
                 <line x1="9" y1="3" x2="9" y2="18"></line>
@@ -392,7 +395,7 @@
               </svg>
             </div>
             <h2 style="font-size:1.5rem; font-weight:800; margin-bottom:4px;">Your map is a clean canvas</h2>
-            <p style="font-size:0.84rem; color:#a1a1a6; line-height:1.45;">Choose how to populate your visual running history:</p>
+            <p style="font-size:0.86rem; color:#64748b; line-height:1.45;">Choose how to populate your visual running history:</p>
 
             <div class="onboarding-split-grid">
               <div class="split-choice-card highlight" onclick="openCatalogModal()">
@@ -411,7 +414,7 @@
               </div>
 
               <div class="split-choice-card" onclick="openAddModal('memorable')">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#af52de" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
                   <path d="M7 21l3-4"></path>
                   <path d="M16 21l-2-4-3-3 1-6"></path>
@@ -422,7 +425,7 @@
               </div>
             </div>
 
-            <a href="javascript:void(0)" onclick="startInteractiveTutorial()" style="color:#5ac8fa; font-size:0.82rem; font-weight:600; text-decoration:none;">
+            <a href="javascript:void(0)" onclick="startInteractiveTutorial()" style="color:#007aff; font-size:0.84rem; font-weight:700; text-decoration:none;">
               New here? Take a 30s quick tour ➔
             </a>
           </div>
@@ -434,13 +437,13 @@
             <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
           </svg>
           <div>
-            <div style="font-size:0.85rem; font-weight:700; color:#fff;">Choose my home base</div>
-            <div style="font-size:0.72rem; color:#aaa;">Click to set your location & auto-center</div>
+            <div style="font-size:0.85rem; font-weight:700; color:#0f172a;">Choose my home base</div>
+            <div style="font-size:0.72rem; color:#64748b;">Click to set your location & auto-center</div>
           </div>
         </div>
       </div>
 
-      <!-- SIDEBAR -->
+      <!-- SIDEBAR (LIGHT) -->
       <aside id="sidebar">
         <div class="sidebar-header">
           <h2 id="main-title">Race Atlas</h2>
@@ -465,7 +468,7 @@
               <button class="pill-btn" onclick="setSurfaceFilter('trail', this)">Trail</button>
               <button class="pill-btn" onclick="setSurfaceFilter('road', this)">Road</button>
             </div>
-            <button id="btn-toggle-advanced-filters" class="pill-btn" style="background:#202024; border-color:#3a3a3c; color:#5ac8fa;" onclick="toggleAdvancedFilters()">
+            <button id="btn-toggle-advanced-filters" class="pill-btn" style="background:#ffffff; border-color:#cbd5e1; color:#007aff;" onclick="toggleAdvancedFilters()">
               ⚙️ More filters <span id="adv-filter-count" style="display:none; background:#007aff; color:#fff; font-size:0.68rem; padding:1px 6px; border-radius:10px; margin-left:2px;">0</span>
             </button>
           </div>
@@ -517,19 +520,18 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 2. KATALOG ZÁVODŮ S VYHLEDÁVÁNÍM           -->
+  <!-- 2. KATALOG ZÁVODŮ (LIGHT)                  -->
   <!-- ========================================== -->
   <div id="modal-catalog" class="modal-backdrop">
     <div class="stepped-modal-card" style="max-width: 660px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
-          <h3 style="font-size: 1.3rem; font-weight: 800;">Global Race Catalog</h3>
-          <p style="font-size: 0.76rem; color: #8e8e93;">Add iconic races to your map in 1 click without GPX files.</p>
+          <h3 style="font-size: 1.3rem; font-weight: 800; color:#0f172a;">Global Race Catalog</h3>
+          <p style="font-size: 0.78rem; color: #64748b;">Add iconic races to your map in 1 click without GPX files.</p>
         </div>
-        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+        <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
       </div>
 
-      <!-- Vyhledávací lišta v katalogu -->
       <div style="position:relative;">
         <input type="text" id="catalog-search-input" class="stepped-input" placeholder="🔍 Search by race name, city or country (e.g. Boston, Chamonix)..." oninput="handleCatalogSearch(this.value)">
       </div>
@@ -542,26 +544,26 @@
       </div>
 
       <div id="catalog-list-container" class="catalog-grid">
-        <div style="text-align:center; padding:20px; color:#888;">Loading catalog races...</div>
+        <div style="text-align:center; padding:20px; color:#64748b;">Loading catalog races...</div>
       </div>
 
-      <div style="display:flex; justify-content:flex-end; border-top:1px solid #333; padding-top:12px;">
+      <div style="display:flex; justify-content:flex-end; border-top:1px solid #e2e8f0; padding-top:12px;">
         <button class="pill-btn" onclick="closeModals()">Done</button>
       </div>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- 3. RYCHLÝ MODAL: POUZE NASTAVENÍ HOME BASE -->
+  <!-- 3. RYCHLÝ MODAL: HOME BASE                 -->
   <!-- ========================================== -->
   <div id="modal-homebase-only" class="modal-backdrop">
     <div class="stepped-modal-card" style="max-width:460px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:1.25rem; font-weight:700;">Set Your Home Base</h3>
-        <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+        <h3 style="font-size:1.25rem; font-weight:800; color:#0f172a;">Set Your Home Base</h3>
+        <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
       </div>
 
-      <p style="font-size:0.8rem; color:#aaa; line-height:1.45;">
+      <p style="font-size:0.82rem; color:#64748b; line-height:1.45;">
         Your home base is used to center your map and calculate distances to races.
       </p>
 
@@ -578,7 +580,7 @@
         <input id="quick-home-coords" class="stepped-input" type="text" placeholder="50.2305, 14.0888">
       </div>
 
-      <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px solid #333; padding-top:12px; margin-top:8px;">
+      <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px solid #e2e8f0; padding-top:12px; margin-top:8px;">
         <button class="pill-btn" onclick="closeModals()">Cancel</button>
         <button class="open-detail-btn" onclick="saveHomeCoordsFromQuick()">Save Home Base</button>
       </div>
@@ -586,18 +588,18 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 4. TWO-STEP ACTIVITY MODAL                 -->
+  <!-- 4. TWO-STEP ACTIVITY MODAL (LIGHT)         -->
   <!-- ========================================== -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
       <div id="modal-step-1" style="display:flex; flex-direction:column; gap:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 id="step1-modal-title" style="font-size: 1.25rem; font-weight: 700;">Add New Race</h3>
-          <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+          <h3 id="step1-modal-title" style="font-size: 1.25rem; font-weight: 800; color:#0f172a;">Add New Race</h3>
+          <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
         </div>
 
-        <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 14px; text-align: center; background: rgba(0,122,255,0.06); cursor: pointer;">
-          <span id="gpx-label">📁 Drag & drop watch .GPX track (Optional)</span>
+        <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 14px; text-align: center; background: rgba(0, 122, 255, 0.05); cursor: pointer;">
+          <span id="gpx-label" style="font-size:0.86rem; font-weight:600; color:#007aff;">📁 Drag & drop watch .GPX track (Optional)</span>
           <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
         </div>
 
@@ -608,29 +610,19 @@
 
         <!-- DYNAMICKÉ PŘEPÍNÁNÍ EVENT DATE VS TYPICAL MONTH -->
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <!-- Konkrétní datum (pro Completed & Planned) -->
           <div id="wrap-field-date">
             <label class="form-group-label">Event Date</label>
             <input id="form-date" class="stepped-input" type="date">
           </div>
 
-          <!-- Měsíc konání (pouze pro Bucket list) -->
           <div id="wrap-field-month" style="display:none;">
             <label class="form-group-label">Typical Month</label>
             <select id="form-month-select" class="stepped-input">
               <option value="" disabled selected>Select month...</option>
-              <option value="1">January</option>
-              <option value="2">February</option>
-              <option value="3">March</option>
-              <option value="4">April</option>
-              <option value="5">May</option>
-              <option value="6">June</option>
-              <option value="7">July</option>
-              <option value="8">August</option>
-              <option value="9">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
+              <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+              <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+              <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+              <option value="10">October</option><option value="11">November</option><option value="12">December</option>
             </select>
           </div>
 
@@ -674,10 +666,10 @@
           </div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #2e2e32; padding-top:14px; margin-top:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:14px; margin-top:6px;">
           <button class="pill-btn" onclick="closeModals()">Cancel</button>
           <div style="display:flex; gap:8px;">
-            <button type="button" class="pill-btn" style="background:#2c2c32; color:#5ac8fa; border-color:#444;" onclick="goToStep(2)">Add Details ➔</button>
+            <button type="button" class="pill-btn" style="background:#ffffff; color:#007aff; border-color:#cbd5e1;" onclick="goToStep(2)">Add Details ➔</button>
             <button id="btn-save-step1" class="open-detail-btn" onclick="saveActivityToSupabase()">Save Activity</button>
           </div>
         </div>
@@ -686,16 +678,16 @@
       <!-- STEP 2: DEEP DIVE -->
       <div id="modal-step-2" style="display:none; flex-direction:column; gap:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <button type="button" class="pill-btn" style="background:transparent; border:none; color:#5ac8fa; padding:0;" onclick="goToStep(1)">← Back to Quick Log</button>
-          <button onclick="closeModals()" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+          <button type="button" class="pill-btn" style="background:transparent; border:none; color:#007aff; padding:0; font-weight:700;" onclick="goToStep(1)">← Back to Quick Log</button>
+          <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
         </div>
 
         <div>
           <label class="form-group-label">Race Importance: <span id="importance-val" style="color:#007aff; font-weight:800;">5</span> / 10</label>
           <div class="form-slider-wrap">
-            <span style="font-size:0.75rem; color:#666;">1</span>
+            <span style="font-size:0.75rem; color:#64748b;">1</span>
             <input type="range" id="form-importance" min="1" max="10" value="5" oninput="document.getElementById('importance-val').textContent = this.value">
-            <span style="font-size:0.75rem; color:#666;">10</span>
+            <span style="font-size:0.75rem; color:#64748b;">10</span>
           </div>
         </div>
 
@@ -710,9 +702,9 @@
               <label class="form-group-label">Target Ambition Time</label>
               <div class="time-inputs-cluster">
                 <input id="ambition-h" class="stepped-input time-box-input" type="number" min="0" max="99" placeholder="HH" oninput="calculateTimeDifference()">
-                <span style="color:#666;">:</span>
+                <span style="color:#64748b;">:</span>
                 <input id="ambition-m" class="stepped-input time-box-input" type="number" min="0" max="59" placeholder="MM" oninput="calculateTimeDifference()">
-                <span style="color:#666;">:</span>
+                <span style="color:#64748b;">:</span>
                 <input id="ambition-s" class="stepped-input time-box-input" type="number" min="0" max="59" placeholder="SS" oninput="calculateTimeDifference()">
               </div>
             </div>
@@ -720,15 +712,15 @@
               <label class="form-group-label">Official Finish Time</label>
               <div class="time-inputs-cluster">
                 <input id="finish-h" class="stepped-input time-box-input" type="number" min="0" max="99" placeholder="HH" oninput="calculateTimeDifference()">
-                <span style="color:#666;">:</span>
+                <span style="color:#64748b;">:</span>
                 <input id="finish-m" class="stepped-input time-box-input" type="number" min="0" max="59" placeholder="MM" oninput="calculateTimeDifference()">
-                <span style="color:#666;">:</span>
+                <span style="color:#64748b;">:</span>
                 <input id="finish-s" class="stepped-input time-box-input" type="number" min="0" max="59" placeholder="SS" oninput="calculateTimeDifference()">
               </div>
             </div>
           </div>
 
-          <div id="ambition-diff-box" style="display:none; font-size:0.8rem; padding:8px 12px; border-radius:6px; background:#1c2b20; border:1px solid #34c759;">
+          <div id="ambition-diff-box" style="display:none; font-size:0.82rem; padding:8px 12px; border-radius:6px; background:#f0fdf4; border:1px solid #16a34a;">
             Diff vs goal: <strong id="ambition-diff-text"></strong>
           </div>
 
@@ -748,11 +740,11 @@
           </div>
 
           <div>
-            <label class="form-group-label">Performance satisfaction: <span id="satisfaction-val" style="color:#34c759; font-weight:800;">7</span> / 10</label>
+            <label class="form-group-label">Performance satisfaction: <span id="satisfaction-val" style="color:#16a34a; font-weight:800;">7</span> / 10</label>
             <div class="form-slider-wrap">
-              <span style="font-size:0.75rem; color:#666;">1</span>
+              <span style="font-size:0.75rem; color:#64748b;">1</span>
               <input type="range" id="form-satisfaction" min="1" max="10" value="7" oninput="document.getElementById('satisfaction-val').textContent = this.value">
-              <span style="font-size:0.75rem; color:#666;">10</span>
+              <span style="font-size:0.75rem; color:#64748b;">10</span>
             </div>
           </div>
 
@@ -805,11 +797,11 @@
 
         <div>
           <label class="form-group-label">Activity Photos (Optional, up to 10):</label>
-          <input type="file" id="input-images" accept="image/*" multiple onchange="handleMultipleImagesPreview(this.files)" style="font-size:0.8rem; color:#aaa;">
+          <input type="file" id="input-images" accept="image/*" multiple onchange="handleMultipleImagesPreview(this.files)" style="font-size:0.8rem; color:#64748b;">
           <div id="images-preview" class="gallery-preview-grid"></div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #2e2e32; padding-top:14px; margin-top:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:14px; margin-top:6px;">
           <button type="button" class="pill-btn" onclick="goToStep(1)">← Back</button>
           <button id="btn-save-step2" class="open-detail-btn" onclick="saveActivityToSupabase()">Save Activity</button>
         </div>
@@ -1084,7 +1076,7 @@
 
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div style="text-align:center; padding:30px; color:#888;">
+          <div style="text-align:center; padding:30px; color:#64748b;">
             No races found matching "${currentCatalogQuery}".
           </div>
         `;
@@ -1101,10 +1093,10 @@
             <p>📍 ${race.location || ''} &bull; 📏 ${race.distance || ''} &bull; ⛰️ ${race.elevation || ''}</p>
           </div>
           <div class="catalog-actions">
-            <button class="pill-btn" style="background:rgba(52,199,89,0.15); border-color:#34c759; color:#34c759; padding:4px 8px; font-size:0.72rem;" onclick="openCustomizeCatalogRace('${race.id}', 'done')">
+            <button class="pill-btn" style="background:rgba(52, 199, 89, 0.12); border-color:#34c759; color:#15803d; padding:4px 8px; font-size:0.72rem;" onclick="openCustomizeCatalogRace('${race.id}', 'done')">
               🏁 I ran this
             </button>
-            <button class="pill-btn" style="background:rgba(90,200,250,0.15); border-color:#5ac8fa; color:#5ac8fa; padding:4px 8px; font-size:0.72rem;" onclick="openCustomizeCatalogRace('${race.id}', 'bucket')">
+            <button class="pill-btn" style="background:#eff6ff; border-color:#dbeafe; color:#007aff; padding:4px 8px; font-size:0.72rem;" onclick="openCustomizeCatalogRace('${race.id}', 'bucket')">
               ⭐️ Bucket list
             </button>
           </div>
@@ -1113,7 +1105,6 @@
       });
     }
 
-    // PŘEDVYPLNĚNÍ FORMULÁŘE ZE ZÁVODU Z KATALOGU
     let pendingCatalogImageUrl = null;
 
     function openCustomizeCatalogRace(raceId, statusChoice) {
@@ -1129,7 +1120,6 @@
       document.getElementById('form-elevation').value = race.elevation || '';
       document.getElementById('form-notes').value = race.description || '';
 
-      // Pokud je to Bucket list, předvyplníme typický měsíc
       if (statusChoice === 'bucket' && race.month) {
         document.getElementById('form-month-select').value = String(race.month);
       }
@@ -1174,14 +1164,14 @@
 
       if (activeList.length === 0) {
         content.innerHTML = `
-          <div style="text-align:center; padding: 36px 10px; color:#888;">
-            <div style="font-size:0.92rem; font-weight:600; color:#ddd; margin-bottom:6px;">No activities match your filters</div>
-            <div style="font-size:0.78rem; margin-bottom:16px;">Pick a race from the catalog or upload a watch track.</div>
+          <div style="text-align:center; padding: 36px 10px; color:#64748b;">
+            <div style="font-size:0.95rem; font-weight:700; color:#0f172a; margin-bottom:6px;">No activities match your filters</div>
+            <div style="font-size:0.8rem; margin-bottom:16px;">Pick a race from the catalog or upload a watch track.</div>
             <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
-              <button class="open-detail-btn" style="width:200px; background:#34c759;" onclick="openCatalogModal()">
+              <button class="open-detail-btn" style="width:200px; background:#16a34a;" onclick="openCatalogModal()">
                 🌍 Choose from Catalog
               </button>
-              <button class="pill-btn" style="width:200px; justify-content:center;" onclick="openAddModal()">
+              <button class="pill-btn" style="width:200px; justify-content:center; background:#ffffff;" onclick="openAddModal()">
                 ➕ Upload own track
               </button>
             </div>
@@ -1191,8 +1181,8 @@
       }
 
       activeList.forEach(item => {
-        const colors = { done: '#34c759', planned: '#ff9f0a', bucket: '#5ac8fa', memorable: '#af52de' };
-        const pinColor = item.isMemorable ? '#af52de' : (colors[item.status] || '#007aff');
+        const colors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#9333ea' };
+        const pinColor = item.isMemorable ? '#9333ea' : (colors[item.status] || '#007aff');
         const pinHtml = `<div class="pin-circle" style="width:18px; height:18px; background:${pinColor};"></div>`;
         const icon = L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [18, 18], iconAnchor: [9, 9] });
 
@@ -1207,7 +1197,7 @@
             <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
               ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
             </span>
-            <span style="font-size:0.75rem; color:#888;">${item.date || ''}</span>
+            <span style="font-size:0.75rem; color:#64748b;">${item.date || ''}</span>
           </div>
           <div class="card-title">${item.name}</div>
           <div class="card-meta">
@@ -1215,7 +1205,7 @@
             <span>📏 ${item.distance || '-'}</span><span>&bull;</span>
             <span>⛰️ ${item.elevation || '-'}</span>
             ${item.cost ? `<span>&bull;</span><span>💰 ${item.cost}</span>` : ''}
-            ${item.resultTime ? `<span>&bull;</span><span style="color:#34c759; font-weight:700;">⏱️ ${item.resultTime}</span>` : ''}
+            ${item.resultTime ? `<span>&bull;</span><span style="color:#16a34a; font-weight:700;">⏱️ ${item.resultTime}</span>` : ''}
           </div>
         `;
         card.onclick = () => {
@@ -1242,24 +1232,24 @@
       content.innerHTML = `
         <button class="back-btn" onclick="renderAll()">← Back to list</button>
         ${galleryHtml}
-        <h2 style="font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:4px;">${item.name}</h2>
-        <div style="font-size:0.8rem; color:#aaa; margin-bottom:14px;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || ''} ${item.cost ? `&bull; Cost: ${item.cost}` : ''}</div>
+        <h2 style="font-size:1.35rem; font-weight:800; color:#0f172a; margin-bottom:4px;">${item.name}</h2>
+        <div style="font-size:0.82rem; color:#64748b; margin-bottom:14px;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || ''} ${item.cost ? `&bull; Cost: ${item.cost}` : ''}</div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#242426; padding:12px; border-radius:8px; margin-bottom:12px;">
-          <div><small style="color:#777; font-size:0.7rem; display:block;">DISTANCE</small><strong>${item.distance || '-'}</strong></div>
-          <div><small style="color:#777; font-size:0.7rem; display:block;">ELEVATION GAIN</small><strong>${item.elevation || '-'}</strong></div>
-          ${item.resultTime ? `<div style="grid-column: span 2;"><small style="color:#777; font-size:0.7rem; display:block;">RESULT TIME</small><strong style="color:#34c759; font-size:1rem;">${item.resultTime}</strong></div>` : ''}
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#ffffff; border:1px solid #e2e8f0; padding:12px; border-radius:10px; margin-bottom:12px;">
+          <div><small style="color:#64748b; font-size:0.7rem; font-weight:700; display:block;">DISTANCE</small><strong style="color:#0f172a;">${item.distance || '-'}</strong></div>
+          <div><small style="color:#64748b; font-size:0.7rem; font-weight:700; display:block;">ELEVATION GAIN</small><strong style="color:#0f172a;">${item.elevation || '-'}</strong></div>
+          ${item.resultTime ? `<div style="grid-column: span 2;"><small style="color:#64748b; font-size:0.7rem; font-weight:700; display:block;">RESULT TIME</small><strong style="color:#16a34a; font-size:1.05rem;">${item.resultTime}</strong></div>` : ''}
         </div>
 
-        ${item.why ? `<div style="background:#1f2733; border-left:3px solid #007aff; padding:10px 12px; border-radius:6px; font-size:0.85rem; margin-bottom:10px;"><em>„${item.why}“</em></div>` : ''}
-        ${item.notes ? `<div style="background:#242426; padding:10px 12px; border-radius:6px; font-size:0.82rem; color:#bbb; line-height:1.5;">${item.notes}</div>` : ''}
+        ${item.why ? `<div style="background:#eff6ff; border-left:3px solid #007aff; padding:10px 12px; border-radius:6px; font-size:0.86rem; color:#1e293b; margin-bottom:10px;"><em>„${item.why}“</em></div>` : ''}
+        ${item.notes ? `<div style="background:#ffffff; border:1px solid #e2e8f0; padding:10px 12px; border-radius:8px; font-size:0.84rem; color:#334155; line-height:1.55;">${item.notes}</div>` : ''}
       `;
 
       if (zavodniTrasy[item.id]) {
         const coords = zavodniTrasy[item.id];
         currentRouteLayer = L.featureGroup([
           L.polyline(coords, { color: '#007aff', weight: 4.5 }),
-          L.circleMarker(coords[0], { radius: 6, fillColor: '#34c759', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Start"),
+          L.circleMarker(coords[0], { radius: 6, fillColor: '#16a34a', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Start"),
           L.circleMarker(coords[coords.length - 1], { radius: 6, fillColor: '#ff3b30', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Finish")
         ]).addTo(map);
         map.fitBounds(currentRouteLayer.getBounds(), { padding: [40, 40] });
@@ -1267,7 +1257,7 @@
     }
 
     // ==========================================
-    // MODAL STEPPER & DYNAMICKÉ DATUM / MĚSÍC
+    // MODAL STEPPER & LOGIKA FORMULÁŘE
     // ==========================================
     let parsedGpxCoords = null;
     let parsedCenterCoords = null;
@@ -1342,7 +1332,6 @@
       resetActivityForm();
     }
 
-    // PŘEPÍNÁNÍ KALENDÁŘE VS MĚSÍCE PODLE STATUSU
     function handleStatusChange(status) {
       const whyInput = document.getElementById('form-why');
       const completedTiming = document.getElementById('group-details-completed');
@@ -1393,9 +1382,9 @@
         const sign = diff <= 0 ? '-' : '+';
         const formatted = `${sign}${h ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 
-        box.style.background = diff <= 0 ? '#1c2b20' : '#2c221a';
-        box.style.borderColor = diff <= 0 ? '#34c759' : '#ff9f0a';
-        txt.innerHTML = `<span style="color:${diff <= 0 ? '#34c759' : '#ff9f0a'};">${formatted} (${diff <= 0 ? 'Faster than goal 🎉' : 'Slower than goal'})</span>`;
+        box.style.background = diff <= 0 ? '#f0fdf4' : '#fffbeb';
+        box.style.borderColor = diff <= 0 ? '#16a34a' : '#d97706';
+        txt.innerHTML = `<span style="color:${diff <= 0 ? '#15803d' : '#b45309'}; font-weight:700;">${formatted} (${diff <= 0 ? 'Faster than goal 🎉' : 'Slower than goal'})</span>`;
         box.style.display = 'block';
       } else {
         box.style.display = 'none';
@@ -1489,7 +1478,6 @@
           uploadedImageUrls.push(pendingCatalogImageUrl);
         }
 
-        // Datum vs. Měsíc podle statusu
         let dateStr = '';
         let monthInt = null;
         const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
