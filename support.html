@@ -47,7 +47,6 @@
     .inner-section h3 { font-size: 1.18rem; font-weight: 800; color: #0f172a; }
     .inner-section p { font-size: 0.88rem; color: #64748b; line-height: 1.6; }
 
-    /* Roadmap items */
     .roadmap-item {
       background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px;
       display: flex; justify-content: space-between; align-items: center; gap: 16px;
@@ -163,77 +162,77 @@
             <h2 style="font-size:1.4rem; font-weight:800; color:#0f172a;">Support & Community Roadmap</h2>
           </div>
 
-          <!-- Veřejná Roadmapa -->
+          <!-- Public Roadmap -->
           <div class="inner-section">
             <div>
-              <h3>🚀 Plánované funkce (Hlasuj pro další krok)</h3>
-              <p>O vývoji Running Atlasu rozhodují sami běžci. Klikni na hlas u funkcí, které bys chtěl vidět nejdříve.</p>
+              <h3>🚀 Community Feature Voting</h3>
+              <p>Vote for the upcoming features you want to see next on Running Atlas.</p>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:8px;">
               <div class="roadmap-item">
                 <div class="roadmap-info">
-                  <strong>Přímé propojení s Garmin Connect API</strong>
-                  <p>Automatická synchronizace nových závodních tratí bez nutnosti stahovat GPX ručně.</p>
+                  <strong>Direct Garmin Connect API Integration</strong>
+                  <p>Auto-sync new race activities without manually exporting .GPX files.</p>
                 </div>
                 <button class="vote-btn" onclick="voteFeature(this, 42)">▲ <span class="v-num">42</span></button>
               </div>
 
               <div class="roadmap-item">
                 <div class="roadmap-info">
-                  <strong>3D Topografický profil tratě</strong>
-                  <p>Interaktivní průlet výškovým profilem závodu na 3D mapovém podkladu terénu.</p>
+                  <strong>3D Topographic Terrain Flyover</strong>
+                  <p>Interactive 3D elevation profile preview across mountain courses.</p>
                 </div>
                 <button class="vote-btn" onclick="voteFeature(this, 37)">▲ <span class="v-num">37</span></button>
               </div>
 
               <div class="roadmap-item">
                 <div class="roadmap-info">
-                  <strong>Export plakátu tvého atlasu k tisku</strong>
-                  <p>Možnost vygenerovat si plakát s vysokým rozlišením tvé mapy závodů na zeď.</p>
+                  <strong>High-Resolution Wall Poster Export</strong>
+                  <p>Generate a printable, high-res graphic of your lifetime running map.</p>
                 </div>
                 <button class="vote-btn" onclick="voteFeature(this, 28)">▲ <span class="v-num">28</span></button>
               </div>
             </div>
           </div>
 
-          <!-- Přímá podpora -->
+          <!-- Direct Feedback -->
           <div class="inner-section">
             <div>
-              <h3>Nahlásit chybu nebo poslat tip na závod do katalogu</h3>
-              <p>Zpráva se uloží přímo do databáze a tvůrce se jí bude věnovat.</p>
+              <h3>Report an Issue or Suggest a Race</h3>
+              <p>Your message goes directly to the project database and creator.</p>
             </div>
 
             <div>
-              <label class="form-group-label">Kategorie</label>
+              <label class="form-group-label">Category</label>
               <select id="feed-cat" class="inner-input-field">
-                <option value="feature">💡 Nápad na novou funkci</option>
-                <option value="race_request">🏁 Návrh závodu do katalogu</option>
-                <option value="bug">🐛 Hlášení chyby v aplikaci / GPX</option>
-                <option value="other">💬 Ostatní</option>
+                <option value="feature">💡 Feature Request</option>
+                <option value="race_request">🏁 Suggest a Race for Global Catalog</option>
+                <option value="bug">🐛 Bug Report / GPX Track Issue</option>
+                <option value="other">💬 General Feedback</option>
               </select>
             </div>
 
             <div>
-              <label class="form-group-label">Zpráva</label>
-              <textarea id="feed-msg" class="inner-input-field" placeholder="Napiš, jaký závod v katalogu chybí nebo co ti nefungovalo..." style="height:110px;"></textarea>
+              <label class="form-group-label">Message</label>
+              <textarea id="feed-msg" class="inner-input-field" placeholder="Tell us what race is missing or what isn't working as expected..." style="height:110px;"></textarea>
             </div>
 
             <button id="btn-submit-feed" class="open-detail-btn" onclick="submitFeedbackForm()">
-              Odeslat zprávu přímo tvůrci ✉️
+              Send to Creator ✉️
             </button>
           </div>
 
-          <!-- Návody -->
+          <!-- Guides -->
           <div class="inner-section">
-            <h3>Jak exportovat GPX z hodinek</h3>
+            <h3>How to Export GPX Tracks</h3>
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px; font-size:0.86rem; color:#334155;">
               <strong style="color:#0f172a; display:block; margin-bottom:4px;">⌚ Garmin Connect</strong>
-              Otevři závod na <em>connect.garmin.com</em> &bull; Klikni na ozubené kolečko vpravo nahoře &bull; Zvol <em>Exportovat do GPX</em> &bull; Přetáhni myší do Atlasu.
+              Open your event on <em>connect.garmin.com</em> &bull; Click the gear icon in the top right &bull; Select <em>Export to GPX</em> &bull; Drag & drop into Atlas.
             </div>
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px; font-size:0.86rem; color:#334155;">
               <strong style="color:#0f172a; display:block; margin-bottom:4px;">📱 Strava</strong>
-              Otevři aktivitu na webu <em>strava.com</em> &bull; V levém sloupci klikni na tři tečky (…) &bull; Vyber <em>Export GPX</em>.
+              Open your running activity on <em>strava.com</em> &bull; Click the three dots (…) on the left sidebar &bull; Click <em>Export GPX</em>.
             </div>
           </div>
         </div>
@@ -254,16 +253,16 @@
       btn.classList.add('voted');
       btn.style.background = '#007aff';
       btn.style.color = '#fff';
-      alert('Tvůj hlas byl zaznamenán! Díky za pomoc s rozvojem.');
+      alert('Your vote was recorded! Thank you for supporting the development.');
     }
 
     async function submitFeedbackForm() {
       const msg = document.getElementById('feed-msg').value.trim();
-      if (!msg) { alert('Vyplň prosím text zprávy.'); return; }
+      if (!msg) { alert('Please enter your message.'); return; }
 
       const cat = document.getElementById('feed-cat').value;
       const btn = document.getElementById('btn-submit-feed');
-      btn.textContent = 'Odesílám...';
+      btn.textContent = 'Sending...';
       btn.disabled = true;
 
       const { data: { user } } = await supabaseClient.auth.getUser();
@@ -277,12 +276,12 @@
         }]);
 
         if (error) throw error;
-        alert('Díky! Tvá zpráva byla v pořádku doručena.');
+        alert('Thank you! Your feedback has been received.');
         document.getElementById('feed-msg').value = '';
       } catch (e) {
-        alert('Díky! Zpráva byla zaznamenána.');
+        alert('Thank you! Feedback received.');
       } finally {
-        btn.textContent = 'Odeslat zprávu přímo tvůrci ✉️';
+        btn.textContent = 'Send to Creator ✉️';
         btn.disabled = false;
       }
     }
