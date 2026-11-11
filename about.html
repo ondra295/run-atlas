@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>About Us — Running Atlas</title>
+  <title>About Us & Story — Running Atlas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%2338bdf8' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body { height: 100%; width: 100%; overflow: hidden; background: #0f172a; color: #0f172a; }
@@ -39,13 +38,20 @@
     .rail-spacer { flex: 1; min-height: 20px; }
 
     .view-content-pane { flex: 1; height: 100%; overflow-y: auto; background: #f8f9fb; padding: 36px 24px; }
-    .inner-page-card { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+    .inner-page-card { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
     .inner-section {
-      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 26px;
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 28px;
       display: flex; flex-direction: column; gap: 14px; box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
     }
-    .inner-section h3 { font-size: 1.18rem; font-weight: 800; color: #0f172a; }
-    .inner-section p { font-size: 0.9rem; color: #64748b; line-height: 1.65; }
+    .inner-section h1 { font-size: 1.9rem; font-weight: 800; color: #0f172a; line-height: 1.25; }
+    .inner-section h3 { font-size: 1.2rem; font-weight: 800; color: #0f172a; }
+    .inner-section p { font-size: 0.92rem; color: #475569; line-height: 1.65; }
+
+    .stat-badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 10px 0; }
+    .stat-badge-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; text-align: center; }
+    .stat-badge-num { font-size: 1.4rem; font-weight: 800; color: #007aff; }
+    .stat-badge-lbl { font-size: 0.74rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+
     .back-btn {
       display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1;
       color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; text-decoration: none; font-weight: 700;
@@ -96,15 +102,6 @@
 
         <div style="height: 1px; background: #334155; margin: 10px 4px;"></div>
 
-        <a class="rail-btn" href="app.html">
-          <span class="rail-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
-            </svg>
-          </span>
-          <span>Home Base</span>
-        </a>
-
         <a class="rail-btn" href="settings.html">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -138,37 +135,50 @@
         </a>
       </nav>
 
-      <!-- BÍLÝ OBSAH SEKCE -->
       <div class="view-content-pane">
         <div class="inner-page-card">
           <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px;">
             <a class="back-btn" href="app.html">← Back to Map</a>
-            <span style="font-size:0.8rem; font-weight:800; color:#007aff; letter-spacing:1.5px;">MANIFESTO</span>
+            <span style="font-size:0.8rem; font-weight:800; color:#007aff; letter-spacing:1.5px;">MANIFESTO & STORY</span>
           </div>
 
           <div class="inner-section">
-            <h1 style="font-size:1.8rem; font-weight:800; color:#0f172a; line-height:1.25;">A runner’s life shouldn't be buried in a social feed.</h1>
+            <h1>Proč jsem postavil Running Atlas</h1>
             <p>
-              Modern running apps are great at calculating weekly training load and heart rate zones, but terrible at preserving your personal running journey. In a fast-moving social stream, the marathon you trained four months for disappears behind yesterday's recovery runs within days.
+              Představ si maraton, na který jsi trénoval 16 týdnů v ranní zimě a dešti. Proběhneš cílovou páskou s osobním rekordem, nahraješ aktivitu na Stravu, posbíráš pár desítek palců a za 48 hodin je tvůj životní závod navždy pohřben pod lavinou cizích ranních výklusů, jízd na trenažéru a fotek z posilovny.
+            </p>
+            <p>
+              Tohle mi jako běžci vadilo nejvíc. Běhání pro mě není o soutěžení o „kudos“ ani o algoritmech na sociálních sítích. Běhání je o krajině, o horských sedlech, o uličkách cizích měst a o mapě stop, které za sebou člověk nechává.
             </p>
 
-            <div style="background:#eff6ff; border-left:3px solid #007aff; padding:16px 18px; border-radius:8px; font-style:italic; color:#1e40af; font-size:0.92rem;">
-              „We don't just run to collect kilometers. We run to explore landscapes, conquer summits, and mark our footsteps across the world.“
+            <div class="stat-badge-grid">
+              <div class="stat-badge-card">
+                <div class="stat-badge-num">100%</div>
+                <div class="stat-badge-lbl">Bez reklam & trackingu</div>
+              </div>
+              <div class="stat-badge-card">
+                <div class="stat-badge-num">GPX</div>
+                <div class="stat-badge-lbl">Reálné křivky & převýšení</div>
+              </div>
+              <div class="stat-badge-card">
+                <div class="stat-badge-num">Canvas</div>
+                <div class="stat-badge-lbl">Trvalá mapa stop</div>
+              </div>
             </div>
 
-            <h3 style="margin-top:10px;">The Philosophy of Running Atlas</h3>
             <p>
-              Running Atlas gives every runner a permanent digital canvas — an interactive world map where every finish line, official result, and dream bucket-list destination has its exact geographic coordinates.
+              Running Atlas je digitální plátno, kde má každý doběhnutý maraton, horský trail i vysněný cíl na Bucket listu své přesné souřadnice. Žádný feed, žádná reklama — jen tvůj svět a tvé trasy.
             </p>
           </div>
 
+          <!-- Osobní medailonek -->
           <div class="inner-section" style="flex-direction:row; align-items:center; gap:24px;">
-            <img src="ondrej.jpg" alt="Ondřej Hradecký" onerror="this.src='https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=300&q=80'" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid #007aff; flex-shrink:0;">
+            <img src="ondrej.jpg" alt="Ondřej Hradecký" onerror="this.src='https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=300&q=80'" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #007aff; flex-shrink:0;">
             <div>
               <span style="font-size:0.72rem; font-weight:800; color:#007aff; letter-spacing:1px; text-transform:uppercase;">Creator & Runner</span>
               <h3 style="margin:2px 0 6px;">Ondřej Hradecký</h3>
-              <p style="font-size:0.86rem; color:#475569; line-height:1.55;">
-                Dlouholetý běžec se zaměřením na maratony a horské traily. Running Atlas jsem vytvořil s cílem nabídnout běžecké komunitě nezávislý a čistý prostor bez algoritmů a reklam.
+              <p style="font-size:0.88rem; color:#475569; line-height:1.6;">
+                Silniční a trailový běžec se zaměřením na maratonské tempo a horské ultramaratony. Running Atlas vyvíjím jako nezávislý projekt s vizí, že každý běžec by měl mít přehledný, dospělý a estetický domov pro svou celoživotní mapu.
               </p>
             </div>
           </div>
