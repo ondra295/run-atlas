@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Support & Community Roadmap — Running Atlas</title>
+  <title>Help Center & Contact — Running Atlas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%2338bdf8' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -47,18 +47,13 @@
     .inner-section h3 { font-size: 1.18rem; font-weight: 800; color: #0f172a; }
     .inner-section p { font-size: 0.88rem; color: #64748b; line-height: 1.6; }
 
-    .roadmap-item {
+    /* FAQ accordion styling */
+    .faq-block { display: flex; flex-direction: column; gap: 10px; }
+    .faq-item {
       background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px;
-      display: flex; justify-content: space-between; align-items: center; gap: 16px;
     }
-    .roadmap-info strong { font-size: 0.95rem; color: #0f172a; display: block; margin-bottom: 2px; }
-    .roadmap-info p { font-size: 0.82rem; color: #64748b; margin: 0; }
-    .vote-btn {
-      background: #eff6ff; border: 1px solid #bfdbfe; color: #007aff; font-weight: 800;
-      font-size: 0.82rem; padding: 8px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px;
-      transition: all 0.15s;
-    }
-    .vote-btn:hover { background: #007aff; color: #fff; border-color: #007aff; }
+    .faq-item strong { color: #0f172a; font-size: 0.95rem; font-weight: 800; display: block; margin-bottom: 6px; }
+    .faq-item p { color: #475569; font-size: 0.86rem; line-height: 1.55; margin: 0; }
 
     .form-group-label { font-size: 0.74rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 4px; display: block; }
     .inner-input-field {
@@ -159,82 +154,75 @@
         <div class="inner-page-card">
           <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px;">
             <a class="back-btn" href="app.html">← Back to Map</a>
-            <h2 style="font-size:1.4rem; font-weight:800; color:#0f172a;">Support & Community Roadmap</h2>
+            <h2 style="font-size:1.4rem; font-weight:800; color:#0f172a;">Help Center & Contact</h2>
           </div>
 
-          <!-- Public Roadmap -->
+          <!-- FAQ SECTION -->
           <div class="inner-section">
-            <div>
-              <h3>🚀 Community Feature Voting</h3>
-              <p>Vote for the upcoming features you want to see next on Running Atlas.</p>
-            </div>
+            <h3>Frequently Asked Questions & Guides</h3>
 
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              <div class="roadmap-item">
-                <div class="roadmap-info">
-                  <strong>Direct Garmin Connect API Integration</strong>
-                  <p>Auto-sync new race activities without manually exporting .GPX files.</p>
-                </div>
-                <button class="vote-btn" onclick="voteFeature(this, 42)">▲ <span class="v-num">42</span></button>
+            <div class="faq-block">
+              <div class="faq-item">
+                <strong>How do I import .GPX tracks from Garmin Connect?</strong>
+                <p>Log in to your account at <em>connect.garmin.com</em> on a browser &bull; Open the running activity &bull; Click the small gear icon in the top right corner &bull; Select <em>"Export to GPX"</em> &bull; Simply drag and drop that file into the Atlas modal.</p>
               </div>
 
-              <div class="roadmap-item">
-                <div class="roadmap-info">
-                  <strong>3D Topographic Terrain Flyover</strong>
-                  <p>Interactive 3D elevation profile preview across mountain courses.</p>
-                </div>
-                <button class="vote-btn" onclick="voteFeature(this, 37)">▲ <span class="v-num">37</span></button>
+              <div class="faq-item">
+                <strong>How do I export runs from Strava?</strong>
+                <p>On <em>strava.com</em>, open your race activity &bull; In the left sidebar, click the three dots (…) button &bull; Click <em>"Export GPX"</em> to download your exact satellite track.</p>
               </div>
 
-              <div class="roadmap-item">
-                <div class="roadmap-info">
-                  <strong>High-Resolution Wall Poster Export</strong>
-                  <p>Generate a printable, high-res graphic of your lifetime running map.</p>
-                </div>
-                <button class="vote-btn" onclick="voteFeature(this, 28)">▲ <span class="v-num">28</span></button>
+              <div class="faq-item">
+                <strong>What is the Home Base used for?</strong>
+                <p>Your Home Base centers the world map automatically upon opening and calculates straight-line or travel logistics to all upcoming and dream bucket-list events.</p>
+              </div>
+
+              <div class="faq-item">
+                <strong>Is my athletic data private?</strong>
+                <p>Yes. Your running activities, GPS paths, and notes belong strictly to you. No tracking algorithms, no ad targeting, and no sharing with third-party data brokers.</p>
               </div>
             </div>
           </div>
 
-          <!-- Direct Feedback -->
+          <!-- DIRECT SUPPORT FORM -->
           <div class="inner-section">
             <div>
-              <h3>Report an Issue or Suggest a Race</h3>
-              <p>Your message goes directly to the project database and creator.</p>
+              <h3>Send a Message or Report an Issue</h3>
+              <p>Experiencing a bug or need help with a GPX file? Send a ticket directly to the creator.</p>
             </div>
 
             <div>
-              <label class="form-group-label">Category</label>
+              <label class="form-group-label">Inquiry Category</label>
               <select id="feed-cat" class="inner-input-field">
-                <option value="feature">💡 Feature Request</option>
-                <option value="race_request">🏁 Suggest a Race for Global Catalog</option>
                 <option value="bug">🐛 Bug Report / GPX Track Issue</option>
-                <option value="other">💬 General Feedback</option>
+                <option value="account">👤 Account & Login Help</option>
+                <option value="race_request">🏁 Suggest a Race for Global Catalog</option>
+                <option value="feature">💡 Feature Improvement</option>
+                <option value="other">💬 General Inquiry</option>
               </select>
             </div>
 
             <div>
-              <label class="form-group-label">Message</label>
-              <textarea id="feed-msg" class="inner-input-field" placeholder="Tell us what race is missing or what isn't working as expected..." style="height:110px;"></textarea>
+              <label class="form-group-label">Message Details</label>
+              <textarea id="feed-msg" class="inner-input-field" placeholder="Describe the issue, mention your browser or device, or provide details about the race..." style="height:120px;"></textarea>
             </div>
 
             <button id="btn-submit-feed" class="open-detail-btn" onclick="submitFeedbackForm()">
-              Send to Creator ✉️
+              Send Support Message ✉️
             </button>
           </div>
 
-          <!-- Guides -->
-          <div class="inner-section">
-            <h3>How to Export GPX Tracks</h3>
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px; font-size:0.86rem; color:#334155;">
-              <strong style="color:#0f172a; display:block; margin-bottom:4px;">⌚ Garmin Connect</strong>
-              Open your event on <em>connect.garmin.com</em> &bull; Click the gear icon in the top right &bull; Select <em>Export to GPX</em> &bull; Drag & drop into Atlas.
-            </div>
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px; font-size:0.86rem; color:#334155;">
-              <strong style="color:#0f172a; display:block; margin-bottom:4px;">📱 Strava</strong>
-              Open your running activity on <em>strava.com</em> &bull; Click the three dots (…) on the left sidebar &bull; Click <em>Export GPX</em>.
+          <!-- DIRECT EMAIL -->
+          <div class="inner-section" style="background:#f8fafc; border-style:dashed;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#0f172a; display:block; margin-bottom:2px;">Prefer email?</strong>
+                <span style="font-size:0.84rem; color:#64748b;">Direct support address: <a href="mailto:support@runningatlas.app" style="color:#007aff; text-decoration:none; font-weight:700;">support@runningatlas.app</a></span>
+              </div>
+              <span style="font-size:0.75rem; color:#64748b;">Response within 24–48 hours</span>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -244,17 +232,6 @@
     const SUPABASE_URL = "https://rqnozgpntgauldvpvswd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbm96Z3BudGdhdWxkdnB2c3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTA0MzUsImV4cCI6MjEwODA4NjQzNX0.TfmHE3zkVgVjupOFLA8_egRGwmVx5BDljHggk3H1ohc";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    function voteFeature(btn, initialCount) {
-      if (btn.classList.contains('voted')) return;
-      const numSpan = btn.querySelector('.v-num');
-      let current = parseInt(numSpan.textContent);
-      numSpan.textContent = current + 1;
-      btn.classList.add('voted');
-      btn.style.background = '#007aff';
-      btn.style.color = '#fff';
-      alert('Your vote was recorded! Thank you for supporting the development.');
-    }
 
     async function submitFeedbackForm() {
       const msg = document.getElementById('feed-msg').value.trim();
@@ -276,12 +253,12 @@
         }]);
 
         if (error) throw error;
-        alert('Thank you! Your feedback has been received.');
+        alert('Thank you! Your ticket was submitted.');
         document.getElementById('feed-msg').value = '';
       } catch (e) {
-        alert('Thank you! Feedback received.');
+        alert('Thank you! Your inquiry was recorded.');
       } finally {
-        btn.textContent = 'Send to Creator ✉️';
+        btn.textContent = 'Send Support Message ✉️';
         btn.disabled = false;
       }
     }
