@@ -103,18 +103,10 @@
     .hud-box-lbl { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; margin-top: 2px; }
 
     /* HUD Barometers */
-    .hud-barometer-row {
-      display: flex; flex-direction: column; gap: 3px; margin: 3px 0;
-    }
-    .hud-barometer-meta {
-      display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 700; color: #cbd5e1;
-    }
-    .hud-barometer-track {
-      height: 6px; width: 100%; background: rgba(255,255,255,0.14); border-radius: 4px; overflow: hidden;
-    }
-    .hud-barometer-fill {
-      height: 100%; border-radius: 4px; transition: width 0.3s ease;
-    }
+    .hud-barometer-row { display: flex; flex-direction: column; gap: 3px; margin: 3px 0; }
+    .hud-barometer-meta { display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 700; color: #cbd5e1; }
+    .hud-barometer-track { height: 6px; width: 100%; background: rgba(255,255,255,0.14); border-radius: 4px; overflow: hidden; }
+    .hud-barometer-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
 
     .hud-close-btn {
       position: absolute; top: -14px; right: -10px; background: #0f172a; border: 1px solid #334155;
@@ -242,21 +234,42 @@
       color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 700;
     }
 
-    /* Detail Card */
-    .detail-container { display: flex; flex-direction: column; gap: 14px; }
-    .detail-header-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; }
-    .detail-grid-table {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-      background: #ffffff; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px;
+    /* PŘEPRACOVANÝ DETAIL V SIDEBARU (EDITORIAL JOURNAL STYLE) */
+    .detail-view-wrap { display: flex; flex-direction: column; gap: 14px; }
+    .detail-hero-banner {
+      height: 120px; border-radius: 12px; overflow: hidden; background-size: cover; background-position: center;
+      position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
     }
-    .detail-cell small { font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px; }
-    .detail-cell strong { font-size: 1.05rem; font-weight: 800; color: #0f172a; }
+    .detail-hero-overlay {
+      position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,23,42,0.1) 0%, rgba(15,23,42,0.82) 100%);
+    }
+    .detail-hero-content { position: relative; z-index: 2; color: #ffffff; }
 
-    /* Stats View */
-    .stats-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
-    .stat-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; text-align: center; }
-    .stat-box-num { font-size: 1.5rem; font-weight: 800; color: #007aff; line-height: 1.2; }
-    .stat-box-lbl { font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 2px; }
+    .editorial-quote-card {
+      background: #eff6ff; border-left: 4px solid #007aff; border-radius: 0 10px 10px 0;
+      padding: 14px 16px; font-style: italic; color: #1e3a8a; line-height: 1.55; font-size: 0.88rem;
+    }
+
+    .report-sheet-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;
+      display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 6px rgba(15,23,42,0.03);
+    }
+    .report-sheet-card h4 {
+      font-size: 0.74rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .report-sheet-card p {
+      font-size: 0.88rem; color: #334155; line-height: 1.6; margin: 0;
+    }
+
+    .spec-sheet-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .spec-cell {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;
+    }
+    .spec-cell small { font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px; }
+    .spec-cell strong { font-size: 0.92rem; font-weight: 800; color: #0f172a; }
 
     /* Map Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
@@ -410,7 +423,7 @@
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1 2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
           </span>
           <span>Settings</span>
@@ -1142,10 +1155,7 @@
             </div>
           </div>
         `;
-        card.onclick = () => {
-          showDetail(item);
-          map.panTo(item.coords, { animate: true });
-        };
+        card.onclick = () => showDetail(item);
         content.appendChild(card);
       });
     }
@@ -1169,7 +1179,6 @@
             <div class="hud-box-metric" style="color:#f8fafc;">${item.distance || '-'} <span style="font-size:0.9rem; color:#94a3b8;">(${item.elevation || '-'})</span></div>
             <div class="hud-box-lbl">${item.surfaceLabel || 'Road'} &bull; ${item.placement || 'Finished'}</div>
           </div>
-          <!-- Třetí box: Dva barometry spokojenosti -->
           <div class="hud-box" style="flex: 1.15;">
             <div class="hud-barometer-row">
               <div class="hud-barometer-meta">
@@ -1232,57 +1241,14 @@
       document.getElementById('floating-hud-panel').style.display = 'none';
     }
 
-    // DETAIL AKTIVITY V BOČNÍM PANELU
+    // PŘEPRACOVANÝ DETAIL V SIDEBARU (BEZ DUPLICIT S HUDEM)
     function showDetail(item) {
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
       const content = document.getElementById('content');
       
       showFloatingHud(item);
 
-      content.innerHTML = `
-        <div class="detail-container">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <button class="back-btn" onclick="renderAll(); closeHudPanel();">← Back to list</button>
-            <div style="display:flex; gap:6px;">
-              <button class="action-btn-secondary" onclick="openEditActivityModal('${item.id}')">✏️ Edit</button>
-              <button class="action-btn-danger" onclick="deleteActivity('${item.id}')">🗑️ Delete</button>
-            </div>
-          </div>
-
-          <div class="detail-header-card">
-            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}" style="margin-bottom:6px;">
-              ${item.isMemorable ? 'Memorable Run' : (item.statusLabel || item.status)}
-            </span>
-            <h2 style="font-size:1.45rem; font-weight:800; color:#0f172a; margin-bottom:4px;">${item.name}</h2>
-            <p style="font-size:0.84rem; color:#64748b; font-weight:600;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || 'Mixed'} &bull; Cost: ${item.cost || '€€'}</p>
-          </div>
-
-          <div class="detail-grid-table">
-            <div class="detail-cell"><small>Distance</small><strong>${item.distance || '-'}</strong></div>
-            <div class="detail-cell"><small>Elevation Gain</small><strong>${item.elevation || '-'}</strong></div>
-            ${item.resultTime ? `<div class="detail-cell" style="grid-column: span 2;"><small>Official Finish Time</small><strong style="color:#16a34a; font-size:1.2rem;">⏱️ ${item.resultTime}</strong></div>` : ''}
-            ${item.ambitionTime ? `<div class="detail-cell"><small>Target Goal</small><strong>${item.ambitionTime}</strong></div>` : ''}
-            ${item.placement ? `<div class="detail-cell"><small>Placement</small><strong>${item.placement}</strong></div>` : ''}
-            <div class="detail-cell"><small>Performance</small><strong style="color:#16a34a;">${item.satisfaction || 8} / 10</strong></div>
-            <div class="detail-cell"><small>Course Satisfaction</small><strong style="color:#0284c7;">${item.course_satisfaction || 9} / 10</strong></div>
-          </div>
-
-          ${item.why ? `
-            <div style="background:#eff6ff; border-left:4px solid #007aff; padding:12px 16px; border-radius:8px;">
-              <small style="color:#007aff; font-weight:800; text-transform:uppercase; font-size:0.68rem; display:block; margin-bottom:2px;">The 'Why' & Motivation</small>
-              <span style="font-size:0.9rem; color:#1e3a8a; font-style:italic;">„${item.why}“</span>
-            </div>
-          ` : ''}
-
-          ${item.notes ? `
-            <div style="background:#ffffff; border:1px solid #e2e8f0; padding:14px 16px; border-radius:10px;">
-              <small style="color:#64748b; font-weight:800; text-transform:uppercase; font-size:0.68rem; display:block; margin-bottom:4px;">Race Report & Notes</small>
-              <p style="font-size:0.86rem; color:#334155; line-height:1.6; margin:0;">${item.notes}</p>
-            </div>
-          ` : ''}
-        </div>
-      `;
-
+      // 1. CHYTRÝ ZOOM: S GPX fitting nebo bez GPX přímý let na zoom 11
       if (zavodniTrasy[item.id]) {
         const coords = zavodniTrasy[item.id];
         currentRouteLayer = L.featureGroup([
@@ -1290,8 +1256,139 @@
           L.circleMarker(coords[0], { radius: 6, fillColor: '#16a34a', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Start"),
           L.circleMarker(coords[coords.length - 1], { radius: 6, fillColor: '#dc2626', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Finish")
         ]).addTo(map);
-        map.fitBounds(currentRouteLayer.getBounds(), { padding: [40, 100] });
+        map.fitBounds(currentRouteLayer.getBounds(), { padding: [60, 110], maxZoom: 13, animate: true });
+      } else if (item.coords) {
+        map.flyTo(item.coords, 11, { animate: true, duration: 1.2 });
       }
+
+      const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80';
+
+      content.innerHTML = `
+        <div class="detail-view-wrap">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button class="back-btn" onclick="renderAll(); closeHudPanel();">← Back to activities</button>
+            <div style="display:flex; gap:6px;">
+              <button class="action-btn-secondary" onclick="openEditActivityModal('${item.id}')">✏️ Edit</button>
+              <button class="action-btn-danger" onclick="deleteActivity('${item.id}')">🗑️ Delete</button>
+            </div>
+          </div>
+
+          <!-- Hero Cover Banner -->
+          <div class="detail-hero-banner" style="background-image: url('${cardImg}');">
+            <div class="detail-hero-overlay"></div>
+            <div class="detail-hero-content">
+              <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}" style="margin-bottom:6px;">
+                ${item.isMemorable ? 'Memorable Run' : (item.statusLabel || item.status)}
+              </span>
+              <h2 style="font-size:1.35rem; font-weight:800; line-height:1.2; text-shadow:0 2px 8px rgba(0,0,0,0.8);">${item.name}</h2>
+              <div style="font-size:0.78rem; opacity:0.9; margin-top:2px;">
+                ${item.date || 'Undated'} &bull; ${item.surfaceLabel || 'Road'} &bull; Cost: ${item.cost || '€€'}
+              </div>
+            </div>
+          </div>
+
+          <!-- Editorial The Why Section -->
+          ${item.why ? `
+            <div class="editorial-quote-card">
+              <small style="color:#007aff; font-weight:800; font-size:0.68rem; text-transform:uppercase; display:block; margin-bottom:4px; font-style:normal; letter-spacing:0.5px;">The Motivation & Why</small>
+              „${item.why}“
+            </div>
+          ` : ''}
+
+          <!-- Race Report / Field Notes -->
+          ${item.notes ? `
+            <div class="report-sheet-card">
+              <h4>Race Report & Field Notes</h4>
+              <p>${item.notes}</p>
+            </div>
+          ` : `
+            <div class="report-sheet-card" style="border-style:dashed; background:#f8fafc;">
+              <p style="color:#94a3b8; font-size:0.82rem; font-style:italic;">No notes logged for this run yet. Click Edit to add course quirks or fueling notes.</p>
+            </div>
+          `}
+
+          <!-- Contextual Spec Sheet (Logistics, Goals, Venue) -->
+          <div class="spec-sheet-grid">
+            <div class="spec-cell">
+              <small>Target Ambition</small>
+              <strong>${item.ambitionTime || 'Finish strong'}</strong>
+            </div>
+            <div class="spec-cell">
+              <small>Placement</small>
+              <strong>${item.placement || 'Not recorded'}</strong>
+            </div>
+            <div class="spec-cell">
+              <small>From Home Base</small>
+              <strong>${item.logisticsDist ? item.logisticsDist + ' km' : 'Calculated'}</strong>
+            </div>
+            <div class="spec-cell">
+              <small>Travel Logistics</small>
+              <strong>${item.logisticsTransport || 'Car / Local'}</strong>
+            </div>
+          </div>
+
+          <!-- Re-run Verdict -->
+          <div style="background:#f1f5f9; border:1px solid #e2e8f0; border-radius:10px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.8rem; font-weight:700; color:#475569;">Would run it again:</span>
+            <span style="font-size:0.8rem; font-weight:800; color:#0f172a; text-transform:uppercase;">${item.repeat === 'yes' ? '✅ Definitely' : item.repeat === 'maybe' ? '🤔 Maybe' : '❌ Once was enough'}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStatsView() {
+      const content = document.getElementById('content');
+      document.getElementById('stats-label').textContent = 'Milestones summary';
+      closeHudPanel();
+
+      let totalKm = 0;
+      let totalEle = 0;
+      let completedCount = 0;
+      let bucketCount = 0;
+
+      races.forEach(r => {
+        if (r.status === 'done') completedCount++;
+        if (r.status === 'bucket') bucketCount++;
+        if (r.distance) {
+          const num = parseFloat(r.distance.replace(/,/g, '.').replace(/[^\d.]/g, ''));
+          if (!isNaN(num)) totalKm += num;
+        }
+        if (r.elevation) {
+          const ele = parseFloat(r.elevation.replace(/,/g, '.').replace(/[^\d.]/g, ''));
+          if (!isNaN(ele)) totalEle += ele;
+        }
+      });
+
+      content.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+          <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a; margin-bottom:4px;">Lifetime Statistics</h3>
+          <p style="font-size:0.8rem; color:#64748b; margin-bottom:14px;">Summary of logged races, routes, and mountain milestones.</p>
+          
+          <div class="stats-card-grid">
+            <div class="stat-box">
+              <div class="stat-box-num">${races.length}</div>
+              <div class="stat-box-lbl">Total Activities</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-num">${completedCount}</div>
+              <div class="stat-box-lbl">Finished Races</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-num">${totalKm.toFixed(0)} km</div>
+              <div class="stat-box-lbl">Total Distance</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-num">+${totalEle.toLocaleString()} m</div>
+              <div class="stat-box-lbl">Elevation Gain</div>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid #f1f5f9; padding-top:12px; font-size:0.82rem; color:#475569; display:flex; justify-content:space-between;">
+            <span>Bucket list destinations:</span>
+            <strong style="color:#0284c7;">${bucketCount} races</strong>
+          </div>
+        </div>
+      `;
     }
 
     let parsedGpxCoords = null;
