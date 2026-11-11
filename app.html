@@ -40,7 +40,7 @@
     .top-search-input::placeholder { color: #64748b; }
     .top-bar-right { display: flex; align-items: center; gap: 8px; position: relative; }
 
-    /* Profile Dropdown Menu */
+    /* Profile Dropdown */
     .profile-dropdown-menu {
       display: none; position: absolute; top: 46px; right: 0; width: 200px;
       background: #1e293b; border: 1px solid #334155; border-radius: 10px;
@@ -60,7 +60,7 @@
     /* Main Workspace */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
 
-    /* Left Rail */
+    /* Left Rail: Slate Navy */
     #left-rail {
       width: 56px; background: #1e293b; border-right: 1px solid #334155;
       display: flex; flex-direction: column; gap: 6px; padding: 12px 6px;
@@ -90,30 +90,17 @@
     #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #e2e8f0; }
     #map { width: 100%; height: 100%; background: #e2e8f0; z-index: 1; }
 
-    #onboarding-overlay {
-      display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(8px); z-index: 1100; align-items: center; justify-content: center; padding: 24px;
+    /* Custom Map Context Menu on Right-Click */
+    #map-context-menu {
+      display: none; position: absolute; z-index: 2500; background: #0f172a;
+      border: 1px solid #334155; border-radius: 10px; padding: 6px; min-width: 190px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5); flex-direction: column; gap: 3px;
     }
-    .onboarding-card {
-      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px;
-      padding: 34px 30px; max-width: 620px; width: 100%; text-align: center; color: #0f172a;
-      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+    .ctx-item {
+      padding: 8px 12px; font-size: 0.82rem; font-weight: 600; color: #f1f5f9;
+      cursor: pointer; border-radius: 6px; display: flex; align-items: center; gap: 8px; transition: background 0.15s;
     }
-    .onboarding-split-grid {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 22px 0 16px;
-    }
-    .split-choice-card {
-      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 12px;
-      cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); text-align: center;
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-    }
-    .split-choice-card:hover {
-      background: #ffffff; border-color: #007aff; transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 122, 255, 0.18);
-    }
-    .split-choice-card.highlight { border-color: #16a34a; background: #f0fdf4; }
-    .split-card-title { font-size: 0.9rem; font-weight: 800; color: #0f172a; }
-    .split-card-sub { font-size: 0.74rem; color: #64748b; line-height: 1.35; }
+    .ctx-item:hover { background: #1e293b; color: #38bdf8; }
 
     /* Home Base Floating Button */
     #floating-home-btn {
@@ -125,7 +112,7 @@
     #floating-home-btn:hover { transform: translateY(-2px); background: #1e293b; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5); }
     #floating-home-label { font-size: 0.84rem; font-weight: 800; color: #f8fafc; }
 
-    /* Sidebar */
+    /* Sidebar: Crisp Canvas */
     #sidebar {
       width: 440px; height: 100%; background: #ffffff; border-left: 1px solid #cbd5e1;
       display: flex; flex-direction: column; z-index: 2;
@@ -147,7 +134,14 @@
     .status-card-btn.active[data-status="planned"] .indicator { background: #d97706; box-shadow: 0 0 6px #d97706; }
     .status-card-btn.active[data-status="bucket"] .indicator { background: #0284c7; box-shadow: 0 0 6px #0284c7; }
 
-    .filters-section { padding: 10px 18px; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 8px; background: #f8fafc; }
+    /* Filters Section */
+    .filters-section { padding: 12px 20px; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
+    .filters-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px; }
+
+    .sort-select {
+      background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 10px;
+      font-size: 0.78rem; font-weight: 700; color: #334155; outline: none; cursor: pointer;
+    }
 
     .pill-btn {
       background: #ffffff; border: 1px solid #cbd5e1; color: #334155; padding: 6px 12px;
@@ -159,20 +153,26 @@
 
     #advanced-filters-drawer {
       display: none; flex-direction: column; gap: 10px; width: 100%; padding: 12px;
-      background: #f1f5f9; border-radius: 8px; border: 1px solid #cbd5e1; margin-top: 4px;
+      background: #ffffff; border-radius: 8px; border: 1px solid #cbd5e1;
     }
 
     #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; background: #f1f5f9; }
 
+    /* Clean Technical Cards (No Emojis) */
     .race-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
-      padding: 13px 15px; cursor: pointer; transition: all 0.2s ease;
+      padding: 14px 16px; cursor: pointer; transition: all 0.2s ease;
       box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
     }
     .race-card:hover { border-color: #007aff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.14); }
     .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .card-title { font-size: 0.98rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px; }
-    .card-meta { font-size: 0.76rem; color: #64748b; margin-top: 4px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .card-title { font-size: 1rem; font-weight: 800; color: #0f172a; }
+    
+    .card-metrics {
+      display: flex; gap: 6px; align-items: center; font-size: 0.78rem; font-weight: 600; color: #475569; margin-top: 4px; flex-wrap: wrap;
+    }
+    .card-metrics span.metric-val { color: #0f172a; font-weight: 700; }
+    .card-metrics span.dot { color: #cbd5e1; }
 
     .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
     .badge-done { background: #dcfce7; color: #166534; }
@@ -201,10 +201,25 @@
 
     .back-btn {
       display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1;
-      color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px; font-weight: 700;
+      color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 700;
     }
     .back-btn:hover { background: #f8fafc; }
 
+    /* Technical Detail Grid */
+    .detail-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+      background: #ffffff; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 14px;
+    }
+    .detail-item small { color: #64748b; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 2px; }
+    .detail-item strong { color: #0f172a; font-size: 1.05rem; font-weight: 800; }
+
+    /* Stats Overview in Sidebar */
+    .stats-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+    .stat-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; text-align: center; }
+    .stat-box-num { font-size: 1.5rem; font-weight: 800; color: #007aff; line-height: 1.2; }
+    .stat-box-lbl { font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 2px; }
+
+    /* Map Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
     .pin-circle {
       border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center;
@@ -277,7 +292,6 @@
       }
       #sidebar.mobile-open { transform: translateY(0); }
       #map-wrapper { width: 100%; height: calc(100vh - 110px); }
-      .onboarding-split-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -307,30 +321,30 @@
         </svg>
       </a>
 
-      <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Search race, route, city..." oninput="handleSearch(this.value)">
+      <input type="text" id="global-search" class="top-search-input" placeholder="Search race, route, city..." oninput="handleSearch(this.value)">
 
       <div class="top-bar-right">
         <button id="btn-browse-catalog" class="pill-btn" style="background:#007aff; border-color:#007aff; color:#ffffff;" onclick="openCatalogModal()">
-          🌍 Race Catalog
+          Race Catalog
         </button>
-        <button id="btn-add-activity" class="open-detail-btn" style="display: none;" onclick="openAddModal()">➕ Add Race</button>
+        <button id="btn-add-activity" class="open-detail-btn" style="display: none;" onclick="openAddModal()">Add Activity</button>
         
         <!-- Profile Dropdown Button -->
         <button id="btn-profile" class="pill-btn" onclick="toggleProfileDropdown()" style="background:#1e293b; border-color:#334155; color:#f8fafc;">
-          👤 <span id="label-user">Profile</span> ▾
+          <span id="label-user">Profile</span> ▾
         </button>
 
         <div id="profile-dropdown" class="profile-dropdown-menu">
-          <a class="dropdown-item" href="settings.html">⚙️ Account Settings</a>
-          <button class="dropdown-item" onclick="exportDataJson()">📦 Export Atlas Data</button>
+          <a class="dropdown-item" href="settings.html">Account Settings</a>
+          <button class="dropdown-item" onclick="exportDataJson()">Export Atlas JSON</button>
           <div style="height:1px; background:#334155; margin:3px 0;"></div>
-          <button class="dropdown-item danger" onclick="handleLogout()">🚪 Log Out</button>
+          <button class="dropdown-item danger" onclick="handleLogout()">Log Out</button>
         </div>
       </div>
     </header>
 
     <div id="main-body">
-      <!-- LEVÝ PANEL -->
+      <!-- LEVÝ PANEL (ROZŠÍŘENÝ O BUCKET LIST & STATISTIKY) -->
       <nav id="left-rail">
         <button id="rail-races" class="rail-btn active" onclick="switchPageMode('races')">
           <span class="rail-icon">
@@ -350,6 +364,28 @@
             </svg>
           </span>
           <span>Memorable Runs</span>
+        </button>
+
+        <!-- Samostatný Bucket list režim -->
+        <button id="rail-bucket" class="rail-btn" onclick="switchPageMode('bucket')">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </span>
+          <span>Bucket List</span>
+        </button>
+
+        <!-- Souhrnné statistiky -->
+        <button id="rail-stats" class="rail-btn" onclick="switchPageMode('stats')">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </span>
+          <span>Milestones & Stats</span>
         </button>
 
         <div style="height: 1px; background: #334155; margin: 10px 4px;"></div>
@@ -391,6 +427,13 @@
       <div id="map-wrapper">
         <div id="map"></div>
 
+        <!-- Kontextové menu na pravý klik -->
+        <div id="map-context-menu">
+          <div class="ctx-item" onclick="handleContextMenuChoice('race')">Add Race here</div>
+          <div class="ctx-item" onclick="handleContextMenuChoice('memorable')">Add Memorable Run here</div>
+          <div class="ctx-item" onclick="handleContextMenuChoice('home')">Set as Home Base</div>
+        </div>
+
         <div id="onboarding-overlay">
           <div class="onboarding-card">
             <div style="display:inline-flex; padding:10px; border-radius:50%; background:#eff6ff; margin-bottom:8px;">
@@ -422,8 +465,7 @@
               <div class="split-choice-card" onclick="openAddModal('memorable')">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
-                  <path d="M7 21l3-4"></path><path d="M16 21l-2-4-3-3 1-6"></path>
-                  <path d="M6 12l2-3 4-1 3 3 1"></path>
+                  <path d="M7 21l3-4"></path><path d="M16 21l-2-4-3-3 1-6"></path><path d="M6 12l2-3 4-1 3 3 1"></path>
                 </svg>
                 <div class="split-card-title">Memorable Run</div>
                 <div class="split-card-sub">Summits, vacations & trail milestones</div>
@@ -436,7 +478,7 @@
           </div>
         </div>
 
-        <!-- PLOVOUCÍ TLAČÍTKO HOME BASE V LEVÉM DOLNÍM ROHU -->
+        <!-- Plovoucí tlačítko Home Base -->
         <div id="floating-home-btn" onclick="handleHomeBaseClick()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
@@ -462,15 +504,26 @@
           </div>
         </div>
 
-        <div class="filters-section">
-          <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+        <div id="filters-section-wrap" class="filters-section">
+          <div class="filters-controls-row">
             <div style="display:flex; gap:6px;">
               <button class="pill-btn active" onclick="setSurfaceFilter('all', this)">All</button>
               <button class="pill-btn" onclick="setSurfaceFilter('trail', this)">Trail</button>
               <button class="pill-btn" onclick="setSurfaceFilter('road', this)">Road</button>
             </div>
+
+            <select id="sort-select" class="sort-select" onchange="handleSortChange(this.value)">
+              <option value="newest">Sort: Newest first</option>
+              <option value="oldest">Sort: Oldest first</option>
+              <option value="longest">Sort: Longest distance</option>
+              <option value="importance">Sort: Importance</option>
+              <option value="alpha">Sort: A to Z</option>
+            </select>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center;">
             <button id="btn-toggle-advanced-filters" class="pill-btn" style="background:#ffffff; border-color:#cbd5e1; color:#007aff;" onclick="toggleAdvancedFilters()">
-              ⚙️ More filters <span id="adv-filter-count" style="display:none; background:#007aff; color:#fff; font-size:0.68rem; padding:1px 6px; border-radius:10px; margin-left:2px;">0</span>
+              More filters <span id="adv-filter-count" style="display:none; background:#007aff; color:#fff; font-size:0.68rem; padding:1px 6px; border-radius:10px; margin-left:2px;">0</span>
             </button>
           </div>
 
@@ -490,10 +543,10 @@
               <label class="form-group-label" style="font-size:0.7rem;">Difficulty</label>
               <div class="chips-group" id="filter-difficulty-chips">
                 <div class="chip-btn active" data-val="all" onclick="setDifficultyFilter('all', this)">All</div>
-                <div class="chip-btn" data-val="snadna" onclick="setDifficultyFilter('snadna', this)">🟢 Easy</div>
-                <div class="chip-btn" data-val="stredni" onclick="setDifficultyFilter('stredni', this)">🟡 Moderate</div>
-                <div class="chip-btn" data-val="tezka" onclick="setDifficultyFilter('tezka', this)">🟠 Hard</div>
-                <div class="chip-btn" data-val="extremni" onclick="setDifficultyFilter('extremni', this)">🔴 Extreme</div>
+                <div class="chip-btn" data-val="snadna" onclick="setDifficultyFilter('snadna', this)">Easy</div>
+                <div class="chip-btn" data-val="stredni" onclick="setDifficultyFilter('stredni', this)">Moderate</div>
+                <div class="chip-btn" data-val="tezka" onclick="setDifficultyFilter('tezka', this)">Hard</div>
+                <div class="chip-btn" data-val="extremni" onclick="setDifficultyFilter('extremni', this)">Extreme</div>
               </div>
             </div>
 
@@ -531,7 +584,7 @@
       </div>
 
       <div style="position:relative;">
-        <input type="text" id="catalog-search-input" class="stepped-input" placeholder="🔍 Search by race name, city or country (e.g. Boston, Chamonix)..." oninput="handleCatalogSearch(this.value)">
+        <input type="text" id="catalog-search-input" class="stepped-input" placeholder="Search by race name, city or country (e.g. Boston, Chamonix)..." oninput="handleCatalogSearch(this.value)">
       </div>
 
       <div class="modal-tabs">
@@ -632,17 +685,17 @@
           <div>
             <label class="form-group-label">Surface</label>
             <div class="chips-group" id="chips-surface">
-              <div class="chip-btn" data-val="trail" onclick="selectChip('surface', 'trail')">⛰️ Trail</div>
-              <div class="chip-btn" data-val="road" onclick="selectChip('surface', 'road')">🛣️ Road</div>
-              <div class="chip-btn" data-val="mixed" onclick="selectChip('surface', 'mixed')">🌲 Mixed</div>
+              <div class="chip-btn" data-val="trail" onclick="selectChip('surface', 'trail')">Trail</div>
+              <div class="chip-btn" data-val="road" onclick="selectChip('surface', 'road')">Road</div>
+              <div class="chip-btn" data-val="mixed" onclick="selectChip('surface', 'mixed')">Mixed</div>
             </div>
           </div>
           <div>
             <label class="form-group-label">Difficulty</label>
             <div class="chips-group" id="chips-difficulty">
-              <div class="chip-btn" data-val="snadna" onclick="selectChip('difficulty', 'snadna')">🟢 Easy</div>
-              <div class="chip-btn" data-val="stredni" onclick="selectChip('difficulty', 'stredni')">🟡 Moderate</div>
-              <div class="chip-btn" data-val="tezka" onclick="selectChip('difficulty', 'tezka')">🟠 Hard</div>
+              <div class="chip-btn" data-val="snadna" onclick="selectChip('difficulty', 'snadna')">Easy</div>
+              <div class="chip-btn" data-val="stredni" onclick="selectChip('difficulty', 'stredni')">Moderate</div>
+              <div class="chip-btn" data-val="tezka" onclick="selectChip('difficulty', 'tezka')">Hard</div>
             </div>
           </div>
         </div>
@@ -816,8 +869,10 @@
     let currentCatalogQuery = '';
     let zavodniTrasy = {};
 
-    let editingActivityId = null; // Uchovává ID upravovaného záznamu
+    let editingActivityId = null;
+    let contextClickLatLng = null;
 
+    let sortOrder = 'newest';
     const statusFilters = { done: true, planned: true, bucket: true };
     let surfaceFilter = 'all';
     let searchQuery = '';
@@ -829,12 +884,12 @@
     let chipSelections = { status: '', surface: 'mixed', difficulty: 'stredni', repeat: 'yes' };
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
-    // 1. NEKONEČNÉ SCROLLOVÁNÍ MAPY (BEZ USEKNUTÍ)
+    // 1. NEKONEČNÉ HORIZONTÁLNÍ SCROLLOVÁNÍ MAPY (BEZ USEKNUTÍ)
     const map = L.map('map', {
       center: userHomeCoords || [25.0, 10.0],
       zoom: userHomeCoords ? 5.2 : 2.5,
       minZoom: 2,
-      worldCopyJump: true // Plynulé přeskakování špendlíků přes 180. poledník
+      worldCopyJump: true
     });
 
     const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 18 }).addTo(map);
@@ -845,23 +900,36 @@
     let markerLayerGroup = L.featureGroup().addTo(map);
     let homeMarker = null;
 
-    // 2. PŘIDÁNÍ ZÁVODU PRAVÝM TLAČÍTKEM NA MAPU
+    // 2. KONTEXTOVÉ ROZBALOVACÍ MENU NA PRAVÝ KLIK
     map.on('contextmenu', function(e) {
-      const lat = parseFloat(e.latlng.lat.toFixed(5));
-      const lng = parseFloat(e.latlng.lng.toFixed(5));
+      contextClickLatLng = [parseFloat(e.latlng.lat.toFixed(5)), parseFloat(e.latlng.lng.toFixed(5))];
+      const menu = document.getElementById('map-context-menu');
       
-      openAddModal(currentMode === 'memorable' ? 'memorable' : 'race');
-      parsedCenterCoords = [lat, lng];
-      
-      // Dočasný vizuální marker na kliknuté pozici
-      const tempPin = L.circleMarker([lat, lng], { radius: 7, fillColor: '#38bdf8', color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
-      setTimeout(() => map.removeLayer(tempPin), 4000);
+      const containerPoint = map.latLngToContainerPoint(e.latlng);
+      menu.style.left = `${containerPoint.x + 10}px`;
+      menu.style.top = `${containerPoint.y + 10}px`;
+      menu.style.display = 'flex';
     });
+
+    map.on('click dragstart zoomstart', function() {
+      document.getElementById('map-context-menu').style.display = 'none';
+    });
+
+    function handleContextMenuChoice(choice) {
+      document.getElementById('map-context-menu').style.display = 'none';
+      if (!contextClickLatLng) return;
+
+      if (choice === 'home') {
+        saveHomeCoordsQuick(contextClickLatLng);
+      } else {
+        openAddModal(choice);
+        parsedCenterCoords = contextClickLatLng;
+      }
+    }
 
     // Profilový dropdown
     function toggleProfileDropdown() {
-      const d = document.getElementById('profile-dropdown');
-      d.classList.toggle('show');
+      document.getElementById('profile-dropdown').classList.toggle('show');
     }
     window.addEventListener('click', function(e) {
       if (!e.target.closest('#btn-profile') && !e.target.closest('#profile-dropdown')) {
@@ -887,7 +955,7 @@
       }
     }
 
-    // HOME BASE NA MAPĚ (DOMEČEK)
+    // Home Base na mapě
     function refreshHomeMarker() {
       const homeLabel = document.getElementById('floating-home-label');
       if (userHomeCoords) {
@@ -902,7 +970,7 @@
         const homeIcon = L.divIcon({ className: 'custom-home-pin', html: homePinHtml, iconSize: [34, 34], iconAnchor: [17, 17] });
 
         if (!homeMarker) {
-          homeMarker = L.marker(userHomeCoords, { icon: homeIcon }).addTo(map).bindTooltip("🏠 Home Base", { direction: 'top' });
+          homeMarker = L.marker(userHomeCoords, { icon: homeIcon }).addTo(map).bindTooltip("Home Base", { direction: 'top' });
         } else {
           homeMarker.setLatLng(userHomeCoords);
           homeMarker.setIcon(homeIcon);
@@ -967,7 +1035,7 @@
       map.flyTo(userHomeCoords, 6.5, { animate: true, duration: 1.2 });
     }
 
-    // INICIALIZACE APLIKACE
+    // Inicializace
     async function initApp() {
       const params = new URLSearchParams(window.location.search);
       isDemoMode = params.get('demo') === 'true';
@@ -1076,7 +1144,7 @@
       }
     }
 
-    // 3. EDITACE A MAZÁNÍ EXISTUJÍCÍCH ZÁVODŮ
+    // Editace & mazání
     function openEditActivityModal(id) {
       const item = races.find(r => r.id === id);
       if (!item) return;
@@ -1108,7 +1176,7 @@
       parsedCenterCoords = item.coords;
       if (zavodniTrasy[item.id]) {
         parsedGpxCoords = zavodniTrasy[item.id];
-        document.getElementById('gpx-label').textContent = `✅ Attached GPX track preserved`;
+        document.getElementById('gpx-label').textContent = `Attached GPX track preserved`;
       }
 
       document.getElementById('btn-save-step1').textContent = 'Update Activity';
@@ -1131,7 +1199,36 @@
       }
     }
 
-    // KATALOG ZÁVODŮ
+    // Řazení a filtry
+    function handleSortChange(val) {
+      sortOrder = val;
+      renderAll();
+    }
+
+    function sortActivities(list) {
+      const parseDist = d => {
+        if (!d) return 0;
+        const num = parseFloat(d.replace(/,/g, '.').replace(/[^\d.]/g, ''));
+        return isNaN(num) ? 0 : num;
+      };
+
+      return list.sort((a, b) => {
+        if (sortOrder === 'newest') {
+          return (b.date || '').localeCompare(a.date || '');
+        } else if (sortOrder === 'oldest') {
+          return (a.date || '').localeCompare(b.date || '');
+        } else if (sortOrder === 'longest') {
+          return parseDist(b.distance) - parseDist(a.distance);
+        } else if (sortOrder === 'importance') {
+          return (b.importance || 5) - (a.importance || 5);
+        } else if (sortOrder === 'alpha') {
+          return (a.name || '').localeCompare(b.name || '');
+        }
+        return 0;
+      });
+    }
+
+    // Katalog
     async function openCatalogModal() {
       closeModals();
       document.getElementById('modal-catalog').style.display = 'flex';
@@ -1198,14 +1295,14 @@
           <img src="${race.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80'}" alt="">
           <div class="catalog-info">
             <h4>${race.name}</h4>
-            <p>📍 ${race.location || ''} &bull; 📏 ${race.distance || ''} &bull; ⛰️ ${race.elevation || ''}</p>
+            <p>${race.location || ''} · ${race.distance || ''} · ${race.elevation || ''}</p>
           </div>
           <div class="catalog-actions">
             <button class="pill-btn" style="background:#dcfce7; border-color:#16a34a; color:#166534; padding:4px 8px; font-size:0.72rem;" onclick="openCustomizeCatalogRace('${race.id}', 'done')">
-              🏁 I ran this
+              I ran this
             </button>
             <button class="pill-btn" style="background:#e0f2fe; border-color:#0284c7; color:#0369a1; padding:4px 8px; font-size:0.72rem;" onclick="openCustomizeCatalogRace('${race.id}', 'bucket')">
-              ⭐️ Bucket list
+              Bucket list
             </button>
           </div>
         `;
@@ -1242,13 +1339,25 @@
       document.getElementById('add-modal').style.display = 'flex';
     }
 
+    // RENDER MAP & SIDEBAR
     function renderAll() {
       markerLayerGroup.clearLayers();
       const content = document.getElementById('content');
       content.innerHTML = '';
 
+      // Zobrazení Milestones & Stats v sidebaru
+      if (currentMode === 'stats') {
+        renderStatsView();
+        return;
+      }
+
       const isRace = (currentMode === 'races');
-      const activeList = races.filter(item => {
+      const isBucket = (currentMode === 'bucket');
+
+      let activeList = races.filter(item => {
+        if (isBucket) {
+          return item.status === 'bucket';
+        }
         const matchesCategory = isRace ? !item.isMemorable : item.isMemorable;
         if (!matchesCategory) return false;
         if (isRace && !statusFilters[item.status]) return false;
@@ -1265,6 +1374,7 @@
         return true;
       });
 
+      activeList = sortActivities(activeList);
       document.getElementById('stats-label').textContent = `Showing ${activeList.length} activities`;
 
       if (activeList.length === 0) {
@@ -1274,10 +1384,10 @@
             <div style="font-size:0.8rem; margin-bottom:16px;">Pick a race from the catalog or upload a watch track.</div>
             <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
               <button class="open-detail-btn" style="width:200px; background:#16a34a;" onclick="openCatalogModal()">
-                🌍 Choose from Catalog
+                Choose from Catalog
               </button>
               <button class="pill-btn" style="width:200px; justify-content:center; background:#ffffff;" onclick="openAddModal()">
-                ➕ Upload own track
+                Upload own track
               </button>
             </div>
           </div>
@@ -1292,7 +1402,7 @@
         const icon = L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [18, 18], iconAnchor: [9, 9] });
 
         const marker = L.marker(item.coords, { icon: icon }).addTo(markerLayerGroup);
-        marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} &bull; ${item.surfaceLabel || ''}`);
+        marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} · ${item.surfaceLabel || ''}`);
         marker.on('click', () => showDetail(item));
 
         const card = document.createElement('div');
@@ -1302,15 +1412,17 @@
             <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
               ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
             </span>
-            <span style="font-size:0.75rem; color:#64748b; font-weight:600;">${item.date || ''}</span>
+            <span style="font-size:0.75rem; color:#64748b; font-weight:700;">${item.date || ''}</span>
           </div>
           <div class="card-title">${item.name}</div>
-          <div class="card-meta">
-            <span>🏃 ${item.surfaceLabel || 'Mixed'}</span><span>&bull;</span>
-            <span>📏 ${item.distance || '-'}</span><span>&bull;</span>
-            <span>⛰️ ${item.elevation || '-'}</span>
-            ${item.cost ? `<span>&bull;</span><span>💰 ${item.cost}</span>` : ''}
-            ${item.resultTime ? `<span>&bull;</span><span style="color:#16a34a; font-weight:800;">⏱️ ${item.resultTime}</span>` : ''}
+          <div class="card-metrics">
+            <span class="metric-val">${item.surfaceLabel || 'Mixed'}</span>
+            <span class="dot">·</span>
+            <span class="metric-val">${item.distance || '-'}</span>
+            <span class="dot">·</span>
+            <span class="metric-val">${item.elevation || '-'}</span>
+            ${item.cost ? `<span class="dot">·</span><span class="metric-val">${item.cost}</span>` : ''}
+            ${item.resultTime ? `<span class="dot">·</span><span style="color:#16a34a; font-weight:800;">${item.resultTime}</span>` : ''}
           </div>
         `;
         card.onclick = () => {
@@ -1319,6 +1431,60 @@
         };
         content.appendChild(card);
       });
+    }
+
+    function renderStatsView() {
+      const content = document.getElementById('content');
+      document.getElementById('stats-label').textContent = 'Milestones summary';
+
+      let totalKm = 0;
+      let totalEle = 0;
+      let completedCount = 0;
+      let bucketCount = 0;
+
+      races.forEach(r => {
+        if (r.status === 'done') completedCount++;
+        if (r.status === 'bucket') bucketCount++;
+        if (r.distance) {
+          const num = parseFloat(r.distance.replace(/,/g, '.').replace(/[^\d.]/g, ''));
+          if (!isNaN(num)) totalKm += num;
+        }
+        if (r.elevation) {
+          const ele = parseFloat(r.elevation.replace(/,/g, '.').replace(/[^\d.]/g, ''));
+          if (!isNaN(ele)) totalEle += ele;
+        }
+      });
+
+      content.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px; margin-bottom:12px;">
+          <h3 style="font-size:1.1rem; font-weight:800; color:#0f172a; margin-bottom:4px;">Lifetime Statistics</h3>
+          <p style="font-size:0.8rem; color:#64748b; margin-bottom:14px;">Summary of logged races, routes, and mountain milestones.</p>
+          
+          <div class="stats-card-grid">
+            <div class="stat-box">
+              <div class="stat-box-num">${races.length}</div>
+              <div class="stat-box-lbl">Total Activities</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-num">${completedCount}</div>
+              <div class="stat-box-lbl">Finished Races</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-num">${totalKm.toFixed(0)} km</div>
+              <div class="stat-box-lbl">Logged Distance</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-num">+${totalEle.toLocaleString()} m</div>
+              <div class="stat-box-lbl">Elevation Gain</div>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid #f1f5f9; padding-top:12px; font-size:0.8rem; color:#475569; display:flex; justify-content:space-between;">
+            <span>Bucket list targets:</span>
+            <strong style="color:#0284c7;">${bucketCount} races</strong>
+          </div>
+        </div>
+      `;
     }
 
     function showDetail(item) {
@@ -1336,25 +1502,29 @@
 
       content.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <button class="back-btn" style="margin-bottom:0;" onclick="renderAll()">← Back to list</button>
+          <button class="back-btn" onclick="renderAll()">← Back to list</button>
           <div style="display:flex; gap:6px;">
-            <button class="action-btn-secondary" onclick="openEditActivityModal('${item.id}')">✏️ Edit</button>
-            <button class="action-btn-danger" onclick="deleteActivity('${item.id}')">🗑️ Delete</button>
+            <button class="action-btn-secondary" onclick="openEditActivityModal('${item.id}')">Edit</button>
+            <button class="action-btn-danger" onclick="deleteActivity('${item.id}')">Delete</button>
           </div>
         </div>
 
         ${galleryHtml}
         <h2 style="font-size:1.35rem; font-weight:800; color:#0f172a; margin-bottom:4px;">${item.name}</h2>
-        <div style="font-size:0.82rem; color:#64748b; margin-bottom:14px;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || ''} ${item.cost ? `&bull; Cost: ${item.cost}` : ''}</div>
+        <div style="font-size:0.82rem; color:#64748b; margin-bottom:14px; font-weight:600;">
+          ${item.date || 'Undated'} · ${item.surfaceLabel || 'Mixed'} ${item.cost ? `· Cost: ${item.cost}` : ''}
+        </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#f8fafc; border:1px solid #cbd5e1; padding:12px; border-radius:10px; margin-bottom:12px;">
-          <div><small style="color:#475569; font-size:0.7rem; font-weight:800; display:block;">DISTANCE</small><strong style="color:#0f172a;">${item.distance || '-'}</strong></div>
-          <div><small style="color:#475569; font-size:0.7rem; font-weight:800; display:block;">ELEVATION GAIN</small><strong style="color:#0f172a;">${item.elevation || '-'}</strong></div>
-          ${item.resultTime ? `<div style="grid-column: span 2;"><small style="color:#475569; font-size:0.7rem; font-weight:800; display:block;">RESULT TIME</small><strong style="color:#16a34a; font-size:1.05rem;">${item.resultTime}</strong></div>` : ''}
+        <div class="detail-grid">
+          <div class="detail-item"><small>DISTANCE</small><strong>${item.distance || '-'}</strong></div>
+          <div class="detail-item"><small>ELEVATION GAIN</small><strong>${item.elevation || '-'}</strong></div>
+          ${item.resultTime ? `<div class="detail-item" style="grid-column: span 2;"><small>OFFICIAL FINISH TIME</small><strong style="color:#16a34a;">${item.resultTime}</strong></div>` : ''}
+          ${item.ambitionTime ? `<div class="detail-item"><small>TARGET AMBITION</small><strong>${item.ambitionTime}</strong></div>` : ''}
+          ${item.placement ? `<div class="detail-item"><small>PLACEMENT</small><strong>${item.placement}</strong></div>` : ''}
         </div>
 
         ${item.why ? `<div style="background:#eff6ff; border-left:3px solid #007aff; padding:10px 12px; border-radius:6px; font-size:0.86rem; color:#1e40af; margin-bottom:10px;"><em>„${item.why}“</em></div>` : ''}
-        ${item.notes ? `<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px 12px; border-radius:8px; font-size:0.84rem; color:#334155; line-height:1.55;">${item.notes}</div>` : ''}
+        ${item.notes ? `<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px 14px; border-radius:8px; font-size:0.84rem; color:#334155; line-height:1.55;">${item.notes}</div>` : ''}
       `;
 
       if (zavodniTrasy[item.id]) {
@@ -1496,7 +1666,7 @@
 
         box.style.background = diff <= 0 ? '#dcfce7' : '#fef3c7';
         box.style.borderColor = diff <= 0 ? '#16a34a' : '#d97706';
-        txt.innerHTML = `<span style="color:${diff <= 0 ? '#166534' : '#92400e'}; font-weight:800;">${formatted} (${diff <= 0 ? 'Faster than goal 🎉' : 'Slower than goal'})</span>`;
+        txt.innerHTML = `<span style="color:${diff <= 0 ? '#166534' : '#92400e'}; font-weight:800;">${formatted} (${diff <= 0 ? 'Faster than goal' : 'Slower than goal'})</span>`;
         box.style.display = 'block';
       } else {
         box.style.display = 'none';
@@ -1558,7 +1728,7 @@
         parsedCenterCoords = latlngs[0];
         document.getElementById('form-distance').value = totalDist.toFixed(1) + ' km';
         document.getElementById('form-elevation').value = '+' + Math.round(totalEle) + ' m';
-        document.getElementById('gpx-label').textContent = `✅ Loaded (${latlngs.length} pts, ${totalDist.toFixed(1)} km)`;
+        document.getElementById('gpx-label').textContent = `Loaded (${latlngs.length} pts, ${totalDist.toFixed(1)} km)`;
       };
       reader.readAsText(file);
     }
@@ -1749,11 +1919,34 @@
 
     function switchPageMode(mode) {
       currentMode = mode;
-      document.getElementById('rail-races').classList.toggle('active', mode === 'races');
-      document.getElementById('rail-memorable').classList.toggle('active', mode === 'memorable');
-      document.getElementById('main-title').textContent = mode === 'races' ? 'Race Atlas' : 'Memorable Runs';
-      document.getElementById('status-boxes-wrap').style.display = mode === 'races' ? 'flex' : 'none';
-      document.getElementById('btn-add-activity').textContent = mode === 'races' ? '➕ Add Race' : '➕ Add Run';
+      document.querySelectorAll('#left-rail .rail-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`rail-${mode}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const statusWrap = document.getElementById('status-boxes-wrap');
+      const filtersWrap = document.getElementById('filters-section-wrap');
+      const addBtn = document.getElementById('btn-add-activity');
+
+      if (mode === 'races') {
+        document.getElementById('main-title').textContent = 'Race Atlas';
+        statusWrap.style.display = 'flex';
+        filtersWrap.style.display = 'flex';
+        addBtn.textContent = 'Add Race';
+      } else if (mode === 'memorable') {
+        document.getElementById('main-title').textContent = 'Memorable Runs';
+        statusWrap.style.display = 'none';
+        filtersWrap.style.display = 'flex';
+        addBtn.textContent = 'Add Run';
+      } else if (mode === 'bucket') {
+        document.getElementById('main-title').textContent = 'Bucket List Targets';
+        statusWrap.style.display = 'none';
+        filtersWrap.style.display = 'flex';
+        addBtn.textContent = 'Add Target';
+      } else if (mode === 'stats') {
+        document.getElementById('main-title').textContent = 'Milestones & Stats';
+        statusWrap.style.display = 'none';
+        filtersWrap.style.display = 'none';
+      }
       renderAll();
     }
 
@@ -1763,7 +1956,7 @@
       const driverObj = window.driver.js.driver({
         showProgress: true, animate: true,
         steps: [
-          { element: '#left-rail', popover: { title: 'Navigation', description: 'Switch between Races and Memorable Runs, or visit Settings.', side: "right" } },
+          { element: '#left-rail', popover: { title: 'Navigation', description: 'Switch between Races, Memorable Runs, Bucket List, and Stats.', side: "right" } },
           { element: '#btn-browse-catalog', popover: { title: 'Race Catalog', description: 'Populate your map in seconds by selecting iconic world and Czech races.', side: "bottom" } },
           { element: '#btn-add-activity', popover: { title: 'Upload Tracks', description: 'Import your own .GPX files with precision pace and elevation curves.', side: "bottom" } }
         ]
