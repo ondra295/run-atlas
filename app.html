@@ -30,7 +30,7 @@
       height: 54px; background: #0f172a; border-bottom: 1px solid #1e293b;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 18px; z-index: 2000; flex-shrink: 0;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25); position: relative;
     }
     .top-search-input {
       background: #1e293b; border: 1px solid #334155; border-radius: 8px;
@@ -38,7 +38,24 @@
     }
     .top-search-input:focus { border-color: #38bdf8; background: #0f172a; width: 320px; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25); }
     .top-search-input::placeholder { color: #64748b; }
-    .top-bar-right { display: flex; align-items: center; gap: 8px; }
+    .top-bar-right { display: flex; align-items: center; gap: 8px; position: relative; }
+
+    /* Profile Dropdown Menu */
+    .profile-dropdown-menu {
+      display: none; position: absolute; top: 46px; right: 0; width: 200px;
+      background: #1e293b; border: 1px solid #334155; border-radius: 10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.45); padding: 6px; z-index: 3000;
+      flex-direction: column; gap: 4px;
+    }
+    .profile-dropdown-menu.show { display: flex; }
+    .dropdown-item {
+      padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: 600;
+      color: #f1f5f9; text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 8px;
+      transition: background 0.15s; border: none; background: transparent; width: 100%; text-align: left;
+    }
+    .dropdown-item:hover { background: #0f172a; color: #38bdf8; }
+    .dropdown-item.danger { color: #f87171; }
+    .dropdown-item.danger:hover { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
 
     /* Main Workspace */
     #main-body { display: flex; flex: 1; position: relative; overflow: hidden; }
@@ -98,7 +115,7 @@
     .split-card-title { font-size: 0.9rem; font-weight: 800; color: #0f172a; }
     .split-card-sub { font-size: 0.74rem; color: #64748b; line-height: 1.35; }
 
-    /* Home Base tlačítko v levém dolním rohu mapy */
+    /* Home Base Floating Button */
     #floating-home-btn {
       position: absolute; bottom: 24px; left: 24px; z-index: 1050;
       background: #0f172a; border: 2px solid #38bdf8; border-radius: 30px; padding: 10px 18px;
@@ -106,7 +123,6 @@
       cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #floating-home-btn:hover { transform: translateY(-2px); background: #1e293b; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5); }
-    #floating-home-btn svg { flex-shrink: 0; }
     #floating-home-label { font-size: 0.84rem; font-weight: 800; color: #f8fafc; }
 
     /* Sidebar */
@@ -170,6 +186,18 @@
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     }
     .open-detail-btn:hover { background: #0062cc; }
+
+    .action-btn-secondary {
+      background: #ffffff; border: 1px solid #cbd5e1; color: #334155; padding: 6px 12px;
+      border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .action-btn-secondary:hover { background: #f8fafc; border-color: #007aff; color: #007aff; }
+
+    .action-btn-danger {
+      background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; padding: 6px 12px;
+      border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .action-btn-danger:hover { background: #fecaca; }
 
     .back-btn {
       display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1;
@@ -256,6 +284,7 @@
 <body>
 
   <div id="app-layout">
+    <!-- TOP BAR -->
     <header id="top-bar">
       <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0;">
         <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
@@ -285,14 +314,23 @@
           🌍 Race Catalog
         </button>
         <button id="btn-add-activity" class="open-detail-btn" style="display: none;" onclick="openAddModal()">➕ Add Race</button>
-        <a id="btn-profile" class="pill-btn" href="settings.html" style="background:#1e293b; border-color:#334155; color:#f8fafc;">
-          👤 <span id="label-user">Profile</span>
-        </a>
+        
+        <!-- Profile Dropdown Button -->
+        <button id="btn-profile" class="pill-btn" onclick="toggleProfileDropdown()" style="background:#1e293b; border-color:#334155; color:#f8fafc;">
+          👤 <span id="label-user">Profile</span> ▾
+        </button>
+
+        <div id="profile-dropdown" class="profile-dropdown-menu">
+          <a class="dropdown-item" href="settings.html">⚙️ Account Settings</a>
+          <button class="dropdown-item" onclick="exportDataJson()">📦 Export Atlas Data</button>
+          <div style="height:1px; background:#334155; margin:3px 0;"></div>
+          <button class="dropdown-item danger" onclick="handleLogout()">🚪 Log Out</button>
+        </div>
       </div>
     </header>
 
     <div id="main-body">
-      <!-- LEVÝ PANEL (BEZ HOME BASE) -->
+      <!-- LEVÝ PANEL -->
       <nav id="left-rail">
         <button id="rail-races" class="rail-btn active" onclick="switchPageMode('races')">
           <span class="rail-icon">
@@ -384,7 +422,8 @@
               <div class="split-choice-card" onclick="openAddModal('memorable')">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
-                  <path d="M7 21l3-4"></path><path d="M16 21l-2-4-3-3 1-6"></path><path d="M6 12l2-3 4-1 3 3 1"></path>
+                  <path d="M7 21l3-4"></path><path d="M16 21l-2-4-3-3 1-6"></path>
+                  <path d="M6 12l2-3 4-1 3 3 1"></path>
                 </svg>
                 <div class="split-card-title">Memorable Run</div>
                 <div class="split-card-sub">Summits, vacations & trail milestones</div>
@@ -397,7 +436,7 @@
           </div>
         </div>
 
-        <!-- PLOVOUCÍ TLAČÍTKO HOME BASE POUZE ZDE NA MAPĚ -->
+        <!-- PLOVOUCÍ TLAČÍTKO HOME BASE V LEVÉM DOLNÍM ROHU -->
         <div id="floating-home-btn" onclick="handleHomeBaseClick()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
@@ -543,11 +582,12 @@
     </div>
   </div>
 
+  <!-- ADD / EDIT ACTIVITY MODAL -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
       <div id="modal-step-1" style="display:flex; flex-direction:column; gap:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 id="step1-modal-title" style="font-size: 1.25rem; font-weight: 800; color:#0f172a;">Add New Race</h3>
+          <h3 id="step1-modal-title" style="font-size: 1.25rem; font-weight: 800; color:#0f172a;">Add Activity</h3>
           <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
         </div>
 
@@ -776,6 +816,8 @@
     let currentCatalogQuery = '';
     let zavodniTrasy = {};
 
+    let editingActivityId = null; // Uchovává ID upravovaného záznamu
+
     const statusFilters = { done: true, planned: true, bucket: true };
     let surfaceFilter = 'all';
     let searchQuery = '';
@@ -787,24 +829,65 @@
     let chipSelections = { status: '', surface: 'mixed', difficulty: 'stredni', repeat: 'yes' };
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
-    const worldBounds = L.latLngBounds(L.latLng(-85, -180), L.latLng(85, 180));
-    const defaultCenter = userHomeCoords || [25.0, 10.0];
-    const defaultZoom = userHomeCoords ? 5.2 : 2.5;
-
+    // 1. NEKONEČNÉ SCROLLOVÁNÍ MAPY (BEZ USEKNUTÍ)
     const map = L.map('map', {
-      center: defaultCenter, zoom: defaultZoom, minZoom: 2,
-      maxBounds: worldBounds, maxBoundsViscosity: 1.0, worldCopyJump: false
+      center: userHomeCoords || [25.0, 10.0],
+      zoom: userHomeCoords ? 5.2 : 2.5,
+      minZoom: 2,
+      worldCopyJump: true // Plynulé přeskakování špendlíků přes 180. poledník
     });
 
-    const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 18, noWrap: true, bounds: worldBounds }).addTo(map);
-    const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Dark', maxZoom: 16, noWrap: true, bounds: worldBounds });
-    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Sat', maxZoom: 18, noWrap: true, bounds: worldBounds });
+    const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri', maxZoom: 18 }).addTo(map);
+    const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Dark', maxZoom: 16 });
+    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Sat', maxZoom: 18 });
 
     L.control.layers({ "Topographic": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
     let markerLayerGroup = L.featureGroup().addTo(map);
     let homeMarker = null;
 
-    // IKONA BARÁČKU NA MAPĚ MÍSTO TEČKY
+    // 2. PŘIDÁNÍ ZÁVODU PRAVÝM TLAČÍTKEM NA MAPU
+    map.on('contextmenu', function(e) {
+      const lat = parseFloat(e.latlng.lat.toFixed(5));
+      const lng = parseFloat(e.latlng.lng.toFixed(5));
+      
+      openAddModal(currentMode === 'memorable' ? 'memorable' : 'race');
+      parsedCenterCoords = [lat, lng];
+      
+      // Dočasný vizuální marker na kliknuté pozici
+      const tempPin = L.circleMarker([lat, lng], { radius: 7, fillColor: '#38bdf8', color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
+      setTimeout(() => map.removeLayer(tempPin), 4000);
+    });
+
+    // Profilový dropdown
+    function toggleProfileDropdown() {
+      const d = document.getElementById('profile-dropdown');
+      d.classList.toggle('show');
+    }
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('#btn-profile') && !e.target.closest('#profile-dropdown')) {
+        document.getElementById('profile-dropdown').classList.remove('show');
+      }
+    });
+
+    function exportDataJson() {
+      if (races.length === 0) { alert('No activities to export.'); return; }
+      const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(races, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute("href", str);
+      a.setAttribute("download", `running_atlas_${Date.now()}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    async function handleLogout() {
+      if (confirm('Log out of Running Atlas?')) {
+        await supabaseClient.auth.signOut();
+        window.location.href = 'index.html';
+      }
+    }
+
+    // HOME BASE NA MAPĚ (DOMEČEK)
     function refreshHomeMarker() {
       const homeLabel = document.getElementById('floating-home-label');
       if (userHomeCoords) {
@@ -884,6 +967,7 @@
       map.flyTo(userHomeCoords, 6.5, { animate: true, duration: 1.2 });
     }
 
+    // INICIALIZACE APLIKACE
     async function initApp() {
       const params = new URLSearchParams(window.location.search);
       isDemoMode = params.get('demo') === 'true';
@@ -932,7 +1016,7 @@
           }
         }
       } catch (err) {
-        console.error('Fatal initialization error:', err);
+        console.error('Initialization error:', err);
         renderAll();
       }
     }
@@ -992,6 +1076,62 @@
       }
     }
 
+    // 3. EDITACE A MAZÁNÍ EXISTUJÍCÍCH ZÁVODŮ
+    function openEditActivityModal(id) {
+      const item = races.find(r => r.id === id);
+      if (!item) return;
+
+      closeModals();
+      resetActivityForm();
+
+      editingActivityId = item.id;
+      document.getElementById('step1-modal-title').textContent = `Edit: ${item.name}`;
+      document.getElementById('form-name').value = item.name || '';
+      document.getElementById('form-distance').value = item.distance || '';
+      document.getElementById('form-elevation').value = item.elevation || '';
+      document.getElementById('form-notes').value = item.notes || '';
+      document.getElementById('form-why').value = item.why || '';
+      document.getElementById('form-importance').value = item.importance || 5;
+      document.getElementById('importance-val').textContent = item.importance || 5;
+
+      selectChip('status', item.status || 'done');
+      selectChip('surface', item.surface || 'road');
+      selectChip('difficulty', item.difficulty || 'stredni');
+      selectChip('repeat', item.repeat || 'yes');
+
+      if (item.status === 'bucket' && item.month) {
+        document.getElementById('form-month-select').value = String(item.month);
+      } else if (item.date && item.date.includes('-')) {
+        document.getElementById('form-date').value = item.date;
+      }
+
+      parsedCenterCoords = item.coords;
+      if (zavodniTrasy[item.id]) {
+        parsedGpxCoords = zavodniTrasy[item.id];
+        document.getElementById('gpx-label').textContent = `✅ Attached GPX track preserved`;
+      }
+
+      document.getElementById('btn-save-step1').textContent = 'Update Activity';
+      document.getElementById('btn-save-step2').textContent = 'Update Activity';
+      document.getElementById('add-modal').style.display = 'flex';
+    }
+
+    async function deleteActivity(id) {
+      if (!confirm('Are you sure you want to delete this activity?')) return;
+      if (!currentUser) return;
+
+      try {
+        const { error } = await supabaseClient.from('races').delete().eq('id', id).eq('user_id', currentUser.id);
+        if (error) throw error;
+        alert('Activity deleted.');
+        if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
+        await loadActivitiesFromDB(currentUser.id);
+      } catch (e) {
+        alert('Could not delete: ' + e.message);
+      }
+    }
+
+    // KATALOG ZÁVODŮ
     async function openCatalogModal() {
       closeModals();
       document.getElementById('modal-catalog').style.display = 'flex';
@@ -1047,11 +1187,7 @@
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center; padding:30px; color:#64748b;">
-            No races found matching "${currentCatalogQuery}".
-          </div>
-        `;
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b;">No races found matching "${currentCatalogQuery}".</div>`;
         return;
       }
 
@@ -1199,7 +1335,14 @@
       }
 
       content.innerHTML = `
-        <button class="back-btn" onclick="renderAll()">← Back to list</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <button class="back-btn" style="margin-bottom:0;" onclick="renderAll()">← Back to list</button>
+          <div style="display:flex; gap:6px;">
+            <button class="action-btn-secondary" onclick="openEditActivityModal('${item.id}')">✏️ Edit</button>
+            <button class="action-btn-danger" onclick="deleteActivity('${item.id}')">🗑️ Delete</button>
+          </div>
+        </div>
+
         ${galleryHtml}
         <h2 style="font-size:1.35rem; font-weight:800; color:#0f172a; margin-bottom:4px;">${item.name}</h2>
         <div style="font-size:0.82rem; color:#64748b; margin-bottom:14px;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || ''} ${item.cost ? `&bull; Cost: ${item.cost}` : ''}</div>
@@ -1243,6 +1386,7 @@
     }
 
     function resetActivityForm() {
+      editingActivityId = null;
       document.getElementById('form-name').value = '';
       document.getElementById('form-date').value = '';
       document.getElementById('form-month-select').value = '';
@@ -1268,6 +1412,8 @@
       document.getElementById('input-images').value = '';
       document.getElementById('images-preview').innerHTML = '';
       document.getElementById('gpx-label').textContent = '📁 Drag & drop watch .GPX track (Optional)';
+      document.getElementById('btn-save-step1').textContent = 'Save Activity';
+      document.getElementById('btn-save-step2').textContent = 'Save Activity';
       
       parsedGpxCoords = null;
       parsedCenterCoords = null;
@@ -1488,10 +1634,7 @@
           importance: parseInt(document.getElementById('form-importance').value) || 5,
           why: document.getElementById('form-why').value,
           notes: document.getElementById('form-notes').value,
-          images: uploadedImageUrls,
-          image_url: uploadedImageUrls[0] || null,
           coords: finalCoords,
-          route_coords: parsedGpxCoords,
           result_time: formatTime('finish'),
           ambition_time: formatTime('ambition') || document.getElementById('form-target-ambition').value.trim(),
           placement: document.getElementById('form-placement').value,
@@ -1505,10 +1648,24 @@
           is_memorable: (currentMode === 'memorable')
         };
 
-        const { error: insErr } = await supabaseClient.from('races').insert([record]);
-        if (insErr) throw insErr;
+        if (uploadedImageUrls.length > 0) {
+          record.images = uploadedImageUrls;
+          record.image_url = uploadedImageUrls[0];
+        }
+        if (parsedGpxCoords) {
+          record.route_coords = parsedGpxCoords;
+        }
 
-        alert('Activity saved successfully!');
+        if (editingActivityId) {
+          const { error: updErr } = await supabaseClient.from('races').update(record).eq('id', editingActivityId).eq('user_id', currentUser.id);
+          if (updErr) throw updErr;
+          alert('Activity updated!');
+        } else {
+          const { error: insErr } = await supabaseClient.from('races').insert([record]);
+          if (insErr) throw insErr;
+          alert('Activity saved!');
+        }
+
         closeModals();
         document.getElementById('onboarding-overlay').style.display = 'none';
         await loadActivitiesFromDB(currentUser.id);
