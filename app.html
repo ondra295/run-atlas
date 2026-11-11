@@ -39,7 +39,6 @@
     .top-search-input::placeholder { color: #64748b; }
     .top-bar-right { display: flex; align-items: center; gap: 8px; position: relative; }
 
-    /* Profile Dropdown */
     .profile-dropdown-menu {
       display: none; position: absolute; top: 46px; right: 0; width: 200px;
       background: #1e293b; border: 1px solid #334155; border-radius: 10px;
@@ -80,9 +79,42 @@
     #left-rail:hover .rail-btn span:not(.rail-icon) { opacity: 1; pointer-events: auto; }
     .rail-spacer { flex: 1; min-height: 20px; }
 
-    /* Map & Sidebar */
+    /* Map & Floating Overlay */
     #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #e2e8f0; }
     #map { width: 100%; height: 100%; background: #e2e8f0; z-index: 1; }
+
+    /* FLOATING TELEMETRY HUD BAR OVER MAP */
+    #floating-hud-panel {
+      position: absolute; bottom: 20px; left: 24px; right: 24px; z-index: 1200;
+      display: none; flex-direction: column; gap: 10px; max-width: 860px; margin: 0 auto;
+      pointer-events: none; /* Allows panning map through empty space */
+    }
+    .hud-card-cluster {
+      display: flex; gap: 10px; width: 100%; pointer-events: auto;
+    }
+    .hud-box {
+      background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px; padding: 14px 18px;
+      color: #ffffff; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); flex: 1;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .hud-box-metric { font-size: 1.45rem; font-weight: 800; color: #38bdf8; line-height: 1.1; }
+    .hud-box-lbl { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; margin-top: 2px; }
+
+    .hud-photo-carousel {
+      display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; max-height: 90px;
+    }
+    .hud-thumb {
+      height: 70px; width: 100px; border-radius: 8px; object-fit: cover; flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.15s;
+    }
+    .hud-thumb:hover { transform: scale(1.05); }
+
+    .hud-close-btn {
+      position: absolute; top: -14px; right: -10px; background: #0f172a; border: 1px solid #334155;
+      color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; cursor: pointer; font-size: 1rem; pointer-events: auto;
+    }
 
     /* Context menu */
     #map-context-menu {
@@ -149,7 +181,7 @@
 
     #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px; background: #f1f5f9; }
 
-    /* VIZUÁLNĚ BOHATÉ KARTY ZÁVODŮ */
+    /* Visual cards */
     .race-card-rich {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
       overflow: hidden; cursor: pointer; transition: all 0.2s ease;
@@ -204,23 +236,15 @@
       color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 700;
     }
 
-    /* PLNOHODNOTNÝ DETAIL ZÁVODU */
+    /* Detail Card */
     .detail-container { display: flex; flex-direction: column; gap: 14px; }
-    .detail-header-card {
-      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px;
-    }
+    .detail-header-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; }
     .detail-grid-table {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
       background: #ffffff; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px;
     }
     .detail-cell small { font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px; }
     .detail-cell strong { font-size: 1.05rem; font-weight: 800; color: #0f172a; }
-
-    /* Stats View */
-    .stats-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
-    .stat-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; text-align: center; }
-    .stat-box-num { font-size: 1.5rem; font-weight: 800; color: #007aff; line-height: 1.2; }
-    .stat-box-lbl { font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 2px; }
 
     /* Map Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
@@ -230,7 +254,7 @@
     }
     .pin-circle:hover { transform: scale(1.25); }
 
-    /* UNIFIED ADD / EDIT MODAL */
+    /* Modal */
     .modal-backdrop {
       display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
@@ -247,7 +271,6 @@
     }
     .stepped-input:focus { border-color: #007aff; background: #ffffff; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15); }
 
-    /* Live Search Results inside Modal */
     .catalog-suggest-box {
       max-height: 180px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 8px;
       background: #ffffff; margin-top: 4px; display: none; flex-direction: column;
@@ -268,12 +291,6 @@
     .chip-btn:hover { background: #e2e8f0; color: #0f172a; }
     .chip-btn.active { background: #007aff; border-color: #007aff; color: #fff; }
 
-    .form-slider-wrap { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; }
-    .form-slider-wrap input[type=range] { flex: 1; accent-color: #007aff; }
-
-    .time-inputs-cluster { display: flex; gap: 6px; align-items: center; }
-    .time-box-input { width: 56px !important; text-align: center; font-weight: 700; padding: 8px 4px !important; }
-
     @media (max-width: 768px) {
       .top-search-input { display: none; }
       #left-rail {
@@ -287,6 +304,7 @@
       }
       #sidebar.mobile-open { transform: translateY(0); }
       #map-wrapper { width: 100%; height: calc(100vh - 110px); }
+      #floating-hud-panel { left: 12px; right: 12px; bottom: 70px; }
     }
   </style>
 </head>
@@ -296,17 +314,11 @@
     <!-- TOP BAR -->
     <header id="top-bar">
       <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0;">
-        <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
-          <defs>
-            <filter id="barRidgeGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="2" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-            </filter>
-          </defs>
+        <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg">
           <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
           <g transform="translate(6, 36)">
             <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
-            <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#barRidgeGlow)"/>
+            <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
             <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
           </g>
           <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
@@ -381,7 +393,7 @@
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
           </span>
           <span>Settings</span>
@@ -410,11 +422,20 @@
         </a>
       </nav>
 
-      <!-- MAPA & SIDEBAR -->
+      <!-- MAPA & HUD OVERLAY -->
       <div id="map-wrapper">
         <div id="map"></div>
 
-        <!-- Right click menu -->
+        <!-- PLOVOUCÍ TELEMETRICKÉ HUD KARTY NAD MAPOU -->
+        <div id="floating-hud-panel">
+          <button class="hud-close-btn" onclick="closeHudPanel()">&times;</button>
+          
+          <div class="hud-card-cluster" id="hud-cluster-content">
+            <!-- Dynamicky plněno dle statusu -->
+          </div>
+        </div>
+
+        <!-- Kontextové menu -->
         <div id="map-context-menu">
           <div class="ctx-item" onclick="handleContextMenuChoice('race')">➕ Add Race here</div>
           <div class="ctx-item" onclick="handleContextMenuChoice('memorable')">🏔️ Add Memorable Run here</div>
@@ -429,6 +450,7 @@
         </div>
       </div>
 
+      <!-- SIDEBAR -->
       <aside id="sidebar">
         <div class="sidebar-header">
           <h2 id="main-title">Race Atlas</h2>
@@ -514,21 +536,21 @@
     </div>
   </div>
 
-  <!-- JEDNOTNÉ INTUITIVNÍ OKNO: ADD TO ATLAS -->
+  <!-- UNIFIED ADD / EDIT MODAL -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
           <h3 id="step1-modal-title" style="font-size: 1.3rem; font-weight: 800; color:#0f172a;">Add to Atlas</h3>
-          <p style="font-size:0.8rem; color:#64748b;">Type a world race name or enter your own custom activity.</p>
+          <p style="font-size:0.8rem; color:#64748b;">Type a race name or enter your own custom run.</p>
         </div>
         <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
       </div>
 
       <!-- Quick Search & Autocomplete from Global Catalog -->
       <div style="position:relative;">
-        <label class="form-group-label">Search Catalog or Enter Custom Name *</label>
-        <input id="form-name" class="stepped-input" type="text" placeholder="e.g. Berlin Marathon, UTMB, Dresden..." oninput="handleCatalogQuickSearch(this.value)">
+        <label class="form-group-label">Search World Catalog or Enter Custom Name *</label>
+        <input id="form-name" class="stepped-input" type="text" placeholder="e.g. Berlin Marathon, UTMB, Boston..." oninput="handleCatalogQuickSearch(this.value)">
         <div id="catalog-suggestions" class="catalog-suggest-box"></div>
       </div>
 
@@ -608,13 +630,13 @@
       </div>
 
       <div>
-        <label class="form-group-label">My 'Why' & Story (Optional)</label>
+        <label class="form-group-label">My 'Why' & Motivation (Optional)</label>
         <input id="form-why" class="stepped-input" type="text" placeholder="What made this event meaningful?">
       </div>
 
       <div>
-        <label class="form-group-label">Detailed Notes & Race Report</label>
-        <textarea id="form-notes" class="stepped-input" placeholder="Pacing notes, nutrition, weather, terrain details..." style="height:65px;"></textarea>
+        <label class="form-group-label">Race Report & Terrain Notes</label>
+        <textarea id="form-notes" class="stepped-input" placeholder="Pacing notes, nutrition, weather, terrain quirks..." style="height:65px;"></textarea>
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:14px;">
@@ -650,10 +672,10 @@
     let advFilterDifficulty = 'all';
     let advFilterCost = 'all';
 
-    let chipSelections = { status: 'done', surface: 'road', difficulty: 'stredni', repeat: 'yes' };
+    let chipSelections = { status: 'done', surface: 'road', difficulty: 'stredni' };
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
-    // Map
+    // Map initialization
     const map = L.map('map', {
       center: userHomeCoords || [25.0, 10.0],
       zoom: userHomeCoords ? 5.2 : 2.5,
@@ -753,7 +775,7 @@
         map.flyTo(userHomeCoords, 6.5, { animate: true, duration: 1.2 });
         refreshHomeMarker();
       } else {
-        const val = prompt('Enter your Home Base city or coordinates (e.g. Slaný, Czechia):');
+        const val = prompt('Enter your Home Base city or coordinates (e.g. Slany, Czechia):');
         if (val) geocodeAndSaveHomeDirect(val);
       }
     }
@@ -890,7 +912,6 @@
       }
     }
 
-    // JEDNODUCHÝ NAŠEPTÁVAČ Z KATALOGU PŘI PSANÍ
     function handleCatalogQuickSearch(q) {
       const box = document.getElementById('catalog-suggestions');
       const val = q.trim().toLowerCase();
@@ -928,7 +949,6 @@
       selectChip('status', 'done');
     }
 
-    // Edit & Delete
     function openEditActivityModal(id) {
       const item = races.find(r => r.id === id);
       if (!item) return;
@@ -973,6 +993,7 @@
       try {
         const { error } = await supabaseClient.from('races').delete().eq('id', id).eq('user_id', currentUser.id);
         if (error) throw error;
+        closeHudPanel();
         if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
         await loadActivitiesFromDB(currentUser.id);
       } catch (e) {
@@ -1002,7 +1023,6 @@
       });
     }
 
-    // RENDER MAP & SIDEBAR S BOHATÝMI KARTAMI
     function renderAll() {
       markerLayerGroup.clearLayers();
       const content = document.getElementById('content');
@@ -1058,7 +1078,6 @@
         marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} &bull; ${item.surfaceLabel || ''}`);
         marker.on('click', () => showDetail(item));
 
-        // Bohatá karta s fotkou a vizuální hierarchií
         const card = document.createElement('div');
         card.className = 'race-card-rich';
         const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80';
@@ -1077,7 +1096,7 @@
             <div class="card-stats-pill-row">
               <span class="card-stat-pill">${item.distance || '-'}</span>
               <span class="card-stat-pill">${item.elevation || '-'}</span>
-              <span class="card-stat-pill">${item.surfaceLabel || 'Mixed'}</span>
+              <span class="card-stat-pill">${item.surfaceLabel || 'Road'}</span>
               ${item.resultTime ? `<span class="card-stat-pill" style="color:#16a34a; font-weight:800; background:#dcfce7; border-color:#bbf7d0;">⏱️ ${item.resultTime}</span>` : ''}
             </div>
           </div>
@@ -1090,38 +1109,98 @@
       });
     }
 
-    // PLNOHODNOTNÝ DETAIL ZÁVODU SE VŠEMI PARAMETRY
-    function showDetail(item) {
-      if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
-      const content = document.getElementById('content');
-      
-      let galleryHtml = '';
-      if (item.images && item.images.length > 0) {
-        galleryHtml = `
-          <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:12px;">
-            ${item.images.map(img => `<img src="${img}" style="height:170px; border-radius:10px; object-fit:cover; flex-shrink:0; cursor:pointer;" onclick="window.open('${img}', '_blank')">`).join('')}
+    // FLOATING HUD PANELS NAD MAPOU (ROZLIŠENÍ COMPLETED / PLANNED / BUCKET)
+    function showFloatingHud(item) {
+      const hud = document.getElementById('floating-hud-panel');
+      const cluster = document.getElementById('hud-cluster-content');
+      cluster.innerHTML = '';
+
+      if (item.status === 'done') {
+        cluster.innerHTML = `
+          <div class="hud-box">
+            <div class="hud-box-metric">${item.resultTime || 'Finished'}</div>
+            <div class="hud-box-lbl">Official Finish Time</div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#f8fafc;">${item.distance || '-'} <span style="font-size:0.9rem; color:#94a3b8;">(${item.elevation || '-'})</span></div>
+            <div class="hud-box-lbl">${item.surfaceLabel || 'Road'} &bull; ${item.placement || 'Completed'}</div>
+          </div>
+          ${(item.images && item.images.length > 0) ? `
+            <div class="hud-box" style="flex: 1.2;">
+              <div class="hud-photo-carousel">
+                ${item.images.map(img => `<img src="${img}" class="hud-thumb" onclick="window.open('${img}', '_blank')">`).join('')}
+              </div>
+              <div class="hud-box-lbl">Photos & Memories</div>
+            </div>
+          ` : `
+            <div class="hud-box">
+              <div class="hud-box-metric" style="color:#34c759;">${item.satisfaction || 8}/10</div>
+              <div class="hud-box-lbl">Satisfaction & Form</div>
+            </div>
+          `}
+        `;
+      } else if (item.status === 'planned') {
+        cluster.innerHTML = `
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#ff9f0a;">${item.ambitionTime || 'Finish strong'}</div>
+            <div class="hud-box-lbl">Target Time & Goal</div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#f8fafc;">${item.distance || '-'}</div>
+            <div class="hud-box-lbl">${item.elevation || '-'} Elevation</div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#38bdf8;">${item.logisticsDist ? item.logisticsDist + ' km' : 'Calculated'}</div>
+            <div class="hud-box-lbl">${item.logisticsTransport || 'Car / Travel'} &bull; Distance from Home</div>
+          </div>
+        `;
+      } else { // bucket
+        cluster.innerHTML = `
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#38bdf8;">Bucket List</div>
+            <div class="hud-box-lbl">Typical Season: ${item.date || 'TBD'}</div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#f8fafc;">${item.distance || '-'}</div>
+            <div class="hud-box-lbl">${item.surfaceLabel || 'Trail'} &bull; ${item.elevation || '-'}</div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#fbbf24;">${item.cost || '€€'}</div>
+            <div class="hud-box-lbl">Estimated Expedition Budget</div>
           </div>
         `;
       }
 
+      hud.style.display = 'flex';
+    }
+
+    function closeHudPanel() {
+      document.getElementById('floating-hud-panel').style.display = 'none';
+    }
+
+    // PLNOHODNOTNÝ DETAIL ZÁVODU
+    function showDetail(item) {
+      if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
+      const content = document.getElementById('content');
+      
+      showFloatingHud(item);
+
       content.innerHTML = `
         <div class="detail-container">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <button class="back-btn" onclick="renderAll()">← Back to list</button>
+            <button class="back-btn" onclick="renderAll(); closeHudPanel();">← Back to list</button>
             <div style="display:flex; gap:6px;">
               <button class="action-btn-secondary" onclick="openEditActivityModal('${item.id}')">✏️ Edit</button>
               <button class="action-btn-danger" onclick="deleteActivity('${item.id}')">🗑️ Delete</button>
             </div>
           </div>
 
-          ${galleryHtml}
-
           <div class="detail-header-card">
             <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}" style="margin-bottom:6px;">
               ${item.isMemorable ? 'Memorable Run' : (item.statusLabel || item.status)}
             </span>
             <h2 style="font-size:1.45rem; font-weight:800; color:#0f172a; margin-bottom:4px;">${item.name}</h2>
-            <p style="font-size:0.84rem; color:#64748b; font-weight:600;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || 'Mixed'} &bull; Estimated Cost: ${item.cost || '€€'}</p>
+            <p style="font-size:0.84rem; color:#64748b; font-weight:600;">📅 ${item.date || 'Undated'} &bull; ${item.surfaceLabel || 'Mixed'} &bull; Cost: ${item.cost || '€€'}</p>
           </div>
 
           <div class="detail-grid-table">
@@ -1157,13 +1236,14 @@
           L.circleMarker(coords[0], { radius: 6, fillColor: '#16a34a', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Start"),
           L.circleMarker(coords[coords.length - 1], { radius: 6, fillColor: '#dc2626', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Finish")
         ]).addTo(map);
-        map.fitBounds(currentRouteLayer.getBounds(), { padding: [40, 40] });
+        map.fitBounds(currentRouteLayer.getBounds(), { padding: [40, 100] });
       }
     }
 
     function renderStatsView() {
       const content = document.getElementById('content');
       document.getElementById('stats-label').textContent = 'Milestones summary';
+      closeHudPanel();
 
       let totalKm = 0;
       let totalEle = 0;
