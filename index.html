@@ -130,6 +130,20 @@
     }
     .auth-input:focus { border-color: #007aff; background: #ffffff; }
 
+    .password-wrap {
+      position: relative; width: 100%; margin-bottom: 12px;
+    }
+    .password-wrap .auth-input {
+      margin-bottom: 0; padding-right: 42px;
+    }
+    .toggle-pass-btn {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: transparent; border: none; color: #64748b; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; padding: 4px;
+      transition: color 0.15s;
+    }
+    .toggle-pass-btn:hover { color: #0f172a; }
+
     @media (max-width: 768px) {
       .hero-title { font-size: 2.1rem; }
       .pillars-grid, .steps-grid { grid-template-columns: 1fr; }
@@ -184,7 +198,7 @@
     </div>
   </section>
 
-  <!-- 2. BELOW-THE-FOLD INFO S VIZUÁLNÍMI MOCKUPY[cite: 8] -->
+  <!-- 2. BELOW-THE-FOLD INFO -->
   <main id="explore" class="content-wrap">
     <section>
       <div class="section-header">
@@ -196,7 +210,6 @@
       </div>
 
       <div class="pillars-grid">
-        <!-- 1. Geographic Memory Mockup -->
         <div class="pillar-card">
           <div class="pillar-mockup">
             <svg width="220" height="90" viewBox="0 0 220 90" fill="none">
@@ -213,7 +226,6 @@
           </div>
         </div>
 
-        <!-- 2. 1-Click Race Catalog Mockup -->
         <div class="pillar-card">
           <div class="pillar-mockup">
             <div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:10px 14px; width:88%; display:flex; justify-content:space-between; align-items:center;">
@@ -230,7 +242,6 @@
           </div>
         </div>
 
-        <!-- 3. Watch Tracks & Elevation Mockup -->
         <div class="pillar-card">
           <div class="pillar-mockup">
             <svg width="220" height="90" viewBox="0 0 220 90" fill="none">
@@ -247,7 +258,6 @@
       </div>
     </section>
 
-    <!-- SEKCE 2: JAK TO FUNGUJE (3 KROKY) -->
     <section>
       <div class="section-header">
         <span class="section-tag">Simple & Independent</span>
@@ -276,7 +286,6 @@
       </div>
     </section>
 
-    <!-- SEKCE 3: MEDAILONEK TVŮRCE -->
     <section>
       <div class="creator-card">
         <div class="creator-avatar-wrap">
@@ -293,7 +302,6 @@
       </div>
     </section>
 
-    <!-- SEKCE 4: SPODNÍ CTA BANNER -->
     <section class="cta-banner">
       <h2>Ready to see your running world?</h2>
       <p>Free to use, built independently with zero ad clutter. Start building your visual running archive today.</p>
@@ -323,7 +331,16 @@
 
       <form id="auth-form" onsubmit="event.preventDefault(); handleAuthSubmit();">
         <input id="auth-email" class="auth-input" type="email" placeholder="Email address" required autocomplete="email">
-        <input id="auth-pass" class="auth-input" type="password" placeholder="Password (min 6 characters)" required autocomplete="current-password">
+        
+        <div class="password-wrap">
+          <input id="auth-pass" class="auth-input" type="password" placeholder="Password (min 6 characters)" required autocomplete="current-password">
+          <button type="button" class="toggle-pass-btn" title="Show / Hide password" onclick="togglePasswordVisibility()">
+            <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
 
         <button type="submit" id="btn-auth-submit" class="btn-primary" style="width:100%; justify-content:center; margin-top:6px;">
           Sign In
@@ -344,8 +361,32 @@
 
     let authMode = 'signin';
 
+    function togglePasswordVisibility() {
+      const passInput = document.getElementById('auth-pass');
+      const eyeIcon = document.getElementById('eye-icon');
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        eyeIcon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+      } else {
+        passInput.type = 'password';
+        eyeIcon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        `;
+      }
+    }
+
     function openAuthModal(mode = 'signin') {
       authMode = mode;
+      const passInput = document.getElementById('auth-pass');
+      passInput.type = 'password';
+      document.getElementById('eye-icon').innerHTML = `
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      `;
       document.getElementById('auth-modal').style.display = 'flex';
       const isUp = (mode === 'signup');
       document.getElementById('auth-title').textContent = isUp ? 'Create Your Atlas' : 'Welcome Back';
