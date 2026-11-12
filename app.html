@@ -628,7 +628,7 @@
         <div id="catalog-suggestions" class="catalog-suggest-box"></div>
       </div>
 
-      <!-- GPX Upload (pro Completed a Planned; u Bucket listu jen volitelný náhled) -->
+      <!-- GPX Upload -->
       <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 11px; text-align: center; background: #f8fafc; cursor: pointer;">
         <span id="gpx-label" style="font-size:0.82rem; font-weight:700; color:#007aff;">📁 Drop watch track (.GPX) — Optional</span>
         <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
@@ -674,9 +674,7 @@
         </div>
       </div>
 
-      <!-- ==================================================== -->
-      <!-- POUZE PRO: COMPLETED (Výsledek, umístění, barometry) -->
-      <!-- ==================================================== -->
+      <!-- POUZE PRO: COMPLETED -->
       <div id="fields-for-done" style="display:flex; flex-direction:column; gap:12px;">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div>
@@ -708,9 +706,7 @@
         </div>
       </div>
 
-      <!-- ==================================================== -->
-      <!-- POUZE PRO: PLANNED (Cílový čas & Logistika)          -->
-      <!-- ==================================================== -->
+      <!-- POUZE PRO: PLANNED -->
       <div id="fields-for-planned" style="display:none; flex-direction:column; gap:12px;">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div>
@@ -729,9 +725,7 @@
         </div>
       </div>
 
-      <!-- ==================================================== -->
-      <!-- PRO PLANNED I BUCKET LIST (Obtížnost & Rozpočet)     -->
-      <!-- ==================================================== -->
+      <!-- PRO PLANNED I BUCKET LIST -->
       <div id="fields-for-planning-common" style="display:none; grid-template-columns: 1fr 1fr; gap: 8px;">
         <div>
           <label class="form-group-label">Difficulty</label>
@@ -1053,7 +1047,6 @@
     function selectStatusMode(mode) {
       chipSelections.status = mode;
 
-      // Vizuální zvýraznění karty nahoře
       document.querySelectorAll('#status-mode-selector .status-mode-card').forEach(card => {
         card.classList.toggle('active', card.dataset.mode === mode);
       });
@@ -1091,7 +1084,7 @@
         fieldsDone.style.display = 'none';
         fieldsPlanned.style.display = 'none';
         fieldsPlanningCommon.style.display = 'grid';
-        wrapNotes.style.display = 'none'; // U bucket listu stačí stručné "Why"
+        wrapNotes.style.display = 'none';
         labelWhy.textContent = "Why is this on my dream bucket list?";
         inputWhy.placeholder = "e.g. Iconic mountain ridges, lifelong marathon goal...";
       }
@@ -1348,7 +1341,6 @@
           </div>
         `;
       } else if (item.status === 'planned') {
-        // Výpočet odpočtu dnů do startu
         let countdownText = item.date || 'Upcoming';
         if (item.date && item.date.includes('-')) {
           const diffDays = Math.ceil((new Date(item.date) - new Date()) / (1000 * 60 * 60 * 24));
@@ -1675,15 +1667,21 @@
           why: document.getElementById('form-why').value,
           notes: status === 'bucket' ? '' : document.getElementById('form-notes').value,
           coords: finalCoords,
-          result_time: status === 'done' ? (document.getElementById('form-finish-simple').value.trim() || null) : null,
-          placement: status === 'done' ? (document.getElementById('form-placement').value.trim() || null) : null,
-          ambition_time: status === 'planned' ? (document.getElementById('form-target-ambition').value.trim() || null) : null,
-          logistics_transport: status === 'planned' ? document.getElementById('form-logistics-transport').value : null,
-          cost: status !== 'done' ? document.getElementById('form-cost').value : null,
-          satisfaction: status === 'done' ? (parseInt(document.getElementById('form-satisfaction').value) || 8) : null,
-          course_satisfaction: status === 'done' ? (parseInt(document.getElementById('form-course-satisfaction').value) || 9) : null,
           is_memorable: (currentMode === 'memorable')
         };
+
+        if (status === 'done') {
+          record.result_time = document.getElementById('form-finish-simple').value.trim() || null;
+          record.placement = document.getElementById('form-placement').value.trim() || null;
+          record.satisfaction = parseInt(document.getElementById('form-satisfaction').value) || 8;
+          record.course_satisfaction = parseInt(document.getElementById('form-course-satisfaction').value) || 9;
+        } else if (status === 'planned') {
+          record.ambition_time = document.getElementById('form-target-ambition').value.trim() || null;
+          record.logistics_transport = document.getElementById('form-logistics-transport').value || null;
+          record.cost = document.getElementById('form-cost').value || null;
+        } else if (status === 'bucket') {
+          record.cost = document.getElementById('form-cost').value || null;
+        }
 
         if (pendingCatalogImageUrl) record.image_url = pendingCatalogImageUrl;
         if (parsedGpxCoords) record.route_coords = parsedGpxCoords;
