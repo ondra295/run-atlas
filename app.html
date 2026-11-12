@@ -97,7 +97,13 @@
       background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px; padding: 14px 18px;
       color: #ffffff; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); flex: 1;
-      display: flex; flex-direction: column; justify-content: center;
+      display: flex; flex-direction: column; justify-content: center; transition: all 0.2s ease;
+    }
+    .hud-box.clickable {
+      cursor: pointer; border-color: rgba(56, 189, 248, 0.55);
+    }
+    .hud-box.clickable:hover {
+      background: rgba(30, 41, 59, 0.96); border-color: #38bdf8; transform: translateY(-2px);
     }
     .hud-box-metric { font-size: 1.4rem; font-weight: 800; color: #38bdf8; line-height: 1.15; }
     .hud-box-sub { font-size: 0.82rem; font-weight: 600; color: #e2e8f0; margin-top: 2px; }
@@ -113,7 +119,9 @@
       position: absolute; top: -14px; right: -10px; background: #0f172a; border: 1px solid #334155;
       color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center;
       justify-content: center; cursor: pointer; font-size: 1rem; pointer-events: auto;
+      transition: all 0.15s;
     }
+    .hud-close-btn:hover { background: #1e293b; color: #ffffff; border-color: #38bdf8; }
 
     /* Context menu */
     #map-context-menu {
@@ -178,35 +186,42 @@
       background: #ffffff; border-radius: 8px; border: 1px solid #cbd5e1;
     }
 
-    #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px; background: #f1f5f9; }
+    #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; background: #f1f5f9; }
 
-    /* Visual rich cards */
+    /* ČISTÉ HORIZONTÁLNÍ KARTY SE ČTVERCOVÝM NÁHLEDEM VLEVO (BEZ OŘÍZNUTÍ) */
     .race-card-rich {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
       overflow: hidden; cursor: pointer; transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04); display: flex; flex-direction: column;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04); display: flex; flex-direction: row; align-items: stretch;
     }
     .race-card-rich:hover { border-color: #007aff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.15); }
     
-    .card-banner-img {
-      width: 100%; height: 75px; object-fit: cover; background: #0f172a; position: relative;
-    }
-    .card-banner-overlay {
-      position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(15,23,42,0.6) 100%);
-      display: flex; justify-content: space-between; align-items: flex-end; padding: 8px 12px;
+    .card-thumb-left {
+      width: 96px; min-height: 96px; flex-shrink: 0; background-color: #0f172a;
+      background-size: cover; background-position: center; position: relative;
     }
 
-    .card-body-wrap { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
-    .card-title-text { font-size: 1.05rem; font-weight: 800; color: #0f172a; }
+    .card-body-wrap {
+      padding: 11px 14px; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px;
+    }
+    .card-meta-top {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    }
+    .card-date-lbl {
+      font-size: 0.72rem; font-weight: 700; color: #64748b; white-space: nowrap;
+    }
+    .card-title-text {
+      font-size: 0.98rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
     
     .card-stats-pill-row {
-      display: flex; gap: 8px; align-items: center; font-size: 0.78rem; font-weight: 700; color: #475569; flex-wrap: wrap;
+      display: flex; gap: 6px; align-items: center; font-size: 0.74rem; font-weight: 700; color: #475569; flex-wrap: wrap;
     }
     .card-stat-pill {
-      background: #f1f5f9; padding: 3px 8px; border-radius: 6px; border: 1px solid #e2e8f0;
+      background: #f8fafc; padding: 2px 7px; border-radius: 6px; border: 1px solid #e2e8f0;
     }
 
-    .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
+    .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
     .badge-done { background: #dcfce7; color: #166534; }
     .badge-planned { background: #fef3c7; color: #92400e; }
     .badge-bucket { background: #e0f2fe; color: #0369a1; }
@@ -238,7 +253,7 @@
     /* EDITORIAL JOURNAL DETAIL IN SIDEBAR */
     .detail-view-wrap { display: flex; flex-direction: column; gap: 14px; }
     .detail-hero-banner {
-      height: 120px; border-radius: 12px; overflow: hidden; background-size: cover; background-position: center;
+      height: 130px; border-radius: 12px; overflow: hidden; background-size: cover; background-position: center;
       position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.12);
     }
@@ -297,7 +312,6 @@
       max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
     }
 
-    /* 3-Step Visual Status Switcher at top of Modal */
     .status-selector-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
     }
@@ -484,9 +498,9 @@
       <div id="map-wrapper">
         <div id="map"></div>
 
-        <!-- PLOVOUCÍ TELEMETRICKÉ HUD KARTY (ODLIŠNÉ PRO COMPLETED / PLANNED / BUCKET) -->
+        <!-- PLOVOUCÍ TELEMETRICKÉ HUD KARTY -->
         <div id="floating-hud-panel">
-          <button class="hud-close-btn" onclick="closeHudPanel()">&times;</button>
+          <button class="hud-close-btn" title="Close & Zoom Out" onclick="exitDetailView()">&times;</button>
           <div class="hud-card-cluster" id="hud-cluster-content"></div>
         </div>
 
@@ -591,7 +605,7 @@
     </div>
   </div>
 
-  <!-- DYNAMICKÝ MODAL: NEJPRVE STATUS, PAK RELEVANTNÍ POLE -->
+  <!-- DYNAMICKÝ MODAL -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -602,7 +616,6 @@
         <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
       </div>
 
-      <!-- KROK 1: VÝBĚR STATUSU -->
       <div>
         <label class="form-group-label">1. What kind of entry is this? *</label>
         <div class="status-selector-grid" id="status-mode-selector">
@@ -621,20 +634,17 @@
         </div>
       </div>
 
-      <!-- SPOLEČNÁ ZÁKLADNÍ POLE -->
       <div style="position:relative;">
         <label class="form-group-label">2. Race / Route Title (or search catalog) *</label>
         <input id="form-name" class="stepped-input" type="text" placeholder="e.g. Berlin Marathon, UTMB, Boston..." oninput="handleCatalogQuickSearch(this.value)">
         <div id="catalog-suggestions" class="catalog-suggest-box"></div>
       </div>
 
-      <!-- GPX Upload -->
       <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 11px; text-align: center; background: #f8fafc; cursor: pointer;">
         <span id="gpx-label" style="font-size:0.82rem; font-weight:700; color:#007aff;">📁 Drop watch track (.GPX) — Optional</span>
         <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
       </div>
 
-      <!-- DYNAMICKÁ SEKCE A: DATUM VS TYPICKÝ MĚSÍC + POVRCH -->
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
         <div id="wrap-field-date">
           <label class="form-group-label">Event Date</label>
@@ -662,7 +672,6 @@
         </div>
       </div>
 
-      <!-- VZDÁLENOST & PŘEVÝŠENÍ -->
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
         <div>
           <label class="form-group-label">Distance</label>
@@ -746,7 +755,6 @@
         </div>
       </div>
 
-      <!-- POZNÁMKY / MOTIVACE -->
       <div>
         <label class="form-group-label" id="label-dynamic-why">The 'Why' & Motivation (Optional)</label>
         <input id="form-why" class="stepped-input" type="text" placeholder="What made this race special?">
@@ -773,6 +781,7 @@
     let isDemoMode = false;
     let currentMode = 'races';
     let currentRouteLayer = null;
+    let currentDetailItem = null; // Uchovává aktuálně otevřený závod
 
     let races = [];
     let featuredRacesList = [];
@@ -927,7 +936,13 @@
       userHomeCoords = coords;
       localStorage.setItem('runatlas_home_coords', JSON.stringify(coords));
       refreshHomeMarker();
-      map.flyTo(userHomeCoords, 6.5, { animate: true, duration: 1.2 });
+      
+      // Pokud je zrovna otevřený detail závodu, okamžitě přepočítáme HUD i pravý panel
+      if (currentDetailItem) {
+        showDetail(currentDetailItem);
+      } else {
+        map.flyTo(userHomeCoords, 6.5, { animate: true, duration: 1.2 });
+      }
     }
 
     // Init
@@ -1180,8 +1195,7 @@
       try {
         const { error } = await supabaseClient.from('races').delete().eq('id', id).eq('user_id', currentUser.id);
         if (error) throw error;
-        closeHudPanel();
-        if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
+        exitDetailView();
         await loadActivitiesFromDB(currentUser.id);
       } catch (e) {
         alert('Could not delete: ' + e.message);
@@ -1265,21 +1279,21 @@
         marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} &bull; ${item.surfaceLabel || ''}`);
         marker.on('click', () => showDetail(item));
 
+        // Čistá horizontální karta se čtvercovým náhledem vlevo
         const card = document.createElement('div');
         card.className = 'race-card-rich';
         const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80';
 
         card.innerHTML = `
-          <div class="card-banner-img" style="background-image: url('${cardImg}'); background-size: cover; background-position: center;">
-            <div class="card-banner-overlay">
+          <div class="card-thumb-left" style="background-image: url('${cardImg}');"></div>
+          <div class="card-body-wrap">
+            <div class="card-meta-top">
               <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
                 ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
               </span>
-              <span style="color:#ffffff; font-size:0.75rem; font-weight:800; text-shadow:0 1px 3px rgba(0,0,0,0.8);">${item.date || ''}</span>
+              <span class="card-date-lbl">${item.date || ''}</span>
             </div>
-          </div>
-          <div class="card-body-wrap">
-            <div class="card-title-text">${item.name}</div>
+            <div class="card-title-text" title="${item.name}">${item.name}</div>
             <div class="card-stats-pill-row">
               <span class="card-stat-pill">${item.distance || '-'}</span>
               <span class="card-stat-pill">${item.elevation || '-'}</span>
@@ -1301,7 +1315,11 @@
       cluster.innerHTML = '';
 
       const homeDist = computeDistanceFromHome(item.coords);
-      const homeDistLabel = homeDist !== null ? `${homeDist.toLocaleString()} km` : 'Set Home Base';
+      const hasHome = homeDist !== null;
+      const homeDistLabel = hasHome ? `${homeDist.toLocaleString()} km` : 'Set Home Base ➔';
+      const homeSubLabel = hasHome ? 'From Home Base' : 'Click to set your location';
+      const homeClickAttr = !hasHome ? `onclick="handleHomeBaseClick()"` : '';
+      const homeClickableClass = !hasHome ? 'clickable' : '';
 
       if (item.status === 'done') {
         const perfVal = item.satisfaction || 8;
@@ -1358,9 +1376,9 @@
             <div class="hud-box-sub">${item.distance || '-'} &bull; ${item.elevation || '-'}</div>
             <div class="hud-box-lbl">Target Goal & Course</div>
           </div>
-          <div class="hud-box">
+          <div class="hud-box ${homeClickableClass}" ${homeClickAttr}>
             <div class="hud-box-metric" style="color:#38bdf8;">${homeDistLabel}</div>
-            <div class="hud-box-sub">${item.logisticsTransport || 'Travel'} &bull; Budget: ${item.cost || '€€'}</div>
+            <div class="hud-box-sub">${hasHome ? (item.logisticsTransport || 'Travel') + ' &bull; Budget: ' + (item.cost || '€€') : homeSubLabel}</div>
             <div class="hud-box-lbl">Travel Logistics</div>
           </div>
         `;
@@ -1379,9 +1397,9 @@
             <div class="hud-box-sub">${item.elevation || 'Mountain / City'}</div>
             <div class="hud-box-lbl">Distance & Climb</div>
           </div>
-          <div class="hud-box">
-            <div class="hud-box-metric" style="color:#fbbf24;">${item.cost || '€€€'}</div>
-            <div class="hud-box-sub">${homeDistLabel} from Home</div>
+          <div class="hud-box ${homeClickableClass}" ${homeClickAttr}>
+            <div class="hud-box-metric" style="color:#fbbf24;">${hasHome ? (item.cost || '€€€') : homeDistLabel}</div>
+            <div class="hud-box-sub">${hasHome ? homeDistLabel + ' from Home' : homeSubLabel}</div>
             <div class="hud-box-lbl">Expedition Scope</div>
           </div>
         `;
@@ -1390,12 +1408,27 @@
       hud.style.display = 'flex';
     }
 
-    function closeHudPanel() {
+    // ZAVŘENÍ DETAILU A ODZOOMOVÁNÍ MAPY ZPĚT NA PŘEHLED
+    function exitDetailView() {
+      currentDetailItem = null;
       document.getElementById('floating-hud-panel').style.display = 'none';
+      if (currentRouteLayer) {
+        map.removeLayer(currentRouteLayer);
+        currentRouteLayer = null;
+      }
+      renderAll();
+
+      // Plynulé odzoomování zpět na celkový pohled
+      if (markerLayerGroup.getLayers().length > 1) {
+        map.flyToBounds(markerLayerGroup.getBounds(), { padding: [50, 50], maxZoom: 5.5, animate: true, duration: 1.1 });
+      } else {
+        map.flyTo(userHomeCoords || [25.0, 10.0], userHomeCoords ? 5.2 : 2.5, { animate: true, duration: 1.1 });
+      }
     }
 
     // EDITORIAL DETAIL V SIDEBARU
     function showDetail(item) {
+      currentDetailItem = item;
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
       const content = document.getElementById('content');
       
@@ -1419,7 +1452,7 @@
       content.innerHTML = `
         <div class="detail-view-wrap">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <button class="back-btn" onclick="renderAll(); closeHudPanel();">← Back to activities</button>
+            <button class="back-btn" onclick="exitDetailView()">← Back to activities</button>
             <div style="display:flex; gap:6px;">
               <button class="action-btn-secondary" onclick="openEditActivityModal('${item.id}')">✏️ Edit</button>
               <button class="action-btn-danger" onclick="deleteActivity('${item.id}')">🗑️ Delete</button>
@@ -1456,9 +1489,9 @@
           ` : ''}
 
           <div class="spec-sheet-grid">
-            <div class="spec-cell">
+            <div class="spec-cell" style="${homeDist === null ? 'cursor:pointer; border-color:#007aff;' : ''}" ${homeDist === null ? 'onclick="handleHomeBaseClick()"' : ''}>
               <small>Distance from Home</small>
-              <strong>${homeDist !== null ? homeDist.toLocaleString() + ' km' : 'Set Home Base'}</strong>
+              <strong style="${homeDist === null ? 'color:#007aff;' : ''}">${homeDist !== null ? homeDist.toLocaleString() + ' km' : 'Set Home Base ➔'}</strong>
             </div>
             <div class="spec-cell">
               <small>${item.status === 'done' ? 'Placement' : 'Estimated Budget'}</small>
@@ -1472,7 +1505,8 @@
     function renderStatsView() {
       const content = document.getElementById('content');
       document.getElementById('stats-label').textContent = 'Milestones summary';
-      closeHudPanel();
+      currentDetailItem = null;
+      document.getElementById('floating-hud-panel').style.display = 'none';
 
       let totalKm = 0;
       let totalEle = 0;
