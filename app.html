@@ -99,8 +99,9 @@
       color: #ffffff; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); flex: 1;
       display: flex; flex-direction: column; justify-content: center;
     }
-    .hud-box-metric { font-size: 1.45rem; font-weight: 800; color: #38bdf8; line-height: 1.1; }
-    .hud-box-lbl { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; margin-top: 2px; }
+    .hud-box-metric { font-size: 1.4rem; font-weight: 800; color: #38bdf8; line-height: 1.15; }
+    .hud-box-sub { font-size: 0.82rem; font-weight: 600; color: #e2e8f0; margin-top: 2px; }
+    .hud-box-lbl { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; margin-top: 4px; }
 
     /* HUD Barometers */
     .hud-barometer-row { display: flex; flex-direction: column; gap: 3px; margin: 3px 0; }
@@ -234,7 +235,7 @@
       color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 700;
     }
 
-    /* PŘEPRACOVANÝ DETAIL V SIDEBARU (EDITORIAL JOURNAL STYLE) */
+    /* EDITORIAL JOURNAL DETAIL IN SIDEBAR */
     .detail-view-wrap { display: flex; flex-direction: column; gap: 14px; }
     .detail-hero-banner {
       height: 120px; border-radius: 12px; overflow: hidden; background-size: cover; background-position: center;
@@ -271,6 +272,12 @@
     .spec-cell small { font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px; }
     .spec-cell strong { font-size: 0.92rem; font-weight: 800; color: #0f172a; }
 
+    /* Stats View */
+    .stats-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+    .stat-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; text-align: center; }
+    .stat-box-num { font-size: 1.5rem; font-weight: 800; color: #007aff; line-height: 1.2; }
+    .stat-box-lbl { font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 2px; }
+
     /* Map Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
     .pin-circle {
@@ -279,7 +286,7 @@
     }
     .pin-circle:hover { transform: scale(1.25); }
 
-    /* Modal */
+    /* Modal & Status Selector Cards */
     .modal-backdrop {
       display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
@@ -289,6 +296,26 @@
       max-width: 600px; width: 100%; color: #0f172a; display: flex; flex-direction: column; gap: 14px;
       max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
     }
+
+    /* 3-Step Visual Status Switcher at top of Modal */
+    .status-selector-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    }
+    .status-mode-card {
+      border: 2px solid #e2e8f0; background: #f8fafc; border-radius: 12px; padding: 10px 12px;
+      cursor: pointer; transition: all 0.15s; text-align: left; display: flex; flex-direction: column; gap: 2px;
+    }
+    .status-mode-card:hover { border-color: #94a3b8; background: #ffffff; }
+    .status-mode-card strong { font-size: 0.86rem; font-weight: 800; color: #0f172a; }
+    .status-mode-card span { font-size: 0.7rem; color: #64748b; line-height: 1.25; }
+
+    .status-mode-card.active[data-mode="done"] { border-color: #16a34a; background: #f0fdf4; }
+    .status-mode-card.active[data-mode="done"] strong { color: #166534; }
+    .status-mode-card.active[data-mode="planned"] { border-color: #d97706; background: #fffbeb; }
+    .status-mode-card.active[data-mode="planned"] strong { color: #92400e; }
+    .status-mode-card.active[data-mode="bucket"] { border-color: #0284c7; background: #f0f9ff; }
+    .status-mode-card.active[data-mode="bucket"] strong { color: #0369a1; }
+
     .form-group-label { font-size: 0.74rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 4px; display: block; }
     .stepped-input {
       padding: 10px 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;
@@ -335,6 +362,7 @@
       #sidebar.mobile-open { transform: translateY(0); }
       #map-wrapper { width: 100%; height: calc(100vh - 110px); }
       #floating-hud-panel { left: 12px; right: 12px; bottom: 70px; }
+      .status-selector-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -423,7 +451,7 @@
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1 2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
           </span>
           <span>Settings</span>
@@ -456,7 +484,7 @@
       <div id="map-wrapper">
         <div id="map"></div>
 
-        <!-- PLOVOUCÍ TELEMETRICKÉ HUD KARTY S BAROMETRY -->
+        <!-- PLOVOUCÍ TELEMETRICKÉ HUD KARTY (ODLIŠNÉ PRO COMPLETED / PLANNED / BUCKET) -->
         <div id="floating-hud-panel">
           <button class="hud-close-btn" onclick="closeHudPanel()">&times;</button>
           <div class="hud-card-cluster" id="hud-cluster-content"></div>
@@ -563,31 +591,50 @@
     </div>
   </div>
 
-  <!-- ADD / EDIT ACTIVITY MODAL (SE VŠEMI POSUVNÍKY) -->
+  <!-- DYNAMICKÝ MODAL: NEJPRVE STATUS, PAK RELEVANTNÍ POLE -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
           <h3 id="step1-modal-title" style="font-size: 1.3rem; font-weight: 800; color:#0f172a;">Add to Atlas</h3>
-          <p style="font-size:0.8rem; color:#64748b;">Type a race name or enter your own custom run.</p>
+          <p style="font-size:0.8rem; color:#64748b;">1. Choose activity status &bull; 2. Fill in matching details</p>
         </div>
         <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
       </div>
 
-      <!-- Quick Search & Autocomplete -->
+      <!-- KROK 1: VÝBĚR STATUSU -->
+      <div>
+        <label class="form-group-label">1. What kind of entry is this? *</label>
+        <div class="status-selector-grid" id="status-mode-selector">
+          <div class="status-mode-card active" data-mode="done" onclick="selectStatusMode('done')">
+            <strong>🏁 Completed</strong>
+            <span>Log finish time & race review</span>
+          </div>
+          <div class="status-mode-card" data-mode="planned" onclick="selectStatusMode('planned')">
+            <strong>📅 Planned</strong>
+            <span>Registered / upcoming target</span>
+          </div>
+          <div class="status-mode-card" data-mode="bucket" onclick="selectStatusMode('bucket')">
+            <strong>⭐️ Bucket List</strong>
+            <span>Future dream race or trail</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPOLEČNÁ ZÁKLADNÍ POLE -->
       <div style="position:relative;">
-        <label class="form-group-label">Search World Catalog or Enter Custom Name *</label>
+        <label class="form-group-label">2. Race / Route Title (or search catalog) *</label>
         <input id="form-name" class="stepped-input" type="text" placeholder="e.g. Berlin Marathon, UTMB, Boston..." oninput="handleCatalogQuickSearch(this.value)">
         <div id="catalog-suggestions" class="catalog-suggest-box"></div>
       </div>
 
-      <!-- GPX Drag & Drop -->
-      <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 12px; text-align: center; background: #f8fafc; cursor: pointer;">
-        <span id="gpx-label" style="font-size:0.84rem; font-weight:700; color:#007aff;">📁 Upload watch track (.GPX file)</span>
+      <!-- GPX Upload (pro Completed a Planned; u Bucket listu jen volitelný náhled) -->
+      <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 11px; text-align: center; background: #f8fafc; cursor: pointer;">
+        <span id="gpx-label" style="font-size:0.82rem; font-weight:700; color:#007aff;">📁 Drop watch track (.GPX) — Optional</span>
         <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
       </div>
 
-      <!-- Date or Month -->
+      <!-- DYNAMICKÁ SEKCE A: DATUM VS TYPICKÝ MĚSÍC + POVRCH -->
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
         <div id="wrap-field-date">
           <label class="form-group-label">Event Date</label>
@@ -595,9 +642,9 @@
         </div>
 
         <div id="wrap-field-month" style="display:none;">
-          <label class="form-group-label">Typical Month</label>
+          <label class="form-group-label">Typical Season / Month</label>
           <select id="form-month-select" class="stepped-input">
-            <option value="" disabled selected>Select month...</option>
+            <option value="">Anytime / Unknown</option>
             <option value="1">January</option><option value="2">February</option><option value="3">March</option>
             <option value="4">April</option><option value="5">May</option><option value="6">June</option>
             <option value="7">July</option><option value="8">August</option><option value="9">September</option>
@@ -606,34 +653,16 @@
         </div>
 
         <div>
-          <label class="form-group-label">Status *</label>
-          <div class="chips-group" id="chips-status" style="margin-top:2px;">
-            <div class="chip-btn" data-val="done" onclick="selectChip('status', 'done')">Completed</div>
-            <div class="chip-btn" data-val="planned" onclick="selectChip('status', 'planned')">Planned</div>
-            <div class="chip-btn" data-val="bucket" onclick="selectChip('status', 'bucket')">Bucket list</div>
-          </div>
-        </div>
-      </div>
-
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div>
           <label class="form-group-label">Surface</label>
-          <div class="chips-group" id="chips-surface">
+          <div class="chips-group" id="chips-surface" style="margin-top:2px;">
             <div class="chip-btn" data-val="trail" onclick="selectChip('surface', 'trail')">Trail</div>
             <div class="chip-btn" data-val="road" onclick="selectChip('surface', 'road')">Road</div>
             <div class="chip-btn" data-val="mixed" onclick="selectChip('surface', 'mixed')">Mixed</div>
           </div>
         </div>
-        <div>
-          <label class="form-group-label">Difficulty</label>
-          <div class="chips-group" id="chips-difficulty">
-            <div class="chip-btn" data-val="snadna" onclick="selectChip('difficulty', 'snadna')">Easy</div>
-            <div class="chip-btn" data-val="stredni" onclick="selectChip('difficulty', 'stredni')">Moderate</div>
-            <div class="chip-btn" data-val="tezka" onclick="selectChip('difficulty', 'tezka')">Hard</div>
-          </div>
-        </div>
       </div>
 
+      <!-- VZDÁLENOST & PŘEVÝŠENÍ -->
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
         <div>
           <label class="form-group-label">Distance</label>
@@ -645,44 +674,93 @@
         </div>
       </div>
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div>
-          <label class="form-group-label">Finish Time (Optional)</label>
-          <input id="form-finish-simple" class="stepped-input" type="text" placeholder="e.g. 3:14:22">
-        </div>
-        <div>
-          <label class="form-group-label">Target / Goal Ambition</label>
-          <input id="form-target-ambition" class="stepped-input" type="text" placeholder="e.g. Sub 3:15:00">
-        </div>
-      </div>
-
-      <!-- DVA BAROMETRY SPOKOJENOSTI -->
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div class="slider-box-wrap">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label class="form-group-label" style="margin:0;">Performance satisfaction</label>
-            <strong id="label-perf-satisfaction" style="color:#16a34a; font-size:0.85rem;">8 / 10</strong>
+      <!-- ==================================================== -->
+      <!-- POUZE PRO: COMPLETED (Výsledek, umístění, barometry) -->
+      <!-- ==================================================== -->
+      <div id="fields-for-done" style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label class="form-group-label">Official Finish Time</label>
+            <input id="form-finish-simple" class="stepped-input" type="text" placeholder="e.g. 3:14:22">
           </div>
-          <input type="range" id="form-satisfaction" min="1" max="10" value="8" style="accent-color:#16a34a;" oninput="document.getElementById('label-perf-satisfaction').textContent = this.value + ' / 10'">
-        </div>
-
-        <div class="slider-box-wrap">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label class="form-group-label" style="margin:0;">Course / Race satisfaction</label>
-            <strong id="label-course-satisfaction" style="color:#0284c7; font-size:0.85rem;">9 / 10</strong>
+          <div>
+            <label class="form-group-label">Placement (Optional)</label>
+            <input id="form-placement" class="stepped-input" type="text" placeholder="e.g. 42nd / 431">
           </div>
-          <input type="range" id="form-course-satisfaction" min="1" max="10" value="9" style="accent-color:#0284c7;" oninput="document.getElementById('label-course-satisfaction').textContent = this.value + ' / 10'">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div class="slider-box-wrap">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="form-group-label" style="margin:0;">Performance</label>
+              <strong id="label-perf-satisfaction" style="color:#16a34a; font-size:0.85rem;">8 / 10</strong>
+            </div>
+            <input type="range" id="form-satisfaction" min="1" max="10" value="8" style="accent-color:#16a34a;" oninput="document.getElementById('label-perf-satisfaction').textContent = this.value + ' / 10'">
+          </div>
+
+          <div class="slider-box-wrap">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="form-group-label" style="margin:0;">Course & Vibe</label>
+              <strong id="label-course-satisfaction" style="color:#0284c7; font-size:0.85rem;">9 / 10</strong>
+            </div>
+            <input type="range" id="form-course-satisfaction" min="1" max="10" value="9" style="accent-color:#0284c7;" oninput="document.getElementById('label-course-satisfaction').textContent = this.value + ' / 10'">
+          </div>
         </div>
       </div>
 
-      <div>
-        <label class="form-group-label">My 'Why' & Motivation (Optional)</label>
-        <input id="form-why" class="stepped-input" type="text" placeholder="What made this event meaningful?">
+      <!-- ==================================================== -->
+      <!-- POUZE PRO: PLANNED (Cílový čas & Logistika)          -->
+      <!-- ==================================================== -->
+      <div id="fields-for-planned" style="display:none; flex-direction:column; gap:12px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label class="form-group-label">Target Time / Goal</label>
+            <input id="form-target-ambition" class="stepped-input" type="text" placeholder="e.g. Sub 3:15:00">
+          </div>
+          <div>
+            <label class="form-group-label">Transport Mode</label>
+            <select id="form-logistics-transport" class="stepped-input">
+              <option value="Car">Car</option>
+              <option value="Plane">Plane</option>
+              <option value="Train">Train</option>
+              <option value="Local">Local / Public Transit</option>
+            </select>
+          </div>
+        </div>
       </div>
 
+      <!-- ==================================================== -->
+      <!-- PRO PLANNED I BUCKET LIST (Obtížnost & Rozpočet)     -->
+      <!-- ==================================================== -->
+      <div id="fields-for-planning-common" style="display:none; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div>
+          <label class="form-group-label">Difficulty</label>
+          <div class="chips-group" id="chips-difficulty">
+            <div class="chip-btn" data-val="snadna" onclick="selectChip('difficulty', 'snadna')">Easy</div>
+            <div class="chip-btn" data-val="stredni" onclick="selectChip('difficulty', 'stredni')">Moderate</div>
+            <div class="chip-btn" data-val="tezka" onclick="selectChip('difficulty', 'tezka')">Hard</div>
+          </div>
+        </div>
+        <div>
+          <label class="form-group-label">Estimated Budget</label>
+          <select id="form-cost" class="stepped-input">
+            <option value="€">€ (Local / low cost)</option>
+            <option value="€€" selected>€€ (Weekend trip)</option>
+            <option value="€€€">€€€ (Flight / hotel stay)</option>
+            <option value="€€€€">€€€€ (Major expedition)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- POZNÁMKY / MOTIVACE -->
       <div>
-        <label class="form-group-label">Race Report & Terrain Notes</label>
-        <textarea id="form-notes" class="stepped-input" placeholder="Pacing notes, nutrition, weather, terrain quirks..." style="height:65px;"></textarea>
+        <label class="form-group-label" id="label-dynamic-why">The 'Why' & Motivation (Optional)</label>
+        <input id="form-why" class="stepped-input" type="text" placeholder="What made this race special?">
+      </div>
+
+      <div id="wrap-field-notes">
+        <label class="form-group-label" id="label-dynamic-notes">Race Report & Field Notes</label>
+        <textarea id="form-notes" class="stepped-input" placeholder="Pacing notes, terrain details, fueling..." style="height:60px;"></textarea>
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:14px;">
@@ -790,6 +868,17 @@
       }
     }
 
+    // Výpočet vzdálenosti od Home Base (km)
+    function computeDistanceFromHome(targetCoords) {
+      if (!userHomeCoords || !targetCoords) return null;
+      const rad = Math.PI / 180;
+      const dLat = (targetCoords[0] - userHomeCoords[0]) * rad;
+      const dLon = (targetCoords[1] - userHomeCoords[1]) * rad;
+      const a = Math.sin(dLat / 2)**2 + Math.cos(userHomeCoords[0] * rad) * Math.cos(targetCoords[0] * rad) * Math.sin(dLon / 2)**2;
+      const dist = 6371 * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+      return Math.round(dist);
+    }
+
     // Home Base
     function refreshHomeMarker() {
       const homeLabel = document.getElementById('floating-home-label');
@@ -860,8 +949,9 @@
         document.getElementById('label-user').textContent = "Demo User";
         document.getElementById('main-title').textContent = "Race Atlas (Demo)";
         races = [
-          { id: "demo-1", name: "Dresden Half Marathon", date: "2026-10-24", month: 10, coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€", distance: "21.1 km", elevation: "+110 m", why: "Flat course along Elbe.", notes: "Target 4:07/km.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80", satisfaction: 8, course_satisfaction: 9 },
-          { id: "demo-2", name: "Helsinki Marathon", date: "2026-08-22", month: 8, coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€€€", distance: "42.2 km", elevation: "+226 m", resultTime: "3:11:04", why: "First marathon.", notes: "Even split.", image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=400&q=80", satisfaction: 9, course_satisfaction: 8 }
+          { id: "demo-1", name: "Dresden Half Marathon", date: "2026-10-24", month: 10, coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€", distance: "21.1 km", elevation: "+110 m", ambitionTime: "Sub 1:25:00", logisticsTransport: "Car", why: "Flat course along Elbe.", notes: "Target 4:01/km.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80" },
+          { id: "demo-2", name: "Helsinki Marathon", date: "2026-08-22", month: 8, coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€€€", distance: "42.2 km", elevation: "+226 m", resultTime: "3:11:04", placement: "38th / 1240", why: "First northern marathon.", notes: "Even split.", image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=400&q=80", satisfaction: 9, course_satisfaction: 8 },
+          { id: "demo-3", name: "UTMB Mont-Blanc", date: "August", month: 8, coords: [45.9237, 6.8694], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "extremni", cost: "€€€€", distance: "171 km", elevation: "+10,000 m", why: "Ultimate alpine loop around Mont Blanc.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" }
         ];
         renderAll();
         return;
@@ -959,6 +1049,54 @@
       }
     }
 
+    // DYNAMICKÉ PŘEPÍNÁNÍ POLÍ VE FORMULÁŘI PODLE STATUSU
+    function selectStatusMode(mode) {
+      chipSelections.status = mode;
+
+      // Vizuální zvýraznění karty nahoře
+      document.querySelectorAll('#status-mode-selector .status-mode-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.mode === mode);
+      });
+
+      const wrapDate = document.getElementById('wrap-field-date');
+      const wrapMonth = document.getElementById('wrap-field-month');
+      const fieldsDone = document.getElementById('fields-for-done');
+      const fieldsPlanned = document.getElementById('fields-for-planned');
+      const fieldsPlanningCommon = document.getElementById('fields-for-planning-common');
+      const wrapNotes = document.getElementById('wrap-field-notes');
+      const labelWhy = document.getElementById('label-dynamic-why');
+      const inputWhy = document.getElementById('form-why');
+
+      if (mode === 'done') {
+        wrapDate.style.display = 'block';
+        wrapMonth.style.display = 'none';
+        fieldsDone.style.display = 'flex';
+        fieldsPlanned.style.display = 'none';
+        fieldsPlanningCommon.style.display = 'none';
+        wrapNotes.style.display = 'block';
+        labelWhy.textContent = "The 'Why' & Motivation (Optional)";
+        inputWhy.placeholder = "What made this race special?";
+      } else if (mode === 'planned') {
+        wrapDate.style.display = 'block';
+        wrapMonth.style.display = 'none';
+        fieldsDone.style.display = 'none';
+        fieldsPlanned.style.display = 'flex';
+        fieldsPlanningCommon.style.display = 'grid';
+        wrapNotes.style.display = 'block';
+        labelWhy.textContent = "Goal & Preparation Focus (Optional)";
+        inputWhy.placeholder = "What is your main focus for this race?";
+      } else if (mode === 'bucket') {
+        wrapDate.style.display = 'none';
+        wrapMonth.style.display = 'block';
+        fieldsDone.style.display = 'none';
+        fieldsPlanned.style.display = 'none';
+        fieldsPlanningCommon.style.display = 'grid';
+        wrapNotes.style.display = 'none'; // U bucket listu stačí stručné "Why"
+        labelWhy.textContent = "Why is this on my dream bucket list?";
+        inputWhy.placeholder = "e.g. Iconic mountain ridges, lifelong marathon goal...";
+      }
+    }
+
     function handleCatalogQuickSearch(q) {
       const box = document.getElementById('catalog-suggestions');
       const val = q.trim().toLowerCase();
@@ -993,7 +1131,6 @@
       pendingCatalogImageUrl = r.image_url || null;
 
       selectChip('surface', r.surface || 'road');
-      selectChip('status', 'done');
     }
 
     function openEditActivityModal(id) {
@@ -1004,14 +1141,17 @@
       resetActivityForm();
 
       editingActivityId = item.id;
-      document.getElementById('step1-modal-title').textContent = `Edit Activity: ${item.name}`;
+      document.getElementById('step1-modal-title').textContent = `Edit: ${item.name}`;
       document.getElementById('form-name').value = item.name || '';
       document.getElementById('form-distance').value = item.distance || '';
       document.getElementById('form-elevation').value = item.elevation || '';
       document.getElementById('form-notes').value = item.notes || '';
       document.getElementById('form-why').value = item.why || '';
       document.getElementById('form-finish-simple').value = item.resultTime || '';
+      document.getElementById('form-placement').value = item.placement || '';
       document.getElementById('form-target-ambition').value = item.ambitionTime || '';
+      if (item.cost) document.getElementById('form-cost').value = item.cost;
+      if (item.logisticsTransport) document.getElementById('form-logistics-transport').value = item.logisticsTransport;
 
       const perfVal = item.satisfaction || 8;
       const courseVal = item.course_satisfaction || 9;
@@ -1020,7 +1160,7 @@
       document.getElementById('form-course-satisfaction').value = courseVal;
       document.getElementById('label-course-satisfaction').textContent = courseVal + ' / 10';
 
-      selectChip('status', item.status || 'done');
+      selectStatusMode(item.status || 'done');
       selectChip('surface', item.surface || 'road');
       selectChip('difficulty', item.difficulty || 'stredni');
 
@@ -1151,7 +1291,8 @@
               <span class="card-stat-pill">${item.distance || '-'}</span>
               <span class="card-stat-pill">${item.elevation || '-'}</span>
               <span class="card-stat-pill">${item.surfaceLabel || 'Road'}</span>
-              ${item.resultTime ? `<span class="card-stat-pill" style="color:#16a34a; font-weight:800; background:#dcfce7; border-color:#bbf7d0;">⏱️ ${item.resultTime}</span>` : ''}
+              ${item.status === 'done' && item.resultTime ? `<span class="card-stat-pill" style="color:#16a34a; font-weight:800; background:#dcfce7; border-color:#bbf7d0;">⏱️ ${item.resultTime}</span>` : ''}
+              ${item.status === 'planned' && item.ambitionTime ? `<span class="card-stat-pill" style="color:#b45309; font-weight:800; background:#fef3c7; border-color:#fde68a;">🎯 ${item.ambitionTime}</span>` : ''}
             </div>
           </div>
         `;
@@ -1160,11 +1301,14 @@
       });
     }
 
-    // FLOATING TELEMETRIC HUD BAR S DVĚMA BAROMETRY SPOKOJENOSTI
+    // 3 ODLIŠNÉ SADY HUD BOXŮ PRO COMPLETED / PLANNED / BUCKET LIST
     function showFloatingHud(item) {
       const hud = document.getElementById('floating-hud-panel');
       const cluster = document.getElementById('hud-cluster-content');
       cluster.innerHTML = '';
+
+      const homeDist = computeDistanceFromHome(item.coords);
+      const homeDistLabel = homeDist !== null ? `${homeDist.toLocaleString()} km` : 'Set Home Base';
 
       if (item.status === 'done') {
         const perfVal = item.satisfaction || 8;
@@ -1173,11 +1317,13 @@
         cluster.innerHTML = `
           <div class="hud-box">
             <div class="hud-box-metric">${item.resultTime || 'Finished'}</div>
-            <div class="hud-box-lbl">Official Finish Time</div>
+            <div class="hud-box-sub">${item.placement || 'Official Finish'}</div>
+            <div class="hud-box-lbl">Performance Result</div>
           </div>
           <div class="hud-box">
-            <div class="hud-box-metric" style="color:#f8fafc;">${item.distance || '-'} <span style="font-size:0.9rem; color:#94a3b8;">(${item.elevation || '-'})</span></div>
-            <div class="hud-box-lbl">${item.surfaceLabel || 'Road'} &bull; ${item.placement || 'Finished'}</div>
+            <div class="hud-box-metric" style="color:#f8fafc;">${item.distance || '-'}</div>
+            <div class="hud-box-sub">${item.elevation || '-'} &bull; ${item.surfaceLabel || 'Road'}</div>
+            <div class="hud-box-lbl">Course Profile</div>
           </div>
           <div class="hud-box" style="flex: 1.15;">
             <div class="hud-barometer-row">
@@ -1189,7 +1335,6 @@
                 <div class="hud-barometer-fill" style="width: ${perfVal * 10}%; background:#16a34a;"></div>
               </div>
             </div>
-
             <div class="hud-barometer-row" style="margin-top:4px;">
               <div class="hud-barometer-meta">
                 <span>Course & Vibe:</span>
@@ -1203,33 +1348,49 @@
           </div>
         `;
       } else if (item.status === 'planned') {
+        // Výpočet odpočtu dnů do startu
+        let countdownText = item.date || 'Upcoming';
+        if (item.date && item.date.includes('-')) {
+          const diffDays = Math.ceil((new Date(item.date) - new Date()) / (1000 * 60 * 60 * 24));
+          countdownText = diffDays > 0 ? `In ${diffDays} days` : (diffDays === 0 ? 'Race Day!' : 'Date passed');
+        }
+
         cluster.innerHTML = `
           <div class="hud-box">
-            <div class="hud-box-metric" style="color:#ff9f0a;">${item.ambitionTime || 'Finish strong'}</div>
-            <div class="hud-box-lbl">Target Time & Goal</div>
+            <div class="hud-box-metric" style="color:#ff9f0a;">${countdownText}</div>
+            <div class="hud-box-sub">${item.date || 'Scheduled'}</div>
+            <div class="hud-box-lbl">Race Countdown</div>
           </div>
           <div class="hud-box">
-            <div class="hud-box-metric" style="color:#f8fafc;">${item.distance || '-'}</div>
-            <div class="hud-box-lbl">${item.elevation || '-'} Elevation</div>
+            <div class="hud-box-metric" style="color:#f8fafc;">${item.ambitionTime || 'Finish strong'}</div>
+            <div class="hud-box-sub">${item.distance || '-'} &bull; ${item.elevation || '-'}</div>
+            <div class="hud-box-lbl">Target Goal & Course</div>
           </div>
           <div class="hud-box">
-            <div class="hud-box-metric" style="color:#38bdf8;">${item.logisticsDist ? item.logisticsDist + ' km' : 'Calculated'}</div>
-            <div class="hud-box-lbl">${item.logisticsTransport || 'Travel'} &bull; Distance from Home</div>
+            <div class="hud-box-metric" style="color:#38bdf8;">${homeDistLabel}</div>
+            <div class="hud-box-sub">${item.logisticsTransport || 'Travel'} &bull; Budget: ${item.cost || '€€'}</div>
+            <div class="hud-box-lbl">Travel Logistics</div>
           </div>
         `;
-      } else { // bucket
+      } else { // BUCKET LIST
+        const diffMap = { snadna: 'Easy', stredni: 'Moderate', tezka: 'Hard', extremni: 'Extreme' };
+        const diffLabel = diffMap[item.difficulty] || 'Moderate';
+
         cluster.innerHTML = `
           <div class="hud-box">
-            <div class="hud-box-metric" style="color:#38bdf8;">Bucket List</div>
-            <div class="hud-box-lbl">Typical Season: ${item.date || 'TBD'}</div>
+            <div class="hud-box-metric" style="color:#38bdf8;">${item.date || 'Anytime'}</div>
+            <div class="hud-box-sub">${item.surfaceLabel || 'Trail'} &bull; ${diffLabel}</div>
+            <div class="hud-box-lbl">Ideal Season & Terrain</div>
           </div>
           <div class="hud-box">
-            <div class="hud-box-metric" style="color:#f8fafc;">${item.distance || '-'}</div>
-            <div class="hud-box-lbl">${item.surfaceLabel || 'Trail'} &bull; ${item.elevation || '-'}</div>
+            <div class="hud-box-metric" style="color:#f8fafc;">${item.distance || 'TBD'}</div>
+            <div class="hud-box-sub">${item.elevation || 'Mountain / City'}</div>
+            <div class="hud-box-lbl">Distance & Climb</div>
           </div>
           <div class="hud-box">
-            <div class="hud-box-metric" style="color:#fbbf24;">${item.cost || '€€'}</div>
-            <div class="hud-box-lbl">Estimated Expedition Budget</div>
+            <div class="hud-box-metric" style="color:#fbbf24;">${item.cost || '€€€'}</div>
+            <div class="hud-box-sub">${homeDistLabel} from Home</div>
+            <div class="hud-box-lbl">Expedition Scope</div>
           </div>
         `;
       }
@@ -1241,14 +1402,13 @@
       document.getElementById('floating-hud-panel').style.display = 'none';
     }
 
-    // PŘEPRACOVANÝ DETAIL V SIDEBARU (BEZ DUPLICIT S HUDEM)
+    // EDITORIAL DETAIL V SIDEBARU
     function showDetail(item) {
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
       const content = document.getElementById('content');
       
       showFloatingHud(item);
 
-      // 1. CHYTRÝ ZOOM: S GPX fitting nebo bez GPX přímý let na zoom 11
       if (zavodniTrasy[item.id]) {
         const coords = zavodniTrasy[item.id];
         currentRouteLayer = L.featureGroup([
@@ -1262,6 +1422,7 @@
       }
 
       const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80';
+      const homeDist = computeDistanceFromHome(item.coords);
 
       content.innerHTML = `
         <div class="detail-view-wrap">
@@ -1273,7 +1434,6 @@
             </div>
           </div>
 
-          <!-- Hero Cover Banner -->
           <div class="detail-hero-banner" style="background-image: url('${cardImg}');">
             <div class="detail-hero-overlay"></div>
             <div class="detail-hero-content">
@@ -1282,55 +1442,36 @@
               </span>
               <h2 style="font-size:1.35rem; font-weight:800; line-height:1.2; text-shadow:0 2px 8px rgba(0,0,0,0.8);">${item.name}</h2>
               <div style="font-size:0.78rem; opacity:0.9; margin-top:2px;">
-                ${item.date || 'Undated'} &bull; ${item.surfaceLabel || 'Road'} &bull; Cost: ${item.cost || '€€'}
+                ${item.date || 'Undated'} &bull; ${item.surfaceLabel || 'Road'}
               </div>
             </div>
           </div>
 
-          <!-- Editorial The Why Section -->
           ${item.why ? `
             <div class="editorial-quote-card">
-              <small style="color:#007aff; font-weight:800; font-size:0.68rem; text-transform:uppercase; display:block; margin-bottom:4px; font-style:normal; letter-spacing:0.5px;">The Motivation & Why</small>
+              <small style="color:#007aff; font-weight:800; font-size:0.68rem; text-transform:uppercase; display:block; margin-bottom:4px; font-style:normal; letter-spacing:0.5px;">
+                ${item.status === 'bucket' ? 'Why This Is On My Bucket List' : 'The Motivation & Why'}
+              </small>
               „${item.why}“
             </div>
           ` : ''}
 
-          <!-- Race Report / Field Notes -->
           ${item.notes ? `
             <div class="report-sheet-card">
-              <h4>Race Report & Field Notes</h4>
+              <h4>${item.status === 'done' ? 'Race Report & Field Notes' : 'Preparation & Route Notes'}</h4>
               <p>${item.notes}</p>
             </div>
-          ` : `
-            <div class="report-sheet-card" style="border-style:dashed; background:#f8fafc;">
-              <p style="color:#94a3b8; font-size:0.82rem; font-style:italic;">No notes logged for this run yet. Click Edit to add course quirks or fueling notes.</p>
-            </div>
-          `}
+          ` : ''}
 
-          <!-- Contextual Spec Sheet (Logistics, Goals, Venue) -->
           <div class="spec-sheet-grid">
             <div class="spec-cell">
-              <small>Target Ambition</small>
-              <strong>${item.ambitionTime || 'Finish strong'}</strong>
+              <small>Distance from Home</small>
+              <strong>${homeDist !== null ? homeDist.toLocaleString() + ' km' : 'Set Home Base'}</strong>
             </div>
             <div class="spec-cell">
-              <small>Placement</small>
-              <strong>${item.placement || 'Not recorded'}</strong>
+              <small>${item.status === 'done' ? 'Placement' : 'Estimated Budget'}</small>
+              <strong>${item.status === 'done' ? (item.placement || 'Finisher') : (item.cost || '€€')}</strong>
             </div>
-            <div class="spec-cell">
-              <small>From Home Base</small>
-              <strong>${item.logisticsDist ? item.logisticsDist + ' km' : 'Calculated'}</strong>
-            </div>
-            <div class="spec-cell">
-              <small>Travel Logistics</small>
-              <strong>${item.logisticsTransport || 'Car / Local'}</strong>
-            </div>
-          </div>
-
-          <!-- Re-run Verdict -->
-          <div style="background:#f1f5f9; border:1px solid #e2e8f0; border-radius:10px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:0.8rem; font-weight:700; color:#475569;">Would run it again:</span>
-            <span style="font-size:0.8rem; font-weight:800; color:#0f172a; text-transform:uppercase;">${item.repeat === 'yes' ? '✅ Definitely' : item.repeat === 'maybe' ? '🤔 Maybe' : '❌ Once was enough'}</span>
           </div>
         </div>
       `;
@@ -1400,7 +1541,6 @@
       document.querySelectorAll(`#chips-${category} .chip-btn`).forEach(btn => {
         btn.classList.toggle('active', btn.dataset.val === value);
       });
-      if (category === 'status') handleStatusChange(value);
     }
 
     function resetActivityForm() {
@@ -1413,19 +1553,20 @@
       document.getElementById('form-why').value = '';
       document.getElementById('form-notes').value = '';
       document.getElementById('form-finish-simple').value = '';
+      document.getElementById('form-placement').value = '';
       document.getElementById('form-target-ambition').value = '';
       document.getElementById('form-satisfaction').value = 8;
       document.getElementById('label-perf-satisfaction').textContent = '8 / 10';
       document.getElementById('form-course-satisfaction').value = 9;
       document.getElementById('label-course-satisfaction').textContent = '9 / 10';
-      document.getElementById('gpx-label').textContent = '📁 Upload watch track (.GPX file)';
+      document.getElementById('gpx-label').textContent = '📁 Drop watch track (.GPX) — Optional';
       document.getElementById('catalog-suggestions').style.display = 'none';
 
       parsedGpxCoords = null;
       parsedCenterCoords = null;
       pendingCatalogImageUrl = null;
 
-      selectChip('status', 'done');
+      selectStatusMode('done');
       selectChip('surface', 'road');
       selectChip('difficulty', 'stredni');
     }
@@ -1435,24 +1576,12 @@
       resetActivityForm();
       document.getElementById('step1-modal-title').textContent = (forcedMode === 'memorable') ? 'Add Memorable Run' : 'Add to Atlas';
       document.getElementById('add-modal').style.display = 'flex';
-      if (forcedMode === 'memorable') selectChip('status', 'done');
+      if (forcedMode === 'memorable') selectStatusMode('done');
     }
 
     function closeModals() {
       document.querySelectorAll('.modal-backdrop').forEach(m => m.style.display = 'none');
       resetActivityForm();
-    }
-
-    function handleStatusChange(status) {
-      const wrapDate = document.getElementById('wrap-field-date');
-      const wrapMonth = document.getElementById('wrap-field-month');
-      if (status === 'bucket') {
-        wrapDate.style.display = 'none';
-        wrapMonth.style.display = 'block';
-      } else {
-        wrapDate.style.display = 'block';
-        wrapMonth.style.display = 'none';
-      }
     }
 
     document.getElementById('drop-gpx').addEventListener('click', () => document.getElementById('input-gpx').click());
@@ -1544,12 +1673,15 @@
           distance: document.getElementById('form-distance').value,
           elevation: document.getElementById('form-elevation').value,
           why: document.getElementById('form-why').value,
-          notes: document.getElementById('form-notes').value,
+          notes: status === 'bucket' ? '' : document.getElementById('form-notes').value,
           coords: finalCoords,
-          result_time: document.getElementById('form-finish-simple').value.trim() || null,
-          ambition_time: document.getElementById('form-target-ambition').value.trim() || null,
-          satisfaction: parseInt(document.getElementById('form-satisfaction').value) || 8,
-          course_satisfaction: parseInt(document.getElementById('form-course-satisfaction').value) || 9,
+          result_time: status === 'done' ? (document.getElementById('form-finish-simple').value.trim() || null) : null,
+          placement: status === 'done' ? (document.getElementById('form-placement').value.trim() || null) : null,
+          ambition_time: status === 'planned' ? (document.getElementById('form-target-ambition').value.trim() || null) : null,
+          logistics_transport: status === 'planned' ? document.getElementById('form-logistics-transport').value : null,
+          cost: status !== 'done' ? document.getElementById('form-cost').value : null,
+          satisfaction: status === 'done' ? (parseInt(document.getElementById('form-satisfaction').value) || 8) : null,
+          course_satisfaction: status === 'done' ? (parseInt(document.getElementById('form-course-satisfaction').value) || 9) : null,
           is_memorable: (currentMode === 'memorable')
         };
 
@@ -1568,7 +1700,7 @@
 
         closeModals();
         await loadActivitiesFromDB(currentUser.id);
-        map.panTo(finalCoords, { animate: true });
+        map.flyTo(finalCoords, 11, { animate: true });
       } catch (err) {
         alert('Error: ' + err.message);
       } finally {
@@ -1639,7 +1771,6 @@
 
       const statusWrap = document.getElementById('status-boxes-wrap');
       const filtersWrap = document.getElementById('filters-section-wrap');
-      const addBtn = document.getElementById('btn-add-activity');
 
       if (mode === 'races') {
         document.getElementById('main-title').textContent = 'Race Atlas';
