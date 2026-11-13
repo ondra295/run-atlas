@@ -5,10 +5,6 @@
   <title>Running Atlas — Interactive Map & Route Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Driver.js -->
-  <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
-
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%2338bdf8' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
@@ -122,6 +118,51 @@
     /* Map & Sidebar */
     #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #e2e8f0; }
     #map { width: 100%; height: 100%; background: #e2e8f0; z-index: 1; }
+
+    /* FULLSCREEN STATS DASHBOARD PANE */
+    #stats-full-view {
+      display: none; flex: 1; height: 100%; overflow-y: auto; background: #f8f9fb; padding: 36px 28px;
+    }
+    .stats-dashboard-container {
+      max-width: 1020px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;
+    }
+    .stats-top-kpis {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    }
+    .kpi-hero-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;
+      box-shadow: 0 4px 16px rgba(15,23,42,0.04); display: flex; flex-direction: column; gap: 6px;
+    }
+    .kpi-hero-val { font-size: 1.95rem; font-weight: 800; color: #0f172a; line-height: 1.1; }
+    .kpi-hero-lbl { font-size: 0.74rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.6px; }
+    .kpi-hero-sub { font-size: 0.76rem; color: #16a34a; font-weight: 700; margin-top: 2px; }
+
+    .stats-two-col {
+      display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px;
+    }
+    .stats-panel-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px;
+      box-shadow: 0 4px 16px rgba(15,23,42,0.04); display: flex; flex-direction: column; gap: 16px;
+    }
+    .stats-panel-header {
+      display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;
+    }
+    .stats-panel-header h3 { font-size: 1.1rem; font-weight: 800; color: #0f172a; }
+
+    .discipline-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    }
+    .discipline-box {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 10px; text-align: center;
+    }
+    .discipline-num { font-size: 1.45rem; font-weight: 800; color: #007aff; }
+    .discipline-lbl { font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-top: 2px; }
+
+    .country-pill-list { display: flex; gap: 8px; flex-wrap: wrap; }
+    .country-pill {
+      background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 0.8rem;
+      font-weight: 700; padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;
+    }
 
     /* FLOATING TELEMETRY HUD BAR OVER MAP */
     #floating-hud-panel {
@@ -326,26 +367,6 @@
     .spec-cell small { font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px; }
     .spec-cell strong { font-size: 0.92rem; font-weight: 800; color: #0f172a; }
 
-    /* Stats View */
-    .stats-section-block {
-      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px;
-      display: flex; flex-direction: column; gap: 12px; box-shadow: 0 2px 6px rgba(15,23,42,0.03);
-    }
-    .stats-section-header {
-      display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;
-    }
-    .stats-section-header h3 { font-size: 0.95rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px; }
-    .stats-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .stat-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 10px; text-align: center; }
-    .stat-box-num { font-size: 1.35rem; font-weight: 800; color: #007aff; line-height: 1.15; }
-    .stat-box-lbl { font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-top: 3px; }
-
-    .country-pill-list { display: flex; gap: 6px; flex-wrap: wrap; }
-    .country-pill {
-      background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 0.74rem;
-      font-weight: 700; padding: 4px 10px; border-radius: 20px;
-    }
-
     /* Map Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
     .pin-circle {
@@ -354,16 +375,68 @@
     }
     .pin-circle:hover { transform: scale(1.25); }
 
-    /* Modal & Status Selector Cards */
+    /* Modals & Dialogs */
     .modal-backdrop {
-      display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
+      display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.68);
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
     }
     .stepped-modal-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 26px;
       max-width: 600px; width: 100%; color: #0f172a; display: flex; flex-direction: column; gap: 14px;
-      max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+      max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
     }
+
+    /* Custom App Dialog (Replaces browser confirm / prompt) */
+    .custom-dialog-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 28px;
+      max-width: 420px; width: 100%; color: #0f172a; display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.4); text-align: center;
+    }
+    .dialog-icon-circle {
+      width: 52px; height: 52px; border-radius: 50%; background: #eff6ff; color: #007aff;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 1.5rem;
+    }
+    .dialog-icon-circle.danger { background: #fee2e2; color: #dc2626; }
+
+    /* Toast Notification */
+    #toast-container {
+      position: fixed; top: 68px; right: 20px; z-index: 100000;
+      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+    }
+    .app-toast {
+      background: #0f172a; color: #ffffff; border: 1px solid #334155; border-left: 4px solid #38bdf8;
+      padding: 12px 18px; border-radius: 10px; font-size: 0.84rem; font-weight: 700;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35); display: flex; align-items: center; gap: 10px;
+      animation: toastSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: auto;
+    }
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Interactive Visual Tour Modal */
+    .tour-card {
+      background: #0f172a; border: 1px solid #334155; border-radius: 22px; overflow: hidden;
+      max-width: 520px; width: 100%; color: #f8fafc; box-shadow: 0 28px 70px rgba(0,0,0,0.65);
+      display: flex; flex-direction: column;
+    }
+    .tour-visual-stage {
+      height: 190px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: center;
+      padding: 24px; position: relative;
+    }
+    .tour-body { padding: 28px; display: flex; flex-direction: column; gap: 12px; }
+    .tour-step-badge {
+      font-size: 0.7rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px;
+    }
+    .tour-title { font-size: 1.4rem; font-weight: 800; color: #ffffff; line-height: 1.25; }
+    .tour-desc { font-size: 0.9rem; color: #94a3b8; line-height: 1.6; }
+    .tour-footer {
+      display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 16px; border-top: 1px solid #1e293b;
+    }
+    .tour-dots { display: flex; gap: 6px; }
+    .tour-dot { width: 8px; height: 8px; border-radius: 50%; background: #334155; transition: all 0.2s; }
+    .tour-dot.active { width: 22px; border-radius: 4px; background: #007aff; }
 
     .status-selector-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
@@ -429,11 +502,14 @@
       #sidebar.mobile-open { transform: translateY(0); }
       #map-wrapper { width: 100%; height: calc(100vh - 110px); }
       #floating-hud-panel { left: 12px; right: 12px; bottom: 70px; }
-      .status-selector-grid { grid-template-columns: 1fr; }
+      .status-selector-grid, .stats-top-kpis, .stats-two-col { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+
+  <!-- PLOVOUCÍ TOAST NOTIFIKACE -->
+  <div id="toast-container"></div>
 
   <div id="app-layout">
     <!-- TOP BAR -->
@@ -453,7 +529,7 @@
         </svg>
       </a>
 
-      <!-- SPOTLIGHT SEARCH S OKAMŽITÝM DROPDOWNEM -->
+      <!-- SPOTLIGHT SEARCH -->
       <div class="top-search-wrap" id="top-search-container">
         <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Jump to race or search catalog..." autocomplete="off" oninput="handleSpotlightSearch(this.value)" onfocus="handleSpotlightSearch(this.value)">
         <button id="search-clear-btn" class="search-clear-btn" onclick="clearSpotlightSearch()">&times;</button>
@@ -461,6 +537,9 @@
       </div>
 
       <div class="top-bar-right">
+        <button class="pill-btn" onclick="openWelcomeTour()" style="background:#1e293b; border-color:#334155; color:#38bdf8;" title="Interactive Guide">
+          🗺️ Quick Tour
+        </button>
         <button id="btn-add-activity" class="open-detail-btn" onclick="openAddModal()">➕ Add to Atlas</button>
         
         <button id="btn-profile" class="pill-btn" onclick="toggleProfileDropdown()" style="background:#1e293b; border-color:#334155; color:#f8fafc;">
@@ -551,6 +630,11 @@
           <span>Support & Ideas</span>
         </a>
       </nav>
+
+      <!-- CELOOBRAZOVKOVÉ STATISTIKY (MILESTONES & STATS) -->
+      <div id="stats-full-view">
+        <div id="stats-dashboard-content" class="stats-dashboard-container"></div>
+      </div>
 
       <!-- MAPA & HUD OVERLAY -->
       <div id="map-wrapper">
@@ -663,7 +747,63 @@
     </div>
   </div>
 
-  <!-- DYNAMICKÝ MODAL -->
+  <!-- 1. VLASTNÍ STYLOVÉ POTVRZOVACÍ OKNO (MÍSTO PROHLÍŽEČOVÉHO CONFIRM) -->
+  <div id="custom-confirm-modal" class="modal-backdrop">
+    <div class="custom-dialog-card">
+      <div id="confirm-icon-box" class="dialog-icon-circle">👋</div>
+      <h3 id="confirm-title" style="font-size:1.25rem; font-weight:800; color:#0f172a;">Confirm Action</h3>
+      <p id="confirm-msg" style="font-size:0.88rem; color:#64748b; line-height:1.5;"></p>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:8px;">
+        <button class="pill-btn" style="padding:9px 18px; font-size:0.84rem;" onclick="closeCustomConfirm()">Cancel</button>
+        <button id="confirm-ok-btn" class="open-detail-btn" style="padding:9px 20px; font-size:0.84rem;">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. VLASTNÍ MODAL PRO NASTAVENÍ HOME BASE (MÍSTO PROHLÍŽEČOVÉHO PROMPTU) -->
+  <div id="homebase-modal" class="modal-backdrop">
+    <div class="custom-dialog-card" style="text-align:left; max-width:440px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:1.25rem; font-weight:800; color:#0f172a;">🏠 Set Home Base</h3>
+        <button onclick="document.getElementById('homebase-modal').style.display='none'" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+      <p style="font-size:0.84rem; color:#64748b; line-height:1.5;">
+        Your Home Base centers your map and automatically calculates travel distances to all planned and bucket-list races.
+      </p>
+      <div>
+        <label class="form-group-label">City or Address</label>
+        <input type="text" id="homebase-city-input" class="stepped-input" placeholder="e.g. Slaný, Czechia or Prague" onkeydown="if(event.key==='Enter') confirmHomeBaseModal()">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:6px;">
+        <button class="pill-btn" onclick="document.getElementById('homebase-modal').style.display='none'">Cancel</button>
+        <button id="btn-save-homebase" class="open-detail-btn" onclick="confirmHomeBaseModal()">Save Home Base</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. VIZUÁLNÍ INTERAKTIVNÍ PRŮVODCE (WELCOME TOUR) -->
+  <div id="welcome-tour-modal" class="modal-backdrop">
+    <div class="tour-card">
+      <div class="tour-visual-stage" id="tour-stage-graphic">
+        <!-- SVG ilustrace se mění podle kroku -->
+      </div>
+      <div class="tour-body">
+        <span class="tour-step-badge" id="tour-step-label">STEP 1 OF 4</span>
+        <h3 class="tour-title" id="tour-step-title">Welcome to Running Atlas</h3>
+        <p class="tour-desc" id="tour-step-desc"></p>
+
+        <div class="tour-footer">
+          <div class="tour-dots" id="tour-dots-wrap"></div>
+          <div style="display:flex; gap:8px;">
+            <button class="pill-btn" style="background:transparent; border-color:#334155; color:#94a3b8;" onclick="closeWelcomeTour()">Skip</button>
+            <button id="tour-next-btn" class="open-detail-btn" onclick="nextTourStep()">Next ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ADD / EDIT ACTIVITY MODAL -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -859,6 +999,139 @@
     let chipSelections = { status: 'done', surface: 'road', difficulty: 'stredni' };
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
+    // ==========================================
+    // SYSTÉM VLASTNÍCH MODÁLŮ & TOAST NOTIFIKACÍ
+    // ==========================================
+    function showToast(message, icon = '✨') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'app-toast';
+      toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.25s';
+        setTimeout(() => toast.remove(), 250);
+      }, 3200);
+    }
+
+    let confirmCallback = null;
+    function openCustomConfirm({ title, message, icon = '👋', isDanger = false, confirmText = 'Confirm', onConfirm }) {
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-msg').textContent = message;
+      const iconBox = document.getElementById('confirm-icon-box');
+      iconBox.textContent = icon;
+      iconBox.className = 'dialog-icon-circle' + (isDanger ? ' danger' : '');
+
+      const okBtn = document.getElementById('confirm-ok-btn');
+      okBtn.textContent = confirmText;
+      okBtn.style.background = isDanger ? '#dc2626' : '#007aff';
+
+      confirmCallback = onConfirm;
+      okBtn.onclick = () => {
+        closeCustomConfirm();
+        if (confirmCallback) confirmCallback();
+      };
+      document.getElementById('custom-confirm-modal').style.display = 'flex';
+    }
+
+    function closeCustomConfirm() {
+      document.getElementById('custom-confirm-modal').style.display = 'none';
+      confirmCallback = null;
+    }
+
+    // ==========================================
+    // VIZUÁLNÍ INTERAKTIVNÍ PRŮVODCE (TOUR)
+    // ==========================================
+    let currentTourStep = 0;
+    const tourSteps = [
+      {
+        badge: "STEP 1 OF 4 • YOUR RUNNING WORLD",
+        title: "Welcome to Running Atlas",
+        desc: "Unlike social feeds where your races disappear after 48 hours, Running Atlas pins every marathon, mountain trail, and future goal onto a permanent topographic canvas.",
+        svg: `<svg width="220" height="110" viewBox="0 0 220 110" fill="none">
+          <path d="M 15 85 Q 60 20 105 60 T 205 35" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <circle cx="60" cy="42" r="7" fill="#16a34a" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="105" cy="60" r="7" fill="#d97706" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="165" cy="45" r="7" fill="#0284c7" stroke="#fff" stroke-width="2.5"/>
+          <rect x="70" y="12" width="85" height="24" rx="6" fill="#0f172a" stroke="#334155"/>
+          <text x="80" y="28" fill="#f8fafc" font-size="10" font-weight="800">3 Race Modes</text>
+        </svg>`
+      },
+      {
+        badge: "STEP 2 OF 4 • SMART LOGGING",
+        title: "1-Click Catalog, GPX or Right-Click",
+        desc: "Click '+ Add to Atlas' to pick iconic World Majors, drop a .GPX watch file for exact route geometry, or simply right-click anywhere on the map to pin a run.",
+        svg: `<svg width="240" height="110" viewBox="0 0 240 110" fill="none">
+          <rect x="25" y="20" width="190" height="70" rx="12" fill="#0f172a" stroke="#007aff" stroke-width="2" stroke-dasharray="5 5"/>
+          <text x="52" y="52" fill="#38bdf8" font-size="12" font-weight="800">📁 Drop .GPX or Pick Major</text>
+          <text x="65" y="72" fill="#94a3b8" font-size="10">Auto-calculates km & climb</text>
+        </svg>`
+      },
+      {
+        badge: "STEP 3 OF 4 • TELEMETRY HUD",
+        title: "Tailored Data for Every Stage",
+        desc: "Click any race to fly to its course. Completed races display finish times & satisfaction barometers, Planned races show a live countdown, and Bucket List targets estimate travel budgets.",
+        svg: `<svg width="250" height="110" viewBox="0 0 250 110" fill="none">
+          <rect x="10" y="25" width="110" height="60" rx="10" fill="#0f172a" stroke="#334155"/>
+          <text x="22" y="54" fill="#38bdf8" font-size="15" font-weight="800">3:11:04</text>
+          <text x="22" y="72" fill="#94a3b8" font-size="8" font-weight="700">OFFICIAL FINISH</text>
+          <rect x="130" y="25" width="110" height="60" rx="10" fill="#0f172a" stroke="#334155"/>
+          <text x="142" y="46" fill="#4ade80" font-size="9" font-weight="800">Performance 9/10</text>
+          <rect x="142" y="52" width="80" height="5" rx="2.5" fill="#16a34a"/>
+          <text x="142" y="70" fill="#38bdf8" font-size="9" font-weight="800">Course Vibe 9/10</text>
+          <rect x="142" y="75" width="80" height="5" rx="2.5" fill="#0284c7"/>
+        </svg>`
+      },
+      {
+        badge: "STEP 4 OF 4 • ANALYTICS & HOME BASE",
+        title: "Home Base & Lifetime Milestones",
+        desc: "Set your Home Base in the bottom-left corner to calculate travel distances. Visit 'Milestones & Stats' in the left menu for a full-screen breakdown of your countries and distances.",
+        svg: `<svg width="230" height="110" viewBox="0 0 230 110" fill="none">
+          <circle cx="55" cy="55" r="24" fill="#007aff" stroke="#fff" stroke-width="3"/>
+          <path d="M45 57 L55 47 L65 57 V65 H45 Z" fill="#fff"/>
+          <path d="M 85 55 L 145 55" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="4 4"/>
+          <rect x="145" y="32" width="75" height="46" rx="8" fill="#0f172a" stroke="#334155"/>
+          <text x="157" y="55" fill="#f8fafc" font-size="12" font-weight="800">7 Countries</text>
+          <text x="157" y="69" fill="#94a3b8" font-size="8">FULL DASHBOARD</text>
+        </svg>`
+      }
+    ];
+
+    function openWelcomeTour() {
+      currentTourStep = 0;
+      renderTourStep();
+      document.getElementById('welcome-tour-modal').style.display = 'flex';
+    }
+
+    function renderTourStep() {
+      const s = tourSteps[currentTourStep];
+      document.getElementById('tour-stage-graphic').innerHTML = s.svg;
+      document.getElementById('tour-step-label').textContent = s.badge;
+      document.getElementById('tour-step-title').textContent = s.title;
+      document.getElementById('tour-step-desc').textContent = s.desc;
+
+      const dotsWrap = document.getElementById('tour-dots-wrap');
+      dotsWrap.innerHTML = tourSteps.map((_, idx) => `<div class="tour-dot ${idx === currentTourStep ? 'active' : ''}"></div>`).join('');
+
+      const nextBtn = document.getElementById('tour-next-btn');
+      nextBtn.textContent = (currentTourStep === tourSteps.length - 1) ? 'Explore Atlas 🚀' : 'Next ➔';
+    }
+
+    function nextTourStep() {
+      if (currentTourStep < tourSteps.length - 1) {
+        currentTourStep++;
+        renderTourStep();
+      } else {
+        closeWelcomeTour();
+      }
+    }
+
+    function closeWelcomeTour() {
+      document.getElementById('welcome-tour-modal').style.display = 'none';
+      localStorage.setItem('runatlas_tour_completed', 'true');
+    }
+
     // Map initialization
     const map = L.map('map', {
       center: userHomeCoords || [25.0, 10.0],
@@ -875,9 +1148,7 @@
     let markerLayerGroup = L.featureGroup().addTo(map);
     let homeMarker = null;
 
-    // ==========================================
-    // 1. SPOTLIGHT VYHLEDÁVÁNÍ V HORNÍ LIŠTĚ
-    // ==========================================
+    // Spotlight Search
     function handleSpotlightSearch(val) {
       const q = val.trim().toLowerCase();
       const dropdown = document.getElementById('spotlight-dropdown');
@@ -891,9 +1162,7 @@
         return;
       }
 
-      // 1. Hledání v mých uložených aktivitách
       const myMatches = races.filter(r => r.name.toLowerCase().includes(q) || (r.why && r.why.toLowerCase().includes(q))).slice(0, 5);
-      // 2. Hledání ve světovém katalogu (které ještě nemám v mapě)
       const catalogMatches = featuredRacesList.filter(c => {
         const inMyRaces = races.some(r => r.name.toLowerCase() === c.name.toLowerCase());
         return !inMyRaces && (c.name.toLowerCase().includes(q) || (c.location && c.location.toLowerCase().includes(q)));
@@ -965,6 +1234,7 @@
       clearSpotlightSearch();
       const item = races.find(r => r.id === id);
       if (!item) return;
+      if (currentMode === 'stats') switchPageMode('races');
       showDetail(item);
     }
 
@@ -1009,6 +1279,7 @@
 
       if (choice === 'home') {
         saveHomeCoordsQuick(contextClickLatLng);
+        showToast('Home Base updated on map!', '🏠');
       } else {
         openAddModal(choice);
         parsedCenterCoords = contextClickLatLng;
@@ -1020,7 +1291,7 @@
     }
 
     function exportDataJson() {
-      if (races.length === 0) { alert('No activities to export.'); return; }
+      if (races.length === 0) { showToast('No activities to export yet.', '📦'); return; }
       const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(races, null, 2));
       const a = document.createElement('a');
       a.setAttribute("href", str);
@@ -1028,16 +1299,25 @@
       document.body.appendChild(a);
       a.click();
       a.remove();
+      showToast('Atlas backup downloaded!', '📦');
     }
 
-    async function handleLogout() {
-      if (confirm('Log out of Running Atlas?')) {
-        await supabaseClient.auth.signOut();
-        window.location.href = 'index.html';
-      }
+    // Stylový odhlašovací dialog místo prohlížečového confirm()
+    function handleLogout() {
+      document.getElementById('profile-dropdown').classList.remove('show');
+      openCustomConfirm({
+        title: 'Log Out of Running Atlas?',
+        message: 'You can sign back in anytime to access your global map and race logs.',
+        icon: '🚪',
+        isDanger: false,
+        confirmText: 'Log Out',
+        onConfirm: async () => {
+          await supabaseClient.auth.signOut();
+          window.location.href = 'index.html';
+        }
+      });
     }
 
-    // Výpočet vzdálenosti od Home Base (km)
     function computeDistanceFromHome(targetCoords) {
       if (!userHomeCoords || !targetCoords) return null;
       const rad = Math.PI / 180;
@@ -1048,14 +1328,12 @@
       return Math.round(dist);
     }
 
-    // Geografická detekce země a kontinentu ze souřadnic pro statistiky
     function detectGeoFromCoords(coords, name = '') {
       if (!coords || coords.length < 2) return { country: 'Unknown', continent: 'Europe' };
       const lat = coords[0];
       const lng = coords[1];
       const lowName = name.toLowerCase();
 
-      // Kontinent
       let continent = 'Europe';
       if (lat > 15 && lng < -30) continent = 'North America';
       else if (lat <= 15 && lng < -30) continent = 'South America';
@@ -1063,7 +1341,6 @@
       else if (lat < -10 && lng > 110) continent = 'Oceania';
       else if (lng > 40 && lat >= 0) continent = 'Asia';
 
-      // Země podle klíčových souřadnic / názvů
       let country = 'Other';
       if (lowName.includes('prague') || lowName.includes('praha') || lowName.includes('běchovice') || (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9)) country = '🇨🇿 Czechia';
       else if (lowName.includes('berlin') || lowName.includes('dresden') || lowName.includes('munich') || (lat >= 47.2 && lat <= 55.0 && lng >= 6.0 && lng <= 15.0)) country = '🇩🇪 Germany';
@@ -1113,22 +1390,34 @@
         map.flyTo(userHomeCoords, 6.5, { animate: true, duration: 1.2 });
         refreshHomeMarker();
       } else {
-        const val = prompt('Enter your Home Base city or coordinates (e.g. Slany, Czechia):');
-        if (val) geocodeAndSaveHomeDirect(val);
+        document.getElementById('homebase-city-input').value = '';
+        document.getElementById('homebase-modal').style.display = 'flex';
+        setTimeout(() => document.getElementById('homebase-city-input').focus(), 50);
       }
     }
 
-    async function geocodeAndSaveHomeDirect(q) {
+    async function confirmHomeBaseModal() {
+      const q = document.getElementById('homebase-city-input').value.trim();
+      if (!q) return;
+      const btn = document.getElementById('btn-save-homebase');
+      btn.textContent = 'Searching...';
+      btn.disabled = true;
+
       try {
         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
         const data = await res.json();
         if (data && data.length > 0) {
+          document.getElementById('homebase-modal').style.display = 'none';
           saveHomeCoordsQuick([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
+          showToast(`Home Base set to ${data[0].display_name.split(',')[0]}!`, '🏠');
         } else {
-          alert('City not found.');
+          showToast('City not found. Try adding country name.', '⚠️');
         }
       } catch (e) {
-        alert('Could not set home base.');
+        showToast('Could not search city.', '⚠️');
+      } finally {
+        btn.textContent = 'Save Home Base';
+        btn.disabled = false;
       }
     }
 
@@ -1162,6 +1451,8 @@
           { id: "demo-3", name: "UTMB Mont-Blanc", date: "August", month: 8, coords: [45.9237, 6.8694], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "extremni", cost: "€€€€", distance: "171 km", elevation: "+10,000 m", why: "Ultimate alpine loop around Mont Blanc.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" }
         ];
         renderAll();
+        // V Demu se průvodce otevře VŽDY při načtení
+        setTimeout(() => openWelcomeTour(), 400);
         return;
       }
 
@@ -1175,6 +1466,11 @@
           const username = profile?.username || currentUser.email.split('@')[0];
           document.getElementById('label-user').textContent = username;
           await loadActivitiesFromDB(currentUser.id);
+
+          // U nového účtu (nebo pokud ještě neviděl tour) otevřeme průvodce
+          if (!localStorage.getItem('runatlas_tour_completed') || races.length === 0) {
+            setTimeout(() => openWelcomeTour(), 400);
+          }
           return;
         }
 
@@ -1386,18 +1682,28 @@
       document.getElementById('add-modal').style.display = 'flex';
     }
 
-    async function deleteActivity(id) {
-      if (!confirm('Are you sure you want to delete this activity?')) return;
-      if (!currentUser) return;
-
-      try {
-        const { error } = await supabaseClient.from('races').delete().eq('id', id).eq('user_id', currentUser.id);
-        if (error) throw error;
-        exitDetailView();
-        await loadActivitiesFromDB(currentUser.id);
-      } catch (e) {
-        alert('Could not delete: ' + e.message);
-      }
+    // Stylový dialog pro smazání závodu místo prohlížečového confirm()
+    function deleteActivity(id) {
+      const item = races.find(r => r.id === id);
+      openCustomConfirm({
+        title: 'Delete Activity?',
+        message: `Are you sure you want to permanently remove "${item ? item.name : 'this activity'}" from your atlas?`,
+        icon: '🗑️',
+        isDanger: true,
+        confirmText: 'Delete',
+        onConfirm: async () => {
+          if (!currentUser) return;
+          try {
+            const { error } = await supabaseClient.from('races').delete().eq('id', id).eq('user_id', currentUser.id);
+            if (error) throw error;
+            exitDetailView();
+            await loadActivitiesFromDB(currentUser.id);
+            showToast('Activity removed from atlas.', '🗑️');
+          } catch (e) {
+            showToast('Error deleting activity.', '⚠️');
+          }
+        }
+      });
     }
 
     function handleSortChange(val) {
@@ -1428,7 +1734,7 @@
       content.innerHTML = '';
 
       if (currentMode === 'stats') {
-        renderStatsView();
+        renderStatsFullDashboard();
         return;
       }
 
@@ -1604,7 +1910,6 @@
       hud.style.display = 'flex';
     }
 
-    // ZAVŘENÍ DETAILU A ODZOOMOVÁNÍ MAPY ZPĚT NA PŘEHLED
     function exitDetailView() {
       currentDetailItem = null;
       document.getElementById('floating-hud-panel').style.display = 'none';
@@ -1621,7 +1926,6 @@
       }
     }
 
-    // EDITORIAL DETAIL V SIDEBARU
     function showDetail(item) {
       currentDetailItem = item;
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
@@ -1698,11 +2002,10 @@
     }
 
     // ====================================================
-    // 2. ROZDĚLENÉ A OBOHACENÉ STATISTIKY (MILESTONES)
+    // CELOOBRAZOVKOVÝ DASHBOARD PRO MILESTONES & STATS
     // ====================================================
-    function renderStatsView() {
-      const content = document.getElementById('content');
-      document.getElementById('stats-label').textContent = 'Separated by race status & geography';
+    function renderStatsFullDashboard() {
+      const container = document.getElementById('stats-dashboard-content');
       currentDetailItem = null;
       document.getElementById('floating-hud-panel').style.display = 'none';
 
@@ -1712,14 +2015,13 @@
         return isNaN(n) ? 0 : n;
       };
 
-      // Rozdělení podle statusů
       const doneList = races.filter(r => r.status === 'done');
       const plannedList = races.filter(r => r.status === 'planned');
       const bucketList = races.filter(r => r.status === 'bucket');
 
-      // 1. Výpočty pro COMPLETED
       let doneKm = 0, doneEle = 0, roadCount = 0, trailCount = 0;
-      let marathons = 0, halfs = 0, ultras = 0;
+      let marathons = 0, halfs = 0, ultras = 0, tens = 0;
+      let perfSum = 0, courseSum = 0;
       const doneCountries = new Set();
       const doneContinents = new Set();
 
@@ -1732,24 +2034,28 @@
         if (d > 45) ultras++;
         else if (d >= 40 && d <= 45) marathons++;
         else if (d >= 20 && d <= 23) halfs++;
+        else if (d > 0) tens++;
+
+        perfSum += (r.satisfaction || 8);
+        courseSum += (r.course_satisfaction || 9);
 
         const geo = detectGeoFromCoords(r.coords, r.name);
         doneCountries.add(geo.country);
         doneContinents.add(geo.continent);
       });
 
+      const avgPerf = doneList.length ? (perfSum / doneList.length).toFixed(1) : '-';
+      const avgCourse = doneList.length ? (courseSum / doneList.length).toFixed(1) : '-';
       const totalSurface = (roadCount + trailCount) || 1;
       const roadPct = Math.round((roadCount / totalSurface) * 100);
       const trailPct = 100 - roadPct;
 
-      // 2. Výpočty pro PLANNED
       let plannedKm = 0, plannedEle = 0;
       plannedList.forEach(r => {
         plannedKm += parseNum(r.distance);
         plannedEle += parseNum(r.elevation);
       });
 
-      // 3. Výpočty pro BUCKET LIST
       let bucketKm = 0, bucketEle = 0;
       const bucketCountries = new Set();
       bucketList.forEach(r => {
@@ -1758,96 +2064,119 @@
         bucketCountries.add(detectGeoFromCoords(r.coords, r.name).country);
       });
 
-      content.innerHTML = `
-        <!-- BLOK 1: SKUTEČNĚ ODBĚHNUTO (COMPLETED) -->
-        <div class="stats-section-block">
-          <div class="stats-section-header">
-            <h3>🏆 Completed Footprint</h3>
-            <span class="badge badge-done">${doneList.length} Finished</span>
-          </div>
-
-          <div class="stats-card-grid">
-            <div class="stat-box">
-              <div class="stat-box-num" style="color:#16a34a;">${doneKm.toFixed(0)} km</div>
-              <div class="stat-box-lbl">Raced Distance</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-box-num" style="color:#16a34a;">+${doneEle.toLocaleString()} m</div>
-              <div class="stat-box-lbl">Total Climb</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-box-num">${doneCountries.size}</div>
-              <div class="stat-box-lbl">Countries Raced</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-box-num">${doneContinents.size}</div>
-              <div class="stat-box-lbl">Continents</div>
-            </div>
-          </div>
-
-          <!-- Rozpad disciplín -->
-          <div style="display:flex; justify-content:space-between; background:#f8fafc; padding:8px 12px; border-radius:8px; font-size:0.76rem; font-weight:700; color:#475569;">
-            <span>Ultras: <strong style="color:#0f172a;">${ultras}</strong></span>
-            <span>Marathons: <strong style="color:#0f172a;">${marathons}</strong></span>
-            <span>Halfs: <strong style="color:#0f172a;">${halfs}</strong></span>
-          </div>
-
-          <!-- Poměr Road vs Trail -->
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px;">
           <div>
-            <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:700; color:#64748b; margin-bottom:4px;">
-              <span>🛣️ Road (${roadPct}%)</span>
-              <span>⛰️ Trail (${trailPct}%)</span>
-            </div>
-            <div style="height:7px; width:100%; background:#e2e8f0; border-radius:4px; overflow:hidden; display:flex;">
-              <div style="width:${roadPct}%; background:#007aff;"></div>
-              <div style="width:${trailPct}%; background:#16a34a;"></div>
-            </div>
+            <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Milestones & Athletic Footprint</h1>
+            <p style="font-size:0.86rem; color:#64748b;">Separated analytics for completed races, scheduled targets, and dream expeditions.</p>
           </div>
+          <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
+        </div>
 
-          ${doneCountries.size > 0 ? `
-            <div>
-              <small style="font-size:0.68rem; font-weight:800; color:#64748b; text-transform:uppercase; display:block; margin-bottom:6px;">Visited Countries</small>
-              <div class="country-pill-list">
-                ${Array.from(doneCountries).map(c => `<span class="country-pill">${c}</span>`).join('')}
+        <!-- TOP 4 KPI CARDS (COMPLETED ONLY) -->
+        <div class="stats-top-kpis">
+          <div class="kpi-hero-card">
+            <span class="kpi-hero-lbl">Completed Distance</span>
+            <div class="kpi-hero-val" style="color:#16a34a;">${doneKm.toFixed(0)} km</div>
+            <span class="kpi-hero-sub">Across ${doneList.length} finished events</span>
+          </div>
+          <div class="kpi-hero-card">
+            <span class="kpi-hero-lbl">Total Elevation Gain</span>
+            <div class="kpi-hero-val" style="color:#007aff;">+${doneEle.toLocaleString()} m</div>
+            <span class="kpi-hero-sub">${trailPct}% Trail / ${roadPct}% Road</span>
+          </div>
+          <div class="kpi-hero-card">
+            <span class="kpi-hero-lbl">Geographic Reach</span>
+            <div class="kpi-hero-val">${doneCountries.size} <span style="font-size:1.05rem; color:#64748b; font-weight:700;">Countries</span></div>
+            <span class="kpi-hero-sub" style="color:#0284c7;">${doneContinents.size} Continents explored</span>
+          </div>
+          <div class="kpi-hero-card">
+            <span class="kpi-hero-lbl">Avg. Race Rating</span>
+            <div class="kpi-hero-val">${avgCourse}<span style="font-size:1rem; color:#94a3b8;">/10</span></div>
+            <span class="kpi-hero-sub">Form satisfaction: ${avgPerf}/10</span>
+          </div>
+        </div>
+
+        <!-- MIDDLE ROW: DISCIPLINE BREAKDOWN & GEOGRAPHY -->
+        <div class="stats-two-col">
+          <div class="stats-panel-card">
+            <div class="stats-panel-header">
+              <h3>🏁 Completed Race Breakdown</h3>
+              <span class="badge badge-done">${doneList.length} Total</span>
+            </div>
+
+            <div class="discipline-grid">
+              <div class="discipline-box">
+                <div class="discipline-num">${ultras}</div>
+                <div class="discipline-lbl">Ultras (>45k)</div>
+              </div>
+              <div class="discipline-box">
+                <div class="discipline-num">${marathons}</div>
+                <div class="discipline-lbl">Marathons</div>
+              </div>
+              <div class="discipline-box">
+                <div class="discipline-num">${halfs}</div>
+                <div class="discipline-lbl">Half Marathons</div>
+              </div>
+              <div class="discipline-box">
+                <div class="discipline-num">${tens}</div>
+                <div class="discipline-lbl">10K / Shorter</div>
               </div>
             </div>
-          ` : ''}
-        </div>
 
-        <!-- BLOK 2: PLÁNOVANÁ SEZÓNA (PLANNED) -->
-        <div class="stats-section-block">
-          <div class="stats-section-header">
-            <h3>📅 Upcoming Season</h3>
-            <span class="badge badge-planned">${plannedList.length} Planned</span>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.78rem; font-weight:700; color:#475569; margin-bottom:6px;">
+                <span>🛣️ Road Surface (${roadCount} races • ${roadPct}%)</span>
+                <span>⛰️ Trail & Mountain (${trailCount} races • ${trailPct}%)</span>
+              </div>
+              <div style="height:10px; width:100%; background:#e2e8f0; border-radius:6px; overflow:hidden; display:flex;">
+                <div style="width:${roadPct}%; background:#007aff;"></div>
+                <div style="width:${trailPct}%; background:#16a34a;"></div>
+              </div>
+            </div>
+
+            <div>
+              <small style="font-size:0.72rem; font-weight:800; color:#64748b; text-transform:uppercase; display:block; margin-bottom:8px;">Raced Countries & Territories</small>
+              <div class="country-pill-list">
+                ${doneCountries.size > 0 ? Array.from(doneCountries).map(c => `<span class="country-pill">${c}</span>`).join('') : '<span style="font-size:0.84rem; color:#94a3b8;">No completed races logged yet.</span>'}
+              </div>
+            </div>
           </div>
 
-          <div class="stats-card-grid">
-            <div class="stat-box">
-              <div class="stat-box-num" style="color:#d97706;">${plannedKm.toFixed(0)} km</div>
-              <div class="stat-box-lbl">Scheduled Distance</div>
+          <!-- RIGHT COLUMN: PLANNED & BUCKET LIST PIPELINE -->
+          <div style="display:flex; flex-direction:column; gap:20px;">
+            <div class="stats-panel-card">
+              <div class="stats-panel-header">
+                <h3>📅 Upcoming Season (Planned)</h3>
+                <span class="badge badge-planned">${plannedList.length} Scheduled</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="discipline-box">
+                  <div class="discipline-num" style="color:#d97706;">${plannedKm.toFixed(0)} km</div>
+                  <div class="discipline-lbl">Scheduled Volume</div>
+                </div>
+                <div class="discipline-box">
+                  <div class="discipline-num" style="color:#d97706;">+${plannedEle.toLocaleString()} m</div>
+                  <div class="discipline-lbl">Planned Climb</div>
+                </div>
+              </div>
             </div>
-            <div class="stat-box">
-              <div class="stat-box-num" style="color:#d97706;">+${plannedEle.toLocaleString()} m</div>
-              <div class="stat-box-lbl">Upcoming Climb</div>
-            </div>
-          </div>
-        </div>
 
-        <!-- BLOK 3: BUCKET LIST & SNY -->
-        <div class="stats-section-block">
-          <div class="stats-section-header">
-            <h3>⭐️ Dream Expeditions</h3>
-            <span class="badge badge-bucket">${bucketList.length} Targets</span>
-          </div>
-
-          <div class="stats-card-grid">
-            <div class="stat-box">
-              <div class="stat-box-num" style="color:#0284c7;">${bucketKm.toFixed(0)} km</div>
-              <div class="stat-box-lbl">Dream Distance</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-box-num" style="color:#0284c7;">${bucketCountries.size}</div>
-              <div class="stat-box-lbl">Target Countries</div>
+            <div class="stats-panel-card">
+              <div class="stats-panel-header">
+                <h3>⭐️ Bucket List Expeditions</h3>
+                <span class="badge badge-bucket">${bucketList.length} Dream Targets</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="discipline-box">
+                  <div class="discipline-num" style="color:#0284c7;">${bucketKm.toFixed(0)} km</div>
+                  <div class="discipline-lbl">Future Challenge</div>
+                </div>
+                <div class="discipline-box">
+                  <div class="discipline-num" style="color:#0284c7;">${bucketCountries.size}</div>
+                  <div class="discipline-lbl">Dream Countries</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1902,7 +2231,9 @@
     }
 
     function closeModals() {
-      document.querySelectorAll('.modal-backdrop').forEach(m => m.style.display = 'none');
+      document.querySelectorAll('.modal-backdrop').forEach(m => {
+        if (m.id !== 'welcome-tour-modal') m.style.display = 'none';
+      });
       resetActivityForm();
     }
 
@@ -1916,7 +2247,7 @@
         const parser = new DOMParser();
         const xml = parser.parseFromString(e.target.result, 'text/xml');
         const trkpts = xml.querySelectorAll('trkpt');
-        if (trkpts.length === 0) { alert('No trackpoints found in GPX.'); return; }
+        if (trkpts.length === 0) { showToast('No trackpoints found in GPX.', '⚠️'); return; }
 
         let latlngs = [], totalDist = 0, totalEle = 0, prevEle = null;
         for (let i = 0; i < trkpts.length; i++) {
@@ -1946,15 +2277,19 @@
         document.getElementById('form-distance').value = totalDist.toFixed(1) + ' km';
         document.getElementById('form-elevation').value = '+' + Math.round(totalEle) + ' m';
         document.getElementById('gpx-label').textContent = `Loaded track (${latlngs.length} pts, ${totalDist.toFixed(1)} km)`;
+        showToast('GPX route parsed!', '📍');
       };
       reader.readAsText(file);
     }
 
     async function saveActivityToSupabase() {
-      if (!currentUser) return;
+      if (!currentUser) {
+        showToast('Sign in to save activities to your atlas.', '🔒');
+        return;
+      }
       const name = document.getElementById('form-name').value.trim();
       const status = chipSelections.status;
-      if (!name) { alert('Please enter activity title.'); return; }
+      if (!name) { showToast('Please enter an activity title.', '⚠️'); return; }
 
       let finalCoords = parsedCenterCoords || userHomeCoords || [map.getCenter().lat, map.getCenter().lng];
       const saveBtn = document.getElementById('btn-save-step1');
@@ -2019,18 +2354,18 @@
         if (editingActivityId) {
           const { error: updErr } = await supabaseClient.from('races').update(record).eq('id', editingActivityId).eq('user_id', currentUser.id);
           if (updErr) throw updErr;
-          alert('Activity updated!');
+          showToast('Activity updated!', '✅');
         } else {
           const { error: insErr } = await supabaseClient.from('races').insert([record]);
           if (insErr) throw insErr;
-          alert('Activity saved!');
+          showToast('Activity saved to your atlas!', '🏁');
         }
 
         closeModals();
         await loadActivitiesFromDB(currentUser.id);
         map.flyTo(finalCoords, 11, { animate: true });
       } catch (err) {
-        alert('Error: ' + err.message);
+        showToast('Error: ' + err.message, '⚠️');
       } finally {
         saveBtn.textContent = 'Save to Atlas';
         saveBtn.disabled = false;
@@ -2092,8 +2427,25 @@
       const activeBtn = document.getElementById(`rail-${mode}`);
       if (activeBtn) activeBtn.classList.add('active');
 
+      const mapWrapper = document.getElementById('map-wrapper');
+      const sidebar = document.getElementById('sidebar');
+      const statsFullView = document.getElementById('stats-full-view');
       const statusWrap = document.getElementById('status-boxes-wrap');
       const filtersWrap = document.getElementById('filters-section-wrap');
+
+      if (mode === 'stats') {
+        mapWrapper.style.display = 'none';
+        sidebar.style.display = 'none';
+        statsFullView.style.display = 'block';
+        renderStatsFullDashboard();
+        return;
+      }
+
+      // Návrat z fullscreen statistik zpět na mapu
+      statsFullView.style.display = 'none';
+      mapWrapper.style.display = 'block';
+      sidebar.style.display = 'flex';
+      setTimeout(() => map.invalidateSize(), 50);
 
       if (mode === 'races') {
         document.getElementById('main-title').textContent = 'Race Atlas';
@@ -2107,10 +2459,6 @@
         document.getElementById('main-title').textContent = 'Bucket List Targets';
         statusWrap.style.display = 'none';
         filtersWrap.style.display = 'flex';
-      } else if (mode === 'stats') {
-        document.getElementById('main-title').textContent = 'Milestones & Stats';
-        statusWrap.style.display = 'none';
-        filtersWrap.style.display = 'none';
       }
       renderAll();
     }
