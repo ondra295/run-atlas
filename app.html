@@ -5,6 +5,10 @@
   <title>Running Atlas — Interactive Map & Route Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Driver.js (Interactive Spotlight Tour) -->
+  <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%2338bdf8' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
@@ -229,9 +233,32 @@
       width: 440px; height: 100%; background: #ffffff; border-left: 1px solid #cbd5e1;
       display: flex; flex-direction: column; z-index: 2;
     }
-    .sidebar-header { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #ffffff; }
-    .sidebar-header h2 { font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 2px; }
+    .sidebar-header { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #ffffff; position: relative; }
+    .sidebar-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+    .sidebar-header h2 { font-size: 1.3rem; font-weight: 800; color: #0f172a; }
     .sidebar-header p { font-size: 0.78rem; color: #64748b; }
+
+    /* Memorable Runs Info Icon & Tooltip Box */
+    .info-badge-btn {
+      display: none; width: 22px; height: 22px; border-radius: 50%;
+      background: #eff6ff; border: 1.5px solid #38bdf8; color: #0284c7;
+      font-size: 0.76rem; font-weight: 800; font-family: Georgia, serif; font-style: italic;
+      align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .info-badge-btn:hover, .info-badge-btn.active {
+      background: #007aff; border-color: #007aff; color: #ffffff; transform: scale(1.08);
+    }
+    .memorable-explainer-box {
+      display: none; margin-top: 10px; padding: 12px 14px; border-radius: 10px;
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border: 1px solid #bae6fd; color: #0f172a; font-size: 0.8rem; line-height: 1.5;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+    }
+    .memorable-explainer-box.show { display: block; }
+    .memorable-explainer-box strong { color: #0369a1; display: block; margin-bottom: 4px; font-size: 0.82rem; }
+    .memorable-explainer-box ul { margin: 4px 0 0 16px; color: #334155; }
+    .memorable-explainer-box li { margin-bottom: 2px; }
 
     .status-boxes { display: flex; gap: 6px; margin-top: 12px; }
     .status-card-btn {
@@ -386,7 +413,7 @@
       max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
     }
 
-    /* Custom App Dialog (Replaces browser confirm / prompt) */
+    /* Custom App Dialog */
     .custom-dialog-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 28px;
       max-width: 420px; width: 100%; color: #0f172a; display: flex; flex-direction: column; gap: 14px;
@@ -414,29 +441,63 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
-    /* Interactive Visual Tour Modal */
-    .tour-card {
-      background: #0f172a; border: 1px solid #334155; border-radius: 22px; overflow: hidden;
-      max-width: 520px; width: 100%; color: #f8fafc; box-shadow: 0 28px 70px rgba(0,0,0,0.65);
-      display: flex; flex-direction: column;
+    /* ==================================================== */
+    /* CUSTOM STYLING PRO DRIVER.JS (MIDNIGHT NAVY POPOVER) */
+    /* ==================================================== */
+    .driver-popover.runatlas-tour-theme {
+      background: #0f172a !important;
+      color: #f8fafc !important;
+      border: 1.5px solid #38bdf8 !important;
+      border-radius: 16px !important;
+      padding: 20px 22px !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65) !important;
+      max-width: 340px !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     }
-    .tour-visual-stage {
-      height: 190px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: center;
-      padding: 24px; position: relative;
+    .driver-popover.runatlas-tour-theme .driver-popover-title {
+      font-size: 1.08rem !important;
+      font-weight: 800 !important;
+      color: #38bdf8 !important;
+      margin-bottom: 6px !important;
     }
-    .tour-body { padding: 28px; display: flex; flex-direction: column; gap: 12px; }
-    .tour-step-badge {
-      font-size: 0.7rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px;
+    .driver-popover.runatlas-tour-theme .driver-popover-description {
+      font-size: 0.86rem !important;
+      color: #cbd5e1 !important;
+      line-height: 1.55 !important;
+      margin-bottom: 14px !important;
     }
-    .tour-title { font-size: 1.4rem; font-weight: 800; color: #ffffff; line-height: 1.25; }
-    .tour-desc { font-size: 0.9rem; color: #94a3b8; line-height: 1.6; }
-    .tour-footer {
-      display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 16px; border-top: 1px solid #1e293b;
+    .driver-popover.runatlas-tour-theme .driver-popover-progress-text {
+      font-size: 0.72rem !important;
+      font-weight: 800 !important;
+      color: #64748b !important;
+      text-transform: uppercase !important;
     }
-    .tour-dots { display: flex; gap: 6px; }
-    .tour-dot { width: 8px; height: 8px; border-radius: 50%; background: #334155; transition: all 0.2s; }
-    .tour-dot.active { width: 22px; border-radius: 4px; background: #007aff; }
+    .driver-popover.runatlas-tour-theme .driver-popover-next-btn,
+    .driver-popover.runatlas-tour-theme .driver-popover-prev-btn {
+      background: #007aff !important;
+      color: #ffffff !important;
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 7px 14px !important;
+      font-size: 0.78rem !important;
+      font-weight: 700 !important;
+      text-shadow: none !important;
+      transition: background 0.15s !important;
+    }
+    .driver-popover.runatlas-tour-theme .driver-popover-prev-btn {
+      background: #1e293b !important;
+      color: #cbd5e1 !important;
+      border: 1px solid #334155 !important;
+    }
+    .driver-popover.runatlas-tour-theme .driver-popover-next-btn:hover {
+      background: #0062cc !important;
+    }
+    .driver-popover.runatlas-tour-theme .driver-popover-close-btn {
+      color: #64748b !important;
+    }
+    .driver-popover.runatlas-tour-theme .driver-popover-close-btn:hover {
+      color: #ffffff !important;
+    }
 
     .status-selector-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
@@ -537,7 +598,7 @@
       </div>
 
       <div class="top-bar-right">
-        <button class="pill-btn" onclick="openWelcomeTour()" style="background:#1e293b; border-color:#334155; color:#38bdf8;" title="Interactive Guide">
+        <button class="pill-btn" onclick="startContextualTour()" style="background:#1e293b; border-color:#334155; color:#38bdf8;" title="Interactive Map Guide">
           🗺️ Quick Tour
         </button>
         <button id="btn-add-activity" class="open-detail-btn" onclick="openAddModal()">➕ Add to Atlas</button>
@@ -631,7 +692,7 @@
         </a>
       </nav>
 
-      <!-- CELOOBRAZOVKOVÉ STATISTIKY (MILESTONES & STATS) -->
+      <!-- CELOOBRAZOVKOVÉ STATISTIKY -->
       <div id="stats-full-view">
         <div id="stats-dashboard-content" class="stats-dashboard-container"></div>
       </div>
@@ -664,8 +725,28 @@
       <!-- SIDEBAR -->
       <aside id="sidebar">
         <div class="sidebar-header">
-          <h2 id="main-title">Race Atlas</h2>
+          <div class="sidebar-title-row">
+            <h2 id="main-title">Race Atlas</h2>
+            <!-- Informační tlačítko 'i' pro Memorable Runs -->
+            <button id="memorable-info-btn" class="info-badge-btn" title="What are Memorable Runs?" onclick="toggleMemorableExplainer()" onmouseenter="showMemorableExplainer()">i</button>
+          </div>
           <p id="stats-label">Loading activities...</p>
+
+          <!-- Vysvětlující karta pro Memorable Runs -->
+          <div id="memorable-explainer" class="memorable-explainer-box">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <strong>🏔️ What belongs in Memorable Runs?</strong>
+              <button onclick="hideMemorableExplainer()" style="background:transparent; border:none; color:#64748b; cursor:pointer; font-size:1rem; line-height:1;">&times;</button>
+            </div>
+            Not every unforgettable run has a starting bib. Use this section to preserve your most meaningful non-race routes:
+            <ul>
+              <li><strong>Alpine summits & ridge crossings</strong></li>
+              <li><strong>Vacation & foreign city exploration runs</strong></li>
+              <li><strong>Solo endurance challenges & FKT attempts</strong></li>
+              <li><strong> runs with friends in iconic nature</strong></li>
+            </ul>
+          </div>
+
           <div id="status-boxes-wrap" class="status-boxes">
             <div class="status-card-btn active" data-status="done" onclick="toggleStatusFilter('done')">
               <span>Completed</span><span class="indicator"></span>
@@ -747,7 +828,7 @@
     </div>
   </div>
 
-  <!-- 1. VLASTNÍ STYLOVÉ POTVRZOVACÍ OKNO (MÍSTO PROHLÍŽEČOVÉHO CONFIRM) -->
+  <!-- 1. VLASTNÍ STYLOVÉ POTVRZOVACÍ OKNO -->
   <div id="custom-confirm-modal" class="modal-backdrop">
     <div class="custom-dialog-card">
       <div id="confirm-icon-box" class="dialog-icon-circle">👋</div>
@@ -760,7 +841,7 @@
     </div>
   </div>
 
-  <!-- 2. VLASTNÍ MODAL PRO NASTAVENÍ HOME BASE (MÍSTO PROHLÍŽEČOVÉHO PROMPTU) -->
+  <!-- 2. VLASTNÍ MODAL PRO NASTAVENÍ HOME BASE -->
   <div id="homebase-modal" class="modal-backdrop">
     <div class="custom-dialog-card" style="text-align:left; max-width:440px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -781,29 +862,7 @@
     </div>
   </div>
 
-  <!-- 3. VIZUÁLNÍ INTERAKTIVNÍ PRŮVODCE (WELCOME TOUR) -->
-  <div id="welcome-tour-modal" class="modal-backdrop">
-    <div class="tour-card">
-      <div class="tour-visual-stage" id="tour-stage-graphic">
-        <!-- SVG ilustrace se mění podle kroku -->
-      </div>
-      <div class="tour-body">
-        <span class="tour-step-badge" id="tour-step-label">STEP 1 OF 4</span>
-        <h3 class="tour-title" id="tour-step-title">Welcome to Running Atlas</h3>
-        <p class="tour-desc" id="tour-step-desc"></p>
-
-        <div class="tour-footer">
-          <div class="tour-dots" id="tour-dots-wrap"></div>
-          <div style="display:flex; gap:8px;">
-            <button class="pill-btn" style="background:transparent; border-color:#334155; color:#94a3b8;" onclick="closeWelcomeTour()">Skip</button>
-            <button id="tour-next-btn" class="open-detail-btn" onclick="nextTourStep()">Next ➔</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. ADD / EDIT ACTIVITY MODAL -->
+  <!-- 3. ADD / EDIT ACTIVITY MODAL -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1000,7 +1059,7 @@
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
     // ==========================================
-    // SYSTÉM VLASTNÍCH MODÁLŮ & TOAST NOTIFIKACÍ
+    // TOAST NOTIFIKACE A POTVRZOVACÍ DIALOGY
     // ==========================================
     function showToast(message, icon = '✨') {
       const container = document.getElementById('toast-container');
@@ -1040,96 +1099,92 @@
       confirmCallback = null;
     }
 
-    // ==========================================
-    // VIZUÁLNÍ INTERAKTIVNÍ PRŮVODCE (TOUR)
-    // ==========================================
-    let currentTourStep = 0;
-    const tourSteps = [
-      {
-        badge: "STEP 1 OF 4 • YOUR RUNNING WORLD",
-        title: "Welcome to Running Atlas",
-        desc: "Unlike social feeds where your races disappear after 48 hours, Running Atlas pins every marathon, mountain trail, and future goal onto a permanent topographic canvas.",
-        svg: `<svg width="220" height="110" viewBox="0 0 220 110" fill="none">
-          <path d="M 15 85 Q 60 20 105 60 T 205 35" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <circle cx="60" cy="42" r="7" fill="#16a34a" stroke="#fff" stroke-width="2.5"/>
-          <circle cx="105" cy="60" r="7" fill="#d97706" stroke="#fff" stroke-width="2.5"/>
-          <circle cx="165" cy="45" r="7" fill="#0284c7" stroke="#fff" stroke-width="2.5"/>
-          <rect x="70" y="12" width="85" height="24" rx="6" fill="#0f172a" stroke="#334155"/>
-          <text x="80" y="28" fill="#f8fafc" font-size="10" font-weight="800">3 Race Modes</text>
-        </svg>`
-      },
-      {
-        badge: "STEP 2 OF 4 • SMART LOGGING",
-        title: "1-Click Catalog, GPX or Right-Click",
-        desc: "Click '+ Add to Atlas' to pick iconic World Majors, drop a .GPX watch file for exact route geometry, or simply right-click anywhere on the map to pin a run.",
-        svg: `<svg width="240" height="110" viewBox="0 0 240 110" fill="none">
-          <rect x="25" y="20" width="190" height="70" rx="12" fill="#0f172a" stroke="#007aff" stroke-width="2" stroke-dasharray="5 5"/>
-          <text x="52" y="52" fill="#38bdf8" font-size="12" font-weight="800">📁 Drop .GPX or Pick Major</text>
-          <text x="65" y="72" fill="#94a3b8" font-size="10">Auto-calculates km & climb</text>
-        </svg>`
-      },
-      {
-        badge: "STEP 3 OF 4 • TELEMETRY HUD",
-        title: "Tailored Data for Every Stage",
-        desc: "Click any race to fly to its course. Completed races display finish times & satisfaction barometers, Planned races show a live countdown, and Bucket List targets estimate travel budgets.",
-        svg: `<svg width="250" height="110" viewBox="0 0 250 110" fill="none">
-          <rect x="10" y="25" width="110" height="60" rx="10" fill="#0f172a" stroke="#334155"/>
-          <text x="22" y="54" fill="#38bdf8" font-size="15" font-weight="800">3:11:04</text>
-          <text x="22" y="72" fill="#94a3b8" font-size="8" font-weight="700">OFFICIAL FINISH</text>
-          <rect x="130" y="25" width="110" height="60" rx="10" fill="#0f172a" stroke="#334155"/>
-          <text x="142" y="46" fill="#4ade80" font-size="9" font-weight="800">Performance 9/10</text>
-          <rect x="142" y="52" width="80" height="5" rx="2.5" fill="#16a34a"/>
-          <text x="142" y="70" fill="#38bdf8" font-size="9" font-weight="800">Course Vibe 9/10</text>
-          <rect x="142" y="75" width="80" height="5" rx="2.5" fill="#0284c7"/>
-        </svg>`
-      },
-      {
-        badge: "STEP 4 OF 4 • ANALYTICS & HOME BASE",
-        title: "Home Base & Lifetime Milestones",
-        desc: "Set your Home Base in the bottom-left corner to calculate travel distances. Visit 'Milestones & Stats' in the left menu for a full-screen breakdown of your countries and distances.",
-        svg: `<svg width="230" height="110" viewBox="0 0 230 110" fill="none">
-          <circle cx="55" cy="55" r="24" fill="#007aff" stroke="#fff" stroke-width="3"/>
-          <path d="M45 57 L55 47 L65 57 V65 H45 Z" fill="#fff"/>
-          <path d="M 85 55 L 145 55" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="4 4"/>
-          <rect x="145" y="32" width="75" height="46" rx="8" fill="#0f172a" stroke="#334155"/>
-          <text x="157" y="55" fill="#f8fafc" font-size="12" font-weight="800">7 Countries</text>
-          <text x="157" y="69" fill="#94a3b8" font-size="8">FULL DASHBOARD</text>
-        </svg>`
-      }
-    ];
+    // ====================================================
+    // 1. KONTEXTOVÝ PRŮVODCE SE ŠIPKAMI NAD MAPOU (DRIVER.JS)
+    // ====================================================
+    function startContextualTour() {
+      if (currentMode === 'stats') switchPageMode('races');
 
-    function openWelcomeTour() {
-      currentTourStep = 0;
-      renderTourStep();
-      document.getElementById('welcome-tour-modal').style.display = 'flex';
+      const driverObj = window.driver.js.driver({
+        showProgress: true,
+        animate: true,
+        popoverClass: 'runatlas-tour-theme',
+        nextBtnText: 'Next ➔',
+        prevBtnText: '← Back',
+        doneBtnText: 'Got it! 🚀',
+        onDestroyed: () => {
+          localStorage.setItem('runatlas_tour_completed', 'true');
+        },
+        steps: [
+          {
+            element: '#left-rail',
+            popover: {
+              title: '🧭 4 Modes of Your Atlas',
+              description: 'Switch between your official Race Atlas, non-race Memorable Runs, future Bucket List targets, and full-screen Milestones & Stats.',
+              side: "right",
+              align: 'start'
+            }
+          },
+          {
+            element: '#btn-add-activity',
+            popover: {
+              title: '➕ Add Races or Drop .GPX',
+              description: 'Log completed races, upcoming goals, or bucket-list dreams. Pick from the World Catalog in 1 click or drag & drop a watch .GPX file.',
+              side: "bottom",
+              align: 'end'
+            }
+          },
+          {
+            element: '#map',
+            popover: {
+              title: '🖱️ Right-Click Anywhere on Map',
+              description: 'Want to pin a run at a specific mountain pass or city? Simply right-click anywhere on the map canvas to add an activity or set your Home Base.',
+              side: "top",
+              align: 'center'
+            }
+          },
+          {
+            element: '#top-search-container',
+            popover: {
+              title: '🔍 Instant Spotlight Search',
+              description: 'Type any race name or city here to immediately fly to your logged activity or quick-add an event from the global catalog.',
+              side: "bottom",
+              align: 'start'
+            }
+          },
+          {
+            element: '#floating-home-btn',
+            popover: {
+              title: '🏠 Your Home Base',
+              description: 'Set your home city here. Running Atlas uses it to center your map and automatically calculate travel distances to all planned & bucket-list races.',
+              side: "top",
+              align: 'start'
+            }
+          }
+        ]
+      });
+
+      driverObj.drive();
     }
 
-    function renderTourStep() {
-      const s = tourSteps[currentTourStep];
-      document.getElementById('tour-stage-graphic').innerHTML = s.svg;
-      document.getElementById('tour-step-label').textContent = s.badge;
-      document.getElementById('tour-step-title').textContent = s.title;
-      document.getElementById('tour-step-desc').textContent = s.desc;
-
-      const dotsWrap = document.getElementById('tour-dots-wrap');
-      dotsWrap.innerHTML = tourSteps.map((_, idx) => `<div class="tour-dot ${idx === currentTourStep ? 'active' : ''}"></div>`).join('');
-
-      const nextBtn = document.getElementById('tour-next-btn');
-      nextBtn.textContent = (currentTourStep === tourSteps.length - 1) ? 'Explore Atlas 🚀' : 'Next ➔';
+    // ====================================================
+    // 2. EXPLAINER PRO MEMORABLE RUNS ("i" TLAČÍTKO)
+    // ====================================================
+    function toggleMemorableExplainer() {
+      const box = document.getElementById('memorable-explainer');
+      const btn = document.getElementById('memorable-info-btn');
+      const isShowing = box.classList.toggle('show');
+      btn.classList.toggle('active', isShowing);
     }
 
-    function nextTourStep() {
-      if (currentTourStep < tourSteps.length - 1) {
-        currentTourStep++;
-        renderTourStep();
-      } else {
-        closeWelcomeTour();
-      }
+    function showMemorableExplainer() {
+      document.getElementById('memorable-explainer').classList.add('show');
+      document.getElementById('memorable-info-btn').classList.add('active');
     }
 
-    function closeWelcomeTour() {
-      document.getElementById('welcome-tour-modal').style.display = 'none';
-      localStorage.setItem('runatlas_tour_completed', 'true');
+    function hideMemorableExplainer() {
+      document.getElementById('memorable-explainer').classList.remove('show');
+      document.getElementById('memorable-info-btn').classList.remove('active');
     }
 
     // Map initialization
@@ -1302,7 +1357,6 @@
       showToast('Atlas backup downloaded!', '📦');
     }
 
-    // Stylový odhlašovací dialog místo prohlížečového confirm()
     function handleLogout() {
       document.getElementById('profile-dropdown').classList.remove('show');
       openCustomConfirm({
@@ -1451,8 +1505,8 @@
           { id: "demo-3", name: "UTMB Mont-Blanc", date: "August", month: 8, coords: [45.9237, 6.8694], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "extremni", cost: "€€€€", distance: "171 km", elevation: "+10,000 m", why: "Ultimate alpine loop around Mont Blanc.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" }
         ];
         renderAll();
-        // V Demu se průvodce otevře VŽDY při načtení
-        setTimeout(() => openWelcomeTour(), 400);
+        // V Demu se interaktivní průvodce nad mapou spustí VŽDY
+        setTimeout(() => startContextualTour(), 500);
         return;
       }
 
@@ -1467,9 +1521,8 @@
           document.getElementById('label-user').textContent = username;
           await loadActivitiesFromDB(currentUser.id);
 
-          // U nového účtu (nebo pokud ještě neviděl tour) otevřeme průvodce
           if (!localStorage.getItem('runatlas_tour_completed') || races.length === 0) {
-            setTimeout(() => openWelcomeTour(), 400);
+            setTimeout(() => startContextualTour(), 500);
           }
           return;
         }
@@ -1682,7 +1735,6 @@
       document.getElementById('add-modal').style.display = 'flex';
     }
 
-    // Stylový dialog pro smazání závodu místo prohlížečového confirm()
     function deleteActivity(id) {
       const item = races.find(r => r.id === id);
       openCustomConfirm({
@@ -1765,8 +1817,8 @@
         content.innerHTML = `
           <div style="text-align:center; padding: 40px 10px; color:#64748b;">
             <div style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:6px;">No activities found</div>
-            <div style="font-size:0.82rem; margin-bottom:16px;">Add your first race or memorable run to your atlas.</div>
-            <button class="open-detail-btn" onclick="openAddModal()">➕ Add Activity</button>
+            <div style="font-size:0.82rem; margin-bottom:16px;">${currentMode === 'memorable' ? 'Log your first memorable mountain crossing, vacation run, or solo adventure.' : 'Add your first race or bucket-list target to your atlas.'}</div>
+            <button class="open-detail-btn" onclick="openAddModal('${currentMode === 'memorable' ? 'memorable' : 'race'}')">➕ Add ${currentMode === 'memorable' ? 'Memorable Run' : 'Activity'}</button>
           </div>
         `;
         return;
@@ -2001,9 +2053,7 @@
       `;
     }
 
-    // ====================================================
     // CELOOBRAZOVKOVÝ DASHBOARD PRO MILESTONES & STATS
-    // ====================================================
     function renderStatsFullDashboard() {
       const container = document.getElementById('stats-dashboard-content');
       currentDetailItem = null;
@@ -2073,7 +2123,6 @@
           <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
         </div>
 
-        <!-- TOP 4 KPI CARDS (COMPLETED ONLY) -->
         <div class="stats-top-kpis">
           <div class="kpi-hero-card">
             <span class="kpi-hero-lbl">Completed Distance</span>
@@ -2097,7 +2146,6 @@
           </div>
         </div>
 
-        <!-- MIDDLE ROW: DISCIPLINE BREAKDOWN & GEOGRAPHY -->
         <div class="stats-two-col">
           <div class="stats-panel-card">
             <div class="stats-panel-header">
@@ -2143,7 +2191,6 @@
             </div>
           </div>
 
-          <!-- RIGHT COLUMN: PLANNED & BUCKET LIST PIPELINE -->
           <div style="display:flex; flex-direction:column; gap:20px;">
             <div class="stats-panel-card">
               <div class="stats-panel-header">
@@ -2231,9 +2278,7 @@
     }
 
     function closeModals() {
-      document.querySelectorAll('.modal-backdrop').forEach(m => {
-        if (m.id !== 'welcome-tour-modal') m.style.display = 'none';
-      });
+      document.querySelectorAll('.modal-backdrop').forEach(m => m.style.display = 'none');
       resetActivityForm();
     }
 
@@ -2432,6 +2477,10 @@
       const statsFullView = document.getElementById('stats-full-view');
       const statusWrap = document.getElementById('status-boxes-wrap');
       const filtersWrap = document.getElementById('filters-section-wrap');
+      const memorableInfoBtn = document.getElementById('memorable-info-btn');
+
+      // Schováme explainer při přepnutí
+      hideMemorableExplainer();
 
       if (mode === 'stats') {
         mapWrapper.style.display = 'none';
@@ -2441,7 +2490,6 @@
         return;
       }
 
-      // Návrat z fullscreen statistik zpět na mapu
       statsFullView.style.display = 'none';
       mapWrapper.style.display = 'block';
       sidebar.style.display = 'flex';
@@ -2449,14 +2497,17 @@
 
       if (mode === 'races') {
         document.getElementById('main-title').textContent = 'Race Atlas';
+        memorableInfoBtn.style.display = 'none';
         statusWrap.style.display = 'flex';
         filtersWrap.style.display = 'flex';
       } else if (mode === 'memorable') {
         document.getElementById('main-title').textContent = 'Memorable Runs';
+        memorableInfoBtn.style.display = 'inline-flex';
         statusWrap.style.display = 'none';
         filtersWrap.style.display = 'flex';
       } else if (mode === 'bucket') {
         document.getElementById('main-title').textContent = 'Bucket List Targets';
+        memorableInfoBtn.style.display = 'none';
         statusWrap.style.display = 'none';
         filtersWrap.style.display = 'flex';
       }
