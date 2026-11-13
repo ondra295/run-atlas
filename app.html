@@ -31,12 +31,51 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 18px; z-index: 2000; flex-shrink: 0; position: relative;
     }
+
+    /* Spotlight Search in Top Bar */
+    .top-search-wrap {
+      position: relative; width: 320px; display: flex; align-items: center;
+    }
     .top-search-input {
       background: #1e293b; border: 1px solid #334155; border-radius: 8px;
-      padding: 7px 14px; color: #f8fafc; font-size: 0.84rem; width: 280px; outline: none; transition: all 0.2s;
+      padding: 7px 32px 7px 14px; color: #f8fafc; font-size: 0.84rem; width: 100%; outline: none; transition: all 0.2s;
     }
-    .top-search-input:focus { border-color: #38bdf8; background: #0f172a; width: 320px; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25); }
+    .top-search-input:focus { border-color: #38bdf8; background: #0f172a; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22); }
     .top-search-input::placeholder { color: #64748b; }
+
+    .search-clear-btn {
+      position: absolute; right: 8px; background: transparent; border: none; color: #64748b;
+      font-size: 1.05rem; cursor: pointer; display: none; line-height: 1; padding: 4px;
+    }
+    .search-clear-btn:hover { color: #f8fafc; }
+
+    /* Spotlight Dropdown Menu */
+    .spotlight-dropdown {
+      display: none; position: absolute; top: 44px; left: 0; width: 380px;
+      background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35); z-index: 3500;
+      max-height: 420px; overflow-y: auto; flex-direction: column; padding: 6px;
+    }
+    .spotlight-dropdown.show { display: flex; }
+    .spotlight-group-title {
+      font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase;
+      letter-spacing: 0.6px; padding: 6px 10px 4px;
+    }
+    .spotlight-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: background 0.15s;
+    }
+    .spotlight-item:hover { background: #eff6ff; }
+    .spotlight-item-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .spotlight-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .spotlight-info { min-width: 0; }
+    .spotlight-title { font-size: 0.86rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .spotlight-sub { font-size: 0.72rem; color: #64748b; }
+    .spotlight-action-tag {
+      font-size: 0.68rem; font-weight: 800; padding: 3px 7px; border-radius: 6px;
+      background: #f1f5f9; color: #334155; flex-shrink: 0;
+    }
+
     .top-bar-right { display: flex; align-items: center; gap: 8px; position: relative; }
 
     /* Profile Dropdown */
@@ -188,7 +227,7 @@
 
     #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; background: #f1f5f9; }
 
-    /* ČISTÉ HORIZONTÁLNÍ KARTY SE ČTVERCOVÝM NÁHLEDEM VLEVO (BEZ OŘÍZNUTÍ) */
+    /* ČISTÉ HORIZONTÁLNÍ KARTY SE ČTVERCOVÝM NÁHLEDEM VLEVO */
     .race-card-rich {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
       overflow: hidden; cursor: pointer; transition: all 0.2s ease;
@@ -288,10 +327,24 @@
     .spec-cell strong { font-size: 0.92rem; font-weight: 800; color: #0f172a; }
 
     /* Stats View */
-    .stats-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
-    .stat-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; text-align: center; }
-    .stat-box-num { font-size: 1.5rem; font-weight: 800; color: #007aff; line-height: 1.2; }
-    .stat-box-lbl { font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 2px; }
+    .stats-section-block {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px;
+      display: flex; flex-direction: column; gap: 12px; box-shadow: 0 2px 6px rgba(15,23,42,0.03);
+    }
+    .stats-section-header {
+      display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;
+    }
+    .stats-section-header h3 { font-size: 0.95rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px; }
+    .stats-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .stat-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 10px; text-align: center; }
+    .stat-box-num { font-size: 1.35rem; font-weight: 800; color: #007aff; line-height: 1.15; }
+    .stat-box-lbl { font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-top: 3px; }
+
+    .country-pill-list { display: flex; gap: 6px; flex-wrap: wrap; }
+    .country-pill {
+      background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 0.74rem;
+      font-weight: 700; padding: 4px 10px; border-radius: 20px;
+    }
 
     /* Map Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
@@ -363,7 +416,7 @@
     }
 
     @media (max-width: 768px) {
-      .top-search-input { display: none; }
+      .top-search-wrap { display: none; }
       #left-rail {
         position: fixed; bottom: 0; left: 0; right: 0; width: 100% !important; height: 56px;
         flex-direction: row; justify-content: space-around; border-right: none; border-top: 1px solid #334155; z-index: 3000;
@@ -400,7 +453,12 @@
         </svg>
       </a>
 
-      <input type="text" id="global-search" class="top-search-input" placeholder="Search race, route, city..." oninput="handleSearch(this.value)">
+      <!-- SPOTLIGHT SEARCH S OKAMŽITÝM DROPDOWNEM -->
+      <div class="top-search-wrap" id="top-search-container">
+        <input type="text" id="global-search" class="top-search-input" placeholder="🔍 Jump to race or search catalog..." autocomplete="off" oninput="handleSpotlightSearch(this.value)" onfocus="handleSpotlightSearch(this.value)">
+        <button id="search-clear-btn" class="search-clear-btn" onclick="clearSpotlightSearch()">&times;</button>
+        <div id="spotlight-dropdown" class="spotlight-dropdown"></div>
+      </div>
 
       <div class="top-bar-right">
         <button id="btn-add-activity" class="open-detail-btn" onclick="openAddModal()">➕ Add to Atlas</button>
@@ -781,7 +839,7 @@
     let isDemoMode = false;
     let currentMode = 'races';
     let currentRouteLayer = null;
-    let currentDetailItem = null; // Uchovává aktuálně otevřený závod
+    let currentDetailItem = null;
 
     let races = [];
     let featuredRacesList = [];
@@ -793,7 +851,6 @@
     let sortOrder = 'newest';
     const statusFilters = { done: true, planned: true, bucket: true };
     let surfaceFilter = 'all';
-    let searchQuery = '';
 
     let advFilterMonth = 'all';
     let advFilterDifficulty = 'all';
@@ -817,6 +874,120 @@
     L.control.layers({ "Topographic": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
     let markerLayerGroup = L.featureGroup().addTo(map);
     let homeMarker = null;
+
+    // ==========================================
+    // 1. SPOTLIGHT VYHLEDÁVÁNÍ V HORNÍ LIŠTĚ
+    // ==========================================
+    function handleSpotlightSearch(val) {
+      const q = val.trim().toLowerCase();
+      const dropdown = document.getElementById('spotlight-dropdown');
+      const clearBtn = document.getElementById('search-clear-btn');
+
+      clearBtn.style.display = q.length > 0 ? 'block' : 'none';
+
+      if (q.length < 1) {
+        dropdown.classList.remove('show');
+        dropdown.innerHTML = '';
+        return;
+      }
+
+      // 1. Hledání v mých uložených aktivitách
+      const myMatches = races.filter(r => r.name.toLowerCase().includes(q) || (r.why && r.why.toLowerCase().includes(q))).slice(0, 5);
+      // 2. Hledání ve světovém katalogu (které ještě nemám v mapě)
+      const catalogMatches = featuredRacesList.filter(c => {
+        const inMyRaces = races.some(r => r.name.toLowerCase() === c.name.toLowerCase());
+        return !inMyRaces && (c.name.toLowerCase().includes(q) || (c.location && c.location.toLowerCase().includes(q)));
+      }).slice(0, 3);
+
+      let html = '';
+
+      if (myMatches.length > 0) {
+        html += `<div class="spotlight-group-title">In Your Atlas (${myMatches.length})</div>`;
+        myMatches.forEach(item => {
+          const colors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
+          const dotColor = item.isMemorable ? '#7e22ce' : (colors[item.status] || '#007aff');
+          html += `
+            <div class="spotlight-item" onclick="selectSpotlightRace('${item.id}')">
+              <div class="spotlight-item-left">
+                <span class="spotlight-dot" style="background:${dotColor};"></span>
+                <div class="spotlight-info">
+                  <div class="spotlight-title">${item.name}</div>
+                  <div class="spotlight-sub">${item.distance || '-'} &bull; ${item.date || item.statusLabel}</div>
+                </div>
+              </div>
+              <span class="spotlight-action-tag">Jump ➔</span>
+            </div>
+          `;
+        });
+      }
+
+      if (catalogMatches.length > 0) {
+        html += `<div class="spotlight-group-title" style="margin-top:4px;">World Catalog (Quick Add)</div>`;
+        catalogMatches.forEach(cat => {
+          html += `
+            <div class="spotlight-item" onclick="quickAddFromSpotlight('${cat.id}')">
+              <div class="spotlight-item-left">
+                <span class="spotlight-dot" style="background:#94a3b8;"></span>
+                <div class="spotlight-info">
+                  <div class="spotlight-title">${cat.name}</div>
+                  <div class="spotlight-sub">${cat.location || ''} &bull; ${cat.distance || ''}</div>
+                </div>
+              </div>
+              <span class="spotlight-action-tag" style="background:#eff6ff; color:#007aff;">+ Add</span>
+            </div>
+          `;
+        });
+      }
+
+      if (myMatches.length === 0 && catalogMatches.length === 0) {
+        html = `
+          <div style="padding:14px 12px; text-align:center; color:#64748b; font-size:0.82rem;">
+            No matches for "<strong>${val}</strong>".
+            <div style="margin-top:8px;">
+              <button class="open-detail-btn" style="padding:5px 12px; font-size:0.76rem;" onclick="openAddWithCustomTitle('${val.replace(/'/g, "\\'")}')">➕ Create "${val}"</button>
+            </div>
+          </div>
+        `;
+      }
+
+      dropdown.innerHTML = html;
+      dropdown.classList.add('show');
+    }
+
+    function clearSpotlightSearch() {
+      const input = document.getElementById('global-search');
+      input.value = '';
+      document.getElementById('search-clear-btn').style.display = 'none';
+      document.getElementById('spotlight-dropdown').classList.remove('show');
+    }
+
+    function selectSpotlightRace(id) {
+      clearSpotlightSearch();
+      const item = races.find(r => r.id === id);
+      if (!item) return;
+      showDetail(item);
+    }
+
+    function quickAddFromSpotlight(catId) {
+      clearSpotlightSearch();
+      openAddModal();
+      applyCatalogPreset(catId);
+    }
+
+    function openAddWithCustomTitle(title) {
+      clearSpotlightSearch();
+      openAddModal();
+      document.getElementById('form-name').value = title;
+    }
+
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('#top-search-container')) {
+        document.getElementById('spotlight-dropdown').classList.remove('show');
+      }
+      if (!e.target.closest('#btn-profile') && !e.target.closest('#profile-dropdown')) {
+        document.getElementById('profile-dropdown').classList.remove('show');
+      }
+    });
 
     // Right-Click Context Menu
     map.on('contextmenu', function(e) {
@@ -847,11 +1018,6 @@
     function toggleProfileDropdown() {
       document.getElementById('profile-dropdown').classList.toggle('show');
     }
-    window.addEventListener('click', function(e) {
-      if (!e.target.closest('#btn-profile') && !e.target.closest('#profile-dropdown')) {
-        document.getElementById('profile-dropdown').classList.remove('show');
-      }
-    });
 
     function exportDataJson() {
       if (races.length === 0) { alert('No activities to export.'); return; }
@@ -880,6 +1046,40 @@
       const a = Math.sin(dLat / 2)**2 + Math.cos(userHomeCoords[0] * rad) * Math.cos(targetCoords[0] * rad) * Math.sin(dLon / 2)**2;
       const dist = 6371 * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
       return Math.round(dist);
+    }
+
+    // Geografická detekce země a kontinentu ze souřadnic pro statistiky
+    function detectGeoFromCoords(coords, name = '') {
+      if (!coords || coords.length < 2) return { country: 'Unknown', continent: 'Europe' };
+      const lat = coords[0];
+      const lng = coords[1];
+      const lowName = name.toLowerCase();
+
+      // Kontinent
+      let continent = 'Europe';
+      if (lat > 15 && lng < -30) continent = 'North America';
+      else if (lat <= 15 && lng < -30) continent = 'South America';
+      else if (lat < 35 && lng >= -20 && lng <= 50) continent = 'Africa';
+      else if (lat < -10 && lng > 110) continent = 'Oceania';
+      else if (lng > 40 && lat >= 0) continent = 'Asia';
+
+      // Země podle klíčových souřadnic / názvů
+      let country = 'Other';
+      if (lowName.includes('prague') || lowName.includes('praha') || lowName.includes('běchovice') || (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9)) country = '🇨🇿 Czechia';
+      else if (lowName.includes('berlin') || lowName.includes('dresden') || lowName.includes('munich') || (lat >= 47.2 && lat <= 55.0 && lng >= 6.0 && lng <= 15.0)) country = '🇩🇪 Germany';
+      else if (lowName.includes('chamonix') || lowName.includes('utmb') || lowName.includes('paris') || (lat >= 42.0 && lat <= 51.0 && lng >= -5.0 && lng <= 8.2)) country = '🇫🇷 France';
+      else if (lowName.includes('chianti') || lowName.includes('rome') || lowName.includes('milan') || (lat >= 36.5 && lat <= 47.0 && lng >= 6.6 && lng <= 18.5)) country = '🇮🇹 Italy';
+      else if (lowName.includes('valencia') || lowName.includes('madrid') || lowName.includes('barcelona') || (lat >= 36.0 && lat <= 43.8 && lng >= -9.3 && lng <= 3.3)) country = '🇪🇸 Spain';
+      else if (lowName.includes('helsinki') || (lat >= 59.5 && lat <= 70.0 && lng >= 20.0 && lng <= 31.5)) country = '🇫🇮 Finland';
+      else if (lowName.includes('aalborg') || lowName.includes('copenhagen') || (lat >= 54.5 && lat <= 58.0 && lng >= 8.0 && lng <= 15.2)) country = '🇩🇰 Denmark';
+      else if (lowName.includes('slovakia') || lowName.includes('bratislava') || lowName.includes('tatry') || (lat >= 47.7 && lat <= 49.6 && lng >= 16.8 && lng <= 22.6)) country = '🇸🇰 Slovakia';
+      else if (lowName.includes('vienna') || lowName.includes('innsbruck') || (lat >= 46.3 && lat <= 49.0 && lng >= 9.5 && lng <= 17.2)) country = '🇦🇹 Austria';
+      else if (lowName.includes('london') || (lat >= 50.0 && lat <= 59.0 && lng >= -8.0 && lng <= 2.0)) country = '🇬🇧 UK';
+      else if (lowName.includes('boston') || lowName.includes('new york') || lowName.includes('chicago') || (continent === 'North America')) country = '🇺🇸 USA';
+      else if (lowName.includes('tokyo') || (lat >= 30.0 && lat <= 45.0 && lng >= 129.0 && lng <= 146.0)) country = '🇯🇵 Japan';
+      else country = `🌍 ${continent}`;
+
+      return { country, continent };
     }
 
     // Home Base
@@ -937,7 +1137,6 @@
       localStorage.setItem('runatlas_home_coords', JSON.stringify(coords));
       refreshHomeMarker();
       
-      // Pokud je zrovna otevřený detail závodu, okamžitě přepočítáme HUD i pravý panel
       if (currentDetailItem) {
         showDetail(currentDetailItem);
       } else {
@@ -1058,7 +1257,6 @@
       }
     }
 
-    // DYNAMICKÉ PŘEPÍNÁNÍ POLÍ VE FORMULÁŘI PODLE STATUSU
     function selectStatusMode(mode) {
       chipSelections.status = mode;
 
@@ -1243,7 +1441,6 @@
         if (!matchesCategory) return false;
         if (isRace && !statusFilters[item.status]) return false;
         if (surfaceFilter !== 'all' && item.surface !== surfaceFilter) return false;
-        if (searchQuery && !item.name.toLowerCase().includes(searchQuery)) return false;
 
         if (advFilterMonth !== 'all') {
           const m = parseActivityMonth(item);
@@ -1279,7 +1476,6 @@
         marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} &bull; ${item.surfaceLabel || ''}`);
         marker.on('click', () => showDetail(item));
 
-        // Čistá horizontální karta se čtvercovým náhledem vlevo
         const card = document.createElement('div');
         card.className = 'race-card-rich';
         const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80';
@@ -1418,7 +1614,6 @@
       }
       renderAll();
 
-      // Plynulé odzoomování zpět na celkový pohled
       if (markerLayerGroup.getLayers().length > 1) {
         map.flyToBounds(markerLayerGroup.getBounds(), { padding: [50, 50], maxZoom: 5.5, animate: true, duration: 1.1 });
       } else {
@@ -1502,57 +1697,158 @@
       `;
     }
 
+    // ====================================================
+    // 2. ROZDĚLENÉ A OBOHACENÉ STATISTIKY (MILESTONES)
+    // ====================================================
     function renderStatsView() {
       const content = document.getElementById('content');
-      document.getElementById('stats-label').textContent = 'Milestones summary';
+      document.getElementById('stats-label').textContent = 'Separated by race status & geography';
       currentDetailItem = null;
       document.getElementById('floating-hud-panel').style.display = 'none';
 
-      let totalKm = 0;
-      let totalEle = 0;
-      let completedCount = 0;
-      let bucketCount = 0;
+      const parseNum = str => {
+        if (!str) return 0;
+        const n = parseFloat(str.replace(/,/g, '').replace(/[^\d.]/g, ''));
+        return isNaN(n) ? 0 : n;
+      };
 
-      races.forEach(r => {
-        if (r.status === 'done') completedCount++;
-        if (r.status === 'bucket') bucketCount++;
-        if (r.distance) {
-          const num = parseFloat(r.distance.replace(/,/g, '.').replace(/[^\d.]/g, ''));
-          if (!isNaN(num)) totalKm += num;
-        }
-        if (r.elevation) {
-          const ele = parseFloat(r.elevation.replace(/,/g, '.').replace(/[^\d.]/g, ''));
-          if (!isNaN(ele)) totalEle += ele;
-        }
+      // Rozdělení podle statusů
+      const doneList = races.filter(r => r.status === 'done');
+      const plannedList = races.filter(r => r.status === 'planned');
+      const bucketList = races.filter(r => r.status === 'bucket');
+
+      // 1. Výpočty pro COMPLETED
+      let doneKm = 0, doneEle = 0, roadCount = 0, trailCount = 0;
+      let marathons = 0, halfs = 0, ultras = 0;
+      const doneCountries = new Set();
+      const doneContinents = new Set();
+
+      doneList.forEach(r => {
+        const d = parseNum(r.distance);
+        doneKm += d;
+        doneEle += parseNum(r.elevation);
+        if (r.surface === 'trail') trailCount++; else roadCount++;
+
+        if (d > 45) ultras++;
+        else if (d >= 40 && d <= 45) marathons++;
+        else if (d >= 20 && d <= 23) halfs++;
+
+        const geo = detectGeoFromCoords(r.coords, r.name);
+        doneCountries.add(geo.country);
+        doneContinents.add(geo.continent);
+      });
+
+      const totalSurface = (roadCount + trailCount) || 1;
+      const roadPct = Math.round((roadCount / totalSurface) * 100);
+      const trailPct = 100 - roadPct;
+
+      // 2. Výpočty pro PLANNED
+      let plannedKm = 0, plannedEle = 0;
+      plannedList.forEach(r => {
+        plannedKm += parseNum(r.distance);
+        plannedEle += parseNum(r.elevation);
+      });
+
+      // 3. Výpočty pro BUCKET LIST
+      let bucketKm = 0, bucketEle = 0;
+      const bucketCountries = new Set();
+      bucketList.forEach(r => {
+        bucketKm += parseNum(r.distance);
+        bucketEle += parseNum(r.elevation);
+        bucketCountries.add(detectGeoFromCoords(r.coords, r.name).country);
       });
 
       content.innerHTML = `
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
-          <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a; margin-bottom:4px;">Lifetime Statistics</h3>
-          <p style="font-size:0.8rem; color:#64748b; margin-bottom:14px;">Summary of logged races, routes, and mountain milestones.</p>
-          
+        <!-- BLOK 1: SKUTEČNĚ ODBĚHNUTO (COMPLETED) -->
+        <div class="stats-section-block">
+          <div class="stats-section-header">
+            <h3>🏆 Completed Footprint</h3>
+            <span class="badge badge-done">${doneList.length} Finished</span>
+          </div>
+
           <div class="stats-card-grid">
             <div class="stat-box">
-              <div class="stat-box-num">${races.length}</div>
-              <div class="stat-box-lbl">Total Activities</div>
+              <div class="stat-box-num" style="color:#16a34a;">${doneKm.toFixed(0)} km</div>
+              <div class="stat-box-lbl">Raced Distance</div>
             </div>
             <div class="stat-box">
-              <div class="stat-box-num">${completedCount}</div>
-              <div class="stat-box-lbl">Finished Races</div>
+              <div class="stat-box-num" style="color:#16a34a;">+${doneEle.toLocaleString()} m</div>
+              <div class="stat-box-lbl">Total Climb</div>
             </div>
             <div class="stat-box">
-              <div class="stat-box-num">${totalKm.toFixed(0)} km</div>
-              <div class="stat-box-lbl">Total Distance</div>
+              <div class="stat-box-num">${doneCountries.size}</div>
+              <div class="stat-box-lbl">Countries Raced</div>
             </div>
             <div class="stat-box">
-              <div class="stat-box-num">+${totalEle.toLocaleString()} m</div>
-              <div class="stat-box-lbl">Elevation Gain</div>
+              <div class="stat-box-num">${doneContinents.size}</div>
+              <div class="stat-box-lbl">Continents</div>
             </div>
           </div>
 
-          <div style="border-top:1px solid #f1f5f9; padding-top:12px; font-size:0.82rem; color:#475569; display:flex; justify-content:space-between;">
-            <span>Bucket list destinations:</span>
-            <strong style="color:#0284c7;">${bucketCount} races</strong>
+          <!-- Rozpad disciplín -->
+          <div style="display:flex; justify-content:space-between; background:#f8fafc; padding:8px 12px; border-radius:8px; font-size:0.76rem; font-weight:700; color:#475569;">
+            <span>Ultras: <strong style="color:#0f172a;">${ultras}</strong></span>
+            <span>Marathons: <strong style="color:#0f172a;">${marathons}</strong></span>
+            <span>Halfs: <strong style="color:#0f172a;">${halfs}</strong></span>
+          </div>
+
+          <!-- Poměr Road vs Trail -->
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:700; color:#64748b; margin-bottom:4px;">
+              <span>🛣️ Road (${roadPct}%)</span>
+              <span>⛰️ Trail (${trailPct}%)</span>
+            </div>
+            <div style="height:7px; width:100%; background:#e2e8f0; border-radius:4px; overflow:hidden; display:flex;">
+              <div style="width:${roadPct}%; background:#007aff;"></div>
+              <div style="width:${trailPct}%; background:#16a34a;"></div>
+            </div>
+          </div>
+
+          ${doneCountries.size > 0 ? `
+            <div>
+              <small style="font-size:0.68rem; font-weight:800; color:#64748b; text-transform:uppercase; display:block; margin-bottom:6px;">Visited Countries</small>
+              <div class="country-pill-list">
+                ${Array.from(doneCountries).map(c => `<span class="country-pill">${c}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- BLOK 2: PLÁNOVANÁ SEZÓNA (PLANNED) -->
+        <div class="stats-section-block">
+          <div class="stats-section-header">
+            <h3>📅 Upcoming Season</h3>
+            <span class="badge badge-planned">${plannedList.length} Planned</span>
+          </div>
+
+          <div class="stats-card-grid">
+            <div class="stat-box">
+              <div class="stat-box-num" style="color:#d97706;">${plannedKm.toFixed(0)} km</div>
+              <div class="stat-box-lbl">Scheduled Distance</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-num" style="color:#d97706;">+${plannedEle.toLocaleString()} m</div>
+              <div class="stat-box-lbl">Upcoming Climb</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BLOK 3: BUCKET LIST & SNY -->
+        <div class="stats-section-block">
+          <div class="stats-section-header">
+            <h3>⭐️ Dream Expeditions</h3>
+            <span class="badge badge-bucket">${bucketList.length} Targets</span>
+          </div>
+
+          <div class="stats-card-grid">
+            <div class="stat-box">
+              <div class="stat-box-num" style="color:#0284c7;">${bucketKm.toFixed(0)} km</div>
+              <div class="stat-box-lbl">Dream Distance</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-num" style="color:#0284c7;">${bucketCountries.size}</div>
+              <div class="stat-box-lbl">Target Countries</div>
+            </div>
           </div>
         </div>
       `;
@@ -1787,11 +2083,6 @@
       surfaceFilter = surface;
       document.querySelectorAll('.filters-section .pill-btn').forEach(b => { if (b.id !== 'btn-toggle-advanced-filters') b.classList.remove('active'); });
       btn.classList.add('active');
-      renderAll();
-    }
-
-    function handleSearch(val) {
-      searchQuery = val.trim().toLowerCase();
       renderAll();
     }
 
