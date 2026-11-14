@@ -101,14 +101,14 @@
     /* Left Rail */
     #left-rail {
       width: 56px; background: #1e293b; border-right: 1px solid #334155;
-      display: flex; flex-direction: column; gap: 6px; padding: 12px 6px;
+      display: flex; flex-direction: column; gap: 5px; padding: 12px 6px;
       transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden; white-space: nowrap; z-index: 1500; flex-shrink: 0;
     }
-    #left-rail:hover { width: 205px; box-shadow: 6px 0 24px rgba(0, 0, 0, 0.35); }
+    #left-rail:hover { width: 215px; box-shadow: 6px 0 24px rgba(0, 0, 0, 0.35); }
 
     .rail-btn {
-      display: flex; align-items: center; gap: 14px; padding: 10px 12px;
+      display: flex; align-items: center; gap: 14px; padding: 9px 12px;
       border-radius: 8px; color: #94a3b8; cursor: pointer; border: none;
       background: transparent; font-size: 0.82rem; font-weight: 700; transition: all 0.15s;
       text-decoration: none; width: 100%; text-align: left;
@@ -117,22 +117,22 @@
     .rail-btn .rail-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     #left-rail .rail-btn span:not(.rail-icon) { opacity: 0; pointer-events: none; transition: opacity 0.18s ease; }
     #left-rail:hover .rail-btn span:not(.rail-icon) { opacity: 1; pointer-events: auto; }
-    .rail-spacer { flex: 1; min-height: 20px; }
+    .rail-spacer { flex: 1; min-height: 12px; }
 
     /* Map & Sidebar */
-    #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #e2e8f0; }
-    #map { width: 100%; height: 100%; background: #e2e8f0; z-index: 1; }
+    #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #cbd5e1; }
+    #map { width: 100%; height: 100%; background: #cbd5e1; z-index: 1; }
 
-    /* FULLSCREEN STATS DASHBOARD PANE */
-    #stats-full-view {
+    /* FULLSCREEN VIEW PANES (STATS, TIMELINE, PERSONAL BESTS, EXPLORE CATALOG) */
+    #full-page-view {
       display: none; flex: 1; height: 100%; overflow-y: auto; background: #f8f9fb; padding: 36px 28px;
     }
-    .stats-dashboard-container {
-      max-width: 1020px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;
+    .full-dashboard-container {
+      max-width: 1060px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;
     }
-    .stats-top-kpis {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-    }
+
+    /* Stats Specific Styles */
+    .stats-top-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .kpi-hero-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;
       box-shadow: 0 4px 16px rgba(15,23,42,0.04); display: flex; flex-direction: column; gap: 6px;
@@ -141,9 +141,7 @@
     .kpi-hero-lbl { font-size: 0.74rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.6px; }
     .kpi-hero-sub { font-size: 0.76rem; color: #16a34a; font-weight: 700; margin-top: 2px; }
 
-    .stats-two-col {
-      display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px;
-    }
+    .stats-two-col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
     .stats-panel-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px;
       box-shadow: 0 4px 16px rgba(15,23,42,0.04); display: flex; flex-direction: column; gap: 16px;
@@ -153,9 +151,7 @@
     }
     .stats-panel-header h3 { font-size: 1.1rem; font-weight: 800; color: #0f172a; }
 
-    .discipline-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-    }
+    .discipline-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     .discipline-box {
       background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 10px; text-align: center;
     }
@@ -167,6 +163,102 @@
       background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 0.8rem;
       font-weight: 700; padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;
     }
+
+    /* ==================================================== */
+    /* SEASON TIMELINE STYLES                               */
+    /* ==================================================== */
+    .timeline-year-section {
+      display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px;
+    }
+    .timeline-year-badge {
+      display: inline-flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 900;
+      color: #0f172a; background: #ffffff; border: 2px solid #007aff; padding: 6px 18px;
+      border-radius: 30px; width: fit-content; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.12);
+    }
+    .timeline-year-summary {
+      font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .timeline-track {
+      position: relative; padding-left: 36px; display: flex; flex-direction: column; gap: 14px;
+      border-left: 3px solid #cbd5e1; margin-left: 24px;
+    }
+    .timeline-node-card {
+      position: relative; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
+      padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 18px;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04); cursor: pointer; transition: all 0.2s ease;
+    }
+    .timeline-node-card:hover {
+      border-color: #007aff; transform: translateX(4px); box-shadow: 0 8px 24px rgba(0, 122, 255, 0.14);
+    }
+    .timeline-dot {
+      position: absolute; left: -46px; top: 50%; transform: translateY(-50%);
+      width: 18px; height: 18px; border-radius: 50%; background: #007aff; border: 3.5px solid #f8f9fb;
+      box-shadow: 0 0 0 2px #007aff;
+    }
+    .timeline-date-col {
+      min-width: 95px; text-align: left; border-right: 1px solid #f1f5f9; padding-right: 14px;
+    }
+    .timeline-month { font-size: 0.72rem; font-weight: 800; color: #007aff; text-transform: uppercase; letter-spacing: 0.8px; display: block; }
+    .timeline-day { font-size: 1.25rem; font-weight: 900; color: #0f172a; }
+
+    /* ==================================================== */
+    /* PERSONAL BESTS (TROPHY ROOM) STYLES                  */
+    /* ==================================================== */
+    .pr-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    }
+    .pr-trophy-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0; border-top: 4px solid #007aff; border-radius: 16px;
+      padding: 22px 20px; display: flex; flex-direction: column; justify-content: space-between;
+      gap: 14px; box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05); transition: all 0.2s;
+    }
+    .pr-trophy-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0, 122, 255, 0.14); }
+    .pr-dist-badge {
+      font-size: 0.72rem; font-weight: 900; color: #007aff; background: #eff6ff;
+      border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 20px; width: fit-content;
+      text-transform: uppercase; letter-spacing: 0.8px;
+    }
+    .pr-time-val { font-size: 2.1rem; font-weight: 900; color: #0f172a; letter-spacing: -0.5px; line-height: 1.1; }
+    .pr-pace-sub { font-size: 0.8rem; font-weight: 700; color: #16a34a; margin-top: 4px; }
+    .pr-race-link {
+      border-top: 1px solid #e2e8f0; padding-top: 10px; font-size: 0.78rem; color: #475569;
+      display: flex; flex-direction: column; gap: 2px; cursor: pointer;
+    }
+    .pr-race-link:hover strong { color: #007aff; text-decoration: underline; }
+
+    /* ==================================================== */
+    /* EXPLORE CATALOG FULLSCREEN STYLES                    */
+    /* ==================================================== */
+    .catalog-full-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .catalog-showcase-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: space-between;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); transition: all 0.22s ease;
+    }
+    .catalog-showcase-card:hover {
+      transform: translateY(-4px); border-color: #007aff; box-shadow: 0 14px 32px rgba(0, 122, 255, 0.15);
+    }
+    .catalog-card-img {
+      height: 150px; background-size: cover; background-position: center; position: relative;
+      display: flex; flex-direction: column; justify-content: space-between; padding: 12px;
+    }
+    .catalog-card-img::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(15,23,42,0.25) 0%, rgba(15,23,42,0.8) 100%);
+    }
+    .catalog-card-top, .catalog-card-bottom { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; }
+    .catalog-card-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .catalog-card-actions {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding-top: 10px; border-top: 1px solid #f1f5f9;
+    }
+    .cat-act-btn {
+      padding: 7px 6px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; border: 1px solid #e2e8f0;
+      background: #f8fafc; color: #334155; cursor: pointer; text-align: center; transition: all 0.15s;
+    }
+    .cat-act-btn:hover { background: #007aff; color: #ffffff; border-color: #007aff; }
 
     /* FLOATING TELEMETRY HUD BAR OVER MAP */
     #floating-hud-panel {
@@ -198,14 +290,6 @@
     .hud-barometer-meta { display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 700; color: #cbd5e1; }
     .hud-barometer-track { height: 6px; width: 100%; background: rgba(255,255,255,0.14); border-radius: 4px; overflow: hidden; }
     .hud-barometer-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
-
-    .hud-close-btn {
-      position: absolute; top: -14px; right: -10px; background: #0f172a; border: 1px solid #334155;
-      color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; cursor: pointer; font-size: 1rem; pointer-events: auto;
-      transition: all 0.15s;
-    }
-    .hud-close-btn:hover { background: #1e293b; color: #ffffff; border-color: #38bdf8; }
 
     /* Context menu */
     #map-context-menu {
@@ -441,9 +525,7 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
-    /* ==================================================== */
-    /* CUSTOM STYLING PRO DRIVER.JS (MIDNIGHT NAVY POPOVER) */
-    /* ==================================================== */
+    /* CUSTOM STYLING PRO DRIVER.JS */
     .driver-popover.runatlas-tour-theme {
       background: #0f172a !important;
       color: #f8fafc !important;
@@ -482,7 +564,6 @@
       font-size: 0.78rem !important;
       font-weight: 700 !important;
       text-shadow: none !important;
-      transition: background 0.15s !important;
     }
     .driver-popover.runatlas-tour-theme .driver-popover-prev-btn {
       background: #1e293b !important;
@@ -549,6 +630,9 @@
       display: flex; flex-direction: column; gap: 4px;
     }
 
+    @media (max-width: 900px) {
+      .pr-grid, .catalog-full-grid, .stats-top-kpis, .stats-two-col { grid-template-columns: 1fr; }
+    }
     @media (max-width: 768px) {
       .top-search-wrap { display: none; }
       #left-rail {
@@ -563,7 +647,7 @@
       #sidebar.mobile-open { transform: translateY(0); }
       #map-wrapper { width: 100%; height: calc(100vh - 110px); }
       #floating-hud-panel { left: 12px; right: 12px; bottom: 70px; }
-      .status-selector-grid, .stats-top-kpis, .stats-two-col { grid-template-columns: 1fr; }
+      .status-selector-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -617,7 +701,7 @@
     </header>
 
     <div id="main-body">
-      <!-- LEVÝ PANEL -->
+      <!-- BOHATÝ LEVÝ PANEL (6 FUNKČNÍCH POHLEDŮ NAHOŘE + 3 DOLE) -->
       <nav id="left-rail">
         <button id="rail-races" class="rail-btn active" onclick="switchPageMode('races')">
           <span class="rail-icon">
@@ -639,13 +723,30 @@
           <span>Memorable Runs</span>
         </button>
 
-        <button id="rail-bucket" class="rail-btn" onclick="switchPageMode('bucket')">
+        <button id="rail-timeline" class="rail-btn" onclick="switchPageMode('timeline')">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
             </svg>
           </span>
-          <span>Bucket List</span>
+          <span>Season Timeline</span>
+        </button>
+
+        <button id="rail-bests" class="rail-btn" onclick="switchPageMode('bests')">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+              <path d="M4 22h16"></path>
+              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+              <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+            </svg>
+          </span>
+          <span>Personal Bests</span>
         </button>
 
         <button id="rail-stats" class="rail-btn" onclick="switchPageMode('stats')">
@@ -657,7 +758,18 @@
           <span>Milestones & Stats</span>
         </button>
 
-        <div style="height: 1px; background: #334155; margin: 10px 4px;"></div>
+        <button id="rail-catalog" class="rail-btn" onclick="switchPageMode('catalog')">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+          </span>
+          <span>Explore Catalog</span>
+        </button>
+
+        <div class="rail-spacer"></div>
+        <div style="height: 1px; background: #334155; margin: 4px 4px;"></div>
 
         <a class="rail-btn" href="settings.html">
           <span class="rail-icon">
@@ -668,9 +780,6 @@
           </span>
           <span>Settings</span>
         </a>
-
-        <div class="rail-spacer"></div>
-        <div style="height: 1px; background: #334155; margin: 4px 4px;"></div>
 
         <a class="rail-btn" href="about.html">
           <span class="rail-icon">
@@ -692,9 +801,9 @@
         </a>
       </nav>
 
-      <!-- CELOOBRAZOVKOVÉ STATISTIKY -->
-      <div id="stats-full-view">
-        <div id="stats-dashboard-content" class="stats-dashboard-container"></div>
+      <!-- CELOOBRAZOVKOVÉ POHLEDY (TIMELINE, BESTS, STATS, EXPLORE CATALOG) -->
+      <div id="full-page-view">
+        <div id="full-page-content" class="full-dashboard-container"></div>
       </div>
 
       <!-- MAPA & HUD OVERLAY -->
@@ -703,7 +812,6 @@
 
         <!-- PLOVOUCÍ TELEMETRICKÉ HUD KARTY -->
         <div id="floating-hud-panel">
-          <button class="hud-close-btn" title="Close & Zoom Out" onclick="exitDetailView()">&times;</button>
           <div class="hud-card-cluster" id="hud-cluster-content"></div>
         </div>
 
@@ -727,7 +835,6 @@
         <div class="sidebar-header">
           <div class="sidebar-title-row">
             <h2 id="main-title">Race Atlas</h2>
-            <!-- Informační tlačítko 'i' pro Memorable Runs -->
             <button id="memorable-info-btn" class="info-badge-btn" title="What are Memorable Runs?" onclick="toggleMemorableExplainer()" onmouseenter="showMemorableExplainer()">i</button>
           </div>
           <p id="stats-label">Loading activities...</p>
@@ -743,7 +850,7 @@
               <li><strong>Alpine summits & ridge crossings</strong></li>
               <li><strong>Vacation & foreign city exploration runs</strong></li>
               <li><strong>Solo endurance challenges & FKT attempts</strong></li>
-              <li><strong> runs with friends in iconic nature</strong></li>
+              <li><strong>Epic runs with friends in iconic nature</strong></li>
             </ul>
           </div>
 
@@ -841,7 +948,7 @@
     </div>
   </div>
 
-  <!-- 2. VLASTNÍ MODAL PRO NASTAVENÍ HOME BASE -->
+  <!-- 2. VLASTNÍ MODAL PRO NASTAVENÍ HOME BASE S NAŠEPTÁVAČEM MĚST -->
   <div id="homebase-modal" class="modal-backdrop">
     <div class="custom-dialog-card" style="text-align:left; max-width:440px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -851,9 +958,10 @@
       <p style="font-size:0.84rem; color:#64748b; line-height:1.5;">
         Your Home Base centers your map and automatically calculates travel distances to all planned and bucket-list races.
       </p>
-      <div>
-        <label class="form-group-label">City or Address</label>
-        <input type="text" id="homebase-city-input" class="stepped-input" placeholder="e.g. Slaný, Czechia or Prague" onkeydown="if(event.key==='Enter') confirmHomeBaseModal()">
+      <div style="position:relative;">
+        <label class="form-group-label">Search City or Address</label>
+        <input type="text" id="homebase-city-input" class="stepped-input" placeholder="Start typing city (e.g. Slaný, Praha, Berlin)..." autocomplete="off" oninput="handleHomeBaseAutocomplete(this.value)" onkeydown="if(event.key==='Enter') confirmHomeBaseModal()">
+        <div id="homebase-suggestions" class="catalog-suggest-box"></div>
       </div>
       <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:6px;">
         <button class="pill-btn" onclick="document.getElementById('homebase-modal').style.display='none'">Cancel</button>
@@ -1055,6 +1163,10 @@
     let advFilterDifficulty = 'all';
     let advFilterCost = 'all';
 
+    let timelineYearFilter = 'all';
+    let exploreCategoryFilter = 'all';
+    let exploreSearchQuery = '';
+
     let chipSelections = { status: 'done', surface: 'road', difficulty: 'stredni' };
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
@@ -1100,14 +1212,14 @@
     }
 
     // ====================================================
-    // 1. KONTEXTOVÝ PRŮVODCE SE ŠIPKAMI NAD MAPOU (DRIVER.JS)
+    // 1. KONTEXTOVÝ PRŮVODCE BEZ ŠKUBAVÉHO PŘELÉTÁVÁNÍ
     // ====================================================
     function startContextualTour() {
-      if (currentMode === 'stats') switchPageMode('races');
+      if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode('races');
 
       const driverObj = window.driver.js.driver({
         showProgress: true,
-        animate: true,
+        animate: false,
         popoverClass: 'runatlas-tour-theme',
         nextBtnText: 'Next ➔',
         prevBtnText: '← Back',
@@ -1119,9 +1231,18 @@
           {
             element: '#left-rail',
             popover: {
-              title: '🧭 4 Modes of Your Atlas',
-              description: 'Switch between your official Race Atlas, non-race Memorable Runs, future Bucket List targets, and full-screen Milestones & Stats.',
+              title: '🧭 6 Views of Your Running Life',
+              description: 'Switch between your interactive Race Atlas, Memorable Runs, chronological Season Timeline, Personal Bests Trophy Room, Analytics, and the Global Race Catalog.',
               side: "right",
+              align: 'start'
+            }
+          },
+          {
+            element: '#status-boxes-wrap',
+            popover: {
+              title: '🎯 Filter Race Stages',
+              description: 'Toggle Completed, Planned, and Bucket List races directly inside your Race Atlas.',
+              side: "left",
               align: 'start'
             }
           },
@@ -1129,7 +1250,7 @@
             element: '#btn-add-activity',
             popover: {
               title: '➕ Add Races or Drop .GPX',
-              description: 'Log completed races, upcoming goals, or bucket-list dreams. Pick from the World Catalog in 1 click or drag & drop a watch .GPX file.',
+              description: 'Pick iconic races from the World Catalog in 1 click or drag & drop a watch .GPX file.',
               side: "bottom",
               align: 'end'
             }
@@ -1138,25 +1259,16 @@
             element: '#map',
             popover: {
               title: '🖱️ Right-Click Anywhere on Map',
-              description: 'Want to pin a run at a specific mountain pass or city? Simply right-click anywhere on the map canvas to add an activity or set your Home Base.',
+              description: 'Simply right-click anywhere on the map canvas to pin a race at that exact spot or set your Home Base.',
               side: "top",
               align: 'center'
-            }
-          },
-          {
-            element: '#top-search-container',
-            popover: {
-              title: '🔍 Instant Spotlight Search',
-              description: 'Type any race name or city here to immediately fly to your logged activity or quick-add an event from the global catalog.',
-              side: "bottom",
-              align: 'start'
             }
           },
           {
             element: '#floating-home-btn',
             popover: {
               title: '🏠 Your Home Base',
-              description: 'Set your home city here. Running Atlas uses it to center your map and automatically calculate travel distances to all planned & bucket-list races.',
+              description: 'Set your home city here. Running Atlas uses it to center your map and draw travel arcs to all your races.',
               side: "top",
               align: 'start'
             }
@@ -1187,11 +1299,15 @@
       document.getElementById('memorable-info-btn').classList.remove('active');
     }
 
-    // Map initialization
+    // ====================================================
+    // 3. MAPA SE ZABLOKOVANÝM VERTIKÁLNÍM ÚNIKEM DO ŠEDI
+    // ====================================================
     const map = L.map('map', {
       center: userHomeCoords || [25.0, 10.0],
       zoom: userHomeCoords ? 5.2 : 2.5,
-      minZoom: 2,
+      minZoom: 2.3,
+      maxBounds: [[-85, -Infinity], [85, Infinity]],
+      maxBoundsViscosity: 1.0,
       worldCopyJump: true
     });
 
@@ -1221,7 +1337,7 @@
       const catalogMatches = featuredRacesList.filter(c => {
         const inMyRaces = races.some(r => r.name.toLowerCase() === c.name.toLowerCase());
         return !inMyRaces && (c.name.toLowerCase().includes(q) || (c.location && c.location.toLowerCase().includes(q)));
-      }).slice(0, 3);
+      }).slice(0, 4);
 
       let html = '';
 
@@ -1289,14 +1405,15 @@
       clearSpotlightSearch();
       const item = races.find(r => r.id === id);
       if (!item) return;
-      if (currentMode === 'stats') switchPageMode('races');
+      if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode('races');
       showDetail(item);
     }
 
-    function quickAddFromSpotlight(catId) {
+    function quickAddFromSpotlight(catId, presetStatus = 'done') {
       clearSpotlightSearch();
       openAddModal();
       applyCatalogPreset(catId);
+      selectStatusMode(presetStatus);
     }
 
     function openAddWithCustomTitle(title) {
@@ -1357,6 +1474,7 @@
       showToast('Atlas backup downloaded!', '📦');
     }
 
+    // SPOLEHLIVÉ ODHLÁŠENÍ S VYČIŠTĚNÍM SUPABASE SESSION
     function handleLogout() {
       document.getElementById('profile-dropdown').classList.remove('show');
       openCustomConfirm({
@@ -1366,8 +1484,16 @@
         isDanger: false,
         confirmText: 'Log Out',
         onConfirm: async () => {
-          await supabaseClient.auth.signOut();
-          window.location.href = 'index.html';
+          try {
+            await supabaseClient.auth.signOut();
+          } catch (e) {
+            console.warn('SignOut notice:', e);
+          }
+          Object.keys(localStorage).forEach(k => {
+            if (k.startsWith('sb-') || k.includes('supabase')) localStorage.removeItem(k);
+          });
+          sessionStorage.clear();
+          window.location.replace('index.html');
         }
       });
     }
@@ -1380,6 +1506,25 @@
       const a = Math.sin(dLat / 2)**2 + Math.cos(userHomeCoords[0] * rad) * Math.cos(targetCoords[0] * rad) * Math.sin(dLon / 2)**2;
       const dist = 6371 * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
       return Math.round(dist);
+    }
+
+    function createGeodesicArc(start, end) {
+      const lat1 = start[0], lng1 = start[1];
+      const lat2 = end[0], lng2 = end[1];
+      const points = [];
+      const midLat = (lat1 + lat2) / 2;
+      const midLng = (lng1 + lng2) / 2;
+      const dLat = lat2 - lat1;
+      const dLng = lng2 - lng1;
+      const offsetLat = midLat + Math.abs(dLng) * 0.14;
+      const offsetLng = midLng - dLat * 0.08;
+
+      for (let t = 0; t <= 1; t += 0.04) {
+        const lat = (1 - t) * (1 - t) * lat1 + 2 * (1 - t) * t * offsetLat + t * t * lat2;
+        const lng = (1 - t) * (1 - t) * lng1 + 2 * (1 - t) * t * offsetLng + t * t * lng2;
+        points.push([lat, lng]);
+      }
+      return points;
     }
 
     function detectGeoFromCoords(coords, name = '') {
@@ -1396,15 +1541,14 @@
       else if (lng > 40 && lat >= 0) continent = 'Asia';
 
       let country = 'Other';
-      if (lowName.includes('prague') || lowName.includes('praha') || lowName.includes('běchovice') || (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9)) country = '🇨🇿 Czechia';
+      if (lowName.includes('prague') || lowName.includes('praha') || lowName.includes('běchovice') || lowName.includes('jizersk') || lowName.includes('beskyd') || (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9)) country = '🇨🇿 Czechia';
       else if (lowName.includes('berlin') || lowName.includes('dresden') || lowName.includes('munich') || (lat >= 47.2 && lat <= 55.0 && lng >= 6.0 && lng <= 15.0)) country = '🇩🇪 Germany';
       else if (lowName.includes('chamonix') || lowName.includes('utmb') || lowName.includes('paris') || (lat >= 42.0 && lat <= 51.0 && lng >= -5.0 && lng <= 8.2)) country = '🇫🇷 France';
-      else if (lowName.includes('chianti') || lowName.includes('rome') || lowName.includes('milan') || (lat >= 36.5 && lat <= 47.0 && lng >= 6.6 && lng <= 18.5)) country = '🇮🇹 Italy';
-      else if (lowName.includes('valencia') || lowName.includes('madrid') || lowName.includes('barcelona') || (lat >= 36.0 && lat <= 43.8 && lng >= -9.3 && lng <= 3.3)) country = '🇪🇸 Spain';
+      else if (lowName.includes('chianti') || lowName.includes('lavaredo') || lowName.includes('rome') || (lat >= 36.5 && lat <= 47.0 && lng >= 6.6 && lng <= 18.5)) country = '🇮🇹 Italy';
+      else if (lowName.includes('valencia') || lowName.includes('seville') || lowName.includes('zegama') || (lat >= 36.0 && lat <= 43.8 && lng >= -9.3 && lng <= 3.3)) country = '🇪🇸 Spain';
       else if (lowName.includes('helsinki') || (lat >= 59.5 && lat <= 70.0 && lng >= 20.0 && lng <= 31.5)) country = '🇫🇮 Finland';
       else if (lowName.includes('aalborg') || lowName.includes('copenhagen') || (lat >= 54.5 && lat <= 58.0 && lng >= 8.0 && lng <= 15.2)) country = '🇩🇰 Denmark';
-      else if (lowName.includes('slovakia') || lowName.includes('bratislava') || lowName.includes('tatry') || (lat >= 47.7 && lat <= 49.6 && lng >= 16.8 && lng <= 22.6)) country = '🇸🇰 Slovakia';
-      else if (lowName.includes('vienna') || lowName.includes('innsbruck') || (lat >= 46.3 && lat <= 49.0 && lng >= 9.5 && lng <= 17.2)) country = '🇦🇹 Austria';
+      else if (lowName.includes('eiger') || lowName.includes('zermatt') || (lat >= 45.8 && lat <= 47.8 && lng >= 6.0 && lng <= 10.5)) country = '🇨🇭 Switzerland';
       else if (lowName.includes('london') || (lat >= 50.0 && lat <= 59.0 && lng >= -8.0 && lng <= 2.0)) country = '🇬🇧 UK';
       else if (lowName.includes('boston') || lowName.includes('new york') || lowName.includes('chicago') || (continent === 'North America')) country = '🇺🇸 USA';
       else if (lowName.includes('tokyo') || (lat >= 30.0 && lat <= 45.0 && lng >= 129.0 && lng <= 146.0)) country = '🇯🇵 Japan';
@@ -1413,7 +1557,56 @@
       return { country, continent };
     }
 
-    // Home Base
+    // Home Base + živý našeptávač měst
+    let homeSuggestTimeout = null;
+
+    function handleHomeBaseAutocomplete(val) {
+      const box = document.getElementById('homebase-suggestions');
+      const q = val.trim();
+      if (q.length < 2) {
+        box.style.display = 'none';
+        return;
+      }
+
+      if (homeSuggestTimeout) clearTimeout(homeSuggestTimeout);
+      homeSuggestTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(q)}`);
+          const data = await res.json();
+          if (!data || data.length === 0) {
+            box.style.display = 'none';
+            return;
+          }
+
+          box.innerHTML = data.map(place => {
+            const parts = place.display_name.split(',');
+            const mainName = parts[0].trim();
+            const subName = parts.slice(1, 3).join(',').trim();
+            return `
+              <div class="suggest-row" onclick="selectHomeBaseSuggestion(${place.lat}, ${place.lon}, '${mainName.replace(/'/g, "\\'")}')">
+                <div>
+                  <strong>📍 ${mainName}</strong>
+                  <span style="display:block;">${subName}</span>
+                </div>
+                <span class="pill-btn" style="padding:2px 8px; font-size:0.7rem; background:#eff6ff; color:#007aff; border-color:#bfdbfe;">Select</span>
+              </div>
+            `;
+          }).join('');
+          box.style.display = 'flex';
+        } catch (e) {
+          box.style.display = 'none';
+        }
+      }, 280);
+    }
+
+    function selectHomeBaseSuggestion(lat, lon, label) {
+      document.getElementById('homebase-city-input').value = label;
+      document.getElementById('homebase-suggestions').style.display = 'none';
+      document.getElementById('homebase-modal').style.display = 'none';
+      saveHomeCoordsQuick([parseFloat(lat), parseFloat(lon)]);
+      showToast(`Home Base set to ${label}!`, '🏠');
+    }
+
     function refreshHomeMarker() {
       const homeLabel = document.getElementById('floating-home-label');
       if (userHomeCoords) {
@@ -1445,6 +1638,7 @@
         refreshHomeMarker();
       } else {
         document.getElementById('homebase-city-input').value = '';
+        document.getElementById('homebase-suggestions').style.display = 'none';
         document.getElementById('homebase-modal').style.display = 'flex';
         setTimeout(() => document.getElementById('homebase-city-input').focus(), 50);
       }
@@ -1494,7 +1688,7 @@
       const sharedUser = params.get('u');
 
       refreshHomeMarker();
-      loadFeaturedCatalogList();
+      await loadFeaturedCatalogList();
 
       if (isDemoMode) {
         document.getElementById('label-user').textContent = "Demo User";
@@ -1502,10 +1696,10 @@
         races = [
           { id: "demo-1", name: "Dresden Half Marathon", date: "2026-10-24", month: 10, coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€", distance: "21.1 km", elevation: "+110 m", ambitionTime: "Sub 1:25:00", logisticsTransport: "Car", why: "Flat course along Elbe.", notes: "Target 4:01/km.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80" },
           { id: "demo-2", name: "Helsinki Marathon", date: "2026-08-22", month: 8, coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€€€", distance: "42.2 km", elevation: "+226 m", resultTime: "3:11:04", placement: "38th / 1240", why: "First northern marathon.", notes: "Even split.", image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=400&q=80", satisfaction: 9, course_satisfaction: 8 },
+          { id: "demo-4", name: "Běchovice–Praha", date: "2025-09-28", month: 9, coords: [50.0818, 14.6186], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€", distance: "10.0 km", elevation: "+85 m", resultTime: "38:42", placement: "64th", why: "Oldest road 10K in Europe.", notes: "Strong climb on Hrdlořezy hill.", image_url: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80", satisfaction: 9, course_satisfaction: 9 },
           { id: "demo-3", name: "UTMB Mont-Blanc", date: "August", month: 8, coords: [45.9237, 6.8694], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "extremni", cost: "€€€€", distance: "171 km", elevation: "+10,000 m", why: "Ultimate alpine loop around Mont Blanc.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" }
         ];
         renderAll();
-        // V Demu se interaktivní průvodce nad mapou spustí VŽDY
         setTimeout(() => startContextualTour(), 500);
         return;
       }
@@ -1540,23 +1734,37 @@
       }
     }
 
+    // ROZŠÍŘENÝ GLOBÁLNÍ KATALOG (18 IKONICKÝCH SVĚTOVÝCH, EVROPSKÝCH A ČESKÝCH ZÁVODŮ)
     async function loadFeaturedCatalogList() {
-      try {
-        const { data } = await supabaseClient.from('featured_races').select('*');
-        if (data && data.length > 0) {
-          featuredRacesList = data;
-        } else {
-          featuredRacesList = [
-            { id: "c-1", name: "Berlin Marathon", location: "Berlin, Germany", distance: "42.2 km", elevation: "+45 m", surface: "road", month: 9, coords: [52.5163, 13.3777], image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-2", name: "Boston Marathon", location: "Boston, USA", distance: "42.2 km", elevation: "+240 m", surface: "road", month: 4, coords: [42.3601, -71.0589], image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-3", name: "UTMB Mont-Blanc", location: "Chamonix, France", distance: "171 km", elevation: "+10000 m", surface: "trail", month: 8, coords: [45.9237, 6.8694], image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-4", name: "Chianti Ultra Trail", location: "Radda in Chianti, Italy", distance: "73 km", elevation: "+3000 m", surface: "trail", month: 3, coords: [43.4900, 11.3780], image_url: "https://images.unsplash.com/photo-1523348837708-a5d9fc0189fa?auto=format&fit=crop&w=400&q=80" },
-            { id: "c-5", name: "Prague Marathon (PIM)", location: "Prague, Czechia", distance: "42.2 km", elevation: "+130 m", surface: "road", month: 5, coords: [50.0875, 14.4211], image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=400&q=80" }
-          ];
-        }
-      } catch (e) {
-        console.warn('Fallback catalog used');
-      }
+      const richCatalog = [
+        // World Marathon Majors
+        { id: "c-1", name: "Berlin Marathon", category: "majors", location: "Berlin, Germany", distance: "42.2 km", elevation: "+45 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 9, coords: [52.5163, 13.3777], desc: "Fastest marathon course in the world, finishing through the Brandenburg Gate.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-2", name: "Boston Marathon", category: "majors", location: "Boston, USA", distance: "42.2 km", elevation: "+240 m", surface: "road", difficulty: "tezka", cost: "€€€€", month: 4, coords: [42.3601, -71.0589], desc: "The world's oldest annual marathon featuring the legendary Heartbreak Hill.", image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-3", name: "London Marathon", category: "majors", location: "London, UK", distance: "42.2 km", elevation: "+110 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 4, coords: [51.5074, -0.1278], desc: "Iconic flat course along the River Thames from Greenwich to The Mall.", image_url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-4", name: "New York City Marathon", category: "majors", location: "New York, USA", distance: "42.2 km", elevation: "+270 m", surface: "road", difficulty: "stredni", cost: "€€€€", month: 11, coords: [40.7128, -74.0060], desc: "Five-borough tour across giant bridges ending in Central Park.", image_url: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-5", name: "Chicago Marathon", category: "majors", location: "Chicago, USA", distance: "42.2 km", elevation: "+75 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 10, coords: [41.8781, -87.6298], desc: "Ultra-flat architectural loop through 29 vibrant Chicago neighborhoods.", image_url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-6", name: "Tokyo Marathon", category: "majors", location: "Tokyo, Japan", distance: "42.2 km", elevation: "+90 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 3, coords: [35.6762, 139.6503], desc: "Precision organization and electric crowds through the heart of Tokyo.", image_url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" },
+
+        // Fast & Flat PR Courses
+        { id: "c-7", name: "Valencia Marathon", category: "fast", location: "Valencia, Spain", distance: "42.2 km", elevation: "+35 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 12, coords: [39.4699, -0.3763], desc: "La Ciudad del Running — ultra-fast December course finishing on blue water walkways.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-8", name: "Copenhagen Half Marathon", category: "fast", location: "Copenhagen, Denmark", distance: "21.1 km", elevation: "+40 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 9, coords: [55.6761, 12.5683], desc: "World-record fast Nordic half marathon with rock-concert atmosphere.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-9", name: "Dresden Half Marathon", category: "fast", location: "Dresden, Germany", distance: "21.1 km", elevation: "+110 m", surface: "road", difficulty: "snadna", cost: "€€", month: 10, coords: [51.0504, 13.7373], desc: "Scenic autumn PR course along the Elbe river and historic baroque center.", image_url: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-10", name: "Seville Marathon", category: "fast", location: "Seville, Spain", distance: "42.2 km", elevation: "+30 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 2, coords: [37.3891, -5.9845], desc: "Flattest marathon in Europe held in ideal February spring weather.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
+
+        // Alpine & Trail Legends
+        { id: "c-11", name: "UTMB Mont-Blanc", category: "trail", location: "Chamonix, France", distance: "171 km", elevation: "+10,000 m", surface: "trail", difficulty: "extremni", cost: "€€€€", month: 8, coords: [45.9237, 6.8694], desc: "The pinnacle of trail ultra-running circling Mont Blanc across France, Italy, and Switzerland.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-12", name: "Lavaredo Ultra Trail", category: "trail", location: "Cortina d'Ampezzo, Italy", distance: "120 km", elevation: "+5,800 m", surface: "trail", difficulty: "tezka", cost: "€€€", month: 6, coords: [46.5405, 12.1357], desc: "Running beneath the dramatic limestone towers of Tre Cime di Lavaredo in the Dolomites.", image_url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-13", name: "Zegama-Aizkorri", category: "trail", location: "Zegama, Spain", distance: "42.2 km", elevation: "+2,736 m", surface: "trail", difficulty: "tezka", cost: "€€", month: 5, coords: [42.9760, -2.2905], desc: "The Tour de France of skyrunning — technical Basque ridges and deafening crowds.", image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-14", name: "Chianti Ultra Trail", category: "trail", location: "Radda in Chianti, Italy", distance: "73 km", elevation: "+3,000 m", surface: "trail", difficulty: "stredni", cost: "€€€", month: 3, coords: [43.4900, 11.3780], desc: "Rolling Tuscan vineyards, medieval castles, and white gravel strade bianche.", image_url: "https://images.unsplash.com/photo-1523348837708-a5d9fc0189fa?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-15", name: "Eiger Ultra Trail", category: "trail", location: "Grindelwald, Switzerland", distance: "51 km", elevation: "+3,100 m", surface: "trail", difficulty: "tezka", cost: "€€€€", month: 7, coords: [46.6242, 8.0414], desc: " Alpine singletrack right below the iconic Eiger North Face and Faulhorn summit.", image_url: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=600&q=80" },
+
+        // Czech Classics
+        { id: "c-16", name: "Prague Marathon (PIM)", category: "czech", location: "Prague, Czechia", distance: "42.2 km", elevation: "+130 m", surface: "road", difficulty: "snadna", cost: "€€", month: 5, coords: [50.0875, 14.4211], desc: "Start and finish on Old Town Square, crossing Charles Bridge and Vltava embankments.", image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-17", name: "Běchovice–Praha", category: "czech", location: "Prague, Czechia", distance: "10.0 km", elevation: "+85 m", surface: "road", difficulty: "stredni", cost: "€", month: 9, coords: [50.0818, 14.6186], desc: "The oldest continuously held road race in Europe (since 1897) with the famous Hrdlořezy climb.", image_url: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-18", name: "Beskydská sedmička (B7)", category: "czech", location: "Třinec – Frenštát, Czechia", distance: "101 km", elevation: "+5,500 m", surface: "trail", difficulty: "extremni", cost: "€€", month: 8, coords: [49.5480, 18.4470], desc: "Legendary Czech mountain ultra crossing seven steep Beskydy summits overnight.", image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" }
+      ];
+
+      featuredRacesList = richCatalog;
     }
 
     async function loadActivitiesFromDB(userId) {
@@ -1657,7 +1865,7 @@
       const val = q.trim().toLowerCase();
       if (!val || val.length < 2) { box.style.display = 'none'; return; }
 
-      const matches = featuredRacesList.filter(r => r.name.toLowerCase().includes(val) || (r.location && r.location.toLowerCase().includes(val))).slice(0, 4);
+      const matches = featuredRacesList.filter(r => r.name.toLowerCase().includes(val) || (r.location && r.location.toLowerCase().includes(val))).slice(0, 5);
       if (matches.length === 0) { box.style.display = 'none'; return; }
 
       box.innerHTML = matches.map(r => `
@@ -1681,11 +1889,13 @@
       document.getElementById('form-distance').value = r.distance || '';
       document.getElementById('form-elevation').value = r.elevation || '';
       if (r.month) document.getElementById('form-month-select').value = String(r.month);
+      if (r.cost) document.getElementById('form-cost').value = r.cost;
 
       parsedCenterCoords = Array.isArray(r.coords) ? r.coords : JSON.parse(r.coords);
       pendingCatalogImageUrl = r.image_url || null;
 
       selectChip('surface', r.surface || 'road');
+      if (r.difficulty) selectChip('difficulty', r.difficulty);
     }
 
     function openEditActivityModal(id) {
@@ -1785,16 +1995,14 @@
       const content = document.getElementById('content');
       content.innerHTML = '';
 
-      if (currentMode === 'stats') {
-        renderStatsFullDashboard();
-        return;
-      }
+      if (currentMode === 'stats') { renderStatsFullDashboard(); return; }
+      if (currentMode === 'timeline') { renderTimelineDashboard(); return; }
+      if (currentMode === 'bests') { renderPersonalBestsDashboard(); return; }
+      if (currentMode === 'catalog') { renderExploreCatalogDashboard(); return; }
 
       const isRace = (currentMode === 'races');
-      const isBucket = (currentMode === 'bucket');
 
       let activeList = races.filter(item => {
-        if (isBucket) return item.status === 'bucket';
         const matchesCategory = isRace ? !item.isMemorable : item.isMemorable;
         if (!matchesCategory) return false;
         if (isRace && !statusFilters[item.status]) return false;
@@ -1985,6 +2193,9 @@
       
       showFloatingHud(item);
 
+      const statusColors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
+      const themeColor = item.isMemorable ? '#7e22ce' : (statusColors[item.status] || '#007aff');
+
       if (zavodniTrasy[item.id]) {
         const coords = zavodniTrasy[item.id];
         currentRouteLayer = L.featureGroup([
@@ -1994,7 +2205,38 @@
         ]).addTo(map);
         map.fitBounds(currentRouteLayer.getBounds(), { padding: [60, 110], maxZoom: 13, animate: true });
       } else if (item.coords) {
-        map.flyTo(item.coords, 11, { animate: true, duration: 1.2 });
+        const layers = [];
+        const zoneRadiusMeters = 3200;
+
+        layers.push(L.circle(item.coords, {
+          radius: zoneRadiusMeters,
+          color: themeColor,
+          weight: 2,
+          dashArray: '6, 6',
+          fillColor: themeColor,
+          fillOpacity: 0.12
+        }));
+
+        layers.push(L.circle(item.coords, {
+          radius: 700,
+          color: themeColor,
+          weight: 1.5,
+          fillColor: themeColor,
+          fillOpacity: 0.25
+        }));
+
+        if (userHomeCoords) {
+          const arcPoints = createGeodesicArc(userHomeCoords, item.coords);
+          layers.push(L.polyline(arcPoints, {
+            color: themeColor,
+            weight: 2.2,
+            dashArray: '5, 8',
+            opacity: 0.75
+          }));
+        }
+
+        currentRouteLayer = L.featureGroup(layers).addTo(map);
+        map.flyTo(item.coords, 11, { animate: true, duration: 1.1 });
       }
 
       const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80';
@@ -2022,6 +2264,13 @@
               </div>
             </div>
           </div>
+
+          ${!zavodniTrasy[item.id] ? `
+            <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.76rem; color:#64748b; font-weight:600;">📍 Showing Race Zone (no GPX track attached)</span>
+              <button class="pill-btn" style="padding:3px 8px; font-size:0.72rem; color:#007aff;" onclick="openEditActivityModal('${item.id}')">+ Add GPX</button>
+            </div>
+          ` : ''}
 
           ${item.why ? `
             <div class="editorial-quote-card">
@@ -2053,9 +2302,360 @@
       `;
     }
 
-    // CELOOBRAZOVKOVÝ DASHBOARD PRO MILESTONES & STATS
+    // ====================================================
+    // POHLED 1: SEASON TIMELINE (GRAFICKÁ ČASOVÁ OSA)
+    // ====================================================
+    function renderTimelineDashboard() {
+      const container = document.getElementById('full-page-content');
+      currentDetailItem = null;
+      document.getElementById('floating-hud-panel').style.display = 'none';
+
+      const parseNum = str => {
+        if (!str) return 0;
+        const n = parseFloat(str.replace(/,/g, '').replace(/[^\d.]/g, ''));
+        return isNaN(n) ? 0 : n;
+      };
+
+      // Vybereme závody, které mají datum nebo jsou Planned/Done
+      const timelineItems = races.filter(r => r.status !== 'bucket' || (r.date && r.date.includes('-')));
+
+      // Seskupení podle roků
+      const groups = {};
+      timelineItems.forEach(item => {
+        let yr = 'Undated / Future';
+        if (item.date && item.date.includes('-')) {
+          yr = item.date.split('-')[0];
+        }
+        if (!groups[yr]) groups[yr] = [];
+        groups[yr].push(item);
+      });
+
+      const years = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+      const monthShort = ["", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+      let timelineHtml = '';
+      if (years.length === 0) {
+        timelineHtml = `
+          <div class="stats-panel-card" style="text-align:center; padding:48px 20px;">
+            <h3 style="font-size:1.2rem; color:#0f172a; margin-bottom:6px;">Your Season Timeline is empty</h3>
+            <p style="font-size:0.88rem; color:#64748b; margin-bottom:18px;">Add completed or planned races with event dates to see your chronological season flow.</p>
+            <div><button class="open-detail-btn" onclick="openAddModal()">➕ Add Race to Timeline</button></div>
+          </div>
+        `;
+      } else {
+        years.forEach(yr => {
+          if (timelineYearFilter !== 'all' && timelineYearFilter !== yr) return;
+          const items = groups[yr].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+          let yrKm = 0, yrEle = 0;
+          items.forEach(i => { yrKm += parseNum(i.distance); yrEle += parseNum(i.elevation); });
+
+          timelineHtml += `
+            <div class="timeline-year-section">
+              <div style="display:flex; align-items:center; gap:16px;">
+                <div class="timeline-year-badge">📅 ${yr}</div>
+                <span class="timeline-year-summary">${items.length} Events &bull; ${yrKm.toFixed(0)} km &bull; +${yrEle.toLocaleString()} m</span>
+              </div>
+              <div class="timeline-track">
+                ${items.map(item => {
+                  let mLabel = 'TBD', dLabel = '—';
+                  if (item.date && item.date.includes('-')) {
+                    const parts = item.date.split('-');
+                    mLabel = monthShort[parseInt(parts[1])] || 'RUN';
+                    dLabel = parts[2];
+                  }
+                  const dotColor = item.status === 'done' ? '#16a34a' : '#d97706';
+                  const geo = detectGeoFromCoords(item.coords, item.name);
+
+                  return `
+                    <div class="timeline-node-card" onclick="selectSpotlightRace('${item.id}')">
+                      <div class="timeline-dot" style="background:${dotColor}; box-shadow: 0 0 0 2px ${dotColor};"></div>
+                      <div style="display:flex; align-items:center; gap:18px; min-width:0;">
+                        <div class="timeline-date-col">
+                          <span class="timeline-month">${mLabel}</span>
+                          <span class="timeline-day">${dLabel}</span>
+                        </div>
+                        <div style="min-width:0;">
+                          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
+                              ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
+                            </span>
+                            <span style="font-size:0.76rem; font-weight:700; color:#64748b;">${geo.country}</span>
+                          </div>
+                          <div style="font-size:1.08rem; font-weight:800; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+                          ${item.why ? `<div style="font-size:0.8rem; color:#64748b; font-style:italic; margin-top:2px;">„${item.why}“</div>` : ''}
+                        </div>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+                        <span class="card-stat-pill">${item.distance || '-'}</span>
+                        <span class="card-stat-pill">${item.elevation || '-'}</span>
+                        ${item.resultTime ? `<span class="card-stat-pill" style="background:#dcfce7; color:#166534; border-color:#bbf7d0; font-weight:800;">⏱️ ${item.resultTime}</span>` : ''}
+                        ${item.ambitionTime && item.status === 'planned' ? `<span class="card-stat-pill" style="background:#fef3c7; color:#92400e; border-color:#fde68a; font-weight:800;">🎯 ${item.ambitionTime}</span>` : ''}
+                        <span style="color:#007aff; font-weight:800; font-size:0.84rem; margin-left:4px;">Map ➔</span>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Season Timeline & Calendar</h1>
+            <p style="font-size:0.86rem; color:#64748b;">Chronological progression of your completed races and scheduled season targets.</p>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div class="chips-group">
+              <button class="chip-btn ${timelineYearFilter === 'all' ? 'active' : ''}" onclick="timelineYearFilter='all'; renderTimelineDashboard();">All Years</button>
+              ${years.map(y => `<button class="chip-btn ${timelineYearFilter === y ? 'active' : ''}" onclick="timelineYearFilter='${y}'; renderTimelineDashboard();">${y}</button>`).join('')}
+            </div>
+            <button class="back-btn" onclick="switchPageMode('races')">← Back to Map</button>
+          </div>
+        </div>
+        ${timelineHtml}
+      `;
+    }
+
+    // ====================================================
+    // POHLED 2: PERSONAL BESTS & TROPHY ROOM
+    // ====================================================
+    function parseTimeToSeconds(timeStr) {
+      if (!timeStr) return null;
+      const clean = timeStr.trim().replace(/[^0-9:]/g, '');
+      const parts = clean.split(':').map(Number);
+      if (parts.some(isNaN)) return null;
+      if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+      if (parts.length === 2) return parts[0] * 60 + parts[1];
+      return null;
+    }
+
+    function formatPacePerKm(seconds, distKm) {
+      if (!seconds || !distKm || distKm <= 0) return '';
+      const paceSec = Math.round(seconds / distKm);
+      const mins = Math.floor(paceSec / 60);
+      const secs = paceSec % 60;
+      return `${mins}:${secs.toString().padStart(2, '0')} /km`;
+    }
+
+    function renderPersonalBestsDashboard() {
+      const container = document.getElementById('full-page-content');
+      currentDetailItem = null;
+      document.getElementById('floating-hud-panel').style.display = 'none';
+
+      const parseNum = str => {
+        if (!str) return 0;
+        const n = parseFloat(str.replace(/,/g, '').replace(/[^\d.]/g, ''));
+        return isNaN(n) ? 0 : n;
+      };
+
+      const doneList = races.filter(r => r.status === 'done');
+
+      // Hledání nejrychlejších časů pro 10K, Half Marathon, Marathon, Ultra
+      const findBestForRange = (minKm, maxKm, stdKm) => {
+        const candidates = doneList.filter(r => {
+          const d = parseNum(r.distance);
+          const sec = parseTimeToSeconds(r.resultTime);
+          return d >= minKm && d <= maxKm && sec !== null && sec > 0;
+        });
+        if (candidates.length === 0) return null;
+        candidates.sort((a, b) => parseTimeToSeconds(a.resultTime) - parseTimeToSeconds(b.resultTime));
+        const best = candidates[0];
+        const sec = parseTimeToSeconds(best.resultTime);
+        return {
+          item: best,
+          time: best.resultTime,
+          pace: formatPacePerKm(sec, stdKm || parseNum(best.distance))
+        };
+      };
+
+      const pr10k = findBestForRange(9.5, 10.6, 10);
+      const prHalf = findBestForRange(20.5, 21.6, 21.0975);
+      const prMarathon = findBestForRange(41.5, 43.0, 42.195);
+      const prUltra = findBestForRange(45.0, 500.0, null);
+
+      // Extrémy a milníky
+      let longestRun = null, biggestClimb = null, topRated = null;
+      doneList.forEach(r => {
+        if (!longestRun || parseNum(r.distance) > parseNum(longestRun.distance)) longestRun = r;
+        if (!biggestClimb || parseNum(r.elevation) > parseNum(biggestClimb.elevation)) biggestClimb = r;
+        if (!topRated || ((r.satisfaction || 0) + (r.course_satisfaction || 0)) > ((topRated.satisfaction || 0) + (topRated.course_satisfaction || 0))) topRated = r;
+      });
+
+      const renderPrCard = (title, badgeText, prObj, accentColor) => {
+        if (!prObj) {
+          return `
+            <div class="pr-trophy-card" style="border-top-color:#cbd5e1;">
+              <div>
+                <span class="pr-dist-badge" style="background:#f1f5f9; color:#64748b; border-color:#cbd5e1;">${badgeText}</span>
+                <div style="font-size:0.9rem; font-weight:800; color:#475569; margin-top:12px;">${title}</div>
+                <div class="pr-time-val" style="color:#cbd5e1; margin-top:6px;">— : —</div>
+              </div>
+              <div style="font-size:0.76rem; color:#94a3b8;">Log a completed ${title.toLowerCase()} with a finish time to unlock this trophy.</div>
+            </div>
+          `;
+        }
+        return `
+          <div class="pr-trophy-card" style="border-top-color:${accentColor};">
+            <div>
+              <span class="pr-dist-badge">${badgeText}</span>
+              <div style="font-size:0.86rem; font-weight:800; color:#64748b; margin-top:10px;">${title}</div>
+              <div class="pr-time-val">${prObj.time}</div>
+              <div class="pr-pace-sub">⚡ Avg Pace: ${prObj.pace}</div>
+            </div>
+            <div class="pr-race-link" onclick="selectSpotlightRace('${prObj.item.id}')">
+              <strong>🏁 ${prObj.item.name} ➔</strong>
+              <span>📅 ${prObj.item.date || 'Completed'}</span>
+            </div>
+          </div>
+        `;
+      };
+
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px;">
+          <div>
+            <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Personal Bests & Trophy Room</h1>
+            <p style="font-size:0.86rem; color:#64748b;">All-time fastest performances and endurance milestones automatically extracted from your completed races.</p>
+          </div>
+          <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
+        </div>
+
+        <!-- 4 MAIN PR TROPHY CARDS -->
+        <div class="pr-grid">
+          ${renderPrCard('10K Road / Trail', '10.0 KM PR', pr10k, '#007aff')}
+          ${renderPrCard('Half Marathon', '21.1 KM PR', prHalf, '#16a34a')}
+          ${renderPrCard('Full Marathon', '42.2 KM PR', prMarathon, '#d97706')}
+          ${renderPrCard('Ultra Endurance', 'ULTRA (>45K)', prUltra, '#7e22ce')}
+        </div>
+
+        <!-- ALL-TIME ENDURANCE EXTREMES -->
+        <div class="stats-panel-card">
+          <div class="stats-panel-header">
+            <h3>🏔️ All-Time Endurance Feats & Highlights</h3>
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;">
+            <div class="discipline-box" style="text-align:left; padding:18px; cursor:pointer;" ${longestRun ? `onclick="selectSpotlightRace('${longestRun.id}')"` : ''}>
+              <span style="font-size:0.7rem; font-weight:800; color:#007aff; text-transform:uppercase;">Longest Single Distance</span>
+              <div style="font-size:1.65rem; font-weight:900; color:#0f172a; margin:4px 0;">${longestRun ? longestRun.distance : '—'}</div>
+              <div style="font-size:0.82rem; font-weight:700; color:#475569;">${longestRun ? longestRun.name : 'No completed runs'}</div>
+            </div>
+
+            <div class="discipline-box" style="text-align:left; padding:18px; cursor:pointer;" ${biggestClimb ? `onclick="selectSpotlightRace('${biggestClimb.id}')"` : ''}>
+              <span style="font-size:0.7rem; font-weight:800; color:#16a34a; text-transform:uppercase;">Biggest Single Climb</span>
+              <div style="font-size:1.65rem; font-weight:900; color:#0f172a; margin:4px 0;">${biggestClimb ? biggestClimb.elevation : '—'}</div>
+              <div style="font-size:0.82rem; font-weight:700; color:#475569;">${biggestClimb ? biggestClimb.name : 'No elevation logged'}</div>
+            </div>
+
+            <div class="discipline-box" style="text-align:left; padding:18px; cursor:pointer;" ${topRated ? `onclick="selectSpotlightRace('${topRated.id}')"` : ''}>
+              <span style="font-size:0.7rem; font-weight:800; color:#d97706; text-transform:uppercase;">Highest Rated Experience</span>
+              <div style="font-size:1.65rem; font-weight:900; color:#0f172a; margin:4px 0;">${topRated ? `${topRated.course_satisfaction || 9}/10 Vibe` : '—'}</div>
+              <div style="font-size:0.82rem; font-weight:700; color:#475569;">${topRated ? topRated.name : 'No ratings yet'}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ====================================================
+    // POHLED 3: EXPLORE GLOBAL CATALOG (18 IKONICKÝCH ZÁVODŮ)
+    // ====================================================
+    function renderExploreCatalogDashboard() {
+      const container = document.getElementById('full-page-content');
+      currentDetailItem = null;
+      document.getElementById('floating-hud-panel').style.display = 'none';
+
+      const catLabels = {
+        majors: 'World Major',
+        fast: 'Fast PR Course',
+        trail: 'Alpine / Trail Legend',
+        czech: 'Czech Classic'
+      };
+      const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+      const filtered = featuredRacesList.filter(r => {
+        const matchCat = exploreCategoryFilter === 'all' || r.category === exploreCategoryFilter;
+        const matchQ = !exploreSearchQuery || r.name.toLowerCase().includes(exploreSearchQuery) || r.location.toLowerCase().includes(exploreSearchQuery);
+        return matchCat && matchQ;
+      });
+
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Explore Iconic World & Regional Races</h1>
+            <p style="font-size:0.86rem; color:#64748b;">Curated collection of World Marathon Majors, flat PR courses, alpine ultra trails, and Czech classics. Add any race in 1 click.</p>
+          </div>
+          <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#ffffff; padding:14px 18px; border-radius:14px; border:1px solid #e2e8f0;">
+          <div class="chips-group">
+            <button class="chip-btn ${exploreCategoryFilter === 'all' ? 'active' : ''}" onclick="exploreCategoryFilter='all'; renderExploreCatalogDashboard();">🌍 All (${featuredRacesList.length})</button>
+            <button class="chip-btn ${exploreCategoryFilter === 'majors' ? 'active' : ''}" onclick="exploreCategoryFilter='majors'; renderExploreCatalogDashboard();">🏅 World Majors</button>
+            <button class="chip-btn ${exploreCategoryFilter === 'fast' ? 'active' : ''}" onclick="exploreCategoryFilter='fast'; renderExploreCatalogDashboard();">⚡ Fast & Flat PR</button>
+            <button class="chip-btn ${exploreCategoryFilter === 'trail' ? 'active' : ''}" onclick="exploreCategoryFilter='trail'; renderExploreCatalogDashboard();">🏔️ Alpine & Trail Legends</button>
+            <button class="chip-btn ${exploreCategoryFilter === 'czech' ? 'active' : ''}" onclick="exploreCategoryFilter='czech'; renderExploreCatalogDashboard();">🇨🇿 Czech Classics</button>
+          </div>
+          <input type="text" class="stepped-input" style="width:240px; padding:7px 12px;" placeholder="Filter by name or city..." value="${exploreSearchQuery}" oninput="exploreSearchQuery=this.value.toLowerCase(); renderExploreCatalogDashboard();">
+        </div>
+
+        <!-- GRID OF 18 CURATED RACES -->
+        <div class="catalog-full-grid">
+          ${filtered.map(r => {
+            const alreadyInAtlas = races.find(my => my.name.toLowerCase() === r.name.toLowerCase());
+            return `
+              <div class="catalog-showcase-card">
+                <div>
+                  <div class="catalog-card-img" style="background-image:url('${r.image_url}');">
+                    <div class="catalog-card-top">
+                      <span class="badge" style="background:rgba(15,23,42,0.85); color:#38bdf8; border:1px solid rgba(56,189,248,0.4);">${catLabels[r.category] || 'Featured'}</span>
+                      <span style="background:rgba(15,23,42,0.85); color:#ffffff; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">📅 ${monthNames[r.month] || 'Annual'}</span>
+                    </div>
+                    <div class="catalog-card-bottom">
+                      <div>
+                        <div style="color:#ffffff; font-size:1.15rem; font-weight:900; text-shadow:0 2px 6px rgba(0,0,0,0.8);">${r.name}</div>
+                        <div style="color:#cbd5e1; font-size:0.76rem; font-weight:700;">📍 ${r.location}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="catalog-card-body">
+                    <div class="card-stats-pill-row">
+                      <span class="card-stat-pill">${r.distance}</span>
+                      <span class="card-stat-pill">${r.elevation}</span>
+                      <span class="card-stat-pill" style="text-transform:capitalize;">${r.surface}</span>
+                      <span class="card-stat-pill">${r.cost || '€€'}</span>
+                    </div>
+                    <p style="font-size:0.8rem; color:#475569; line-height:1.5;">${r.desc || ''}</p>
+                  </div>
+                </div>
+
+                <div style="padding: 0 16px 16px;">
+                  ${alreadyInAtlas ? `
+                    <button class="open-detail-btn" style="width:100%; background:#16a34a;" onclick="selectSpotlightRace('${alreadyInAtlas.id}')">
+                      ✅ In Your Atlas (${alreadyInAtlas.statusLabel || alreadyInAtlas.status}) — View on Map ➔
+                    </button>
+                  ` : `
+                    <div class="catalog-card-actions">
+                      <button class="cat-act-btn" onclick="quickAddFromSpotlight('${r.id}', 'done')">🏁 Completed</button>
+                      <button class="cat-act-btn" onclick="quickAddFromSpotlight('${r.id}', 'planned')">📅 Plan It</button>
+                      <button class="cat-act-btn" onclick="quickAddFromSpotlight('${r.id}', 'bucket')">⭐️ Bucket List</button>
+                    </div>
+                  `}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    // ====================================================
+    // POHLED 4: MILESTONES & STATS DASHBOARD
+    // ====================================================
     function renderStatsFullDashboard() {
-      const container = document.getElementById('stats-dashboard-content');
+      const container = document.getElementById('full-page-content');
       currentDetailItem = null;
       document.getElementById('floating-hud-panel').style.display = 'none';
 
@@ -2408,6 +3008,9 @@
 
         closeModals();
         await loadActivitiesFromDB(currentUser.id);
+        if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) {
+          switchPageMode('races');
+        }
         map.flyTo(finalCoords, 11, { animate: true });
       } catch (err) {
         showToast('Error: ' + err.message, '⚠️');
@@ -2474,23 +3077,22 @@
 
       const mapWrapper = document.getElementById('map-wrapper');
       const sidebar = document.getElementById('sidebar');
-      const statsFullView = document.getElementById('stats-full-view');
+      const fullPageView = document.getElementById('full-page-view');
       const statusWrap = document.getElementById('status-boxes-wrap');
       const filtersWrap = document.getElementById('filters-section-wrap');
       const memorableInfoBtn = document.getElementById('memorable-info-btn');
 
-      // Schováme explainer při přepnutí
       hideMemorableExplainer();
 
-      if (mode === 'stats') {
+      if (['stats', 'timeline', 'bests', 'catalog'].includes(mode)) {
         mapWrapper.style.display = 'none';
         sidebar.style.display = 'none';
-        statsFullView.style.display = 'block';
-        renderStatsFullDashboard();
+        fullPageView.style.display = 'block';
+        renderAll();
         return;
       }
 
-      statsFullView.style.display = 'none';
+      fullPageView.style.display = 'none';
       mapWrapper.style.display = 'block';
       sidebar.style.display = 'flex';
       setTimeout(() => map.invalidateSize(), 50);
@@ -2503,11 +3105,6 @@
       } else if (mode === 'memorable') {
         document.getElementById('main-title').textContent = 'Memorable Runs';
         memorableInfoBtn.style.display = 'inline-flex';
-        statusWrap.style.display = 'none';
-        filtersWrap.style.display = 'flex';
-      } else if (mode === 'bucket') {
-        document.getElementById('main-title').textContent = 'Bucket List Targets';
-        memorableInfoBtn.style.display = 'none';
         statusWrap.style.display = 'none';
         filtersWrap.style.display = 'flex';
       }
