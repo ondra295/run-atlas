@@ -5,16 +5,19 @@
   <title>Running Atlas — Interactive Map & Route Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Driver.js (Interactive Spotlight Tour) -->
+  <!-- Driver.js -->
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8 L8 54 L20 54 L32 28 L44 54 L56 54 Z' fill='%23007aff'/%3E%3Cpath d='M4 36 Q18 26 32 33 T60 30' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 44 Q19 35 32 41 T58 38' stroke='%2338bdf8' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
-  <!-- Leaflet Map CSS & JS -->
+  <!-- Leaflet Map CSS & JS + MarkerCluster -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
   <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -24,6 +27,17 @@
     html, body { height: 100%; width: 100%; overflow: hidden; background: #0f172a; color: #0f172a; }
 
     #app-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; }
+
+    /* Mode Banner (Demo / Shared View) */
+    #context-mode-banner {
+      display: none; background: linear-gradient(90deg, #0284c7 0%, #007aff 100%);
+      color: #ffffff; font-size: 0.8rem; font-weight: 700; padding: 7px 18px;
+      align-items: center; justify-content: center; gap: 12px; z-index: 2100; flex-shrink: 0;
+    }
+    #context-mode-banner a {
+      background: #ffffff; color: #007aff; padding: 3px 10px; border-radius: 6px;
+      text-decoration: none; font-weight: 800; font-size: 0.74rem;
+    }
 
     /* Top Bar */
     #top-bar {
@@ -123,7 +137,21 @@
     #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #cbd5e1; }
     #map { width: 100%; height: 100%; background: #cbd5e1; z-index: 1; }
 
-    /* FULLSCREEN VIEW PANES (STATS, TIMELINE, PERSONAL BESTS, EXPLORE CATALOG) */
+    /* Custom MarkerCluster Styling */
+    .custom-cluster-icon {
+      background: rgba(15, 23, 42, 0.9);
+      border: 2.5px solid #38bdf8;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.82rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.45);
+    }
+
+    /* FULLSCREEN VIEW PANES */
     #full-page-view {
       display: none; flex: 1; height: 100%; overflow-y: auto; background: #f8f9fb; padding: 36px 28px;
     }
@@ -164,20 +192,14 @@
       font-weight: 700; padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;
     }
 
-    /* ==================================================== */
-    /* SEASON TIMELINE STYLES                               */
-    /* ==================================================== */
-    .timeline-year-section {
-      display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px;
-    }
+    /* SEASON TIMELINE STYLES */
+    .timeline-year-section { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; }
     .timeline-year-badge {
       display: inline-flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 900;
       color: #0f172a; background: #ffffff; border: 2px solid #007aff; padding: 6px 18px;
       border-radius: 30px; width: fit-content; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.12);
     }
-    .timeline-year-summary {
-      font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;
-    }
+    .timeline-year-summary { font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
     .timeline-track {
       position: relative; padding-left: 36px; display: flex; flex-direction: column; gap: 14px;
       border-left: 3px solid #cbd5e1; margin-left: 24px;
@@ -195,18 +217,12 @@
       width: 18px; height: 18px; border-radius: 50%; background: #007aff; border: 3.5px solid #f8f9fb;
       box-shadow: 0 0 0 2px #007aff;
     }
-    .timeline-date-col {
-      min-width: 95px; text-align: left; border-right: 1px solid #f1f5f9; padding-right: 14px;
-    }
+    .timeline-date-col { min-width: 95px; text-align: left; border-right: 1px solid #f1f5f9; padding-right: 14px; }
     .timeline-month { font-size: 0.72rem; font-weight: 800; color: #007aff; text-transform: uppercase; letter-spacing: 0.8px; display: block; }
     .timeline-day { font-size: 1.25rem; font-weight: 900; color: #0f172a; }
 
-    /* ==================================================== */
-    /* PERSONAL BESTS (TROPHY ROOM) STYLES                  */
-    /* ==================================================== */
-    .pr-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-    }
+    /* PERSONAL BESTS (TROPHY ROOM) STYLES */
+    .pr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .pr-trophy-card {
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
       border: 1px solid #e2e8f0; border-top: 4px solid #007aff; border-radius: 16px;
@@ -227,12 +243,8 @@
     }
     .pr-race-link:hover strong { color: #007aff; text-decoration: underline; }
 
-    /* ==================================================== */
-    /* EXPLORE CATALOG FULLSCREEN STYLES                    */
-    /* ==================================================== */
-    .catalog-full-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-    }
+    /* EXPLORE CATALOG FULLSCREEN STYLES */
+    .catalog-full-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .catalog-showcase-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden;
       display: flex; flex-direction: column; justify-content: space-between;
@@ -266,21 +278,15 @@
       display: none; flex-direction: column; gap: 10px; max-width: 860px; margin: 0 auto;
       pointer-events: none;
     }
-    .hud-card-cluster {
-      display: flex; gap: 10px; width: 100%; pointer-events: auto;
-    }
+    .hud-card-cluster { display: flex; gap: 10px; width: 100%; pointer-events: auto; }
     .hud-box {
       background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px; padding: 14px 18px;
       color: #ffffff; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); flex: 1;
       display: flex; flex-direction: column; justify-content: center; transition: all 0.2s ease;
     }
-    .hud-box.clickable {
-      cursor: pointer; border-color: rgba(56, 189, 248, 0.55);
-    }
-    .hud-box.clickable:hover {
-      background: rgba(30, 41, 59, 0.96); border-color: #38bdf8; transform: translateY(-2px);
-    }
+    .hud-box.clickable { cursor: pointer; border-color: rgba(56, 189, 248, 0.55); }
+    .hud-box.clickable:hover { background: rgba(30, 41, 59, 0.96); border-color: #38bdf8; transform: translateY(-2px); }
     .hud-box-metric { font-size: 1.4rem; font-weight: 800; color: #38bdf8; line-height: 1.15; }
     .hud-box-sub { font-size: 0.82rem; font-weight: 600; color: #e2e8f0; margin-top: 2px; }
     .hud-box-lbl { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; margin-top: 4px; }
@@ -303,14 +309,19 @@
     }
     .ctx-item:hover { background: #1e293b; color: #38bdf8; }
 
-    #floating-home-btn {
+    /* Map Bottom-Left Floating Controls (Home Base + Fit All) */
+    .map-bottom-controls {
       position: absolute; bottom: 24px; left: 24px; z-index: 1050;
-      background: #0f172a; border: 2px solid #38bdf8; border-radius: 30px; padding: 10px 18px;
-      display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-      cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex; align-items: center; gap: 8px;
     }
-    #floating-home-btn:hover { transform: translateY(-2px); background: #1e293b; }
-    #floating-home-label { font-size: 0.84rem; font-weight: 800; color: #f8fafc; }
+    .floating-map-pill {
+      background: #0f172a; border: 2px solid #38bdf8; border-radius: 30px; padding: 9px 16px;
+      display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 0.82rem; font-weight: 800; color: #f8fafc;
+    }
+    .floating-map-pill:hover { transform: translateY(-2px); background: #1e293b; }
+    .floating-map-pill.secondary { border-color: #475569; color: #e2e8f0; }
 
     /* Sidebar */
     #sidebar {
@@ -395,22 +406,12 @@
     .card-body-wrap {
       padding: 11px 14px; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px;
     }
-    .card-meta-top {
-      display: flex; justify-content: space-between; align-items: center; gap: 8px;
-    }
-    .card-date-lbl {
-      font-size: 0.72rem; font-weight: 700; color: #64748b; white-space: nowrap;
-    }
-    .card-title-text {
-      font-size: 0.98rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
+    .card-meta-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .card-date-lbl { font-size: 0.72rem; font-weight: 700; color: #64748b; white-space: nowrap; }
+    .card-title-text { font-size: 0.98rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    .card-stats-pill-row {
-      display: flex; gap: 6px; align-items: center; font-size: 0.74rem; font-weight: 700; color: #475569; flex-wrap: wrap;
-    }
-    .card-stat-pill {
-      background: #f8fafc; padding: 2px 7px; border-radius: 6px; border: 1px solid #e2e8f0;
-    }
+    .card-stats-pill-row { display: flex; gap: 6px; align-items: center; font-size: 0.74rem; font-weight: 700; color: #475569; flex-wrap: wrap; }
+    .card-stat-pill { background: #f8fafc; padding: 2px 7px; border-radius: 6px; border: 1px solid #e2e8f0; }
 
     .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
     .badge-done { background: #dcfce7; color: #166534; }
@@ -441,7 +442,7 @@
       color: #0f172a; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 700;
     }
 
-    /* EDITORIAL JOURNAL DETAIL IN SIDEBAR */
+    /* EDITORIAL JOURNAL DETAIL IN SIDEBAR + ELEVATION SPARKLINE */
     .detail-view-wrap { display: flex; flex-direction: column; gap: 14px; }
     .detail-hero-banner {
       height: 130px; border-radius: 12px; overflow: hidden; background-size: cover; background-position: center;
@@ -452,6 +453,15 @@
       position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,23,42,0.1) 0%, rgba(15,23,42,0.82) 100%);
     }
     .detail-hero-content { position: relative; z-index: 2; color: #ffffff; }
+
+    .elevation-spark-card {
+      background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 12px 14px;
+      color: #f8fafc; display: flex; flex-direction: column; gap: 6px;
+    }
+    .elevation-spark-header {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.68rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;
+    }
 
     .editorial-quote-card {
       background: #eff6ff; border-left: 4px solid #007aff; border-radius: 0 10px 10px 0;
@@ -469,14 +479,26 @@
       font-size: 0.88rem; color: #334155; line-height: 1.6; margin: 0;
     }
 
-    .spec-sheet-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-    }
-    .spec-cell {
-      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;
-    }
+    .spec-sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .spec-cell { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; }
     .spec-cell small { font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px; }
     .spec-cell strong { font-size: 0.92rem; font-weight: 800; color: #0f172a; }
+
+    /* Empty State Starter Card */
+    .empty-starter-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px 18px;
+      text-align: center; display: flex; flex-direction: column; gap: 12px;
+      box-shadow: 0 4px 16px rgba(15,23,42,0.04);
+    }
+    .starter-action-row {
+      display: flex; flex-direction: column; gap: 8px; margin-top: 4px;
+    }
+    .starter-btn {
+      padding: 10px 14px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc;
+      color: #0f172a; font-size: 0.82rem; font-weight: 700; cursor: pointer; text-align: left;
+      display: flex; align-items: center; justify-content: space-between; transition: all 0.15s;
+    }
+    .starter-btn:hover { background: #eff6ff; border-color: #007aff; color: #007aff; }
 
     /* Map Pins */
     .custom-race-pin { background: transparent !important; border: none !important; }
@@ -570,19 +592,11 @@
       color: #cbd5e1 !important;
       border: 1px solid #334155 !important;
     }
-    .driver-popover.runatlas-tour-theme .driver-popover-next-btn:hover {
-      background: #0062cc !important;
-    }
-    .driver-popover.runatlas-tour-theme .driver-popover-close-btn {
-      color: #64748b !important;
-    }
-    .driver-popover.runatlas-tour-theme .driver-popover-close-btn:hover {
-      color: #ffffff !important;
-    }
+    .driver-popover.runatlas-tour-theme .driver-popover-next-btn:hover { background: #0062cc !important; }
+    .driver-popover.runatlas-tour-theme .driver-popover-close-btn { color: #64748b !important; }
+    .driver-popover.runatlas-tour-theme .driver-popover-close-btn:hover { color: #ffffff !important; }
 
-    .status-selector-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-    }
+    .status-selector-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .status-mode-card {
       border: 2px solid #e2e8f0; background: #f8fafc; border-radius: 12px; padding: 10px 12px;
       cursor: pointer; transition: all 0.15s; text-align: left; display: flex; flex-direction: column; gap: 2px;
@@ -639,7 +653,7 @@
         position: fixed; bottom: 0; left: 0; right: 0; width: 100% !important; height: 56px;
         flex-direction: row; justify-content: space-around; border-right: none; border-top: 1px solid #334155; z-index: 3000;
       }
-      #floating-home-btn { bottom: 68px; left: 16px; }
+      .map-bottom-controls { bottom: 68px; left: 16px; }
       #sidebar {
         position: fixed; inset: 54px 0 56px 0; width: 100%; transform: translateY(100%);
         transition: transform 0.25s ease; z-index: 2500;
@@ -653,10 +667,12 @@
 </head>
 <body>
 
-  <!-- PLOVOUCÍ TOAST NOTIFIKACE -->
   <div id="toast-container"></div>
 
   <div id="app-layout">
+    <!-- TOP CONTEXT BANNER (PRO DEMO NEBO SDÍLENÝ PROFIL) -->
+    <div id="context-mode-banner"></div>
+
     <!-- TOP BAR -->
     <header id="top-bar">
       <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0;">
@@ -681,8 +697,8 @@
         <div id="spotlight-dropdown" class="spotlight-dropdown"></div>
       </div>
 
-      <div class="top-bar-right">
-        <button class="pill-btn" onclick="startContextualTour()" style="background:#1e293b; border-color:#334155; color:#38bdf8;" title="Interactive Map Guide">
+      <div class="top-bar-right" id="top-bar-actions">
+        <button id="btn-quick-tour" class="pill-btn" onclick="startContextualTour()" style="background:#1e293b; border-color:#334155; color:#38bdf8;" title="Interactive Map Guide">
           🗺️ Quick Tour
         </button>
         <button id="btn-add-activity" class="open-detail-btn" onclick="openAddModal()">➕ Add to Atlas</button>
@@ -701,7 +717,7 @@
     </header>
 
     <div id="main-body">
-      <!-- BOHATÝ LEVÝ PANEL (6 FUNKČNÍCH POHLEDŮ NAHOŘE + 3 DOLE) -->
+      <!-- BOHATÝ LEVÝ PANEL -->
       <nav id="left-rail">
         <button id="rail-races" class="rail-btn active" onclick="switchPageMode('races')">
           <span class="rail-icon">
@@ -775,7 +791,7 @@
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
           </span>
           <span>Settings</span>
@@ -801,7 +817,7 @@
         </a>
       </nav>
 
-      <!-- CELOOBRAZOVKOVÉ POHLEDY (TIMELINE, BESTS, STATS, EXPLORE CATALOG) -->
+      <!-- CELOOBRAZOVKOVÉ POHLEDY -->
       <div id="full-page-view">
         <div id="full-page-content" class="full-dashboard-container"></div>
       </div>
@@ -822,11 +838,18 @@
           <div class="ctx-item" onclick="handleContextMenuChoice('home')">🏠 Set as Home Base</div>
         </div>
 
-        <div id="floating-home-btn" onclick="handleHomeBaseClick()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
-          </svg>
-          <span id="floating-home-label">Home Base</span>
+        <!-- Map Bottom-Left Controls (Home Base + Fit All) -->
+        <div class="map-bottom-controls">
+          <div id="floating-home-btn" class="floating-map-pill" onclick="handleHomeBaseClick()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+            </svg>
+            <span id="floating-home-label">Home Base</span>
+          </div>
+
+          <div id="floating-fitall-btn" class="floating-map-pill secondary" onclick="fitAllMarkersOnMap()" title="Zoom to fit all displayed pins">
+            🌐 Fit All
+          </div>
         </div>
       </div>
 
@@ -839,7 +862,6 @@
           </div>
           <p id="stats-label">Loading activities...</p>
 
-          <!-- Vysvětlující karta pro Memorable Runs -->
           <div id="memorable-explainer" class="memorable-explainer-box">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
               <strong>🏔️ What belongs in Memorable Runs?</strong>
@@ -935,7 +957,7 @@
     </div>
   </div>
 
-  <!-- 1. VLASTNÍ STYLOVÉ POTVRZOVACÍ OKNO -->
+  <!-- 1. CUSTOM CONFIRM DIALOG -->
   <div id="custom-confirm-modal" class="modal-backdrop">
     <div class="custom-dialog-card">
       <div id="confirm-icon-box" class="dialog-icon-circle">👋</div>
@@ -948,7 +970,7 @@
     </div>
   </div>
 
-  <!-- 2. VLASTNÍ MODAL PRO NASTAVENÍ HOME BASE S NAŠEPTÁVAČEM MĚST -->
+  <!-- 2. HOME BASE MODAL WITH CITY AUTOCOMPLETE -->
   <div id="homebase-modal" class="modal-backdrop">
     <div class="custom-dialog-card" style="text-align:left; max-width:440px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1144,6 +1166,7 @@
 
     let currentUser = null;
     let isDemoMode = false;
+    let isReadOnlyShared = false;
     let currentMode = 'races';
     let currentRouteLayer = null;
     let currentDetailItem = null;
@@ -1151,6 +1174,7 @@
     let races = [];
     let featuredRacesList = [];
     let zavodniTrasy = {};
+    let elevationProfiles = {}; // Ukládá zjednodušené výškové profily pro sparkline
 
     let editingActivityId = null;
     let contextClickLatLng = null;
@@ -1170,9 +1194,7 @@
     let chipSelections = { status: 'done', surface: 'road', difficulty: 'stredni' };
     let userHomeCoords = JSON.parse(localStorage.getItem('runatlas_home_coords')) || null;
 
-    // ==========================================
-    // TOAST NOTIFIKACE A POTVRZOVACÍ DIALOGY
-    // ==========================================
+    // TOAST & DIALOGS
     function showToast(message, icon = '✨') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -1211,9 +1233,7 @@
       confirmCallback = null;
     }
 
-    // ====================================================
-    // 1. KONTEXTOVÝ PRŮVODCE BEZ ŠKUBAVÉHO PŘELÉTÁVÁNÍ
-    // ====================================================
+    // CONTEXTUAL TOUR
     function startContextualTour() {
       if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode('races');
 
@@ -1279,9 +1299,6 @@
       driverObj.drive();
     }
 
-    // ====================================================
-    // 2. EXPLAINER PRO MEMORABLE RUNS ("i" TLAČÍTKO)
-    // ====================================================
     function toggleMemorableExplainer() {
       const box = document.getElementById('memorable-explainer');
       const btn = document.getElementById('memorable-info-btn');
@@ -1299,9 +1316,7 @@
       document.getElementById('memorable-info-btn').classList.remove('active');
     }
 
-    // ====================================================
-    // 3. MAPA SE ZABLOKOVANÝM VERTIKÁLNÍM ÚNIKEM DO ŠEDI
-    // ====================================================
+    // MAP + MARKER CLUSTERING
     const map = L.map('map', {
       center: userHomeCoords || [25.0, 10.0],
       zoom: userHomeCoords ? 5.2 : 2.5,
@@ -1316,8 +1331,29 @@
     const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri Sat', maxZoom: 18 });
 
     L.control.layers({ "Topographic": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
-    let markerLayerGroup = L.featureGroup().addTo(map);
+
+    let markerLayerGroup = L.markerClusterGroup({
+      maxClusterRadius: 36,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      iconCreateFunction: function(cluster) {
+        return L.divIcon({
+          html: `<div class="custom-cluster-icon" style="width:32px; height:32px;">${cluster.getChildCount()}</div>`,
+          className: 'marker-cluster-custom',
+          iconSize: [32, 32]
+        });
+      }
+    }).addTo(map);
+
     let homeMarker = null;
+
+    function fitAllMarkersOnMap() {
+      if (markerLayerGroup.getLayers().length > 0) {
+        map.flyToBounds(markerLayerGroup.getBounds(), { padding: [55, 55], maxZoom: 11, animate: true, duration: 1.1 });
+      } else {
+        showToast('No activities visible to fit on map.', '🌐');
+      }
+    }
 
     // Spotlight Search
     function handleSpotlightSearch(val) {
@@ -1361,7 +1397,7 @@
         });
       }
 
-      if (catalogMatches.length > 0) {
+      if (!isReadOnlyShared && catalogMatches.length > 0) {
         html += `<div class="spotlight-group-title" style="margin-top:4px;">World Catalog (Quick Add)</div>`;
         catalogMatches.forEach(cat => {
           html += `
@@ -1379,13 +1415,11 @@
         });
       }
 
-      if (myMatches.length === 0 && catalogMatches.length === 0) {
+      if (myMatches.length === 0 && (isReadOnlyShared || catalogMatches.length === 0)) {
         html = `
           <div style="padding:14px 12px; text-align:center; color:#64748b; font-size:0.82rem;">
             No matches for "<strong>${val}</strong>".
-            <div style="margin-top:8px;">
-              <button class="open-detail-btn" style="padding:5px 12px; font-size:0.76rem;" onclick="openAddWithCustomTitle('${val.replace(/'/g, "\\'")}')">➕ Create "${val}"</button>
-            </div>
+            ${!isReadOnlyShared ? `<div style="margin-top:8px;"><button class="open-detail-btn" style="padding:5px 12px; font-size:0.76rem;" onclick="openAddWithCustomTitle('${val.replace(/'/g, "\\'")}')">➕ Create "${val}"</button></div>` : ''}
           </div>
         `;
       }
@@ -1410,6 +1444,7 @@
     }
 
     function quickAddFromSpotlight(catId, presetStatus = 'done') {
+      if (isReadOnlyShared) return;
       clearSpotlightSearch();
       openAddModal();
       applyCatalogPreset(catId);
@@ -1417,6 +1452,7 @@
     }
 
     function openAddWithCustomTitle(title) {
+      if (isReadOnlyShared) return;
       clearSpotlightSearch();
       openAddModal();
       document.getElementById('form-name').value = title;
@@ -1431,8 +1467,9 @@
       }
     });
 
-    // Right-Click Context Menu
+    // Right-Click Context Menu (zakázáno pro read-only sdílený profil)
     map.on('contextmenu', function(e) {
+      if (isReadOnlyShared) return;
       contextClickLatLng = [parseFloat(e.latlng.lat.toFixed(5)), parseFloat(e.latlng.lng.toFixed(5))];
       const menu = document.getElementById('map-context-menu');
       const containerPoint = map.latLngToContainerPoint(e.latlng);
@@ -1447,7 +1484,7 @@
 
     function handleContextMenuChoice(choice) {
       document.getElementById('map-context-menu').style.display = 'none';
-      if (!contextClickLatLng) return;
+      if (!contextClickLatLng || isReadOnlyShared) return;
 
       if (choice === 'home') {
         saveHomeCoordsQuick(contextClickLatLng);
@@ -1474,7 +1511,6 @@
       showToast('Atlas backup downloaded!', '📦');
     }
 
-    // SPOLEHLIVÉ ODHLÁŠENÍ S VYČIŠTĚNÍM SUPABASE SESSION
     function handleLogout() {
       document.getElementById('profile-dropdown').classList.remove('show');
       openCustomConfirm({
@@ -1486,9 +1522,7 @@
         onConfirm: async () => {
           try {
             await supabaseClient.auth.signOut();
-          } catch (e) {
-            console.warn('SignOut notice:', e);
-          }
+          } catch (e) {}
           Object.keys(localStorage).forEach(k => {
             if (k.startsWith('sb-') || k.includes('supabase')) localStorage.removeItem(k);
           });
@@ -1557,7 +1591,7 @@
       return { country, continent };
     }
 
-    // Home Base + živý našeptávač měst
+    // Home Base Autocomplete
     let homeSuggestTimeout = null;
 
     function handleHomeBaseAutocomplete(val) {
@@ -1633,6 +1667,7 @@
     }
 
     function handleHomeBaseClick() {
+      if (isReadOnlyShared) return;
       if (userHomeCoords) {
         map.flyTo(userHomeCoords, 6.5, { animate: true, duration: 1.2 });
         refreshHomeMarker();
@@ -1686,12 +1721,17 @@
       const params = new URLSearchParams(window.location.search);
       isDemoMode = params.get('demo') === 'true';
       const sharedUser = params.get('u');
+      const initialView = params.get('view');
 
       refreshHomeMarker();
       await loadFeaturedCatalogList();
 
       if (isDemoMode) {
-        document.getElementById('label-user').textContent = "Demo User";
+        const banner = document.getElementById('context-mode-banner');
+        banner.style.display = 'flex';
+        banner.innerHTML = `<span>🧪 Live Demo Sandbox — Try adding, editing, or exploring races freely.</span> <a href="index.html">Create Free Account ➔</a>`;
+
+        document.getElementById('label-user').textContent = "Demo Sandbox";
         document.getElementById('main-title').textContent = "Race Atlas (Demo)";
         races = [
           { id: "demo-1", name: "Dresden Half Marathon", date: "2026-10-24", month: 10, coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€", distance: "21.1 km", elevation: "+110 m", ambitionTime: "Sub 1:25:00", logisticsTransport: "Car", why: "Flat course along Elbe.", notes: "Target 4:01/km.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80" },
@@ -1699,7 +1739,11 @@
           { id: "demo-4", name: "Běchovice–Praha", date: "2025-09-28", month: 9, coords: [50.0818, 14.6186], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€", distance: "10.0 km", elevation: "+85 m", resultTime: "38:42", placement: "64th", why: "Oldest road 10K in Europe.", notes: "Strong climb on Hrdlořezy hill.", image_url: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80", satisfaction: 9, course_satisfaction: 9 },
           { id: "demo-3", name: "UTMB Mont-Blanc", date: "August", month: 8, coords: [45.9237, 6.8694], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "extremni", cost: "€€€€", distance: "171 km", elevation: "+10,000 m", why: "Ultimate alpine loop around Mont Blanc.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" }
         ];
-        renderAll();
+        if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView)) {
+          switchPageMode(initialView);
+        } else {
+          renderAll();
+        }
         setTimeout(() => startContextualTour(), 500);
         return;
       }
@@ -1708,25 +1752,39 @@
         const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
         if (authError || !user) {
           if (!sharedUser) { window.location.href = 'index.html'; return; }
-        } else {
+        } else if (!sharedUser) {
           currentUser = user;
           const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
           const username = profile?.username || currentUser.email.split('@')[0];
           document.getElementById('label-user').textContent = username;
           await loadActivitiesFromDB(currentUser.id);
 
-          if (!localStorage.getItem('runatlas_tour_completed') || races.length === 0) {
+          if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView)) {
+            switchPageMode(initialView);
+          } else if (!localStorage.getItem('runatlas_tour_completed') || races.length === 0) {
             setTimeout(() => startContextualTour(), 500);
           }
           return;
         }
 
+        // Veřejný sdílený režim (?u=username)
         if (sharedUser) {
+          isReadOnlyShared = true;
+          const banner = document.getElementById('context-mode-banner');
+          banner.style.display = 'flex';
+          banner.innerHTML = `<span>🌍 Viewing public Running Atlas of <strong>${sharedUser}</strong></span> <a href="index.html">Create Your Own Atlas ➔</a>`;
+
+          document.getElementById('btn-add-activity').style.display = 'none';
+          document.getElementById('btn-profile').style.display = 'none';
+          document.getElementById('floating-home-btn').style.display = 'none';
+
           const { data: profile } = await supabaseClient.from('profiles').select('*').eq('username', sharedUser).single();
           if (profile) {
-            document.getElementById('main-title').textContent = `Atlas: ${profile.display_name || profile.username}`;
-            document.getElementById('label-user').textContent = "Guest";
+            document.getElementById('main-title').textContent = `${profile.display_name || profile.username}'s Atlas`;
             await loadActivitiesFromDB(profile.id);
+            if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView)) {
+              switchPageMode(initialView);
+            }
           }
         }
       } catch (err) {
@@ -1734,36 +1792,27 @@
       }
     }
 
-    // ROZŠÍŘENÝ GLOBÁLNÍ KATALOG (18 IKONICKÝCH SVĚTOVÝCH, EVROPSKÝCH A ČESKÝCH ZÁVODŮ)
     async function loadFeaturedCatalogList() {
       const richCatalog = [
-        // World Marathon Majors
         { id: "c-1", name: "Berlin Marathon", category: "majors", location: "Berlin, Germany", distance: "42.2 km", elevation: "+45 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 9, coords: [52.5163, 13.3777], desc: "Fastest marathon course in the world, finishing through the Brandenburg Gate.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=600&q=80" },
         { id: "c-2", name: "Boston Marathon", category: "majors", location: "Boston, USA", distance: "42.2 km", elevation: "+240 m", surface: "road", difficulty: "tezka", cost: "€€€€", month: 4, coords: [42.3601, -71.0589], desc: "The world's oldest annual marathon featuring the legendary Heartbreak Hill.", image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=600&q=80" },
         { id: "c-3", name: "London Marathon", category: "majors", location: "London, UK", distance: "42.2 km", elevation: "+110 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 4, coords: [51.5074, -0.1278], desc: "Iconic flat course along the River Thames from Greenwich to The Mall.", image_url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80" },
         { id: "c-4", name: "New York City Marathon", category: "majors", location: "New York, USA", distance: "42.2 km", elevation: "+270 m", surface: "road", difficulty: "stredni", cost: "€€€€", month: 11, coords: [40.7128, -74.0060], desc: "Five-borough tour across giant bridges ending in Central Park.", image_url: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=600&q=80" },
         { id: "c-5", name: "Chicago Marathon", category: "majors", location: "Chicago, USA", distance: "42.2 km", elevation: "+75 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 10, coords: [41.8781, -87.6298], desc: "Ultra-flat architectural loop through 29 vibrant Chicago neighborhoods.", image_url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=600&q=80" },
         { id: "c-6", name: "Tokyo Marathon", category: "majors", location: "Tokyo, Japan", distance: "42.2 km", elevation: "+90 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 3, coords: [35.6762, 139.6503], desc: "Precision organization and electric crowds through the heart of Tokyo.", image_url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" },
-
-        // Fast & Flat PR Courses
         { id: "c-7", name: "Valencia Marathon", category: "fast", location: "Valencia, Spain", distance: "42.2 km", elevation: "+35 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 12, coords: [39.4699, -0.3763], desc: "La Ciudad del Running — ultra-fast December course finishing on blue water walkways.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
         { id: "c-8", name: "Copenhagen Half Marathon", category: "fast", location: "Copenhagen, Denmark", distance: "21.1 km", elevation: "+40 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 9, coords: [55.6761, 12.5683], desc: "World-record fast Nordic half marathon with rock-concert atmosphere.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=600&q=80" },
         { id: "c-9", name: "Dresden Half Marathon", category: "fast", location: "Dresden, Germany", distance: "21.1 km", elevation: "+110 m", surface: "road", difficulty: "snadna", cost: "€€", month: 10, coords: [51.0504, 13.7373], desc: "Scenic autumn PR course along the Elbe river and historic baroque center.", image_url: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=600&q=80" },
         { id: "c-10", name: "Seville Marathon", category: "fast", location: "Seville, Spain", distance: "42.2 km", elevation: "+30 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 2, coords: [37.3891, -5.9845], desc: "Flattest marathon in Europe held in ideal February spring weather.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
-
-        // Alpine & Trail Legends
         { id: "c-11", name: "UTMB Mont-Blanc", category: "trail", location: "Chamonix, France", distance: "171 km", elevation: "+10,000 m", surface: "trail", difficulty: "extremni", cost: "€€€€", month: 8, coords: [45.9237, 6.8694], desc: "The pinnacle of trail ultra-running circling Mont Blanc across France, Italy, and Switzerland.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" },
         { id: "c-12", name: "Lavaredo Ultra Trail", category: "trail", location: "Cortina d'Ampezzo, Italy", distance: "120 km", elevation: "+5,800 m", surface: "trail", difficulty: "tezka", cost: "€€€", month: 6, coords: [46.5405, 12.1357], desc: "Running beneath the dramatic limestone towers of Tre Cime di Lavaredo in the Dolomites.", image_url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80" },
         { id: "c-13", name: "Zegama-Aizkorri", category: "trail", location: "Zegama, Spain", distance: "42.2 km", elevation: "+2,736 m", surface: "trail", difficulty: "tezka", cost: "€€", month: 5, coords: [42.9760, -2.2905], desc: "The Tour de France of skyrunning — technical Basque ridges and deafening crowds.", image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" },
         { id: "c-14", name: "Chianti Ultra Trail", category: "trail", location: "Radda in Chianti, Italy", distance: "73 km", elevation: "+3,000 m", surface: "trail", difficulty: "stredni", cost: "€€€", month: 3, coords: [43.4900, 11.3780], desc: "Rolling Tuscan vineyards, medieval castles, and white gravel strade bianche.", image_url: "https://images.unsplash.com/photo-1523348837708-a5d9fc0189fa?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-15", name: "Eiger Ultra Trail", category: "trail", location: "Grindelwald, Switzerland", distance: "51 km", elevation: "+3,100 m", surface: "trail", difficulty: "tezka", cost: "€€€€", month: 7, coords: [46.6242, 8.0414], desc: " Alpine singletrack right below the iconic Eiger North Face and Faulhorn summit.", image_url: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=600&q=80" },
-
-        // Czech Classics
+        { id: "c-15", name: "Eiger Ultra Trail", category: "trail", location: "Grindelwald, Switzerland", distance: "51 km", elevation: "+3,100 m", surface: "trail", difficulty: "tezka", cost: "€€€€", month: 7, coords: [46.6242, 8.0414], desc: "Alpine singletrack right below the iconic Eiger North Face and Faulhorn summit.", image_url: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=600&q=80" },
         { id: "c-16", name: "Prague Marathon (PIM)", category: "czech", location: "Prague, Czechia", distance: "42.2 km", elevation: "+130 m", surface: "road", difficulty: "snadna", cost: "€€", month: 5, coords: [50.0875, 14.4211], desc: "Start and finish on Old Town Square, crossing Charles Bridge and Vltava embankments.", image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=600&q=80" },
         { id: "c-17", name: "Běchovice–Praha", category: "czech", location: "Prague, Czechia", distance: "10.0 km", elevation: "+85 m", surface: "road", difficulty: "stredni", cost: "€", month: 9, coords: [50.0818, 14.6186], desc: "The oldest continuously held road race in Europe (since 1897) with the famous Hrdlořezy climb.", image_url: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80" },
         { id: "c-18", name: "Beskydská sedmička (B7)", category: "czech", location: "Třinec – Frenštát, Czechia", distance: "101 km", elevation: "+5,500 m", surface: "trail", difficulty: "extremni", cost: "€€", month: 8, coords: [49.5480, 18.4470], desc: "Legendary Czech mountain ultra crossing seven steep Beskydy summits overnight.", image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" }
       ];
-
       featuredRacesList = richCatalog;
     }
 
@@ -1899,6 +1948,7 @@
     }
 
     function openEditActivityModal(id) {
+      if (isReadOnlyShared) return;
       const item = races.find(r => r.id === id);
       if (!item) return;
 
@@ -1946,6 +1996,7 @@
     }
 
     function deleteActivity(id) {
+      if (isReadOnlyShared) return;
       const item = races.find(r => r.id === id);
       openCustomConfirm({
         title: 'Delete Activity?',
@@ -1954,6 +2005,12 @@
         isDanger: true,
         confirmText: 'Delete',
         onConfirm: async () => {
+          if (isDemoMode) {
+            races = races.filter(r => r.id !== id);
+            exitDetailView();
+            showToast('Demo activity deleted.', '🗑️');
+            return;
+          }
           if (!currentUser) return;
           try {
             const { error } = await supabaseClient.from('races').delete().eq('id', id).eq('user_id', currentUser.id);
@@ -2021,14 +2078,41 @@
       activeList = sortActivities(activeList);
       document.getElementById('stats-label').textContent = `Showing ${activeList.length} activities`;
 
+      // Bohatý uvítací Empty State pro prázdný účet
       if (activeList.length === 0) {
-        content.innerHTML = `
-          <div style="text-align:center; padding: 40px 10px; color:#64748b;">
-            <div style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:6px;">No activities found</div>
-            <div style="font-size:0.82rem; margin-bottom:16px;">${currentMode === 'memorable' ? 'Log your first memorable mountain crossing, vacation run, or solo adventure.' : 'Add your first race or bucket-list target to your atlas.'}</div>
-            <button class="open-detail-btn" onclick="openAddModal('${currentMode === 'memorable' ? 'memorable' : 'race'}')">➕ Add ${currentMode === 'memorable' ? 'Memorable Run' : 'Activity'}</button>
-          </div>
-        `;
+        if (races.length === 0 && !isReadOnlyShared) {
+          content.innerHTML = `
+            <div class="empty-starter-card">
+              <div style="font-size:2rem;">🗺️</div>
+              <h3 style="font-size:1.1rem; font-weight:800; color:#0f172a;">Your Running Atlas is Ready</h3>
+              <p style="font-size:0.82rem; color:#64748b; line-height:1.5;">
+                Start building your personal running geography. Pick from iconic world races, drop a watch GPX track, or set your home base.
+              </p>
+              <div class="starter-action-row">
+                <button class="starter-btn" onclick="switchPageMode('catalog')">
+                  <span>🌍 Browse 18 Iconic World Races</span>
+                  <span style="color:#007aff;">➔</span>
+                </button>
+                <button class="starter-btn" onclick="openAddModal()">
+                  <span>📁 Upload Your First .GPX Track</span>
+                  <span style="color:#007aff;">➔</span>
+                </button>
+                <button class="starter-btn" onclick="handleHomeBaseClick()">
+                  <span>🏠 Set Your Home Base City</span>
+                  <span style="color:#007aff;">➔</span>
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          content.innerHTML = `
+            <div style="text-align:center; padding: 40px 10px; color:#64748b;">
+              <div style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:6px;">No activities match these filters</div>
+              <div style="font-size:0.82rem; margin-bottom:16px;">Try adjusting your status or surface filters above.</div>
+              ${!isReadOnlyShared ? `<button class="open-detail-btn" onclick="openAddModal('${currentMode === 'memorable' ? 'memorable' : 'race'}')">➕ Add Activity</button>` : ''}
+            </div>
+          `;
+        }
         return;
       }
 
@@ -2070,7 +2154,6 @@
       });
     }
 
-    // 3 ODLIŠNÉ SADY HUD BOXŮ PRO COMPLETED / PLANNED / BUCKET LIST
     function showFloatingHud(item) {
       const hud = document.getElementById('floating-hud-panel');
       const cluster = document.getElementById('hud-cluster-content');
@@ -2078,10 +2161,10 @@
 
       const homeDist = computeDistanceFromHome(item.coords);
       const hasHome = homeDist !== null;
-      const homeDistLabel = hasHome ? `${homeDist.toLocaleString()} km` : 'Set Home Base ➔';
-      const homeSubLabel = hasHome ? 'From Home Base' : 'Click to set your location';
-      const homeClickAttr = !hasHome ? `onclick="handleHomeBaseClick()"` : '';
-      const homeClickableClass = !hasHome ? 'clickable' : '';
+      const homeDistLabel = hasHome ? `${homeDist.toLocaleString()} km` : (isReadOnlyShared ? 'N/A' : 'Set Home Base ➔');
+      const homeSubLabel = hasHome ? 'From Home Base' : (isReadOnlyShared ? 'Distance' : 'Click to set your location');
+      const homeClickAttr = (!hasHome && !isReadOnlyShared) ? `onclick="handleHomeBaseClick()"` : '';
+      const homeClickableClass = (!hasHome && !isReadOnlyShared) ? 'clickable' : '';
 
       if (item.status === 'done') {
         const perfVal = item.satisfaction || 8;
@@ -2144,7 +2227,7 @@
             <div class="hud-box-lbl">Travel Logistics</div>
           </div>
         `;
-      } else { // BUCKET LIST
+      } else {
         const diffMap = { snadna: 'Easy', stredni: 'Moderate', tezka: 'Hard', extremni: 'Extreme' };
         const diffLabel = diffMap[item.difficulty] || 'Moderate';
 
@@ -2186,6 +2269,36 @@
       }
     }
 
+    // Vykreslení SVG Elevation Sparkline v detailu závodu
+    function buildElevationSparklineHtml(elevPoints, totalGainStr) {
+      if (!elevPoints || elevPoints.length < 3) return '';
+      const minE = Math.min(...elevPoints);
+      const maxE = Math.max(...elevPoints);
+      const span = (maxE - minE) || 1;
+      const w = 360, h = 64;
+
+      const pts = elevPoints.map((e, idx) => {
+        const x = (idx / (elevPoints.length - 1)) * w;
+        const y = h - 8 - ((e - minE) / span) * (h - 16);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+
+      const fillPts = `0,${h} ${pts} ${w},${h}`;
+
+      return `
+        <div class="elevation-spark-card">
+          <div class="elevation-spark-header">
+            <span>⛰️ Elevation Profile (${totalGainStr || ''})</span>
+            <span>${Math.round(minE)}m – ${Math.round(maxE)}m</span>
+          </div>
+          <svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+            <polygon points="${fillPts}" fill="rgba(56, 189, 248, 0.22)" />
+            <polyline points="${pts}" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+      `;
+    }
+
     function showDetail(item) {
       currentDetailItem = item;
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
@@ -2206,17 +2319,14 @@
         map.fitBounds(currentRouteLayer.getBounds(), { padding: [60, 110], maxZoom: 13, animate: true });
       } else if (item.coords) {
         const layers = [];
-        const zoneRadiusMeters = 3200;
-
         layers.push(L.circle(item.coords, {
-          radius: zoneRadiusMeters,
+          radius: 3200,
           color: themeColor,
           weight: 2,
           dashArray: '6, 6',
           fillColor: themeColor,
           fillOpacity: 0.12
         }));
-
         layers.push(L.circle(item.coords, {
           radius: 700,
           color: themeColor,
@@ -2224,7 +2334,6 @@
           fillColor: themeColor,
           fillOpacity: 0.25
         }));
-
         if (userHomeCoords) {
           const arcPoints = createGeodesicArc(userHomeCoords, item.coords);
           layers.push(L.polyline(arcPoints, {
@@ -2234,22 +2343,24 @@
             opacity: 0.75
           }));
         }
-
         currentRouteLayer = L.featureGroup(layers).addTo(map);
         map.flyTo(item.coords, 11, { animate: true, duration: 1.1 });
       }
 
       const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80';
       const homeDist = computeDistanceFromHome(item.coords);
+      const sparkHtml = buildElevationSparklineHtml(elevationProfiles[item.id], item.elevation);
 
       content.innerHTML = `
         <div class="detail-view-wrap">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <button class="back-btn" onclick="exitDetailView()">← Back to activities</button>
-            <div style="display:flex; gap:6px;">
-              <button class="action-btn-secondary" onclick="openEditActivityModal('${item.id}')">✏️ Edit</button>
-              <button class="action-btn-danger" onclick="deleteActivity('${item.id}')">🗑️ Delete</button>
-            </div>
+            ${!isReadOnlyShared ? `
+              <div style="display:flex; gap:6px;">
+                <button class="action-btn-secondary" onclick="openEditActivityModal('${item.id}')">✏️ Edit</button>
+                <button class="action-btn-danger" onclick="deleteActivity('${item.id}')">🗑️ Delete</button>
+              </div>
+            ` : ''}
           </div>
 
           <div class="detail-hero-banner" style="background-image: url('${cardImg}');">
@@ -2265,7 +2376,9 @@
             </div>
           </div>
 
-          ${!zavodniTrasy[item.id] ? `
+          ${sparkHtml}
+
+          ${(!zavodniTrasy[item.id] && !isReadOnlyShared) ? `
             <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
               <span style="font-size:0.76rem; color:#64748b; font-weight:600;">📍 Showing Race Zone (no GPX track attached)</span>
               <button class="pill-btn" style="padding:3px 8px; font-size:0.72rem; color:#007aff;" onclick="openEditActivityModal('${item.id}')">+ Add GPX</button>
@@ -2289,9 +2402,9 @@
           ` : ''}
 
           <div class="spec-sheet-grid">
-            <div class="spec-cell" style="${homeDist === null ? 'cursor:pointer; border-color:#007aff;' : ''}" ${homeDist === null ? 'onclick="handleHomeBaseClick()"' : ''}>
+            <div class="spec-cell" style="${(homeDist === null && !isReadOnlyShared) ? 'cursor:pointer; border-color:#007aff;' : ''}" ${(homeDist === null && !isReadOnlyShared) ? 'onclick="handleHomeBaseClick()"' : ''}>
               <small>Distance from Home</small>
-              <strong style="${homeDist === null ? 'color:#007aff;' : ''}">${homeDist !== null ? homeDist.toLocaleString() + ' km' : 'Set Home Base ➔'}</strong>
+              <strong style="${(homeDist === null && !isReadOnlyShared) ? 'color:#007aff;' : ''}">${homeDist !== null ? homeDist.toLocaleString() + ' km' : (isReadOnlyShared ? '—' : 'Set Home Base ➔')}</strong>
             </div>
             <div class="spec-cell">
               <small>${item.status === 'done' ? 'Placement' : 'Estimated Budget'}</small>
@@ -2302,9 +2415,7 @@
       `;
     }
 
-    // ====================================================
-    // POHLED 1: SEASON TIMELINE (GRAFICKÁ ČASOVÁ OSA)
-    // ====================================================
+    // POHLED 1: SEASON TIMELINE
     function renderTimelineDashboard() {
       const container = document.getElementById('full-page-content');
       currentDetailItem = null;
@@ -2316,10 +2427,8 @@
         return isNaN(n) ? 0 : n;
       };
 
-      // Vybereme závody, které mají datum nebo jsou Planned/Done
       const timelineItems = races.filter(r => r.status !== 'bucket' || (r.date && r.date.includes('-')));
 
-      // Seskupení podle roků
       const groups = {};
       timelineItems.forEach(item => {
         let yr = 'Undated / Future';
@@ -2339,7 +2448,7 @@
           <div class="stats-panel-card" style="text-align:center; padding:48px 20px;">
             <h3 style="font-size:1.2rem; color:#0f172a; margin-bottom:6px;">Your Season Timeline is empty</h3>
             <p style="font-size:0.88rem; color:#64748b; margin-bottom:18px;">Add completed or planned races with event dates to see your chronological season flow.</p>
-            <div><button class="open-detail-btn" onclick="openAddModal()">➕ Add Race to Timeline</button></div>
+            ${!isReadOnlyShared ? `<div><button class="open-detail-btn" onclick="openAddModal()">➕ Add Race to Timeline</button></div>` : ''}
           </div>
         `;
       } else {
@@ -2419,9 +2528,7 @@
       `;
     }
 
-    // ====================================================
     // POHLED 2: PERSONAL BESTS & TROPHY ROOM
-    // ====================================================
     function parseTimeToSeconds(timeStr) {
       if (!timeStr) return null;
       const clean = timeStr.trim().replace(/[^0-9:]/g, '');
@@ -2453,7 +2560,6 @@
 
       const doneList = races.filter(r => r.status === 'done');
 
-      // Hledání nejrychlejších časů pro 10K, Half Marathon, Marathon, Ultra
       const findBestForRange = (minKm, maxKm, stdKm) => {
         const candidates = doneList.filter(r => {
           const d = parseNum(r.distance);
@@ -2476,7 +2582,6 @@
       const prMarathon = findBestForRange(41.5, 43.0, 42.195);
       const prUltra = findBestForRange(45.0, 500.0, null);
 
-      // Extrémy a milníky
       let longestRun = null, biggestClimb = null, topRated = null;
       doneList.forEach(r => {
         if (!longestRun || parseNum(r.distance) > parseNum(longestRun.distance)) longestRun = r;
@@ -2522,7 +2627,6 @@
           <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
         </div>
 
-        <!-- 4 MAIN PR TROPHY CARDS -->
         <div class="pr-grid">
           ${renderPrCard('10K Road / Trail', '10.0 KM PR', pr10k, '#007aff')}
           ${renderPrCard('Half Marathon', '21.1 KM PR', prHalf, '#16a34a')}
@@ -2530,7 +2634,6 @@
           ${renderPrCard('Ultra Endurance', 'ULTRA (>45K)', prUltra, '#7e22ce')}
         </div>
 
-        <!-- ALL-TIME ENDURANCE EXTREMES -->
         <div class="stats-panel-card">
           <div class="stats-panel-header">
             <h3>🏔️ All-Time Endurance Feats & Highlights</h3>
@@ -2558,9 +2661,7 @@
       `;
     }
 
-    // ====================================================
-    // POHLED 3: EXPLORE GLOBAL CATALOG (18 IKONICKÝCH ZÁVODŮ)
-    // ====================================================
+    // POHLED 3: EXPLORE CATALOG
     function renderExploreCatalogDashboard() {
       const container = document.getElementById('full-page-content');
       currentDetailItem = null;
@@ -2589,7 +2690,6 @@
           <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
         </div>
 
-        <!-- FILTER BAR -->
         <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#ffffff; padding:14px 18px; border-radius:14px; border:1px solid #e2e8f0;">
           <div class="chips-group">
             <button class="chip-btn ${exploreCategoryFilter === 'all' ? 'active' : ''}" onclick="exploreCategoryFilter='all'; renderExploreCatalogDashboard();">🌍 All (${featuredRacesList.length})</button>
@@ -2601,7 +2701,6 @@
           <input type="text" class="stepped-input" style="width:240px; padding:7px 12px;" placeholder="Filter by name or city..." value="${exploreSearchQuery}" oninput="exploreSearchQuery=this.value.toLowerCase(); renderExploreCatalogDashboard();">
         </div>
 
-        <!-- GRID OF 18 CURATED RACES -->
         <div class="catalog-full-grid">
           ${filtered.map(r => {
             const alreadyInAtlas = races.find(my => my.name.toLowerCase() === r.name.toLowerCase());
@@ -2636,13 +2735,15 @@
                     <button class="open-detail-btn" style="width:100%; background:#16a34a;" onclick="selectSpotlightRace('${alreadyInAtlas.id}')">
                       ✅ In Your Atlas (${alreadyInAtlas.statusLabel || alreadyInAtlas.status}) — View on Map ➔
                     </button>
+                  ` : (isReadOnlyShared ? `
+                    <a class="open-detail-btn" style="width:100%; display:inline-block; text-align:center; text-decoration:none;" href="index.html">Sign up to add to your map</a>
                   ` : `
                     <div class="catalog-card-actions">
                       <button class="cat-act-btn" onclick="quickAddFromSpotlight('${r.id}', 'done')">🏁 Completed</button>
                       <button class="cat-act-btn" onclick="quickAddFromSpotlight('${r.id}', 'planned')">📅 Plan It</button>
                       <button class="cat-act-btn" onclick="quickAddFromSpotlight('${r.id}', 'bucket')">⭐️ Bucket List</button>
                     </div>
-                  `}
+                  `)}
                 </div>
               </div>
             `;
@@ -2651,9 +2752,7 @@
       `;
     }
 
-    // ====================================================
     // POHLED 4: MILESTONES & STATS DASHBOARD
-    // ====================================================
     function renderStatsFullDashboard() {
       const container = document.getElementById('full-page-content');
       currentDetailItem = null;
@@ -2831,6 +2930,7 @@
     }
 
     let parsedGpxCoords = null;
+    let parsedElevationSample = null;
     let parsedCenterCoords = null;
     let pendingCatalogImageUrl = null;
 
@@ -2861,6 +2961,7 @@
       document.getElementById('catalog-suggestions').style.display = 'none';
 
       parsedGpxCoords = null;
+      parsedElevationSample = null;
       parsedCenterCoords = null;
       pendingCatalogImageUrl = null;
 
@@ -2870,6 +2971,7 @@
     }
 
     function openAddModal(forcedMode = null) {
+      if (isReadOnlyShared) return;
       closeModals();
       resetActivityForm();
       document.getElementById('step1-modal-title').textContent = (forcedMode === 'memorable') ? 'Add Memorable Run' : 'Add to Atlas';
@@ -2894,7 +2996,7 @@
         const trkpts = xml.querySelectorAll('trkpt');
         if (trkpts.length === 0) { showToast('No trackpoints found in GPX.', '⚠️'); return; }
 
-        let latlngs = [], totalDist = 0, totalEle = 0, prevEle = null;
+        let latlngs = [], rawElevations = [], totalDist = 0, totalEle = 0, prevEle = null;
         for (let i = 0; i < trkpts.length; i++) {
           const lat = parseFloat(trkpts[i].getAttribute('lat'));
           const lon = parseFloat(trkpts[i].getAttribute('lon'));
@@ -2903,6 +3005,7 @@
           const eleEl = trkpts[i].querySelector('ele');
           if (eleEl) {
             const ele = parseFloat(eleEl.textContent);
+            rawElevations.push(ele);
             if (prevEle !== null && ele > prevEle) totalEle += (ele - prevEle);
             prevEle = ele;
           }
@@ -2917,21 +3020,24 @@
           }
         }
 
+        // Zjednodušený vzorek 60 bodů pro výškový graf
+        if (rawElevations.length > 5) {
+          const step = Math.max(1, Math.floor(rawElevations.length / 60));
+          parsedElevationSample = rawElevations.filter((_, idx) => idx % step === 0);
+        }
+
         parsedGpxCoords = latlngs;
         parsedCenterCoords = latlngs[0];
         document.getElementById('form-distance').value = totalDist.toFixed(1) + ' km';
         document.getElementById('form-elevation').value = '+' + Math.round(totalEle) + ' m';
         document.getElementById('gpx-label').textContent = `Loaded track (${latlngs.length} pts, ${totalDist.toFixed(1)} km)`;
-        showToast('GPX route parsed!', '📍');
+        showToast('GPX route & elevation parsed!', '📍');
       };
       reader.readAsText(file);
     }
 
     async function saveActivityToSupabase() {
-      if (!currentUser) {
-        showToast('Sign in to save activities to your atlas.', '🔒');
-        return;
-      }
+      if (isReadOnlyShared) return;
       const name = document.getElementById('form-name').value.trim();
       const status = chipSelections.status;
       if (!name) { showToast('Please enter an activity title.', '⚠️'); return; }
@@ -2941,68 +3047,105 @@
       saveBtn.textContent = 'Saving...';
       saveBtn.disabled = true;
 
-      try {
-        let dateStr = '';
-        let monthInt = null;
-        const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      let dateStr = '';
+      let monthInt = null;
+      const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-        if (status === 'bucket') {
-          const selectedMonthVal = document.getElementById('form-month-select').value;
-          if (selectedMonthVal) {
-            monthInt = parseInt(selectedMonthVal);
-            dateStr = monthNames[monthInt];
-          } else {
-            dateStr = 'Bucket list';
-          }
+      if (status === 'bucket') {
+        const selectedMonthVal = document.getElementById('form-month-select').value;
+        if (selectedMonthVal) {
+          monthInt = parseInt(selectedMonthVal);
+          dateStr = monthNames[monthInt];
         } else {
-          dateStr = document.getElementById('form-date').value;
-          if (dateStr && dateStr.includes('-')) monthInt = parseInt(dateStr.split('-')[1]);
+          dateStr = 'Bucket list';
         }
+      } else {
+        dateStr = document.getElementById('form-date').value;
+        if (dateStr && dateStr.includes('-')) monthInt = parseInt(dateStr.split('-')[1]);
+      }
 
-        const statusLabels = { done: 'Completed', planned: 'Planned', bucket: 'Bucket list' };
-        const surfaceLabels = { trail: 'Trail', road: 'Road', mixed: 'Mixed' };
+      const statusLabels = { done: 'Completed', planned: 'Planned', bucket: 'Bucket list' };
+      const surfaceLabels = { trail: 'Trail', road: 'Road', mixed: 'Mixed' };
 
-        const record = {
-          user_id: currentUser.id,
-          name: name,
-          date: dateStr,
-          month: monthInt,
-          status: status,
-          status_label: statusLabels[status] || 'Completed',
-          surface: chipSelections.surface,
-          surface_label: surfaceLabels[chipSelections.surface] || 'Road',
-          difficulty: chipSelections.difficulty,
-          distance: document.getElementById('form-distance').value,
-          elevation: document.getElementById('form-elevation').value,
-          why: document.getElementById('form-why').value,
-          notes: status === 'bucket' ? '' : document.getElementById('form-notes').value,
-          coords: finalCoords,
-          is_memorable: (currentMode === 'memorable')
+      const record = {
+        user_id: currentUser ? currentUser.id : 'demo',
+        name: name,
+        date: dateStr,
+        month: monthInt,
+        status: status,
+        status_label: statusLabels[status] || 'Completed',
+        surface: chipSelections.surface,
+        surface_label: surfaceLabels[chipSelections.surface] || 'Road',
+        difficulty: chipSelections.difficulty,
+        distance: document.getElementById('form-distance').value,
+        elevation: document.getElementById('form-elevation').value,
+        why: document.getElementById('form-why').value,
+        notes: status === 'bucket' ? '' : document.getElementById('form-notes').value,
+        coords: finalCoords,
+        is_memorable: (currentMode === 'memorable')
+      };
+
+      if (status === 'done') {
+        record.result_time = document.getElementById('form-finish-simple').value.trim() || null;
+        record.placement = document.getElementById('form-placement').value.trim() || null;
+        record.satisfaction = parseInt(document.getElementById('form-satisfaction').value) || 8;
+        record.course_satisfaction = parseInt(document.getElementById('form-course-satisfaction').value) || 9;
+      } else if (status === 'planned') {
+        record.ambition_time = document.getElementById('form-target-ambition').value.trim() || null;
+        record.logistics_transport = document.getElementById('form-logistics-transport').value || null;
+        record.cost = document.getElementById('form-cost').value || null;
+      } else if (status === 'bucket') {
+        record.cost = document.getElementById('form-cost').value || null;
+      }
+
+      if (pendingCatalogImageUrl) record.image_url = pendingCatalogImageUrl;
+      if (parsedGpxCoords) record.route_coords = parsedGpxCoords;
+
+      // DEMO SANDBOX UKLÁDÁNÍ DO PAMĚTI
+      if (isDemoMode) {
+        const localId = editingActivityId || `demo-${Date.now()}`;
+        const localObj = {
+          ...record,
+          id: localId,
+          statusLabel: record.status_label,
+          surfaceLabel: record.surface_label,
+          resultTime: record.result_time,
+          ambitionTime: record.ambition_time,
+          logisticsTransport: record.logistics_transport,
+          isMemorable: record.is_memorable
         };
+        if (parsedGpxCoords) zavodniTrasy[localId] = parsedGpxCoords;
+        if (parsedElevationSample) elevationProfiles[localId] = parsedElevationSample;
 
-        if (status === 'done') {
-          record.result_time = document.getElementById('form-finish-simple').value.trim() || null;
-          record.placement = document.getElementById('form-placement').value.trim() || null;
-          record.satisfaction = parseInt(document.getElementById('form-satisfaction').value) || 8;
-          record.course_satisfaction = parseInt(document.getElementById('form-course-satisfaction').value) || 9;
-        } else if (status === 'planned') {
-          record.ambition_time = document.getElementById('form-target-ambition').value.trim() || null;
-          record.logistics_transport = document.getElementById('form-logistics-transport').value || null;
-          record.cost = document.getElementById('form-cost').value || null;
-        } else if (status === 'bucket') {
-          record.cost = document.getElementById('form-cost').value || null;
+        if (editingActivityId) {
+          races = races.map(r => r.id === editingActivityId ? localObj : r);
+          showToast('Demo activity updated!', '✅');
+        } else {
+          races.unshift(localObj);
+          showToast('Added to Live Demo map!', '🏁');
         }
+        closeModals();
+        if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode('races');
+        else renderAll();
+        map.flyTo(finalCoords, 11, { animate: true });
+        saveBtn.textContent = 'Save to Atlas';
+        saveBtn.disabled = false;
+        return;
+      }
 
-        if (pendingCatalogImageUrl) record.image_url = pendingCatalogImageUrl;
-        if (parsedGpxCoords) record.route_coords = parsedGpxCoords;
-
+      // SUPABASE PRODUKČNÍ UKLÁDÁNÍ
+      try {
         if (editingActivityId) {
           const { error: updErr } = await supabaseClient.from('races').update(record).eq('id', editingActivityId).eq('user_id', currentUser.id);
           if (updErr) throw updErr;
+          if (parsedElevationSample) elevationProfiles[editingActivityId] = parsedElevationSample;
           showToast('Activity updated!', '✅');
         } else {
-          const { error: insErr } = await supabaseClient.from('races').insert([record]);
+          const { data: insData, error: insErr } = await supabaseClient.from('races').insert([record]).select();
           if (insErr) throw insErr;
+          if (insData && insData[0] && parsedElevationSample) {
+            elevationProfiles[insData[0].id] = parsedElevationSample;
+          }
           showToast('Activity saved to your atlas!', '🏁');
         }
 
@@ -3098,7 +3241,7 @@
       setTimeout(() => map.invalidateSize(), 50);
 
       if (mode === 'races') {
-        document.getElementById('main-title').textContent = 'Race Atlas';
+        document.getElementById('main-title').textContent = isReadOnlyShared ? document.getElementById('main-title').textContent : 'Race Atlas';
         memorableInfoBtn.style.display = 'none';
         statusWrap.style.display = 'flex';
         filtersWrap.style.display = 'flex';
