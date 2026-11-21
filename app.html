@@ -983,7 +983,7 @@
         <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
       </div>
 
-      <div>
+      <div id="wrap-status-selector">
         <label class="form-group-label">1. What kind of entry is this? *</label>
         <div class="status-selector-grid" id="status-mode-selector">
           <div class="status-mode-card active" data-mode="done" onclick="selectStatusMode('done')">
@@ -1166,6 +1166,7 @@
     let elevationProfiles = {};
 
     let editingActivityId = null;
+    let isModalMemorableMode = false;
     let contextClickLatLng = null;
 
     let sortOrder = 'newest';
@@ -1343,8 +1344,8 @@
     // MAP + MARKER CLUSTERING
     const map = L.map('map', {
       center: userHomeCoords || [25.0, 10.0],
-      zoom: userHomeCoords ? 5.2 : 2.5,
-      minZoom: 2.3,
+      zoom: userHomeCoords ? 5 : 2,
+      minZoom: 2,
       maxBounds: [[-85, -Infinity], [85, Infinity]],
       maxBoundsViscosity: 1.0,
       worldCopyJump: true
@@ -1360,6 +1361,7 @@
       maxClusterRadius: 36,
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
+      removeOutsideVisibleBounds: false,
       iconCreateFunction: function(cluster) {
         return L.divIcon({
           html: `<div class="custom-cluster-icon" style="width:32px; height:32px;">${cluster.getChildCount()}</div>`,
@@ -1375,7 +1377,7 @@
       if (markerLayerGroup.getLayers().length > 0) {
         map.flyToBounds(markerLayerGroup.getBounds(), { padding: [55, 55], maxZoom: 11, animate: true, duration: 1.1 });
       } else {
-        map.flyTo(userHomeCoords || [25.0, 10.0], userHomeCoords ? 5.2 : 2.5, { animate: true, duration: 1.1 });
+        map.flyTo(userHomeCoords || [25.0, 10.0], userHomeCoords ? 5 : 2, { animate: true, duration: 1.0 });
       }
     }
 
@@ -1584,8 +1586,13 @@
       return points;
     }
 
+    function renderFlag(code) {
+      if (!code) return '🌍 ';
+      return `<img src="https://flagcdn.com/w20/${code}.png" srcset="https://flagcdn.com/w40/${code}.png 2x" alt="${code.toUpperCase()}" style="width:16px; height:12px; object-fit:cover; border-radius:2px; vertical-align:-1px; margin-right:5px; box-shadow:0 1px 2px rgba(0,0,0,0.2);">`;
+    }
+
     function detectGeoFromCoords(coords, name = '') {
-      if (!coords || coords.length < 2) return { country: 'Unknown', continent: 'Europe' };
+      if (!coords || coords.length < 2) return { country: 'Unknown', code: '', continent: 'Europe', html: '🌍 Unknown' };
       const lat = coords[0];
       const lng = coords[1];
       const lowName = name.toLowerCase();
@@ -1597,28 +1604,29 @@
       else if (lat < -10 && lng > 110) continent = 'Oceania';
       else if (lng > 40 && lat >= 0) continent = 'Asia';
 
-      let country = 'Other';
-      if (lowName.includes('prague') || lowName.includes('praha') || (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9)) country = '🇨🇿 Czechia';
-      else if (lowName.includes('berlin') || lowName.includes('dresden') || lowName.includes('munich') || (lat >= 47.2 && lat <= 55.0 && lng >= 6.0 && lng <= 15.0)) country = '🇩🇪 Germany';
-      else if (lowName.includes('chamonix') || lowName.includes('utmb') || lowName.includes('paris') || (lat >= 42.0 && lat <= 51.0 && lng >= -5.0 && lng <= 8.2)) country = '🇫🇷 France';
-      else if (lowName.includes('chianti') || lowName.includes('lavaredo') || lowName.includes('rome') || (lat >= 36.5 && lat <= 47.0 && lng >= 6.6 && lng <= 18.5)) country = '🇮🇹 Italy';
-      else if (lowName.includes('valencia') || lowName.includes('seville') || lowName.includes('zegama') || lowName.includes('grancanaria') || (lat >= 36.0 && lat <= 43.8 && lng >= -9.3 && lng <= 3.3)) country = '🇪🇸 Spain';
-      else if (lowName.includes('helsinki') || (lat >= 59.5 && lat <= 70.0 && lng >= 20.0 && lng <= 31.5)) country = '🇫🇮 Finland';
-      else if (lowName.includes('copenhagen') || (lat >= 54.5 && lat <= 58.0 && lng >= 8.0 && lng <= 15.2)) country = '🇩🇰 Denmark';
-      else if (lowName.includes('eiger') || lowName.includes('sierre') || lowName.includes('zermatt') || (lat >= 45.8 && lat <= 47.8 && lng >= 6.0 && lng <= 10.5)) country = '🇨🇭 Switzerland';
-      else if (lowName.includes('amsterdam') || (lat >= 50.7 && lat <= 53.6 && lng >= 3.3 && lng <= 7.2)) country = '🇳🇱 Netherlands';
-      else if (lowName.includes('vienna') || (lat >= 46.3 && lat <= 49.0 && lng >= 9.5 && lng <= 17.2)) country = '🇦🇹 Austria';
-      else if (lowName.includes('athens') || (lat >= 35.0 && lat <= 41.8 && lng >= 19.3 && lng <= 28.2)) country = '🇬🇷 Greece';
-      else if (lowName.includes('stockholm') || (lat >= 55.3 && lat <= 69.0 && lng >= 11.0 && lng <= 24.2)) country = '🇸🇪 Sweden';
-      else if (lowName.includes('london') || (lat >= 50.0 && lat <= 59.0 && lng >= -8.0 && lng <= 2.0)) country = '🇬🇧 UK';
-      else if (lowName.includes('boston') || lowName.includes('new york') || lowName.includes('chicago') || lowName.includes('western states') || lowName.includes('big sur') || (continent === 'North America')) country = '🇺🇸 USA';
-      else if (lowName.includes('tokyo') || lowName.includes('fuji') || (lat >= 30.0 && lat <= 45.0 && lng >= 129.0 && lng <= 146.0)) country = '🇯🇵 Japan';
-      else if (lowName.includes('sydney') || continent === 'Oceania') country = '🇦🇺 Australia';
-      else if (lowName.includes('cape town') || lowName.includes('comrades') || continent === 'Africa') country = '🇿🇦 South Africa';
-      else if (lowName.includes('patagonia') || continent === 'South America') country = '🇦🇷 Argentina';
-      else country = `🌍 ${continent}`;
+      let country = continent;
+      let code = '';
+      if (lowName.includes('prague') || lowName.includes('praha') || (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9)) { country = 'Czechia'; code = 'cz'; }
+      else if (lowName.includes('slovak') || lowName.includes('bratislava') || lowName.includes('tatry') || (lat >= 47.7 && lat <= 49.6 && lng >= 16.8 && lng <= 22.6)) { country = 'Slovakia'; code = 'sk'; }
+      else if (lowName.includes('berlin') || lowName.includes('dresden') || lowName.includes('munich') || (lat >= 47.2 && lat <= 55.0 && lng >= 6.0 && lng <= 15.0)) { country = 'Germany'; code = 'de'; }
+      else if (lowName.includes('chamonix') || lowName.includes('utmb') || lowName.includes('paris') || (lat >= 42.0 && lat <= 51.0 && lng >= -5.0 && lng <= 8.2)) { country = 'France'; code = 'fr'; }
+      else if (lowName.includes('chianti') || lowName.includes('lavaredo') || lowName.includes('rome') || (lat >= 36.5 && lat <= 47.0 && lng >= 6.6 && lng <= 18.5)) { country = 'Italy'; code = 'it'; }
+      else if (lowName.includes('valencia') || lowName.includes('seville') || lowName.includes('zegama') || lowName.includes('grancanaria') || (lat >= 36.0 && lat <= 43.8 && lng >= -9.3 && lng <= 3.3)) { country = 'Spain'; code = 'es'; }
+      else if (lowName.includes('helsinki') || (lat >= 59.5 && lat <= 70.0 && lng >= 20.0 && lng <= 31.5)) { country = 'Finland'; code = 'fi'; }
+      else if (lowName.includes('copenhagen') || lowName.includes('aalborg') || (lat >= 54.5 && lat <= 58.0 && lng >= 8.0 && lng <= 15.2)) { country = 'Denmark'; code = 'dk'; }
+      else if (lowName.includes('eiger') || lowName.includes('sierre') || lowName.includes('zermatt') || (lat >= 45.8 && lat <= 47.8 && lng >= 6.0 && lng <= 10.5)) { country = 'Switzerland'; code = 'ch'; }
+      else if (lowName.includes('amsterdam') || (lat >= 50.7 && lat <= 53.6 && lng >= 3.3 && lng <= 7.2)) { country = 'Netherlands'; code = 'nl'; }
+      else if (lowName.includes('vienna') || (lat >= 46.3 && lat <= 49.0 && lng >= 9.5 && lng <= 17.2)) { country = 'Austria'; code = 'at'; }
+      else if (lowName.includes('athens') || (lat >= 35.0 && lat <= 41.8 && lng >= 19.3 && lng <= 28.2)) { country = 'Greece'; code = 'gr'; }
+      else if (lowName.includes('stockholm') || (lat >= 55.3 && lat <= 69.0 && lng >= 11.0 && lng <= 24.2)) { country = 'Sweden'; code = 'se'; }
+      else if (lowName.includes('london') || (lat >= 50.0 && lat <= 59.0 && lng >= -8.0 && lng <= 2.0)) { country = 'UK'; code = 'gb'; }
+      else if (lowName.includes('boston') || lowName.includes('new york') || lowName.includes('chicago') || lowName.includes('western states') || lowName.includes('big sur') || (continent === 'North America')) { country = 'USA'; code = 'us'; }
+      else if (lowName.includes('tokyo') || lowName.includes('fuji') || (lat >= 30.0 && lat <= 45.0 && lng >= 129.0 && lng <= 146.0)) { country = 'Japan'; code = 'jp'; }
+      else if (lowName.includes('sydney') || continent === 'Oceania') { country = 'Australia'; code = 'au'; }
+      else if (lowName.includes('cape town') || lowName.includes('comrades') || continent === 'Africa') { country = 'South Africa'; code = 'za'; }
+      else if (lowName.includes('patagonia') || continent === 'South America') { country = 'Argentina'; code = 'ar'; }
 
-      return { country, continent };
+      return { country, code, continent, html: `${renderFlag(code)}${country}` };
     }
 
     // Home Base Autocomplete
@@ -1699,7 +1707,7 @@
     function handleHomeBaseClick() {
       if (isReadOnlyShared) return;
       if (userHomeCoords) {
-        map.flyTo(userHomeCoords, 6.5, { animate: true, duration: 1.2 });
+        map.flyTo(userHomeCoords, 6, { animate: true, duration: 1.0 });
         refreshHomeMarker();
       } else {
         document.getElementById('homebase-city-input').value = '';
@@ -1742,7 +1750,7 @@
       if (currentDetailItem) {
         showDetail(currentDetailItem);
       } else {
-        map.flyTo(userHomeCoords, 6.5, { animate: true, duration: 1.2 });
+        map.flyTo(userHomeCoords, 6, { animate: true, duration: 1.0 });
       }
     }
 
@@ -1767,7 +1775,7 @@
         if (!userHomeCoords) {
           userHomeCoords = [51.5074, -0.1278]; // Neutral demo Home Base: London
           refreshHomeMarker();
-          map.setView(userHomeCoords, 4.5);
+          map.setView(userHomeCoords, 4);
         }
 
         races = [
@@ -2030,6 +2038,7 @@
       document.getElementById('label-importance').textContent = impVal + ' / 10';
 
       selectStatusMode(item.status || 'done');
+      applyMemorableFormLayout(!!item.isMemorable);
       selectChip('surface', item.surface || 'road');
       selectChip('difficulty', item.difficulty || 'stredni');
 
@@ -2224,7 +2233,26 @@
       const homeClickAttr = (!hasHome && !isReadOnlyShared) ? `onclick="handleHomeBaseClick()"` : '';
       const homeClickableClass = (!hasHome && !isReadOnlyShared) ? 'clickable' : '';
 
-      if (item.status === 'done') {
+      if (item.isMemorable) {
+        const geo = detectGeoFromCoords(item.coords, item.name);
+        cluster.innerHTML = `
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#c084fc;">${item.distance || '-'}</div>
+            <div class="hud-box-sub">${item.elevation || 'Flat / Rolling'}</div>
+            <div class="hud-box-lbl">Distance & Climb</div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#f8fafc;">${item.surfaceLabel || 'Trail'}</div>
+            <div class="hud-box-sub">${item.date || 'Memorable Run'}</div>
+            <div class="hud-box-lbl">Terrain & Date</div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-box-metric" style="color:#38bdf8; display:flex; align-items:center;">${geo.html}</div>
+            <div class="hud-box-sub">${geo.continent}</div>
+            <div class="hud-box-lbl">Location</div>
+          </div>
+        `;
+      } else if (item.status === 'done') {
         const perfVal = item.satisfaction || 8;
         const courseVal = item.course_satisfaction || 9;
 
@@ -2321,11 +2349,15 @@
       }
       renderAll();
 
-      if (markerLayerGroup.getLayers().length > 1) {
-        map.flyToBounds(markerLayerGroup.getBounds(), { padding: [50, 50], maxZoom: 5.5, animate: true, duration: 1.1 });
-      } else {
-        map.flyTo(userHomeCoords || [25.0, 10.0], userHomeCoords ? 5.2 : 2.5, { animate: true, duration: 1.1 });
-      }
+      setTimeout(() => {
+        if (markerLayerGroup.getLayers().length > 1) {
+          map.fitBounds(markerLayerGroup.getBounds(), { padding: [50, 50], maxZoom: 6, animate: true });
+        } else if (markerLayerGroup.getLayers().length === 1) {
+          map.setView(markerLayerGroup.getLayers()[0].getLatLng(), 5, { animate: true });
+        } else {
+          map.setView(userHomeCoords || [25.0, 10.0], userHomeCoords ? 5 : 2, { animate: true });
+        }
+      }, 40);
     }
 
     function buildElevationSparklineHtml(elevPoints, totalGainStr) {
@@ -2394,7 +2426,7 @@
           fillColor: themeColor,
           fillOpacity: 0.25
         }));
-        if (userHomeCoords) {
+        if (userHomeCoords && !item.isMemorable) {
           const arcPoints = createGeodesicArc(userHomeCoords, item.coords);
           layers.push(L.polyline(arcPoints, {
             color: themeColor,
@@ -2448,7 +2480,7 @@
           ${item.why ? `
             <div class="editorial-quote-card">
               <small style="color:#007aff; font-weight:800; font-size:0.68rem; text-transform:uppercase; display:block; margin-bottom:4px; font-style:normal; letter-spacing:0.5px;">
-                ${item.status === 'bucket' ? 'Why This Is On My Bucket List' : 'The Motivation & Why'}
+                ${item.isMemorable ? 'The Story & Why It Mattered' : (item.status === 'bucket' ? 'Why This Is On My Bucket List' : 'The Motivation & Why')}
               </small>
               „${item.why}“
             </div>
@@ -2456,21 +2488,23 @@
 
           ${item.notes ? `
             <div class="report-sheet-card">
-              <h4>${item.status === 'done' ? 'Race Report & Field Notes' : 'Preparation & Route Notes'}</h4>
+              <h4>${item.isMemorable ? 'Trail & Experience Notes' : (item.status === 'done' ? 'Race Report & Field Notes' : 'Preparation & Route Notes')}</h4>
               <p>${item.notes}</p>
             </div>
           ` : ''}
 
-          <div class="spec-sheet-grid">
-            <div class="spec-cell" style="${(homeDist === null && !isReadOnlyShared) ? 'cursor:pointer; border-color:#007aff;' : ''}" ${(homeDist === null && !isReadOnlyShared) ? 'onclick="handleHomeBaseClick()"' : ''}>
-              <small>Distance from Home</small>
-              <strong style="${(homeDist === null && !isReadOnlyShared) ? 'color:#007aff;' : ''}">${homeDist !== null ? homeDist.toLocaleString() + ' km' : (isReadOnlyShared ? '—' : 'Set Home Base ➔')}</strong>
+          ${!item.isMemorable ? `
+            <div class="spec-sheet-grid">
+              <div class="spec-cell" style="${(homeDist === null && !isReadOnlyShared) ? 'cursor:pointer; border-color:#007aff;' : ''}" ${(homeDist === null && !isReadOnlyShared) ? 'onclick="handleHomeBaseClick()"' : ''}>
+                <small>Distance from Home</small>
+                <strong style="${(homeDist === null && !isReadOnlyShared) ? 'color:#007aff;' : ''}">${homeDist !== null ? homeDist.toLocaleString() + ' km' : (isReadOnlyShared ? '—' : 'Set Home Base ➔')}</strong>
+              </div>
+              <div class="spec-cell">
+                <small>${item.status === 'done' ? 'Placement' : 'Estimated Budget'}</small>
+                <strong>${item.status === 'done' ? (item.placement || 'Finisher') : (item.cost || '€€')}</strong>
+              </div>
             </div>
-            <div class="spec-cell">
-              <small>${item.status === 'done' ? 'Placement' : 'Estimated Budget'}</small>
-              <strong>${item.status === 'done' ? (item.placement || 'Finisher') : (item.cost || '€€')}</strong>
-            </div>
-          </div>
+          ` : ''}
         </div>
       `;
     }
@@ -2548,7 +2582,7 @@
                             <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
                               ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
                             </span>
-                            <span style="font-size:0.76rem; font-weight:700; color:#64748b;">${geo.country}</span>
+                            <span style="font-size:0.76rem; font-weight:700; color:#64748b; display:inline-flex; align-items:center;">${geo.html}</span>
                           </div>
                           <div style="font-size:1.08rem; font-weight:800; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
                           ${item.why ? `<div style="font-size:0.8rem; color:#64748b; font-style:italic; margin-top:2px;">„${item.why}“</div>` : ''}
@@ -2876,7 +2910,7 @@
         courseSum += (r.course_satisfaction || 9);
 
         const geo = detectGeoFromCoords(r.coords, r.name);
-        doneCountries.add(geo.country);
+        doneCountries.add(geo.html);
         doneContinents.add(geo.continent);
       });
 
@@ -3059,13 +3093,37 @@
       selectChip('difficulty', 'stredni');
     }
 
+    function applyMemorableFormLayout(isMem) {
+      isModalMemorableMode = isMem;
+      document.getElementById('wrap-status-selector').style.display = isMem ? 'none' : 'block';
+      if (isMem) {
+        document.getElementById('wrap-field-date').style.display = 'block';
+        document.getElementById('wrap-field-month').style.display = 'none';
+        document.getElementById('fields-for-done').style.display = 'none';
+        document.getElementById('fields-for-planned').style.display = 'none';
+        document.getElementById('fields-for-planning-common').style.display = 'none';
+        document.getElementById('wrap-field-importance').style.display = 'flex';
+        document.getElementById('wrap-field-notes').style.display = 'block';
+        document.getElementById('label-dynamic-why').textContent = 'The Story — Why was this run unforgettable?';
+        document.getElementById('form-why').placeholder = 'e.g. Sunrise over the ridge, vacation discovery...';
+        document.getElementById('label-dynamic-notes').textContent = 'Trail & Experience Notes';
+      }
+    }
+
     function openAddModal(forcedMode = null) {
       if (isReadOnlyShared) return;
       closeModals();
       resetActivityForm();
-      document.getElementById('step1-modal-title').textContent = (forcedMode === 'memorable') ? 'Add Memorable Run' : 'Add to Atlas';
+      const isMem = (forcedMode === 'memorable') || (forcedMode === null && currentMode === 'memorable');
+      document.getElementById('step1-modal-title').textContent = isMem ? 'Add Memorable Run' : 'Add to Atlas';
       document.getElementById('add-modal').style.display = 'flex';
-      if (forcedMode === 'memorable') selectStatusMode('done');
+      if (isMem) {
+        selectStatusMode('done');
+        applyMemorableFormLayout(true);
+      } else {
+        applyMemorableFormLayout(false);
+        selectStatusMode('done');
+      }
     }
 
     function closeModals() {
@@ -3171,10 +3229,10 @@
         why: document.getElementById('form-why').value,
         notes: status === 'bucket' ? '' : document.getElementById('form-notes').value,
         coords: finalCoords,
-        is_memorable: (currentMode === 'memorable')
+        is_memorable: isModalMemorableMode
       };
 
-      if (status === 'done') {
+      if (status === 'done' && !isModalMemorableMode) {
         record.result_time = document.getElementById('form-finish-simple').value.trim() || null;
         record.placement = document.getElementById('form-placement').value.trim() || null;
         record.satisfaction = parseInt(document.getElementById('form-satisfaction').value) || 8;
