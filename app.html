@@ -309,7 +309,7 @@
     }
     .ctx-item:hover { background: #1e293b; color: #38bdf8; }
 
-    /* Map Bottom-Left Floating Controls (Home Base + Fit All) */
+    /* Map Bottom-Left Floating Controls (Home Base + World View) */
     .map-bottom-controls {
       position: absolute; bottom: 24px; left: 24px; z-index: 1050;
       display: flex; align-items: center; gap: 8px;
@@ -390,7 +390,7 @@
 
     #content { padding: 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; background: #f1f5f9; }
 
-    /* ČISTÉ HORIZONTÁLNÍ KARTY SE ČTVERCOVÝM NÁHLEDEM VLEVO */
+    /* HORIZONTAL CARDS */
     .race-card-rich {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
       overflow: hidden; cursor: pointer; transition: all 0.2s ease;
@@ -475,9 +475,7 @@
     .report-sheet-card h4 {
       font-size: 0.74rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .report-sheet-card p {
-      font-size: 0.88rem; color: #334155; line-height: 1.6; margin: 0;
-    }
+    .report-sheet-card p { font-size: 0.88rem; color: #334155; line-height: 1.6; margin: 0; }
 
     .spec-sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .spec-cell { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; }
@@ -490,9 +488,7 @@
       text-align: center; display: flex; flex-direction: column; gap: 12px;
       box-shadow: 0 4px 16px rgba(15,23,42,0.04);
     }
-    .starter-action-row {
-      display: flex; flex-direction: column; gap: 8px; margin-top: 4px;
-    }
+    .starter-action-row { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
     .starter-btn {
       padding: 10px 14px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc;
       color: #0f172a; font-size: 0.82rem; font-weight: 700; cursor: pointer; text-align: left;
@@ -547,7 +543,7 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
-    /* CUSTOM STYLING PRO DRIVER.JS */
+    /* DRIVER.JS THEME */
     .driver-popover.runatlas-tour-theme {
       background: #0f172a !important;
       color: #f8fafc !important;
@@ -559,38 +555,22 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     }
     .driver-popover.runatlas-tour-theme .driver-popover-title {
-      font-size: 1.08rem !important;
-      font-weight: 800 !important;
-      color: #38bdf8 !important;
-      margin-bottom: 6px !important;
+      font-size: 1.08rem !important; font-weight: 800 !important; color: #38bdf8 !important; margin-bottom: 6px !important;
     }
     .driver-popover.runatlas-tour-theme .driver-popover-description {
-      font-size: 0.86rem !important;
-      color: #cbd5e1 !important;
-      line-height: 1.55 !important;
-      margin-bottom: 14px !important;
+      font-size: 0.86rem !important; color: #cbd5e1 !important; line-height: 1.55 !important; margin-bottom: 14px !important;
     }
     .driver-popover.runatlas-tour-theme .driver-popover-progress-text {
-      font-size: 0.72rem !important;
-      font-weight: 800 !important;
-      color: #64748b !important;
-      text-transform: uppercase !important;
+      font-size: 0.72rem !important; font-weight: 800 !important; color: #64748b !important; text-transform: uppercase !important;
     }
     .driver-popover.runatlas-tour-theme .driver-popover-next-btn,
     .driver-popover.runatlas-tour-theme .driver-popover-prev-btn {
-      background: #007aff !important;
-      color: #ffffff !important;
-      border: none !important;
-      border-radius: 8px !important;
-      padding: 7px 14px !important;
-      font-size: 0.78rem !important;
-      font-weight: 700 !important;
-      text-shadow: none !important;
+      background: #007aff !important; color: #ffffff !important; border: none !important;
+      border-radius: 8px !important; padding: 7px 14px !important; font-size: 0.78rem !important;
+      font-weight: 700 !important; text-shadow: none !important;
     }
     .driver-popover.runatlas-tour-theme .driver-popover-prev-btn {
-      background: #1e293b !important;
-      color: #cbd5e1 !important;
-      border: 1px solid #334155 !important;
+      background: #1e293b !important; color: #cbd5e1 !important; border: 1px solid #334155 !important;
     }
     .driver-popover.runatlas-tour-theme .driver-popover-next-btn:hover { background: #0062cc !important; }
     .driver-popover.runatlas-tour-theme .driver-popover-close-btn { color: #64748b !important; }
@@ -670,12 +650,12 @@
   <div id="toast-container"></div>
 
   <div id="app-layout">
-    <!-- TOP CONTEXT BANNER (PRO DEMO NEBO SDÍLENÝ PROFIL) -->
+    <!-- TOP CONTEXT BANNER -->
     <div id="context-mode-banner"></div>
 
     <!-- TOP BAR -->
     <header id="top-bar">
-      <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0;">
+      <a href="javascript:void(0)" onclick="handleLogoClick()" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0; cursor: pointer;" title="Reset to Race Atlas Overview">
         <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg">
           <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
           <g transform="translate(6, 36)">
@@ -708,7 +688,7 @@
         </button>
 
         <div id="profile-dropdown" class="profile-dropdown-menu">
-          <a class="dropdown-item" href="settings.html">⚙️ Account Settings</a>
+          <a class="dropdown-item" href="settings.html" onclick="return guardDemoLink(event, 'Account Settings')">⚙️ Account Settings</a>
           <button class="dropdown-item" onclick="exportDataJson()">📦 Export Atlas JSON</button>
           <div style="height:1px; background:#334155; margin:3px 0;"></div>
           <button class="dropdown-item danger" onclick="handleLogout()">🚪 Log Out</button>
@@ -717,7 +697,7 @@
     </header>
 
     <div id="main-body">
-      <!-- BOHATÝ LEVÝ PANEL -->
+      <!-- LEFT RAIL -->
       <nav id="left-rail">
         <button id="rail-races" class="rail-btn active" onclick="switchPageMode('races')">
           <span class="rail-icon">
@@ -787,11 +767,11 @@
         <div class="rail-spacer"></div>
         <div style="height: 1px; background: #334155; margin: 4px 4px;"></div>
 
-        <a class="rail-btn" href="settings.html">
+        <a class="rail-btn" href="settings.html" onclick="return guardDemoLink(event, 'Account Settings')">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
           </span>
           <span>Settings</span>
@@ -806,7 +786,7 @@
           <span>About Us</span>
         </a>
 
-        <a class="rail-btn" href="support.html">
+        <a class="rail-btn" href="support.html" onclick="return guardDemoLink(event, 'Support & Help Center')">
           <span class="rail-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle>
@@ -817,28 +797,28 @@
         </a>
       </nav>
 
-      <!-- CELOOBRAZOVKOVÉ POHLEDY -->
+      <!-- FULLSCREEN VIEWS -->
       <div id="full-page-view">
         <div id="full-page-content" class="full-dashboard-container"></div>
       </div>
 
-      <!-- MAPA & HUD OVERLAY -->
+      <!-- MAP & HUD OVERLAY -->
       <div id="map-wrapper">
         <div id="map"></div>
 
-        <!-- PLOVOUCÍ TELEMETRICKÉ HUD KARTY -->
+        <!-- FLOATING TELEMETRY HUD -->
         <div id="floating-hud-panel">
           <div class="hud-card-cluster" id="hud-cluster-content"></div>
         </div>
 
-        <!-- Kontextové menu -->
+        <!-- Context Menu -->
         <div id="map-context-menu">
           <div class="ctx-item" onclick="handleContextMenuChoice('race')">➕ Add Race here</div>
           <div class="ctx-item" onclick="handleContextMenuChoice('memorable')">🏔️ Add Memorable Run here</div>
           <div class="ctx-item" onclick="handleContextMenuChoice('home')">🏠 Set as Home Base</div>
         </div>
 
-        <!-- Map Bottom-Left Controls (Home Base + Fit All) -->
+        <!-- Map Bottom-Left Controls (Home Base + World View) -->
         <div class="map-bottom-controls">
           <div id="floating-home-btn" class="floating-map-pill" onclick="handleHomeBaseClick()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
@@ -847,8 +827,8 @@
             <span id="floating-home-label">Home Base</span>
           </div>
 
-          <div id="floating-fitall-btn" class="floating-map-pill secondary" onclick="fitAllMarkersOnMap()" title="Zoom to fit all displayed pins">
-            🌐 Fit All
+          <div id="floating-fitall-btn" class="floating-map-pill secondary" onclick="fitAllMarkersOnMap()" title="Zoom out to show all your pins">
+            🌐 World View
           </div>
         </div>
       </div>
@@ -982,7 +962,7 @@
       </p>
       <div style="position:relative;">
         <label class="form-group-label">Search City or Address</label>
-        <input type="text" id="homebase-city-input" class="stepped-input" placeholder="Start typing city (e.g. Slaný, Praha, Berlin)..." autocomplete="off" oninput="handleHomeBaseAutocomplete(this.value)" onkeydown="if(event.key==='Enter') confirmHomeBaseModal()">
+        <input type="text" id="homebase-city-input" class="stepped-input" placeholder="Start typing city (e.g. London, Zurich, New York)..." autocomplete="off" oninput="handleHomeBaseAutocomplete(this.value)" onkeydown="if(event.key==='Enter') confirmHomeBaseModal()">
         <div id="homebase-suggestions" class="catalog-suggest-box"></div>
       </div>
       <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:6px;">
@@ -1070,7 +1050,7 @@
         </div>
       </div>
 
-      <!-- POUZE PRO: COMPLETED -->
+      <!-- ONLY FOR: COMPLETED -->
       <div id="fields-for-done" style="display:flex; flex-direction:column; gap:12px;">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div>
@@ -1102,7 +1082,7 @@
         </div>
       </div>
 
-      <!-- POUZE PRO: PLANNED -->
+      <!-- ONLY FOR: PLANNED -->
       <div id="fields-for-planned" style="display:none; flex-direction:column; gap:12px;">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div>
@@ -1121,7 +1101,7 @@
         </div>
       </div>
 
-      <!-- PRO PLANNED I BUCKET LIST -->
+      <!-- FOR PLANNED & BUCKET LIST -->
       <div id="fields-for-planning-common" style="display:none; grid-template-columns: 1fr 1fr; gap: 8px;">
         <div>
           <label class="form-group-label">Difficulty</label>
@@ -1140,6 +1120,15 @@
             <option value="€€€€">€€€€ (Major expedition)</option>
           </select>
         </div>
+      </div>
+
+      <!-- RACE IMPORTANCE (PIN SIZE ON MAP — COMPLETED & BUCKET LIST) -->
+      <div id="wrap-field-importance" class="slider-box-wrap">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label class="form-group-label" style="margin:0;">Race Importance (Pin size on map)</label>
+          <strong id="label-importance" style="color:#007aff; font-size:0.85rem;">5 / 10</strong>
+        </div>
+        <input type="range" id="form-importance" min="1" max="10" value="5" style="accent-color:#007aff;" oninput="document.getElementById('label-importance').textContent = this.value + ' / 10'">
       </div>
 
       <div>
@@ -1174,7 +1163,7 @@
     let races = [];
     let featuredRacesList = [];
     let zavodniTrasy = {};
-    let elevationProfiles = {}; // Ukládá zjednodušené výškové profily pro sparkline
+    let elevationProfiles = {};
 
     let editingActivityId = null;
     let contextClickLatLng = null;
@@ -1188,7 +1177,10 @@
     let advFilterCost = 'all';
 
     let timelineYearFilter = 'all';
-    let exploreCategoryFilter = 'all';
+    let exploreContinentFilter = 'all';
+    let exploreCountryFilter = 'all';
+    let exploreSurfaceFilter = 'all';
+    let exploreMonthFilter = 'all';
     let exploreSearchQuery = '';
 
     let chipSelections = { status: 'done', surface: 'road', difficulty: 'stredni' };
@@ -1233,7 +1225,30 @@
       confirmCallback = null;
     }
 
-    // CONTEXTUAL TOUR
+    // LOGO CLICK (RETURNS TO RACE ATLAS OVERVIEW WITHOUT HOMEPAGE FLASH)
+    function handleLogoClick() {
+      if (currentDetailItem) exitDetailView();
+      switchPageMode('races');
+      fitAllMarkersOnMap();
+    }
+
+    // DEMO GUARD FOR SETTINGS & SUPPORT
+    function guardDemoLink(event, featureName) {
+      if (!isDemoMode) return true;
+      event.preventDefault();
+      document.getElementById('profile-dropdown').classList.remove('show');
+      openCustomConfirm({
+        title: `${featureName} Requires an Account`,
+        message: 'You are currently exploring the Live Demo sandbox. Create a free account to customize settings, save your routes permanently, and access direct support.',
+        icon: '🔒',
+        isDanger: false,
+        confirmText: 'Create Free Account',
+        onConfirm: () => { window.location.href = 'index.html'; }
+      });
+      return false;
+    }
+
+    // CONTEXTUAL TOUR (WITH MEMORABLE RUNS STEP)
     function startContextualTour() {
       if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode('races');
 
@@ -1258,6 +1273,15 @@
             }
           },
           {
+            element: '#rail-memorable',
+            popover: {
+              title: '🏔️ Memorable Runs (Non-Race)',
+              description: 'Not every unforgettable run has a race bib. Log scenic mountain ridge crossings, vacation runs, and solo endurance adventures here.',
+              side: "right",
+              align: 'start'
+            }
+          },
+          {
             element: '#status-boxes-wrap',
             popover: {
               title: '🎯 Filter Race Stages',
@@ -1270,7 +1294,7 @@
             element: '#btn-add-activity',
             popover: {
               title: '➕ Add Races or Drop .GPX',
-              description: 'Pick iconic races from the World Catalog in 1 click or drag & drop a watch .GPX file.',
+              description: 'Pick iconic races from the Global Catalog in 1 click or drag & drop a watch .GPX file.',
               side: "bottom",
               align: 'end'
             }
@@ -1351,7 +1375,7 @@
       if (markerLayerGroup.getLayers().length > 0) {
         map.flyToBounds(markerLayerGroup.getBounds(), { padding: [55, 55], maxZoom: 11, animate: true, duration: 1.1 });
       } else {
-        showToast('No activities visible to fit on map.', '🌐');
+        map.flyTo(userHomeCoords || [25.0, 10.0], userHomeCoords ? 5.2 : 2.5, { animate: true, duration: 1.1 });
       }
     }
 
@@ -1398,7 +1422,7 @@
       }
 
       if (!isReadOnlyShared && catalogMatches.length > 0) {
-        html += `<div class="spotlight-group-title" style="margin-top:4px;">World Catalog (Quick Add)</div>`;
+        html += `<div class="spotlight-group-title" style="margin-top:4px;">Global Catalog (Quick Add)</div>`;
         catalogMatches.forEach(cat => {
           html += `
             <div class="spotlight-item" onclick="quickAddFromSpotlight('${cat.id}')">
@@ -1439,7 +1463,7 @@
       clearSpotlightSearch();
       const item = races.find(r => r.id === id);
       if (!item) return;
-      if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode('races');
+      if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode(item.isMemorable ? 'memorable' : 'races');
       showDetail(item);
     }
 
@@ -1467,7 +1491,7 @@
       }
     });
 
-    // Right-Click Context Menu (zakázáno pro read-only sdílený profil)
+    // Right-Click Context Menu
     map.on('contextmenu', function(e) {
       if (isReadOnlyShared) return;
       contextClickLatLng = [parseFloat(e.latlng.lat.toFixed(5)), parseFloat(e.latlng.lng.toFixed(5))];
@@ -1511,6 +1535,7 @@
       showToast('Atlas backup downloaded!', '📦');
     }
 
+    // RELIABLE LOGOUT (CLEARS TOKENS FIRST, REDIRECTS WITH ?logout=1)
     function handleLogout() {
       document.getElementById('profile-dropdown').classList.remove('show');
       openCustomConfirm({
@@ -1519,15 +1544,13 @@
         icon: '🚪',
         isDanger: false,
         confirmText: 'Log Out',
-        onConfirm: async () => {
-          try {
-            await supabaseClient.auth.signOut();
-          } catch (e) {}
+        onConfirm: () => {
           Object.keys(localStorage).forEach(k => {
             if (k.startsWith('sb-') || k.includes('supabase')) localStorage.removeItem(k);
           });
           sessionStorage.clear();
-          window.location.replace('index.html');
+          supabaseClient.auth.signOut({ scope: 'local' }).catch(() => {});
+          window.location.replace('index.html?logout=1');
         }
       });
     }
@@ -1575,17 +1598,24 @@
       else if (lng > 40 && lat >= 0) continent = 'Asia';
 
       let country = 'Other';
-      if (lowName.includes('prague') || lowName.includes('praha') || lowName.includes('běchovice') || lowName.includes('jizersk') || lowName.includes('beskyd') || (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9)) country = '🇨🇿 Czechia';
+      if (lowName.includes('prague') || lowName.includes('praha') || (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9)) country = '🇨🇿 Czechia';
       else if (lowName.includes('berlin') || lowName.includes('dresden') || lowName.includes('munich') || (lat >= 47.2 && lat <= 55.0 && lng >= 6.0 && lng <= 15.0)) country = '🇩🇪 Germany';
       else if (lowName.includes('chamonix') || lowName.includes('utmb') || lowName.includes('paris') || (lat >= 42.0 && lat <= 51.0 && lng >= -5.0 && lng <= 8.2)) country = '🇫🇷 France';
       else if (lowName.includes('chianti') || lowName.includes('lavaredo') || lowName.includes('rome') || (lat >= 36.5 && lat <= 47.0 && lng >= 6.6 && lng <= 18.5)) country = '🇮🇹 Italy';
-      else if (lowName.includes('valencia') || lowName.includes('seville') || lowName.includes('zegama') || (lat >= 36.0 && lat <= 43.8 && lng >= -9.3 && lng <= 3.3)) country = '🇪🇸 Spain';
+      else if (lowName.includes('valencia') || lowName.includes('seville') || lowName.includes('zegama') || lowName.includes('grancanaria') || (lat >= 36.0 && lat <= 43.8 && lng >= -9.3 && lng <= 3.3)) country = '🇪🇸 Spain';
       else if (lowName.includes('helsinki') || (lat >= 59.5 && lat <= 70.0 && lng >= 20.0 && lng <= 31.5)) country = '🇫🇮 Finland';
-      else if (lowName.includes('aalborg') || lowName.includes('copenhagen') || (lat >= 54.5 && lat <= 58.0 && lng >= 8.0 && lng <= 15.2)) country = '🇩🇰 Denmark';
-      else if (lowName.includes('eiger') || lowName.includes('zermatt') || (lat >= 45.8 && lat <= 47.8 && lng >= 6.0 && lng <= 10.5)) country = '🇨🇭 Switzerland';
+      else if (lowName.includes('copenhagen') || (lat >= 54.5 && lat <= 58.0 && lng >= 8.0 && lng <= 15.2)) country = '🇩🇰 Denmark';
+      else if (lowName.includes('eiger') || lowName.includes('sierre') || lowName.includes('zermatt') || (lat >= 45.8 && lat <= 47.8 && lng >= 6.0 && lng <= 10.5)) country = '🇨🇭 Switzerland';
+      else if (lowName.includes('amsterdam') || (lat >= 50.7 && lat <= 53.6 && lng >= 3.3 && lng <= 7.2)) country = '🇳🇱 Netherlands';
+      else if (lowName.includes('vienna') || (lat >= 46.3 && lat <= 49.0 && lng >= 9.5 && lng <= 17.2)) country = '🇦🇹 Austria';
+      else if (lowName.includes('athens') || (lat >= 35.0 && lat <= 41.8 && lng >= 19.3 && lng <= 28.2)) country = '🇬🇷 Greece';
+      else if (lowName.includes('stockholm') || (lat >= 55.3 && lat <= 69.0 && lng >= 11.0 && lng <= 24.2)) country = '🇸🇪 Sweden';
       else if (lowName.includes('london') || (lat >= 50.0 && lat <= 59.0 && lng >= -8.0 && lng <= 2.0)) country = '🇬🇧 UK';
-      else if (lowName.includes('boston') || lowName.includes('new york') || lowName.includes('chicago') || (continent === 'North America')) country = '🇺🇸 USA';
-      else if (lowName.includes('tokyo') || (lat >= 30.0 && lat <= 45.0 && lng >= 129.0 && lng <= 146.0)) country = '🇯🇵 Japan';
+      else if (lowName.includes('boston') || lowName.includes('new york') || lowName.includes('chicago') || lowName.includes('western states') || lowName.includes('big sur') || (continent === 'North America')) country = '🇺🇸 USA';
+      else if (lowName.includes('tokyo') || lowName.includes('fuji') || (lat >= 30.0 && lat <= 45.0 && lng >= 129.0 && lng <= 146.0)) country = '🇯🇵 Japan';
+      else if (lowName.includes('sydney') || continent === 'Oceania') country = '🇦🇺 Australia';
+      else if (lowName.includes('cape town') || lowName.includes('comrades') || continent === 'Africa') country = '🇿🇦 South Africa';
+      else if (lowName.includes('patagonia') || continent === 'South America') country = '🇦🇷 Argentina';
       else country = `🌍 ${continent}`;
 
       return { country, continent };
@@ -1733,12 +1763,20 @@
 
         document.getElementById('label-user').textContent = "Demo Sandbox";
         document.getElementById('main-title').textContent = "Race Atlas (Demo)";
+
+        if (!userHomeCoords) {
+          userHomeCoords = [51.5074, -0.1278]; // Neutral demo Home Base: London
+          refreshHomeMarker();
+          map.setView(userHomeCoords, 4.5);
+        }
+
         races = [
-          { id: "demo-1", name: "Dresden Half Marathon", date: "2026-10-24", month: 10, coords: [51.050, 13.737], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€", distance: "21.1 km", elevation: "+110 m", ambitionTime: "Sub 1:25:00", logisticsTransport: "Car", why: "Flat course along Elbe.", notes: "Target 4:01/km.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=400&q=80" },
-          { id: "demo-2", name: "Helsinki Marathon", date: "2026-08-22", month: 8, coords: [60.155, 24.951], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€€€", distance: "42.2 km", elevation: "+226 m", resultTime: "3:11:04", placement: "38th / 1240", why: "First northern marathon.", notes: "Even split.", image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=400&q=80", satisfaction: 9, course_satisfaction: 8 },
-          { id: "demo-4", name: "Běchovice–Praha", date: "2025-09-28", month: 9, coords: [50.0818, 14.6186], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€", distance: "10.0 km", elevation: "+85 m", resultTime: "38:42", placement: "64th", why: "Oldest road 10K in Europe.", notes: "Strong climb on Hrdlořezy hill.", image_url: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80", satisfaction: 9, course_satisfaction: 9 },
-          { id: "demo-3", name: "UTMB Mont-Blanc", date: "August", month: 8, coords: [45.9237, 6.8694], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "extremni", cost: "€€€€", distance: "171 km", elevation: "+10,000 m", why: "Ultimate alpine loop around Mont Blanc.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" }
+          { id: "demo-1", name: "London Marathon", date: "2025-04-27", month: 4, coords: [51.5074, -0.1278], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€", distance: "42.2 km", elevation: "+110 m", importance: 9, resultTime: "3:08:15", placement: "Top 10%", why: "Electric crowds crossing Tower Bridge.", notes: "Negative split in the final 10 km.", image_url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 10 },
+          { id: "demo-2", name: "Valencia Marathon", date: "2026-12-06", month: 12, coords: [39.4699, -0.3763], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€", distance: "42.2 km", elevation: "+35 m", importance: 8, ambitionTime: "Sub 3:05:00", logisticsTransport: "Plane", why: "Fastest flat course for an autumn PR attempt.", notes: "Targeting 4:22/km pace.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-3", name: "Tokyo Marathon", date: "March", month: 3, coords: [35.6762, 139.6503], status: "bucket", statusLabel: "Bucket list", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€€", distance: "42.2 km", elevation: "+90 m", importance: 10, why: "Dream World Major and spring trip to Japan.", image_url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-4", name: "Chamonix Grand Balcon Ridge", date: "2025-07-19", month: 7, coords: [45.9237, 6.8694], status: "done", statusLabel: "Completed", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€", distance: "24.5 km", elevation: "+1,450 m", importance: 9, isMemorable: true, why: "Sunrise alpine run facing Mont Blanc glaciers.", notes: "Unforgettable morning trails above the valley.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80", satisfaction: 10, course_satisfaction: 10 }
         ];
+
         if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView)) {
           switchPageMode(initialView);
         } else {
@@ -1767,7 +1805,6 @@
           return;
         }
 
-        // Veřejný sdílený režim (?u=username)
         if (sharedUser) {
           isReadOnlyShared = true;
           const banner = document.getElementById('context-mode-banner');
@@ -1792,28 +1829,38 @@
       }
     }
 
+    // GLOBAL RACE CATALOG (28 WORLD RACES WITH CONTINENT & COUNTRY METADATA)
     async function loadFeaturedCatalogList() {
-      const richCatalog = [
-        { id: "c-1", name: "Berlin Marathon", category: "majors", location: "Berlin, Germany", distance: "42.2 km", elevation: "+45 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 9, coords: [52.5163, 13.3777], desc: "Fastest marathon course in the world, finishing through the Brandenburg Gate.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-2", name: "Boston Marathon", category: "majors", location: "Boston, USA", distance: "42.2 km", elevation: "+240 m", surface: "road", difficulty: "tezka", cost: "€€€€", month: 4, coords: [42.3601, -71.0589], desc: "The world's oldest annual marathon featuring the legendary Heartbreak Hill.", image_url: "https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-3", name: "London Marathon", category: "majors", location: "London, UK", distance: "42.2 km", elevation: "+110 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 4, coords: [51.5074, -0.1278], desc: "Iconic flat course along the River Thames from Greenwich to The Mall.", image_url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-4", name: "New York City Marathon", category: "majors", location: "New York, USA", distance: "42.2 km", elevation: "+270 m", surface: "road", difficulty: "stredni", cost: "€€€€", month: 11, coords: [40.7128, -74.0060], desc: "Five-borough tour across giant bridges ending in Central Park.", image_url: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-5", name: "Chicago Marathon", category: "majors", location: "Chicago, USA", distance: "42.2 km", elevation: "+75 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 10, coords: [41.8781, -87.6298], desc: "Ultra-flat architectural loop through 29 vibrant Chicago neighborhoods.", image_url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-6", name: "Tokyo Marathon", category: "majors", location: "Tokyo, Japan", distance: "42.2 km", elevation: "+90 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 3, coords: [35.6762, 139.6503], desc: "Precision organization and electric crowds through the heart of Tokyo.", image_url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-7", name: "Valencia Marathon", category: "fast", location: "Valencia, Spain", distance: "42.2 km", elevation: "+35 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 12, coords: [39.4699, -0.3763], desc: "La Ciudad del Running — ultra-fast December course finishing on blue water walkways.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-8", name: "Copenhagen Half Marathon", category: "fast", location: "Copenhagen, Denmark", distance: "21.1 km", elevation: "+40 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 9, coords: [55.6761, 12.5683], desc: "World-record fast Nordic half marathon with rock-concert atmosphere.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-9", name: "Dresden Half Marathon", category: "fast", location: "Dresden, Germany", distance: "21.1 km", elevation: "+110 m", surface: "road", difficulty: "snadna", cost: "€€", month: 10, coords: [51.0504, 13.7373], desc: "Scenic autumn PR course along the Elbe river and historic baroque center.", image_url: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-10", name: "Seville Marathon", category: "fast", location: "Seville, Spain", distance: "42.2 km", elevation: "+30 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 2, coords: [37.3891, -5.9845], desc: "Flattest marathon in Europe held in ideal February spring weather.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-11", name: "UTMB Mont-Blanc", category: "trail", location: "Chamonix, France", distance: "171 km", elevation: "+10,000 m", surface: "trail", difficulty: "extremni", cost: "€€€€", month: 8, coords: [45.9237, 6.8694], desc: "The pinnacle of trail ultra-running circling Mont Blanc across France, Italy, and Switzerland.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-12", name: "Lavaredo Ultra Trail", category: "trail", location: "Cortina d'Ampezzo, Italy", distance: "120 km", elevation: "+5,800 m", surface: "trail", difficulty: "tezka", cost: "€€€", month: 6, coords: [46.5405, 12.1357], desc: "Running beneath the dramatic limestone towers of Tre Cime di Lavaredo in the Dolomites.", image_url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-13", name: "Zegama-Aizkorri", category: "trail", location: "Zegama, Spain", distance: "42.2 km", elevation: "+2,736 m", surface: "trail", difficulty: "tezka", cost: "€€", month: 5, coords: [42.9760, -2.2905], desc: "The Tour de France of skyrunning — technical Basque ridges and deafening crowds.", image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-14", name: "Chianti Ultra Trail", category: "trail", location: "Radda in Chianti, Italy", distance: "73 km", elevation: "+3,000 m", surface: "trail", difficulty: "stredni", cost: "€€€", month: 3, coords: [43.4900, 11.3780], desc: "Rolling Tuscan vineyards, medieval castles, and white gravel strade bianche.", image_url: "https://images.unsplash.com/photo-1523348837708-a5d9fc0189fa?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-15", name: "Eiger Ultra Trail", category: "trail", location: "Grindelwald, Switzerland", distance: "51 km", elevation: "+3,100 m", surface: "trail", difficulty: "tezka", cost: "€€€€", month: 7, coords: [46.6242, 8.0414], desc: "Alpine singletrack right below the iconic Eiger North Face and Faulhorn summit.", image_url: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-16", name: "Prague Marathon (PIM)", category: "czech", location: "Prague, Czechia", distance: "42.2 km", elevation: "+130 m", surface: "road", difficulty: "snadna", cost: "€€", month: 5, coords: [50.0875, 14.4211], desc: "Start and finish on Old Town Square, crossing Charles Bridge and Vltava embankments.", image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-17", name: "Běchovice–Praha", category: "czech", location: "Prague, Czechia", distance: "10.0 km", elevation: "+85 m", surface: "road", difficulty: "stredni", cost: "€", month: 9, coords: [50.0818, 14.6186], desc: "The oldest continuously held road race in Europe (since 1897) with the famous Hrdlořezy climb.", image_url: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-18", name: "Beskydská sedmička (B7)", category: "czech", location: "Třinec – Frenštát, Czechia", distance: "101 km", elevation: "+5,500 m", surface: "trail", difficulty: "extremni", cost: "€€", month: 8, coords: [49.5480, 18.4470], desc: "Legendary Czech mountain ultra crossing seven steep Beskydy summits overnight.", image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" }
+      featuredRacesList = [
+        { id: "c-1", name: "Berlin Marathon", continent: "Europe", country: "Germany", location: "Berlin, Germany", distance: "42.2 km", elevation: "+45 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 9, coords: [52.5163, 13.3777], desc: "Fastest marathon course in the world, finishing through the Brandenburg Gate.", image_url: "https://images.unsplash.com/photo-1560969184-10fe8719e047?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-2", name: "Boston Marathon", continent: "North America", country: "USA", location: "Boston, USA", distance: "42.2 km", elevation: "+240 m", surface: "road", difficulty: "tezka", cost: "€€€€", month: 4, coords: [42.3601, -71.0589], desc: "The world's oldest annual marathon featuring the legendary Heartbreak Hill.", image_url: "https://images.unsplash.com/photo-1501979376754-2ff867a4f659?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-3", name: "London Marathon", continent: "Europe", country: "United Kingdom", location: "London, UK", distance: "42.2 km", elevation: "+110 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 4, coords: [51.5074, -0.1278], desc: "Iconic flat course along the River Thames from Greenwich to The Mall.", image_url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-4", name: "New York City Marathon", continent: "North America", country: "USA", location: "New York, USA", distance: "42.2 km", elevation: "+270 m", surface: "road", difficulty: "stredni", cost: "€€€€", month: 11, coords: [40.7128, -74.0060], desc: "Five-borough tour across giant bridges ending in Central Park.", image_url: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-5", name: "Chicago Marathon", continent: "North America", country: "USA", location: "Chicago, USA", distance: "42.2 km", elevation: "+75 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 10, coords: [41.8781, -87.6298], desc: "Ultra-flat architectural loop through 29 vibrant Chicago neighborhoods.", image_url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-6", name: "Tokyo Marathon", continent: "Asia", country: "Japan", location: "Tokyo, Japan", distance: "42.2 km", elevation: "+90 m", surface: "road", difficulty: "snadna", cost: "€€€€", month: 3, coords: [35.6762, 139.6503], desc: "Precision organization and electric crowds through the heart of Tokyo.", image_url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-7", name: "Sydney Marathon", continent: "Oceania", country: "Australia", location: "Sydney, Australia", distance: "42.2 km", elevation: "+310 m", surface: "road", difficulty: "stredni", cost: "€€€€", month: 9, coords: [-33.8688, 151.2093], desc: "Cross the Sydney Harbour Bridge and finish on the steps of the Opera House.", image_url: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-8", name: "Valencia Marathon", continent: "Europe", country: "Spain", location: "Valencia, Spain", distance: "42.2 km", elevation: "+35 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 12, coords: [39.4699, -0.3763], desc: "Ultra-fast December course finishing on blue water walkways.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-9", name: "Copenhagen Half Marathon", continent: "Europe", country: "Denmark", location: "Copenhagen, Denmark", distance: "21.1 km", elevation: "+40 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 9, coords: [55.6761, 12.5683], desc: "World-record fast Nordic half marathon with festival atmosphere.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-10", name: "Paris Marathon", continent: "Europe", country: "France", location: "Paris, France", distance: "42.2 km", elevation: "+160 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 4, coords: [48.8566, 2.3522], desc: "Start on the Champs-Élysées, running past the Louvre, Bastille, and Eiffel Tower.", image_url: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-11", name: "Amsterdam Marathon", continent: "Europe", country: "Netherlands", location: "Amsterdam, Netherlands", distance: "42.2 km", elevation: "+25 m", surface: "road", difficulty: "snadna", cost: "€€€", month: 10, coords: [52.3676, 4.9041], desc: "Flat canals, Vondelpark, Rijksmuseum tunnel, and Olympic Stadium finish.", image_url: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-12", name: "Prague Marathon", continent: "Europe", country: "Czechia", location: "Prague, Czechia", distance: "42.2 km", elevation: "+130 m", surface: "road", difficulty: "snadna", cost: "€€", month: 5, coords: [50.0875, 14.4211], desc: "Old Town Square start and finish crossing Charles Bridge and Vltava riverbanks.", image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-13", name: "Vienna City Marathon", continent: "Europe", country: "Austria", location: "Vienna, Austria", distance: "42.2 km", elevation: "+110 m", surface: "road", difficulty: "snadna", cost: "€€", month: 4, coords: [48.2082, 16.3738], desc: "Imperial avenues, Prater park straightaways, and Burgtheater finish.", image_url: "https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-14", name: "Athens Authentic Marathon", continent: "Europe", country: "Greece", location: "Athens, Greece", distance: "42.2 km", elevation: "+320 m", surface: "road", difficulty: "tezka", cost: "€€€", month: 11, coords: [37.9838, 23.7275], desc: "The original historical route from Marathon to the marble Panathenaic Stadium.", image_url: "https://images.unsplash.com/photo-1555993539-1732b0258235?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-15", name: "Stockholm Marathon", continent: "Europe", country: "Sweden", location: "Stockholm, Sweden", distance: "42.2 km", elevation: "+210 m", surface: "road", difficulty: "stredni", cost: "€€€", month: 6, coords: [59.3293, 18.0686], desc: "Waterfront Nordic islands finishing inside the 1912 Olympic Stadium.", image_url: "https://images.unsplash.com/photo-1509356843151-3e7d96241e11?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-16", name: "Rome Marathon", continent: "Europe", country: "Italy", location: "Rome, Italy", distance: "42.2 km", elevation: "+140 m", surface: "road", difficulty: "stredni", cost: "€€€", month: 3, coords: [41.9028, 12.4964], desc: "Open-air museum course starting and finishing right by the Colosseum.", image_url: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-17", name: "UTMB Mont-Blanc", continent: "Europe", country: "France", location: "Chamonix, France", distance: "171 km", elevation: "+10,000 m", surface: "trail", difficulty: "extremni", cost: "€€€€", month: 8, coords: [45.9237, 6.8694], desc: "The pinnacle of trail ultra-running circling Mont Blanc across 3 countries.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-18", name: "Lavaredo Ultra Trail", continent: "Europe", country: "Italy", location: "Cortina d'Ampezzo, Italy", distance: "120 km", elevation: "+5,800 m", surface: "trail", difficulty: "tezka", cost: "€€€", month: 6, coords: [46.5405, 12.1357], desc: "Running beneath the dramatic limestone towers of Tre Cime in the Dolomites.", image_url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-19", name: "Zegama-Aizkorri", continent: "Europe", country: "Spain", location: "Zegama, Spain", distance: "42.2 km", elevation: "+2,736 m", surface: "trail", difficulty: "tezka", cost: "€€", month: 5, coords: [42.9760, -2.2905], desc: "Technical Basque ridges and Tour de France-level mountain crowds.", image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-20", name: "Eiger Ultra Trail", continent: "Europe", country: "Switzerland", location: "Grindelwald, Switzerland", distance: "51 km", elevation: "+3,100 m", surface: "trail", difficulty: "tezka", cost: "€€€€", month: 7, coords: [46.6242, 8.0414], desc: "Alpine singletrack right below the iconic Eiger North Face.", image_url: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-21", name: "Sierre-Zinal", continent: "Europe", country: "Switzerland", location: "Sierre, Switzerland", distance: "31 km", elevation: "+2,200 m", surface: "trail", difficulty: "tezka", cost: "€€€", month: 8, coords: [46.2920, 7.5350], desc: "The Race of the Five 4000m Peaks through Val d'Anniviers.", image_url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-22", name: "Transgrancanaria", continent: "Europe", country: "Spain", location: "Gran Canaria, Spain", distance: "126 km", elevation: "+6,800 m", surface: "trail", difficulty: "extremni", cost: "€€€", month: 2, coords: [27.9202, -15.5474], desc: "Coast-to-coast volcanic island crossing in early spring.", image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-23", name: "Western States 100", continent: "North America", country: "USA", location: "Olympic Valley, USA", distance: "161 km", elevation: "+5,500 m", surface: "trail", difficulty: "extremni", cost: "€€€€", month: 6, coords: [39.1969, -120.2357], desc: "The world's oldest 100-mile trail race through Sierra Nevada canyons.", image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-24", name: "Big Sur International Marathon", continent: "North America", country: "USA", location: "Carmel, USA", distance: "42.2 km", elevation: "+665 m", surface: "road", difficulty: "tezka", cost: "€€€€", month: 4, coords: [36.2704, -121.8081], desc: "Dramatic Pacific Coast Highway cliffs, redwoods, and Bixby Bridge.", image_url: "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-25", name: "Comrades Marathon", continent: "Africa", country: "South Africa", location: "Durban – Pietermaritzburg, SA", distance: "89 km", elevation: "+1,800 m", surface: "road", difficulty: "extremni", cost: "€€€€", month: 6, coords: [-29.8587, 31.0218], desc: "The Ultimate Human Race — world's largest and oldest road ultramarathon.", image_url: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-26", name: "Cape Town Marathon", continent: "Africa", country: "South Africa", location: "Cape Town, South Africa", distance: "42.2 km", elevation: "+260 m", surface: "road", difficulty: "stredni", cost: "€€€", month: 10, coords: [-33.9249, 18.4241], desc: "Fast coastal city marathon beneath the iconic Table Mountain.", image_url: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-27", name: "Mt. Fuji 100", continent: "Asia", country: "Japan", location: "Fujiyoshida, Japan", distance: "166 km", elevation: "+7,000 m", surface: "trail", difficulty: "extremni", cost: "€€€€", month: 4, coords: [35.4875, 138.8079], desc: "Epic 100-mile loop around the foothills and lakes of Mount Fuji.", image_url: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-28", name: "Patagonia Run", continent: "South America", country: "Argentina", location: "San Martín de los Andes, AR", distance: "100 km", elevation: "+4,900 m", surface: "trail", difficulty: "tezka", cost: "€€€€", month: 4, coords: [-40.1579, -71.3534], desc: "Andean forests, glacial lakes, and rugged Patagonian peaks.", image_url: "https://images.unsplash.com/photo-1518182170546-07661fd94144?auto=format&fit=crop&w=600&q=80" }
       ];
-      featuredRacesList = richCatalog;
     }
 
     async function loadActivitiesFromDB(userId) {
@@ -1875,6 +1922,7 @@
       const fieldsDone = document.getElementById('fields-for-done');
       const fieldsPlanned = document.getElementById('fields-for-planned');
       const fieldsPlanningCommon = document.getElementById('fields-for-planning-common');
+      const wrapImportance = document.getElementById('wrap-field-importance');
       const wrapNotes = document.getElementById('wrap-field-notes');
       const labelWhy = document.getElementById('label-dynamic-why');
       const inputWhy = document.getElementById('form-why');
@@ -1885,6 +1933,7 @@
         fieldsDone.style.display = 'flex';
         fieldsPlanned.style.display = 'none';
         fieldsPlanningCommon.style.display = 'none';
+        wrapImportance.style.display = 'flex';
         wrapNotes.style.display = 'block';
         labelWhy.textContent = "The 'Why' & Motivation (Optional)";
         inputWhy.placeholder = "What made this race special?";
@@ -1894,6 +1943,7 @@
         fieldsDone.style.display = 'none';
         fieldsPlanned.style.display = 'flex';
         fieldsPlanningCommon.style.display = 'grid';
+        wrapImportance.style.display = 'none';
         wrapNotes.style.display = 'block';
         labelWhy.textContent = "Goal & Preparation Focus (Optional)";
         inputWhy.placeholder = "What is your main focus for this race?";
@@ -1903,6 +1953,7 @@
         fieldsDone.style.display = 'none';
         fieldsPlanned.style.display = 'none';
         fieldsPlanningCommon.style.display = 'grid';
+        wrapImportance.style.display = 'flex';
         wrapNotes.style.display = 'none';
         labelWhy.textContent = "Why is this on my dream bucket list?";
         inputWhy.placeholder = "e.g. Iconic mountain ridges, lifelong marathon goal...";
@@ -1970,10 +2021,13 @@
 
       const perfVal = item.satisfaction || 8;
       const courseVal = item.course_satisfaction || 9;
+      const impVal = item.importance || 5;
       document.getElementById('form-satisfaction').value = perfVal;
       document.getElementById('label-perf-satisfaction').textContent = perfVal + ' / 10';
       document.getElementById('form-course-satisfaction').value = courseVal;
       document.getElementById('label-course-satisfaction').textContent = courseVal + ' / 10';
+      document.getElementById('form-importance').value = impVal;
+      document.getElementById('label-importance').textContent = impVal + ' / 10';
 
       selectStatusMode(item.status || 'done');
       selectChip('surface', item.surface || 'road');
@@ -2078,7 +2132,6 @@
       activeList = sortActivities(activeList);
       document.getElementById('stats-label').textContent = `Showing ${activeList.length} activities`;
 
-      // Bohatý uvítací Empty State pro prázdný účet
       if (activeList.length === 0) {
         if (races.length === 0 && !isReadOnlyShared) {
           content.innerHTML = `
@@ -2090,7 +2143,7 @@
               </p>
               <div class="starter-action-row">
                 <button class="starter-btn" onclick="switchPageMode('catalog')">
-                  <span>🌍 Browse 18 Iconic World Races</span>
+                  <span>🌍 Browse Global Race Catalog</span>
                   <span style="color:#007aff;">➔</span>
                 </button>
                 <button class="starter-btn" onclick="openAddModal()">
@@ -2119,8 +2172,13 @@
       activeList.forEach(item => {
         const colors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
         const pinColor = item.isMemorable ? '#7e22ce' : (colors[item.status] || '#007aff');
-        const pinHtml = `<div class="pin-circle" style="width:18px; height:18px; background:${pinColor};"></div>`;
-        const icon = L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [18, 18], iconAnchor: [9, 9] });
+
+        // Dynamic pin size based on Race Importance (1-10)
+        const imp = parseInt(item.importance) || 5;
+        const pinSize = imp >= 8 ? 24 : (imp <= 3 ? 13 : 18);
+        const pinGlow = imp >= 8 ? `box-shadow: 0 0 0 3px ${pinColor}44, 0 4px 10px rgba(15,23,42,0.5);` : '';
+        const pinHtml = `<div class="pin-circle" style="width:${pinSize}px; height:${pinSize}px; background:${pinColor}; ${pinGlow}"></div>`;
+        const icon = L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [pinSize, pinSize], iconAnchor: [pinSize / 2, pinSize / 2] });
 
         const marker = L.marker(item.coords, { icon: icon }).addTo(markerLayerGroup);
         marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} &bull; ${item.surfaceLabel || ''}`);
@@ -2256,6 +2314,7 @@
     function exitDetailView() {
       currentDetailItem = null;
       document.getElementById('floating-hud-panel').style.display = 'none';
+      document.querySelector('.map-bottom-controls').style.display = 'flex';
       if (currentRouteLayer) {
         map.removeLayer(currentRouteLayer);
         currentRouteLayer = null;
@@ -2269,7 +2328,6 @@
       }
     }
 
-    // Vykreslení SVG Elevation Sparkline v detailu závodu
     function buildElevationSparklineHtml(elevPoints, totalGainStr) {
       if (!elevPoints || elevPoints.length < 3) return '';
       const minE = Math.min(...elevPoints);
@@ -2305,6 +2363,8 @@
       const content = document.getElementById('content');
       
       showFloatingHud(item);
+      // Hide bottom-left map buttons so they don't overlap HUD boxes
+      document.querySelector('.map-bottom-controls').style.display = 'none';
 
       const statusColors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
       const themeColor = item.isMemorable ? '#7e22ce' : (statusColors[item.status] || '#007aff');
@@ -2415,7 +2475,7 @@
       `;
     }
 
-    // POHLED 1: SEASON TIMELINE
+    // VIEW 1: SEASON TIMELINE
     function renderTimelineDashboard() {
       const container = document.getElementById('full-page-content');
       currentDetailItem = null;
@@ -2472,7 +2532,7 @@
                     mLabel = monthShort[parseInt(parts[1])] || 'RUN';
                     dLabel = parts[2];
                   }
-                  const dotColor = item.status === 'done' ? '#16a34a' : '#d97706';
+                  const dotColor = item.isMemorable ? '#7e22ce' : (item.status === 'done' ? '#16a34a' : '#d97706');
                   const geo = detectGeoFromCoords(item.coords, item.name);
 
                   return `
@@ -2528,7 +2588,7 @@
       `;
     }
 
-    // POHLED 2: PERSONAL BESTS & TROPHY ROOM
+    // VIEW 2: PERSONAL BESTS & TROPHY ROOM
     function parseTimeToSeconds(timeStr) {
       if (!timeStr) return null;
       const clean = timeStr.trim().replace(/[^0-9:]/g, '');
@@ -2661,55 +2721,82 @@
       `;
     }
 
-    // POHLED 3: EXPLORE CATALOG
+    // VIEW 3: GLOBAL RACE CATALOG (CONTINENT, COUNTRY, SURFACE, MONTH FILTERS)
     function renderExploreCatalogDashboard() {
       const container = document.getElementById('full-page-content');
       currentDetailItem = null;
       document.getElementById('floating-hud-panel').style.display = 'none';
 
-      const catLabels = {
-        majors: 'World Major',
-        fast: 'Fast PR Course',
-        trail: 'Alpine / Trail Legend',
-        czech: 'Czech Classic'
-      };
       const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const continents = ['all', 'Europe', 'North America', 'Asia', 'Africa', 'Oceania', 'South America'];
+
+      const availableCountries = Array.from(new Set(
+        featuredRacesList
+          .filter(r => exploreContinentFilter === 'all' || r.continent === exploreContinentFilter)
+          .map(r => r.country)
+      )).sort();
 
       const filtered = featuredRacesList.filter(r => {
-        const matchCat = exploreCategoryFilter === 'all' || r.category === exploreCategoryFilter;
-        const matchQ = !exploreSearchQuery || r.name.toLowerCase().includes(exploreSearchQuery) || r.location.toLowerCase().includes(exploreSearchQuery);
-        return matchCat && matchQ;
+        if (exploreContinentFilter !== 'all' && r.continent !== exploreContinentFilter) return false;
+        if (exploreCountryFilter !== 'all' && r.country !== exploreCountryFilter) return false;
+        if (exploreSurfaceFilter !== 'all' && r.surface !== exploreSurfaceFilter) return false;
+        if (exploreMonthFilter !== 'all' && String(r.month) !== exploreMonthFilter) return false;
+        if (exploreSearchQuery && !r.name.toLowerCase().includes(exploreSearchQuery) && !r.location.toLowerCase().includes(exploreSearchQuery)) return false;
+        return true;
       });
 
       container.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px; flex-wrap:wrap; gap:12px;">
           <div>
-            <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Explore Iconic World & Regional Races</h1>
-            <p style="font-size:0.86rem; color:#64748b;">Curated collection of World Marathon Majors, flat PR courses, alpine ultra trails, and Czech classics. Add any race in 1 click.</p>
+            <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Explore Global Race Catalog</h1>
+            <p style="font-size:0.86rem; color:#64748b;">Discover iconic marathons and mountain ultras across continents. Showing ${filtered.length} of ${featuredRacesList.length} races.</p>
           </div>
           <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#ffffff; padding:14px 18px; border-radius:14px; border:1px solid #e2e8f0;">
+        <div style="display:flex; flex-direction:column; gap:12px; background:#ffffff; padding:16px 18px; border-radius:14px; border:1px solid #e2e8f0;">
           <div class="chips-group">
-            <button class="chip-btn ${exploreCategoryFilter === 'all' ? 'active' : ''}" onclick="exploreCategoryFilter='all'; renderExploreCatalogDashboard();">🌍 All (${featuredRacesList.length})</button>
-            <button class="chip-btn ${exploreCategoryFilter === 'majors' ? 'active' : ''}" onclick="exploreCategoryFilter='majors'; renderExploreCatalogDashboard();">🏅 World Majors</button>
-            <button class="chip-btn ${exploreCategoryFilter === 'fast' ? 'active' : ''}" onclick="exploreCategoryFilter='fast'; renderExploreCatalogDashboard();">⚡ Fast & Flat PR</button>
-            <button class="chip-btn ${exploreCategoryFilter === 'trail' ? 'active' : ''}" onclick="exploreCategoryFilter='trail'; renderExploreCatalogDashboard();">🏔️ Alpine & Trail Legends</button>
-            <button class="chip-btn ${exploreCategoryFilter === 'czech' ? 'active' : ''}" onclick="exploreCategoryFilter='czech'; renderExploreCatalogDashboard();">🇨🇿 Czech Classics</button>
+            ${continents.map(c => `
+              <button class="chip-btn ${exploreContinentFilter === c ? 'active' : ''}" onclick="exploreContinentFilter='${c}'; exploreCountryFilter='all'; renderExploreCatalogDashboard();">
+                ${c === 'all' ? '🌍 All Continents' : c}
+              </button>
+            `).join('')}
           </div>
-          <input type="text" class="stepped-input" style="width:240px; padding:7px 12px;" placeholder="Filter by name or city..." value="${exploreSearchQuery}" oninput="exploreSearchQuery=this.value.toLowerCase(); renderExploreCatalogDashboard();">
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <select class="stepped-input" style="width:170px; padding:7px 10px; font-size:0.82rem;" onchange="exploreCountryFilter=this.value; renderExploreCatalogDashboard();">
+              <option value="all">All Countries</option>
+              ${availableCountries.map(cnt => `<option value="${cnt}" ${exploreCountryFilter === cnt ? 'selected' : ''}>${cnt}</option>`).join('')}
+            </select>
+
+            <select class="stepped-input" style="width:140px; padding:7px 10px; font-size:0.82rem;" onchange="exploreSurfaceFilter=this.value; renderExploreCatalogDashboard();">
+              <option value="all" ${exploreSurfaceFilter === 'all' ? 'selected' : ''}>All Surfaces</option>
+              <option value="road" ${exploreSurfaceFilter === 'road' ? 'selected' : ''}>🛣️ Road</option>
+              <option value="trail" ${exploreSurfaceFilter === 'trail' ? 'selected' : ''}>⛰️ Trail</option>
+            </select>
+
+            <select class="stepped-input" style="width:155px; padding:7px 10px; font-size:0.82rem;" onchange="exploreMonthFilter=this.value; renderExploreCatalogDashboard();">
+              <option value="all">All Months</option>
+              ${monthNames.slice(1).map((m, idx) => `<option value="${idx + 1}" ${exploreMonthFilter === String(idx + 1) ? 'selected' : ''}>${m}</option>`).join('')}
+            </select>
+
+            <input type="text" class="stepped-input" style="flex:1; min-width:200px; padding:7px 12px; font-size:0.82rem;" placeholder="Search race or city..." value="${exploreSearchQuery}" oninput="exploreSearchQuery=this.value.toLowerCase(); renderExploreCatalogDashboard();">
+          </div>
         </div>
 
         <div class="catalog-full-grid">
-          ${filtered.map(r => {
+          ${filtered.length === 0 ? `
+            <div style="grid-column: 1 / -1; text-align:center; padding:40px; color:#64748b; background:#fff; border-radius:14px; border:1px solid #e2e8f0;">
+              No races match these filters. <button class="pill-btn" style="margin-left:8px;" onclick="exploreContinentFilter='all'; exploreCountryFilter='all'; exploreSurfaceFilter='all'; exploreMonthFilter='all'; exploreSearchQuery=''; renderExploreCatalogDashboard();">Reset Filters</button>
+            </div>
+          ` : filtered.map(r => {
             const alreadyInAtlas = races.find(my => my.name.toLowerCase() === r.name.toLowerCase());
             return `
               <div class="catalog-showcase-card">
                 <div>
                   <div class="catalog-card-img" style="background-image:url('${r.image_url}');">
                     <div class="catalog-card-top">
-                      <span class="badge" style="background:rgba(15,23,42,0.85); color:#38bdf8; border:1px solid rgba(56,189,248,0.4);">${catLabels[r.category] || 'Featured'}</span>
+                      <span class="badge" style="background:rgba(15,23,42,0.85); color:#38bdf8; border:1px solid rgba(56,189,248,0.4);">${r.continent}</span>
                       <span style="background:rgba(15,23,42,0.85); color:#ffffff; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">📅 ${monthNames[r.month] || 'Annual'}</span>
                     </div>
                     <div class="catalog-card-bottom">
@@ -2752,7 +2839,7 @@
       `;
     }
 
-    // POHLED 4: MILESTONES & STATS DASHBOARD
+    // VIEW 4: MILESTONES & STATS DASHBOARD
     function renderStatsFullDashboard() {
       const container = document.getElementById('full-page-content');
       currentDetailItem = null;
@@ -2957,6 +3044,8 @@
       document.getElementById('label-perf-satisfaction').textContent = '8 / 10';
       document.getElementById('form-course-satisfaction').value = 9;
       document.getElementById('label-course-satisfaction').textContent = '9 / 10';
+      document.getElementById('form-importance').value = 5;
+      document.getElementById('label-importance').textContent = '5 / 10';
       document.getElementById('gpx-label').textContent = '📁 Drop watch track (.GPX) — Optional';
       document.getElementById('catalog-suggestions').style.display = 'none';
 
@@ -3020,7 +3109,6 @@
           }
         }
 
-        // Zjednodušený vzorek 60 bodů pro výškový graf
         if (rawElevations.length > 5) {
           const step = Math.max(1, Math.floor(rawElevations.length / 60));
           parsedElevationSample = rawElevations.filter((_, idx) => idx % step === 0);
@@ -3079,6 +3167,7 @@
         difficulty: chipSelections.difficulty,
         distance: document.getElementById('form-distance').value,
         elevation: document.getElementById('form-elevation').value,
+        importance: status === 'planned' ? 5 : (parseInt(document.getElementById('form-importance').value) || 5),
         why: document.getElementById('form-why').value,
         notes: status === 'bucket' ? '' : document.getElementById('form-notes').value,
         coords: finalCoords,
@@ -3101,7 +3190,6 @@
       if (pendingCatalogImageUrl) record.image_url = pendingCatalogImageUrl;
       if (parsedGpxCoords) record.route_coords = parsedGpxCoords;
 
-      // DEMO SANDBOX UKLÁDÁNÍ DO PAMĚTI
       if (isDemoMode) {
         const localId = editingActivityId || `demo-${Date.now()}`;
         const localObj = {
@@ -3133,7 +3221,6 @@
         return;
       }
 
-      // SUPABASE PRODUKČNÍ UKLÁDÁNÍ
       try {
         if (editingActivityId) {
           const { error: updErr } = await supabaseClient.from('races').update(record).eq('id', editingActivityId).eq('user_id', currentUser.id);
@@ -3238,10 +3325,11 @@
       fullPageView.style.display = 'none';
       mapWrapper.style.display = 'block';
       sidebar.style.display = 'flex';
+      document.querySelector('.map-bottom-controls').style.display = 'flex';
       setTimeout(() => map.invalidateSize(), 50);
 
       if (mode === 'races') {
-        document.getElementById('main-title').textContent = isReadOnlyShared ? document.getElementById('main-title').textContent : 'Race Atlas';
+        document.getElementById('main-title').textContent = isReadOnlyShared ? document.getElementById('main-title').textContent : (isDemoMode ? 'Race Atlas (Demo)' : 'Race Atlas');
         memorableInfoBtn.style.display = 'none';
         statusWrap.style.display = 'flex';
         filtersWrap.style.display = 'flex';
