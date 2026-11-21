@@ -238,7 +238,7 @@
           </div>
           <div class="pillar-body">
             <h3>1-Click Race Catalog</h3>
-            <p>No need to search for old GPX files. Select from curated World Marathon Majors, European alpine sky-races, and regional classics to light up your map in seconds.</p>
+            <p>No need to search for old GPX files. Select from curated World Marathon Majors, European alpine sky-races, and iconic global classics to light up your map in seconds.</p>
           </div>
         </div>
 
@@ -252,7 +252,7 @@
           </div>
           <div class="pillar-body">
             <h3>Watch Tracks & Elevation</h3>
-            <p>Import .GPX tracks from Garmin, Apple Watch, or Strava. Relive elevation profiles, official split targets vs. finish times, and memorable photos in clean dark mode.</p>
+            <p>Import .GPX tracks from Garmin, Apple Watch, or Strava. Relive elevation profiles, official split targets vs. finish times, and memorable notes in clean dark mode.</p>
           </div>
         </div>
       </div>
@@ -269,13 +269,13 @@
         <div class="step-card">
           <span class="step-number">STEP 01</span>
           <h4>Select or Upload</h4>
-          <p>Pick races you've completed from our database, or drag and drop your watch's original GPX files for elevation curves and course routes.</p>
+          <p>Pick races you've completed from our global catalog, or drag and drop your watch's original GPX files for elevation curves and course routes.</p>
         </div>
 
         <div class="step-card">
           <span class="step-number">STEP 02</span>
           <h4>Log Context & 'The Why'</h4>
-          <p>Record what made the day memorable: official finish times, pacing satisfaction, photos, terrain notes, or future ambitions.</p>
+          <p>Record what made the day memorable: official finish times, pacing satisfaction, terrain notes, or future ambitions.</p>
         </div>
 
         <div class="step-card">
@@ -295,7 +295,7 @@
           <span class="creator-badge">Behind the Project</span>
           <h3 class="creator-name">Ondřej Hradecký</h3>
           <p class="creator-bio">
-            Maratonec, milovník strmých horských trailů a tvůrce Running Atlasu. Aplikaci jsem začal stavět pro sebe, protože mi chyběl klidný prostor bez sociálního hluku a algoritmů — místo, kde se člověk podívá na mapu a vidí každé pohoří, kterým proběhl, i každý cíl, o kterém zatím jenom sní.
+            Marathoner, steep mountain trail enthusiast, and the creator of Running Atlas. I started building this app for myself because I was missing a calm space free of social noise and algorithms — a place where you can look at a map and see every mountain range you've crossed and every finish line you still dream about.
           </p>
           <a href="about.html" class="creator-link">Read the full story & manifesto ➔</a>
         </div>
@@ -436,9 +436,20 @@
       }
     }
 
-    supabaseClient.auth.getUser().then(({ data: { user } }) => {
-      if (user) window.location.href = 'app.html';
-    });
+    // Reliable logout guard: do not auto-redirect back to app.html right after logging out
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('logout') === '1') {
+      Object.keys(localStorage).forEach(k => {
+        if (k.startsWith('sb-') || k.includes('supabase')) localStorage.removeItem(k);
+      });
+      sessionStorage.clear();
+      supabaseClient.auth.signOut({ scope: 'local' }).catch(() => {});
+      window.history.replaceState({}, document.title, 'index.html');
+    } else {
+      supabaseClient.auth.getUser().then(({ data: { user } }) => {
+        if (user) window.location.href = 'app.html';
+      });
+    }
   </script>
 </body>
 </html>
