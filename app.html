@@ -922,7 +922,9 @@
                 <div class="chip-btn" data-val="€" onclick="setCostFilter('€', this)">€</div>
                 <div class="chip-btn" data-val="€€" onclick="setCostFilter('€€', this)">€€</div>
                 <div class="chip-btn" data-val="€€€" onclick="setCostFilter('€€€', this)">€€€</div>
-                <div class="chip-btn" data-val="€€€€" onclick="setCostFilter('€€€€', this)">€€€€+</div>
+                <div class="chip-btn" data-val="€€€€" onclick="setCostFilter('€€€€', this)">€€€€</div>
+                <div class="chip-btn" data-val="€€€€€" onclick="setCostFilter('€€€€€', this)">€€€€€</div>
+                <div class="chip-btn" data-val="€€€€€€" onclick="setCostFilter('€€€€€€', this)">€€€€€€</div>
               </div>
             </div>
 
@@ -1114,10 +1116,12 @@
         <div>
           <label class="form-group-label">Estimated Budget</label>
           <select id="form-cost" class="stepped-input">
-            <option value="€">€ (Local / low cost)</option>
-            <option value="€€" selected>€€ (Weekend trip)</option>
-            <option value="€€€">€€€ (Flight / hotel stay)</option>
-            <option value="€€€€">€€€€ (Major expedition)</option>
+            <option value="€">€ (Almost free / local)</option>
+            <option value="€€" selected>€€ (Low / weekend trip)</option>
+            <option value="€€€">€€€ (Medium / European trip)</option>
+            <option value="€€€€">€€€€ (High / flight &amp; hotel)</option>
+            <option value="€€€€€">€€€€€ (Extreme / major expedition)</option>
+            <option value="€€€€€€">€€€€€€ (Ultra-expensive / rare)</option>
           </select>
         </div>
       </div>
