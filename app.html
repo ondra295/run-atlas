@@ -393,9 +393,50 @@
     /* HORIZONTAL CARDS */
     .race-card-rich {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
-      overflow: hidden; cursor: pointer; transition: all 0.2s ease;
+      overflow: hidden; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;
       box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04); display: flex; flex-direction: row; align-items: stretch;
     }
+
+    /* GEO HIERARCHY CARDS (CONTINENTS & COUNTRIES) */
+    .geo-breadcrumb-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px;
+      padding: 8px 12px; flex-shrink: 0; box-shadow: 0 1px 4px rgba(15,23,42,0.04);
+    }
+    .geo-breadcrumb-title {
+      font-size: 0.88rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px;
+    }
+    .geo-group-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
+      padding: 16px 18px; cursor: pointer; transition: all 0.18s ease; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .geo-group-card:hover {
+      border-color: #007aff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.14);
+    }
+    .geo-group-top {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .geo-group-name {
+      font-size: 1.08rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;
+    }
+    .geo-group-total {
+      font-size: 0.76rem; font-weight: 800; color: #64748b; background: #f1f5f9;
+      padding: 3px 9px; border-radius: 20px; border: 1px solid #e2e8f0;
+    }
+    .geo-status-pills {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .geo-pill {
+      font-size: 0.73rem; font-weight: 800; padding: 3px 9px; border-radius: 8px;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .geo-pill-done { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .geo-pill-planned { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .geo-pill-bucket { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .geo-pill-memorable { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+    .geo-pill-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
     .race-card-rich:hover { border-color: #007aff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.15); }
     
     .card-thumb-left {
@@ -1111,6 +1152,7 @@
             <div class="chip-btn" data-val="snadna" onclick="selectChip('difficulty', 'snadna')">Easy</div>
             <div class="chip-btn" data-val="stredni" onclick="selectChip('difficulty', 'stredni')">Moderate</div>
             <div class="chip-btn" data-val="tezka" onclick="selectChip('difficulty', 'tezka')">Hard</div>
+            <div class="chip-btn" data-val="extremni" onclick="selectChip('difficulty', 'extremni')">Extreme</div>
           </div>
         </div>
         <div>
@@ -1140,9 +1182,14 @@
         <input id="form-why" class="stepped-input" type="text" placeholder="What made this race special?">
       </div>
 
+      <div id="wrap-field-qualification" style="display:none;">
+        <label class="form-group-label">Qualification &amp; Entry Requirements (Optional)</label>
+        <input id="form-qualification" class="stepped-input" type="text" placeholder="e.g. Open entry, UTMB Index, Lottery, Sub-3:00 BQ...">
+      </div>
+
       <div id="wrap-field-notes">
-        <label class="form-group-label" id="label-dynamic-notes">Race Report & Field Notes</label>
-        <textarea id="form-notes" class="stepped-input" placeholder="Pacing notes, terrain details, fueling..." style="height:60px;"></textarea>
+        <label class="form-group-label" id="label-dynamic-notes">Race Report &amp; Course Notes</label>
+        <textarea id="form-notes" class="stepped-input" placeholder="Pacing notes, terrain details, fueling..." style="height:70px;"></textarea>
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:14px;">
@@ -1180,6 +1227,13 @@
     let advFilterMonth = 'all';
     let advFilterDifficulty = 'all';
     let advFilterCost = 'all';
+
+    let sidebarContinent = null;
+    let sidebarCountry = null;
+    let currentFilteredList = [];
+    let isProgrammaticMove = false;
+    let viewportDebounceTimer = null;
+    const MAX_DIRECT_CARDS = 8;
 
     let timelineYearFilter = 'all';
     let exploreContinentFilter = 'all';
@@ -1378,12 +1432,31 @@
     let homeMarker = null;
 
     function fitAllMarkersOnMap() {
+      sidebarContinent = null;
+      sidebarCountry = null;
+      isProgrammaticMove = true;
       if (markerLayerGroup.getLayers().length > 0) {
-        map.flyToBounds(markerLayerGroup.getBounds(), { padding: [55, 55], maxZoom: 11, animate: true, duration: 1.1 });
+        map.flyToBounds(markerLayerGroup.getBounds(), { padding: [55, 55], maxZoom: 11, animate: true, duration: 1.0 });
       } else {
         map.flyTo(userHomeCoords || [25.0, 10.0], userHomeCoords ? 5 : 2, { animate: true, duration: 1.0 });
       }
+      setTimeout(() => { isProgrammaticMove = false; renderSidebarList(); }, 1050);
     }
+
+    map.on('moveend', function() {
+      if (currentDetailItem || !['races', 'memorable'].includes(currentMode)) return;
+      if (viewportDebounceTimer) clearTimeout(viewportDebounceTimer);
+      viewportDebounceTimer = setTimeout(() => {
+        if (!isProgrammaticMove) {
+          // When user manually zooms out to world/wide view, reset drill-down so hierarchy adapts naturally
+          if (map.getZoom() <= 3 && (sidebarContinent || sidebarCountry)) {
+            sidebarContinent = null;
+            sidebarCountry = null;
+          }
+          renderSidebarList();
+        }
+      }, 120);
+    });
 
     // Spotlight Search
     function handleSpotlightSearch(val) {
@@ -1599,38 +1672,91 @@
       if (!coords || coords.length < 2) return { country: 'Unknown', code: '', continent: 'Europe', html: '🌍 Unknown' };
       const lat = coords[0];
       const lng = coords[1];
-      const lowName = name.toLowerCase();
+      const low = (name || '').toLowerCase();
 
-      let continent = 'Europe';
-      if (lat > 15 && lng < -30) continent = 'North America';
-      else if (lat <= 15 && lng < -30) continent = 'South America';
-      else if (lat < 35 && lng >= -20 && lng <= 50) continent = 'Africa';
-      else if (lat < -10 && lng > 110) continent = 'Oceania';
-      else if (lng > 40 && lat >= 0) continent = 'Asia';
+      const res = (country, code, continent) => ({ country, code, continent, html: `${renderFlag(code)}${country}` });
 
-      let country = continent;
-      let code = '';
-      if (lowName.includes('prague') || lowName.includes('praha') || (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9)) { country = 'Czechia'; code = 'cz'; }
-      else if (lowName.includes('slovak') || lowName.includes('bratislava') || lowName.includes('tatry') || (lat >= 47.7 && lat <= 49.6 && lng >= 16.8 && lng <= 22.6)) { country = 'Slovakia'; code = 'sk'; }
-      else if (lowName.includes('berlin') || lowName.includes('dresden') || lowName.includes('munich') || (lat >= 47.2 && lat <= 55.0 && lng >= 6.0 && lng <= 15.0)) { country = 'Germany'; code = 'de'; }
-      else if (lowName.includes('chamonix') || lowName.includes('utmb') || lowName.includes('paris') || (lat >= 42.0 && lat <= 51.0 && lng >= -5.0 && lng <= 8.2)) { country = 'France'; code = 'fr'; }
-      else if (lowName.includes('chianti') || lowName.includes('lavaredo') || lowName.includes('rome') || (lat >= 36.5 && lat <= 47.0 && lng >= 6.6 && lng <= 18.5)) { country = 'Italy'; code = 'it'; }
-      else if (lowName.includes('valencia') || lowName.includes('seville') || lowName.includes('zegama') || lowName.includes('grancanaria') || (lat >= 36.0 && lat <= 43.8 && lng >= -9.3 && lng <= 3.3)) { country = 'Spain'; code = 'es'; }
-      else if (lowName.includes('helsinki') || (lat >= 59.5 && lat <= 70.0 && lng >= 20.0 && lng <= 31.5)) { country = 'Finland'; code = 'fi'; }
-      else if (lowName.includes('copenhagen') || lowName.includes('aalborg') || (lat >= 54.5 && lat <= 58.0 && lng >= 8.0 && lng <= 15.2)) { country = 'Denmark'; code = 'dk'; }
-      else if (lowName.includes('eiger') || lowName.includes('sierre') || lowName.includes('zermatt') || (lat >= 45.8 && lat <= 47.8 && lng >= 6.0 && lng <= 10.5)) { country = 'Switzerland'; code = 'ch'; }
-      else if (lowName.includes('amsterdam') || (lat >= 50.7 && lat <= 53.6 && lng >= 3.3 && lng <= 7.2)) { country = 'Netherlands'; code = 'nl'; }
-      else if (lowName.includes('vienna') || (lat >= 46.3 && lat <= 49.0 && lng >= 9.5 && lng <= 17.2)) { country = 'Austria'; code = 'at'; }
-      else if (lowName.includes('athens') || (lat >= 35.0 && lat <= 41.8 && lng >= 19.3 && lng <= 28.2)) { country = 'Greece'; code = 'gr'; }
-      else if (lowName.includes('stockholm') || (lat >= 55.3 && lat <= 69.0 && lng >= 11.0 && lng <= 24.2)) { country = 'Sweden'; code = 'se'; }
-      else if (lowName.includes('london') || (lat >= 50.0 && lat <= 59.0 && lng >= -8.0 && lng <= 2.0)) { country = 'UK'; code = 'gb'; }
-      else if (lowName.includes('boston') || lowName.includes('new york') || lowName.includes('chicago') || lowName.includes('western states') || lowName.includes('big sur') || (continent === 'North America')) { country = 'USA'; code = 'us'; }
-      else if (lowName.includes('tokyo') || lowName.includes('fuji') || (lat >= 30.0 && lat <= 45.0 && lng >= 129.0 && lng <= 146.0)) { country = 'Japan'; code = 'jp'; }
-      else if (lowName.includes('sydney') || continent === 'Oceania') { country = 'Australia'; code = 'au'; }
-      else if (lowName.includes('cape town') || lowName.includes('comrades') || continent === 'Africa') { country = 'South Africa'; code = 'za'; }
-      else if (lowName.includes('patagonia') || continent === 'South America') { country = 'Argentina'; code = 'ar'; }
+      // Explicit keyword matches first (handles islands, border towns, etc.)
+      if (low.includes('polar circle') || low.includes('greenland') || low.includes('kangerlussuaq')) return res('Greenland', 'gl', 'North America');
+      if (low.includes('tenerife') || low.includes('transgrancanaria') || low.includes('zegama') || low.includes('penyagolosa') || low.includes('valencia') || low.includes('seville')) return res('Spain', 'es', 'Europe');
+      if (low.includes('madeira') || low.includes('miut') || low.includes('estrela')) return res('Portugal', 'pt', 'Europe');
+      if (low.includes('iceland') || low.includes('laugavegur')) return res('Iceland', 'is', 'Europe');
+      if (low.includes('corsica') || low.includes('korsika') || low.includes('restonica') || low.includes('chamonix') || low.includes('utmb') || low.includes('paris') || low.includes('nice') || low.includes('alsace') || low.includes('pyrénées') || low.includes('templiers') || low.includes('morbihan') || low.includes('bout du monde')) return res('France', 'fr', 'Europe');
+      if (low.includes('wicklow') || low.includes('kerry way')) return res('Ireland', 'ie', 'Europe');
+      if (low.includes('wales') || low.includes('scotland') || low.includes('highland fling') || low.includes('arc of attrition') || low.includes('london')) return res('United Kingdom', 'gb', 'Europe');
+      if (low.includes('ardennes')) return res('Belgium', 'be', 'Europe');
+      if (low.includes('amsterdam')) return res('Netherlands', 'nl', 'Europe');
+      if (low.includes('copenhagen') || low.includes('cold hawaii') || low.includes('aalborg')) return res('Denmark', 'dk', 'Europe');
+      if (low.includes('lofoten') || low.includes('midnight sun') || low.includes('stranda')) return res('Norway', 'no', 'Europe');
+      if (low.includes('ultravasan') || low.includes('high coast') || low.includes('stockholm')) return res('Sweden', 'se', 'Europe');
+      if (low.includes('helsinki') || low.includes('karhunkierros')) return res('Finland', 'fi', 'Europe');
+      if (low.includes('estonia') || low.includes('eutr')) return res('Estonia', 'ee', 'Europe');
+      if (low.includes('gauja')) return res('Latvia', 'lv', 'Europe');
+      if (low.includes('kernav')) return res('Lithuania', 'lt', 'Europe');
+      if (low.includes('warsaw') || low.includes('varšava') || low.includes('niepodleg') || low.includes('bieg 7 dolin')) return res('Poland', 'pl', 'Europe');
+      if (low.includes('prague') || low.includes('praha') || low.includes('pražský') || low.includes('železná ruda') || low.includes('labský') || low.includes('krušné') || low.includes('run tour') || low.includes('sázav') || low.includes('týmovka') || low.includes('hostivice') || low.includes('čertovskej') || low.includes('třeboň') || low.includes('běchovice') || low.includes('pečeck') || low.includes('zátop') || low.includes('beskydská') || low.includes('krakonoš') || low.includes('zapomenuté') || low.includes('jesenick') || low.includes('ještěd') || low.includes('kunratick') || low.includes('ostravice') || low.includes('vltav')) return res('Czechia', 'cz', 'Europe');
+      if (low.includes('žaškov') || low.includes('nízkotatran') || low.includes('košic') || low.includes('mieru') || low.includes('malofatran') || low.includes('big bear') || low.includes('slovak')) return res('Slovakia', 'sk', 'Europe');
+      if (low.includes('hungary')) return res('Hungary', 'hu', 'Europe');
+      if (low.includes('transylvania')) return res('Romania', 'ro', 'Europe');
+      if (low.includes('julian alps')) return res('Slovenia', 'si', 'Europe');
+      if (low.includes('istria') || low.includes('dalmacija')) return res('Croatia', 'hr', 'Europe');
+      if (low.includes('athens') || low.includes('athény') || low.includes('zagori')) return res('Greece', 'gr', 'Europe');
+      if (low.includes('wachau') || low.includes('3-länder') || low.includes('innsbruck') || low.includes('grossglockner') || low.includes('mozart 100') || low.includes('kat 100') || low.includes('vienna')) return res('Austria', 'at', 'Europe');
+      if (low.includes('matterhorn') || low.includes('swiss alps') || low.includes('eiger') || low.includes('wildstrubel') || low.includes('sierre')) return res('Switzerland', 'ch', 'Europe');
+      if (low.includes('dresden') || low.includes('frankfurt') || low.includes('berlin') || low.includes('münchen') || low.includes('munich') || low.includes('zugspitz') || low.includes('black forest')) return res('Germany', 'de', 'Europe');
+      if (low.includes('roma') || low.includes('rome') || low.includes('chianti') || low.includes('dolomiti') || low.includes('lavaredo') || low.includes('sicily') || low.includes('sicílie')) return res('Italy', 'it', 'Europe');
+      if (low.includes('kačkar') || low.includes('kaçkar') || low.includes('cappadocia') || low.includes('lycian') || low.includes('ida ultra')) return res('Turkey', 'tr', 'Asia');
+      if (low.includes('kazbegi')) return res('Georgia', 'ge', 'Asia');
+      if (low.includes('shahdag')) return res('Azerbaijan', 'az', 'Asia');
+      if (low.includes('tengri')) return res('Kazakhstan', 'kz', 'Asia');
+      if (low.includes('zaamin') || low.includes('samarkand')) return res('Uzbekistan', 'uz', 'Asia');
+      if (low.includes('mongolia')) return res('Mongolia', 'mn', 'Asia');
+      if (low.includes('oman') || low.includes('wadi bih')) return res('Oman', 'om', 'Asia');
+      if (low.includes('alula')) return res('Saudi Arabia', 'sa', 'Asia');
+      if (low.includes('petra')) return res('Jordan', 'jo', 'Asia');
+      if (low.includes('dead sea')) return res('Israel', 'il', 'Asia');
+      if (low.includes('toubkal') || low.includes('sables')) return res('Morocco', 'ma', 'Africa');
+      if (low.includes('comrades') || low.includes('two oceans') || low.includes('cape town')) return res('South Africa', 'za', 'Africa');
+      if (low.includes('lewa')) return res('Kenya', 'ke', 'Africa');
+      if (low.includes('kilimanjaro')) return res('Tanzania', 'tz', 'Africa');
+      if (low.includes('isalo')) return res('Madagascar', 'mg', 'Africa');
+      if (low.includes('congo nile')) return res('Rwanda', 'rw', 'Africa');
+      if (low.includes('squamish')) return res('Canada', 'ca', 'North America');
+      if (low.includes('western states') || low.includes('leadville') || low.includes('black canyon') || low.includes('boston') || low.includes('new york') || low.includes('chicago') || low.includes('moab') || low.includes('rabbit run') || low.includes('resurrection') || low.includes('equinox') || low.includes('big sur')) return res('USA', 'us', 'North America');
+      if (low.includes('patagonia') || low.includes('valhöll')) return res('Argentina', 'ar', 'South America');
+      if (low.includes('ultra fiord')) return res('Chile', 'cl', 'South America');
+      if (low.includes('paraty') || low.includes('mantiqueira')) return res('Brazil', 'br', 'South America');
+      if (low.includes('tarawera') || low.includes('kepler')) return res('New Zealand', 'nz', 'Oceania');
+      if (low.includes('australia') || low.includes('sydney')) return res('Australia', 'au', 'Oceania');
+      if (low.includes('tokyo') || low.includes('fuji')) return res('Japan', 'jp', 'Asia');
+      if (low.includes('translantau')) return res('Hong Kong', 'hk', 'Asia');
+      if (low.includes('doi inthanon') || low.includes('thailand')) return res('Thailand', 'th', 'Asia');
+      if (low.includes('gaoligong') || low.includes('siguniang')) return res('China', 'cn', 'Asia');
+      if (low.includes('malnad')) return res('India', 'in', 'Asia');
+      if (low.includes('golden ring') || low.includes('grut')) return res('Russia', 'ru', 'Europe');
+      if (low.includes('baikal')) return res('Russia', 'ru', 'Asia');
 
-      return { country, code, continent, html: `${renderFlag(code)}${country}` };
+      // Fallback geographic bounds
+      if (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9) return res('Czechia', 'cz', 'Europe');
+      if (lat >= 47.7 && lat <= 49.6 && lng >= 16.8 && lng <= 22.6) return res('Slovakia', 'sk', 'Europe');
+      if (lat >= 46.3 && lat <= 49.0 && lng >= 9.5 && lng <= 17.2) return res('Austria', 'at', 'Europe');
+      if (lat >= 45.8 && lat <= 47.8 && lng >= 5.9 && lng <= 10.5) return res('Switzerland', 'ch', 'Europe');
+      if (lat >= 47.2 && lat <= 55.0 && lng >= 5.9 && lng <= 15.0) return res('Germany', 'de', 'Europe');
+      if (lat >= 36.5 && lat <= 47.1 && lng >= 6.6 && lng <= 18.6) return res('Italy', 'it', 'Europe');
+      if (lat >= 42.0 && lat <= 51.1 && lng >= -5.2 && lng <= 8.3) return res('France', 'fr', 'Europe');
+      if (lat >= 35.9 && lat <= 43.8 && lng >= -9.4 && lng <= 3.4) return res('Spain', 'es', 'Europe');
+      if (lat >= 50.0 && lat <= 59.0 && lng >= -8.0 && lng <= 2.0) return res('United Kingdom', 'gb', 'Europe');
+      if (lat >= 49.0 && lat <= 54.9 && lng >= 14.1 && lng <= 24.2) return res('Poland', 'pl', 'Europe');
+      if (lat >= 58.0 && lat <= 71.2 && lng >= 4.5 && lng <= 31.1) return res('Norway', 'no', 'Europe');
+      if (lat >= 55.3 && lat <= 69.1 && lng >= 11.0 && lng <= 24.2) return res('Sweden', 'se', 'Europe');
+      if (lat >= 59.5 && lat <= 70.1 && lng >= 20.0 && lng <= 31.6) return res('Finland', 'fi', 'Europe');
+      if (lat > 15 && lng < -30) return res(lat > 49 && lng > -141 ? 'Canada' : 'USA', lat > 49 && lng > -141 ? 'ca' : 'us', 'North America');
+      if (lat <= 15 && lng < -30) return res('South America', '', 'South America');
+      if (lat < 35 && lng >= -20 && lng <= 52) return res('Africa', '', 'Africa');
+      if (lat < -10 && lng > 110) return res(lng > 165 ? 'New Zealand' : 'Australia', lng > 165 ? 'nz' : 'au', 'Oceania');
+      if (lng > 35 && lat >= 0) return res('Asia', '', 'Asia');
+
+      return res('Europe', '', 'Europe');
     }
 
     // Home Base Autocomplete
@@ -1896,6 +2022,7 @@
           importance: item.importance || 5,
           why: item.why,
           notes: item.notes,
+          qualification: item.qualification || null,
           images: item.images || (item.image_url ? [item.image_url] : []),
           image_url: item.image_url || (item.images && item.images[0]) || null,
           resultTime: item.result_time || item.how_it_went,
@@ -1936,6 +2063,8 @@
       const fieldsPlanningCommon = document.getElementById('fields-for-planning-common');
       const wrapImportance = document.getElementById('wrap-field-importance');
       const wrapNotes = document.getElementById('wrap-field-notes');
+      const wrapQual = document.getElementById('wrap-field-qualification');
+      const labelNotes = document.getElementById('label-dynamic-notes');
       const labelWhy = document.getElementById('label-dynamic-why');
       const inputWhy = document.getElementById('form-why');
 
@@ -1946,7 +2075,9 @@
         fieldsPlanned.style.display = 'none';
         fieldsPlanningCommon.style.display = 'none';
         wrapImportance.style.display = 'flex';
+        wrapQual.style.display = 'none';
         wrapNotes.style.display = 'block';
+        labelNotes.textContent = "Race Report & Course Notes";
         labelWhy.textContent = "The 'Why' & Motivation (Optional)";
         inputWhy.placeholder = "What made this race special?";
       } else if (mode === 'planned') {
@@ -1956,7 +2087,9 @@
         fieldsPlanned.style.display = 'flex';
         fieldsPlanningCommon.style.display = 'grid';
         wrapImportance.style.display = 'none';
+        wrapQual.style.display = 'block';
         wrapNotes.style.display = 'block';
+        labelNotes.textContent = "Preparation & Course Notes";
         labelWhy.textContent = "Goal & Preparation Focus (Optional)";
         inputWhy.placeholder = "What is your main focus for this race?";
       } else if (mode === 'bucket') {
@@ -1966,7 +2099,9 @@
         fieldsPlanned.style.display = 'none';
         fieldsPlanningCommon.style.display = 'grid';
         wrapImportance.style.display = 'flex';
-        wrapNotes.style.display = 'none';
+        wrapQual.style.display = 'block';
+        wrapNotes.style.display = 'block';
+        labelNotes.textContent = "Course & Terrain Notes";
         labelWhy.textContent = "Why is this on my dream bucket list?";
         inputWhy.placeholder = "e.g. Iconic mountain ridges, lifelong marathon goal...";
       }
@@ -2024,6 +2159,7 @@
       document.getElementById('form-distance').value = item.distance || '';
       document.getElementById('form-elevation').value = item.elevation || '';
       document.getElementById('form-notes').value = item.notes || '';
+      document.getElementById('form-qualification').value = item.qualification || '';
       document.getElementById('form-why').value = item.why || '';
       document.getElementById('form-finish-simple').value = item.resultTime || '';
       document.getElementById('form-placement').value = item.placement || '';
@@ -2114,6 +2250,299 @@
       });
     }
 
+    function buildRaceCardElement(item) {
+      const card = document.createElement('div');
+      card.className = 'race-card-rich';
+      const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80';
+
+      card.innerHTML = `
+        <div class="card-thumb-left" style="background-image: url('${cardImg}');"></div>
+        <div class="card-body-wrap">
+          <div class="card-meta-top">
+            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
+              ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
+            </span>
+            <span class="card-date-lbl">${item.date || ''}</span>
+          </div>
+          <div class="card-title-text" title="${item.name}">${item.name}</div>
+          <div class="card-stats-pill-row">
+            <span class="card-stat-pill">${item.distance || '-'}</span>
+            <span class="card-stat-pill">${item.elevation || '-'}</span>
+            <span class="card-stat-pill">${item.surfaceLabel || 'Road'}</span>
+            ${item.status === 'done' && item.resultTime ? `<span class="card-stat-pill" style="color:#16a34a; font-weight:800; background:#dcfce7; border-color:#bbf7d0;">⏱️ ${item.resultTime}</span>` : ''}
+            ${item.status === 'planned' && item.ambitionTime ? `<span class="card-stat-pill" style="color:#b45309; font-weight:800; background:#fef3c7; border-color:#fde68a;">🎯 ${item.ambitionTime}</span>` : ''}
+          </div>
+        </div>
+      `;
+      card.onclick = () => showDetail(item);
+      return card;
+    }
+
+    function buildStatusPillsHtml(items) {
+      let done = 0, planned = 0, bucket = 0, mem = 0;
+      items.forEach(i => {
+        if (i.isMemorable) mem++;
+        else if (i.status === 'done') done++;
+        else if (i.status === 'planned') planned++;
+        else bucket++;
+      });
+      const pills = [];
+      if (done > 0) pills.push(`<span class="geo-pill geo-pill-done"><span class="geo-pill-dot" style="background:#16a34a;"></span>${done} Completed</span>`);
+      if (planned > 0) pills.push(`<span class="geo-pill geo-pill-planned"><span class="geo-pill-dot" style="background:#d97706;"></span>${planned} Planned</span>`);
+      if (bucket > 0) pills.push(`<span class="geo-pill geo-pill-bucket"><span class="geo-pill-dot" style="background:#0284c7;"></span>${bucket} Bucket List</span>`);
+      if (mem > 0) pills.push(`<span class="geo-pill geo-pill-memorable"><span class="geo-pill-dot" style="background:#7e22ce;"></span>${mem} Memorable</span>`);
+      return pills.join('');
+    }
+
+    function flyToItemsBounds(items) {
+      const validCoords = items.filter(i => Array.isArray(i.coords) && i.coords.length === 2).map(i => i.coords);
+      if (validCoords.length === 0) return;
+      isProgrammaticMove = true;
+      if (validCoords.length === 1) {
+        map.flyTo(validCoords[0], 8, { animate: true, duration: 0.9 });
+      } else {
+        map.flyToBounds(L.latLngBounds(validCoords), { padding: [50, 50], maxZoom: 9, animate: true, duration: 0.9 });
+      }
+      setTimeout(() => { isProgrammaticMove = false; }, 980);
+    }
+
+    function drillIntoContinent(continentName, items) {
+      sidebarContinent = continentName;
+      sidebarCountry = null;
+      flyToItemsBounds(items);
+      renderSidebarList(true);
+    }
+
+    function drillIntoCountry(countryName, continentName, items) {
+      if (continentName) sidebarContinent = continentName;
+      sidebarCountry = countryName;
+      flyToItemsBounds(items);
+      renderSidebarList(true);
+    }
+
+    function navigateBackSidebar(targetLevel) {
+      if (targetLevel === 'continents') {
+        sidebarContinent = null;
+        sidebarCountry = null;
+        fitAllMarkersOnMap();
+      } else if (targetLevel === 'countries') {
+        sidebarCountry = null;
+        const contItems = currentFilteredList.filter(i => detectGeoFromCoords(i.coords, i.name).continent === sidebarContinent);
+        flyToItemsBounds(contItems);
+        renderSidebarList(true);
+      }
+    }
+
+    function renderSidebarList(skipViewportFilter = false) {
+      if (currentDetailItem || !['races', 'memorable'].includes(currentMode)) return;
+      const content = document.getElementById('content');
+      content.innerHTML = '';
+
+      const totalCount = currentFilteredList.length;
+      if (totalCount === 0) {
+        document.getElementById('stats-label').textContent = 'Showing 0 activities';
+        if (races.length === 0 && !isReadOnlyShared) {
+          content.innerHTML = `
+            <div class="empty-starter-card">
+              <div style="font-size:2rem;">🗺️</div>
+              <h3 style="font-size:1.1rem; font-weight:800; color:#0f172a;">Your Running Atlas is Ready</h3>
+              <p style="font-size:0.82rem; color:#64748b; line-height:1.5;">
+                Start building your personal running geography. Pick from iconic world races, drop a watch GPX track, or set your home base.
+              </p>
+              <div class="starter-action-row">
+                <button class="starter-btn" onclick="switchPageMode('catalog')">
+                  <span>🌍 Browse Global Race Catalog</span><span style="color:#007aff;">➔</span>
+                </button>
+                <button class="starter-btn" onclick="openAddModal()">
+                  <span>📁 Upload Your First .GPX Track</span><span style="color:#007aff;">➔</span>
+                </button>
+                <button class="starter-btn" onclick="handleHomeBaseClick()">
+                  <span>🏠 Set Your Home Base City</span><span style="color:#007aff;">➔</span>
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          content.innerHTML = `
+            <div style="text-align:center; padding: 40px 10px; color:#64748b;">
+              <div style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:6px;">No activities match these filters</div>
+              <div style="font-size:0.82rem; margin-bottom:16px;">Try adjusting your status or surface filters above.</div>
+              ${!isReadOnlyShared ? `<button class="open-detail-btn" onclick="openAddModal('${currentMode === 'memorable' ? 'memorable' : 'race'}')">➕ Add Activity</button>` : ''}
+            </div>
+          `;
+        }
+        return;
+      }
+
+      // Filter by current map viewport unless drilling directly via sidebar click
+      let visibleList = currentFilteredList;
+      if (!skipViewportFilter && map && map.getBounds) {
+        const bounds = map.getBounds();
+        visibleList = currentFilteredList.filter(item => {
+          if (!Array.isArray(item.coords) || item.coords.length < 2) return false;
+          return bounds.contains(item.coords);
+        });
+      }
+
+      if (visibleList.length === 0) {
+        document.getElementById('stats-label').textContent = `0 in map view (${totalCount} total)`;
+        content.innerHTML = `
+          <div style="text-align:center; padding: 40px 14px; color:#64748b;">
+            <div style="font-size:1.4rem; margin-bottom:6px;">🗺️</div>
+            <div style="font-size:0.95rem; font-weight:800; color:#0f172a; margin-bottom:6px;">No activities in this map area</div>
+            <div style="font-size:0.8rem; margin-bottom:14px;">Pan the map or zoom out to see your ${totalCount} activities.</div>
+            <button class="open-detail-btn" onclick="fitAllMarkersOnMap()">🌐 Show All on Map</button>
+          </div>
+        `;
+        return;
+      }
+
+      const labelSuffix = visibleList.length < totalCount ? ` in map view (${totalCount} total)` : ' activities';
+      document.getElementById('stats-label').textContent = `Showing ${visibleList.length}${labelSuffix}`;
+
+      // Pre-compute geo metadata for visibleList
+      const enriched = visibleList.map(item => ({ item, geo: detectGeoFromCoords(item.coords, item.name) }));
+
+      // LEVEL 3: Specific Country selected -> ALWAYS render scrollable race cards
+      if (sidebarCountry) {
+        const countryPool = (skipViewportFilter ? currentFilteredList.map(item => ({ item, geo: detectGeoFromCoords(item.coords, item.name) })) : enriched)
+          .filter(x => x.geo.country === sidebarCountry);
+
+        if (countryPool.length > 0) {
+          const sampleGeo = countryPool[0].geo;
+          const bar = document.createElement('div');
+          bar.className = 'geo-breadcrumb-bar';
+          bar.innerHTML = `
+            <button class="back-btn" style="padding:4px 10px; font-size:0.75rem;" onclick="navigateBackSidebar('${sidebarContinent ? 'countries' : 'continents'}')">← ${sidebarContinent || 'All'}</button>
+            <div class="geo-breadcrumb-title">${sampleGeo.html} <span class="geo-group-total">${countryPool.length}</span></div>
+          `;
+          content.appendChild(bar);
+          countryPool.forEach(x => content.appendChild(buildRaceCardElement(x.item)));
+          return;
+        } else {
+          sidebarCountry = null;
+        }
+      }
+
+      // LEVEL 2: Specific Continent selected
+      if (sidebarContinent) {
+        const contPool = (skipViewportFilter ? currentFilteredList.map(item => ({ item, geo: detectGeoFromCoords(item.coords, item.name) })) : enriched)
+          .filter(x => x.geo.continent === sidebarContinent);
+
+        if (contPool.length > 0) {
+          const bar = document.createElement('div');
+          bar.className = 'geo-breadcrumb-bar';
+          bar.innerHTML = `
+            <button class="back-btn" style="padding:4px 10px; font-size:0.75rem;" onclick="navigateBackSidebar('continents')">← Continents</button>
+            <div class="geo-breadcrumb-title">🌍 ${sidebarContinent} <span class="geo-group-total">${contPool.length}</span></div>
+          `;
+          content.appendChild(bar);
+
+          if (contPool.length <= MAX_DIRECT_CARDS) {
+            contPool.forEach(x => content.appendChild(buildRaceCardElement(x.item)));
+            return;
+          }
+
+          // Group by Country
+          const byCountry = {};
+          contPool.forEach(x => {
+            const c = x.geo.country;
+            if (!byCountry[c]) byCountry[c] = { geo: x.geo, items: [] };
+            byCountry[c].items.push(x.item);
+          });
+
+          const countryEntries = Object.values(byCountry).sort((a, b) => b.items.length - a.items.length);
+          if (countryEntries.length === 1) {
+            contPool.forEach(x => content.appendChild(buildRaceCardElement(x.item)));
+            return;
+          }
+
+          countryEntries.forEach(entry => {
+            const box = document.createElement('div');
+            box.className = 'geo-group-card';
+            box.innerHTML = `
+              <div class="geo-group-top">
+                <div class="geo-group-name">${entry.geo.html}</div>
+                <span class="geo-group-total">${entry.items.length} ${entry.items.length === 1 ? 'race' : 'races'} ➔</span>
+              </div>
+              <div class="geo-status-pills">${buildStatusPillsHtml(entry.items)}</div>
+            `;
+            box.onclick = () => drillIntoCountry(entry.geo.country, sidebarContinent, entry.items);
+            content.appendChild(box);
+          });
+          return;
+        } else {
+          sidebarContinent = null;
+        }
+      }
+
+      // LEVEL 1: Top-level viewport view
+      if (enriched.length <= MAX_DIRECT_CARDS) {
+        enriched.forEach(x => content.appendChild(buildRaceCardElement(x.item)));
+        return;
+      }
+
+      // Group by Continent
+      const byContinent = {};
+      enriched.forEach(x => {
+        const cont = x.geo.continent;
+        if (!byContinent[cont]) byContinent[cont] = [];
+        byContinent[cont].push(x);
+      });
+
+      const contNames = Object.keys(byContinent).sort((a, b) => byContinent[b].length - byContinent[a].length);
+
+      // If viewport only spans 1 continent, skip straight to Country boxes!
+      if (contNames.length === 1) {
+        const onlyCont = contNames[0];
+        const byCountry = {};
+        byContinent[onlyCont].forEach(x => {
+          const c = x.geo.country;
+          if (!byCountry[c]) byCountry[c] = { geo: x.geo, items: [] };
+          byCountry[c].items.push(x.item);
+        });
+        const countryEntries = Object.values(byCountry).sort((a, b) => b.items.length - a.items.length);
+        if (countryEntries.length === 1) {
+          enriched.forEach(x => content.appendChild(buildRaceCardElement(x.item)));
+          return;
+        }
+        countryEntries.forEach(entry => {
+          const box = document.createElement('div');
+          box.className = 'geo-group-card';
+          box.innerHTML = `
+            <div class="geo-group-top">
+              <div class="geo-group-name">${entry.geo.html}</div>
+              <span class="geo-group-total">${entry.items.length} ${entry.items.length === 1 ? 'race' : 'races'} ➔</span>
+            </div>
+            <div class="geo-status-pills">${buildStatusPillsHtml(entry.items)}</div>
+          `;
+          box.onclick = () => drillIntoCountry(entry.geo.country, onlyCont, entry.items);
+          content.appendChild(box);
+        });
+        return;
+      }
+
+      // Multiple continents visible -> render Continent boxes
+      const contIcons = {
+        'Europe': '🇪🇺', 'North America': '🌎', 'South America': '🌎',
+        'Asia': '🌏', 'Africa': '🌍', 'Oceania': '🌏'
+      };
+      contNames.forEach(cont => {
+        const contItems = byContinent[cont].map(x => x.item);
+        const box = document.createElement('div');
+        box.className = 'geo-group-card';
+        box.innerHTML = `
+          <div class="geo-group-top">
+            <div class="geo-group-name"><span>${contIcons[cont] || '🌍'}</span><span>${cont}</span></div>
+            <span class="geo-group-total">${contItems.length} ${contItems.length === 1 ? 'race' : 'races'} ➔</span>
+          </div>
+          <div class="geo-status-pills">${buildStatusPillsHtml(contItems)}</div>
+        `;
+        box.onclick = () => drillIntoContinent(cont, contItems);
+        content.appendChild(box);
+      });
+    }
+
     function renderAll() {
       markerLayerGroup.clearLayers();
       const content = document.getElementById('content');
@@ -2143,50 +2572,12 @@
       });
 
       activeList = sortActivities(activeList);
-      document.getElementById('stats-label').textContent = `Showing ${activeList.length} activities`;
-
-      if (activeList.length === 0) {
-        if (races.length === 0 && !isReadOnlyShared) {
-          content.innerHTML = `
-            <div class="empty-starter-card">
-              <div style="font-size:2rem;">🗺️</div>
-              <h3 style="font-size:1.1rem; font-weight:800; color:#0f172a;">Your Running Atlas is Ready</h3>
-              <p style="font-size:0.82rem; color:#64748b; line-height:1.5;">
-                Start building your personal running geography. Pick from iconic world races, drop a watch GPX track, or set your home base.
-              </p>
-              <div class="starter-action-row">
-                <button class="starter-btn" onclick="switchPageMode('catalog')">
-                  <span>🌍 Browse Global Race Catalog</span>
-                  <span style="color:#007aff;">➔</span>
-                </button>
-                <button class="starter-btn" onclick="openAddModal()">
-                  <span>📁 Upload Your First .GPX Track</span>
-                  <span style="color:#007aff;">➔</span>
-                </button>
-                <button class="starter-btn" onclick="handleHomeBaseClick()">
-                  <span>🏠 Set Your Home Base City</span>
-                  <span style="color:#007aff;">➔</span>
-                </button>
-              </div>
-            </div>
-          `;
-        } else {
-          content.innerHTML = `
-            <div style="text-align:center; padding: 40px 10px; color:#64748b;">
-              <div style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:6px;">No activities match these filters</div>
-              <div style="font-size:0.82rem; margin-bottom:16px;">Try adjusting your status or surface filters above.</div>
-              ${!isReadOnlyShared ? `<button class="open-detail-btn" onclick="openAddModal('${currentMode === 'memorable' ? 'memorable' : 'race'}')">➕ Add Activity</button>` : ''}
-            </div>
-          `;
-        }
-        return;
-      }
+      currentFilteredList = activeList;
 
       activeList.forEach(item => {
         const colors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
         const pinColor = item.isMemorable ? '#7e22ce' : (colors[item.status] || '#007aff');
 
-        // Dynamic pin size based on Race Importance (1-10)
         const imp = parseInt(item.importance) || 5;
         const pinSize = imp >= 8 ? 24 : (imp <= 3 ? 13 : 18);
         const pinGlow = imp >= 8 ? `box-shadow: 0 0 0 3px ${pinColor}44, 0 4px 10px rgba(15,23,42,0.5);` : '';
@@ -2196,33 +2587,9 @@
         const marker = L.marker(item.coords, { icon: icon }).addTo(markerLayerGroup);
         marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} &bull; ${item.surfaceLabel || ''}`);
         marker.on('click', () => showDetail(item));
-
-        const card = document.createElement('div');
-        card.className = 'race-card-rich';
-        const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80';
-
-        card.innerHTML = `
-          <div class="card-thumb-left" style="background-image: url('${cardImg}');"></div>
-          <div class="card-body-wrap">
-            <div class="card-meta-top">
-              <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
-                ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
-              </span>
-              <span class="card-date-lbl">${item.date || ''}</span>
-            </div>
-            <div class="card-title-text" title="${item.name}">${item.name}</div>
-            <div class="card-stats-pill-row">
-              <span class="card-stat-pill">${item.distance || '-'}</span>
-              <span class="card-stat-pill">${item.elevation || '-'}</span>
-              <span class="card-stat-pill">${item.surfaceLabel || 'Road'}</span>
-              ${item.status === 'done' && item.resultTime ? `<span class="card-stat-pill" style="color:#16a34a; font-weight:800; background:#dcfce7; border-color:#bbf7d0;">⏱️ ${item.resultTime}</span>` : ''}
-              ${item.status === 'planned' && item.ambitionTime ? `<span class="card-stat-pill" style="color:#b45309; font-weight:800; background:#fef3c7; border-color:#fde68a;">🎯 ${item.ambitionTime}</span>` : ''}
-            </div>
-          </div>
-        `;
-        card.onclick = () => showDetail(item);
-        content.appendChild(card);
       });
+
+      renderSidebarList();
     }
 
     function showFloatingHud(item) {
@@ -2490,10 +2857,17 @@
             </div>
           ` : ''}
 
+          ${item.qualification ? `
+            <div class="report-sheet-card" style="background:#f8fafc; border-color:#cbd5e1;">
+              <h4>🎟️ Qualification &amp; Entry</h4>
+              <p style="font-weight:700; color:#0f172a;">${item.qualification}</p>
+            </div>
+          ` : ''}
+
           ${item.notes ? `
             <div class="report-sheet-card">
-              <h4>${item.isMemorable ? 'Trail & Experience Notes' : (item.status === 'done' ? 'Race Report & Field Notes' : 'Preparation & Route Notes')}</h4>
-              <p>${item.notes}</p>
+              <h4>${item.isMemorable ? 'Trail & Experience Notes' : (item.status === 'done' ? 'Race Report & Course Notes' : (item.status === 'bucket' ? 'Course & Terrain Notes' : 'Preparation & Course Notes'))}</h4>
+              <p style="white-space:pre-line;">${item.notes}</p>
             </div>
           ` : ''}
 
@@ -3075,6 +3449,7 @@
       document.getElementById('form-elevation').value = '';
       document.getElementById('form-why').value = '';
       document.getElementById('form-notes').value = '';
+      document.getElementById('form-qualification').value = '';
       document.getElementById('form-finish-simple').value = '';
       document.getElementById('form-placement').value = '';
       document.getElementById('form-target-ambition').value = '';
@@ -3107,6 +3482,7 @@
         document.getElementById('fields-for-planned').style.display = 'none';
         document.getElementById('fields-for-planning-common').style.display = 'none';
         document.getElementById('wrap-field-importance').style.display = 'flex';
+        document.getElementById('wrap-field-qualification').style.display = 'none';
         document.getElementById('wrap-field-notes').style.display = 'block';
         document.getElementById('label-dynamic-why').textContent = 'The Story — Why was this run unforgettable?';
         document.getElementById('form-why').placeholder = 'e.g. Sunrise over the ridge, vacation discovery...';
@@ -3231,7 +3607,8 @@
         elevation: document.getElementById('form-elevation').value,
         importance: status === 'planned' ? 5 : (parseInt(document.getElementById('form-importance').value) || 5),
         why: document.getElementById('form-why').value,
-        notes: status === 'bucket' ? '' : document.getElementById('form-notes').value,
+        notes: document.getElementById('form-notes').value.trim() || null,
+        qualification: (!isModalMemorableMode && (status === 'bucket' || status === 'planned')) ? (document.getElementById('form-qualification').value.trim() || null) : null,
         coords: finalCoords,
         is_memorable: isModalMemorableMode
       };
@@ -3363,6 +3740,8 @@
 
     function switchPageMode(mode) {
       currentMode = mode;
+      sidebarContinent = null;
+      sidebarCountry = null;
       document.querySelectorAll('#left-rail .rail-btn').forEach(b => b.classList.remove('active'));
       const activeBtn = document.getElementById(`rail-${mode}`);
       if (activeBtn) activeBtn.classList.add('active');
