@@ -411,8 +411,11 @@
     /* HORIZONTAL CARDS */
     .race-card-rich {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
-      overflow: hidden; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;
+      height: 96px; overflow: hidden; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;
       box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04); display: flex; flex-direction: row; align-items: stretch;
+    }
+    .race-card-rich.no-photo {
+      border-left: 5px solid var(--card-accent, #007aff);
     }
 
     /* GEO HIERARCHY CARDS (CONTINENTS & COUNTRIES) */
@@ -458,19 +461,22 @@
     .race-card-rich:hover { border-color: #007aff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.15); }
     
     .card-thumb-left {
-      width: 96px; min-height: 96px; flex-shrink: 0; background-color: #0f172a;
-      background-size: cover; background-position: center; position: relative;
+      width: 96px; height: 96px; aspect-ratio: 1 / 1; flex-shrink: 0;
+      overflow: hidden; background: #e2e8f0; position: relative;
+    }
+    .card-thumb-img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
     }
 
     .card-body-wrap {
-      padding: 11px 14px; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px;
+      padding: 10px 14px; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 5px;
     }
     .card-meta-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .card-date-lbl { font-size: 0.72rem; font-weight: 700; color: #64748b; white-space: nowrap; }
-    .card-title-text { font-size: 0.98rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-title-text { font-size: 0.96rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    .card-stats-pill-row { display: flex; gap: 6px; align-items: center; font-size: 0.74rem; font-weight: 700; color: #475569; flex-wrap: wrap; }
-    .card-stat-pill { background: #f8fafc; padding: 2px 7px; border-radius: 6px; border: 1px solid #e2e8f0; }
+    .card-stats-pill-row { display: flex; gap: 5px; align-items: center; font-size: 0.72rem; font-weight: 700; color: #475569; flex-wrap: nowrap; overflow: hidden; }
+    .card-stat-pill { background: #f8fafc; padding: 2px 7px; border-radius: 6px; border: 1px solid #e2e8f0; white-space: nowrap; flex-shrink: 0; }
 
     .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
     .badge-done { background: #dcfce7; color: #166534; }
@@ -507,6 +513,15 @@
       height: 130px; border-radius: 12px; overflow: hidden; background-size: cover; background-position: center;
       position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+    .detail-hero-img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;
+    }
+    .detail-hero-nophoto {
+      border-radius: 12px; background: #ffffff; border: 1px solid #e2e8f0;
+      border-left: 5px solid var(--hero-accent, #007aff);
+      padding: 16px; display: flex; flex-direction: column; gap: 4px;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.04);
     }
     .detail-hero-overlay {
       position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,23,42,0.1) 0%, rgba(15,23,42,0.82) 100%);
@@ -1249,6 +1264,7 @@
 
     let sidebarContinent = null;
     let sidebarCountry = null;
+    let drillViewStack = { continents: null, countries: null };
     let currentFilteredList = [];
     let programmaticMoveLock = false;
     let programmaticUnlockTimer = null;
@@ -1471,6 +1487,7 @@
     function fitAllMarkersOnMap() {
       sidebarContinent = null;
       sidebarCountry = null;
+      drillViewStack = { continents: null, countries: null };
       runProgrammaticMapMove(() => {
         if (markerLayerGroup.getLayers().length > 0) {
           map.flyToBounds(markerLayerGroup.getBounds(), { padding: [55, 55], maxZoom: 11, animate: true, duration: 0.9 });
@@ -2286,18 +2303,33 @@
       });
     }
 
+    function getItemAccentColor(item) {
+      const colors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
+      return item.isMemorable ? '#7e22ce' : (colors[item.status] || '#007aff');
+    }
+
     function buildRaceCardElement(item) {
       const card = document.createElement('div');
-      card.className = 'race-card-rich';
-      const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=400&q=80';
+      const accent = getItemAccentColor(item);
+      const hasPhoto = Boolean(item.image_url && item.image_url.trim());
+      card.className = 'race-card-rich' + (hasPhoto ? '' : ' no-photo');
+      card.style.setProperty('--card-accent', accent);
+
+      const geo = detectGeoFromCoords(item.coords, item.name);
+      const thumbHtml = hasPhoto
+        ? `<div class="card-thumb-left"><img class="card-thumb-img" src="${item.image_url}" alt="" loading="lazy" onerror="const c = this.closest('.race-card-rich'); this.parentElement.remove(); if (c) c.classList.add('no-photo');"></div>`
+        : '';
 
       card.innerHTML = `
-        <div class="card-thumb-left" style="background-image: url('${cardImg}');"></div>
+        ${thumbHtml}
         <div class="card-body-wrap">
           <div class="card-meta-top">
-            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
-              ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
-            </span>
+            <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+              <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
+                ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
+              </span>
+              ${!hasPhoto ? `<span style="font-size:0.72rem; font-weight:700; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${geo.html}</span>` : ''}
+            </div>
             <span class="card-date-lbl">${item.date || ''}</span>
           </div>
           <div class="card-title-text" title="${item.name}">${item.name}</div>
@@ -2330,46 +2362,84 @@
       return pills.join('');
     }
 
-    function flyToItemsBounds(items) {
+    function flyToItemsBounds(items, { allowZoomOut = false } = {}) {
       const validCoords = items.filter(i => Array.isArray(i.coords) && i.coords.length === 2).map(i => i.coords);
-      if (validCoords.length === 0) return;
-      runProgrammaticMapMove(() => {
-        if (validCoords.length === 1) {
-          map.flyTo(validCoords[0], 8, { animate: true, duration: 0.85 });
-        } else {
-          map.flyToBounds(L.latLngBounds(validCoords), { padding: [50, 50], maxZoom: 9, animate: true, duration: 0.85 });
+      if (validCoords.length === 0) return false;
+
+      const currentZoom = map.getZoom();
+      if (validCoords.length === 1) {
+        const targetZoom = Math.max(currentZoom, 8);
+        if (!allowZoomOut && targetZoom <= currentZoom && map.getBounds().contains(validCoords[0])) {
+          return false;
         }
+        runProgrammaticMapMove(() => {
+          map.flyTo(validCoords[0], targetZoom, { animate: true, duration: 0.8 });
+        });
+        return true;
+      }
+
+      const bounds = L.latLngBounds(validCoords);
+      const fitZoom = Math.min(9, map.getBoundsZoom(bounds, false, L.point(55, 55)));
+
+      // Never zoom OUT when drilling down into a continent/country inside an already zoomed-in viewport
+      if (!allowZoomOut && fitZoom <= currentZoom) {
+        return false;
+      }
+
+      runProgrammaticMapMove(() => {
+        map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 9, animate: true, duration: 0.85 });
       });
+      return true;
     }
 
     function drillIntoContinent(continentName, items) {
+      const prevView = { center: map.getCenter(), zoom: map.getZoom() };
       sidebarContinent = continentName;
       sidebarCountry = null;
-      flyToItemsBounds(items);
-      renderSidebarList(true);
+      const didMove = flyToItemsBounds(items, { allowZoomOut: false });
+      drillViewStack.continents = didMove ? prevView : null;
+      drillViewStack.countries = null;
+      renderSidebarList();
     }
 
     function drillIntoCountry(countryName, continentName, items) {
+      const prevView = { center: map.getCenter(), zoom: map.getZoom() };
       if (continentName) sidebarContinent = continentName;
       sidebarCountry = countryName;
-      flyToItemsBounds(items);
-      renderSidebarList(true);
+      const didMove = flyToItemsBounds(items, { allowZoomOut: false });
+      drillViewStack.countries = didMove ? prevView : null;
+      renderSidebarList();
     }
 
     function navigateBackSidebar(targetLevel) {
       if (targetLevel === 'continents') {
         sidebarContinent = null;
         sidebarCountry = null;
-        fitAllMarkersOnMap();
+        const savedView = drillViewStack.continents;
+        drillViewStack.continents = null;
+        drillViewStack.countries = null;
+        if (savedView) {
+          runProgrammaticMapMove(() => {
+            map.flyTo(savedView.center, savedView.zoom, { animate: true, duration: 0.8 });
+          }, () => renderSidebarList());
+        } else {
+          renderSidebarList();
+        }
       } else if (targetLevel === 'countries') {
         sidebarCountry = null;
-        const contItems = currentFilteredList.filter(i => detectGeoFromCoords(i.coords, i.name).continent === sidebarContinent);
-        flyToItemsBounds(contItems);
-        renderSidebarList(true);
+        const savedView = drillViewStack.countries;
+        drillViewStack.countries = null;
+        if (savedView) {
+          runProgrammaticMapMove(() => {
+            map.flyTo(savedView.center, savedView.zoom, { animate: true, duration: 0.8 });
+          }, () => renderSidebarList());
+        } else {
+          renderSidebarList();
+        }
       }
     }
 
-    function renderSidebarList(skipViewportFilter = false) {
+    function renderSidebarList() {
       if (currentDetailItem || !['races', 'memorable'].includes(currentMode)) return;
       const content = document.getElementById('content');
       content.innerHTML = '';
@@ -2410,9 +2480,9 @@
         return;
       }
 
-      // Filter by current map viewport unless drilling directly via sidebar click
+      // ALWAYS filter by current map viewport so zoomed-in drill-down only shows races inside the visible area
       let visibleList = currentFilteredList;
-      if (!skipViewportFilter && map && map.getBounds) {
+      if (map && map.getBounds) {
         const bounds = map.getBounds();
         visibleList = currentFilteredList.filter(item => {
           if (!Array.isArray(item.coords) || item.coords.length < 2) return false;
@@ -2436,13 +2506,12 @@
       const labelSuffix = visibleList.length < totalCount ? ` in map view (${totalCount} total)` : ' activities';
       document.getElementById('stats-label').textContent = `Showing ${visibleList.length}${labelSuffix}`;
 
-      // Pre-compute geo metadata for visibleList
+      // Pre-compute geo metadata for viewport-visible items only
       const enriched = visibleList.map(item => ({ item, geo: detectGeoFromCoords(item.coords, item.name) }));
 
-      // LEVEL 3: Specific Country selected -> ALWAYS render scrollable race cards
+      // LEVEL 3: Specific Country selected -> ALWAYS render scrollable race cards from current viewport
       if (sidebarCountry) {
-        const countryPool = (skipViewportFilter ? currentFilteredList.map(item => ({ item, geo: detectGeoFromCoords(item.coords, item.name) })) : enriched)
-          .filter(x => x.geo.country === sidebarCountry);
+        const countryPool = enriched.filter(x => x.geo.country === sidebarCountry);
 
         if (countryPool.length > 0) {
           const sampleGeo = countryPool[0].geo;
@@ -2460,10 +2529,9 @@
         }
       }
 
-      // LEVEL 2: Specific Continent selected
+      // LEVEL 2: Specific Continent selected (viewport-scoped)
       if (sidebarContinent) {
-        const contPool = (skipViewportFilter ? currentFilteredList.map(item => ({ item, geo: detectGeoFromCoords(item.coords, item.name) })) : enriched)
-          .filter(x => x.geo.continent === sidebarContinent);
+        const contPool = enriched.filter(x => x.geo.continent === sidebarContinent);
 
         if (contPool.length > 0) {
           const bar = document.createElement('div');
@@ -3005,8 +3073,41 @@
         });
       }
 
-      const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80';
+      const hasHeroPhoto = Boolean(item.image_url && item.image_url.trim());
+      const geo = detectGeoFromCoords(item.coords, item.name);
       const homeDist = computeDistanceFromHome(item.coords);
+
+      const noPhotoHeroHtml = `
+        <div class="detail-hero-nophoto" style="--hero-accent:${themeColor};">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px;">
+            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
+              ${item.isMemorable ? 'Memorable Run' : (item.statusLabel || item.status)}
+            </span>
+            <span style="font-size:0.76rem; font-weight:700; color:#64748b;">${geo.html}</span>
+          </div>
+          <h2 style="font-size:1.3rem; font-weight:800; line-height:1.2; color:#0f172a;">${item.name}</h2>
+          <div style="font-size:0.78rem; font-weight:600; color:#64748b; margin-top:2px;">
+            ${item.date || 'Undated'} &bull; ${item.surfaceLabel || 'Road'}
+          </div>
+        </div>
+      `;
+
+      window._currentDetailNoPhotoHtml = noPhotoHeroHtml;
+      const heroHtml = hasHeroPhoto ? `
+        <div class="detail-hero-banner" id="detail-hero-box">
+          <img class="detail-hero-img" src="${item.image_url}" alt="" onerror="const box = document.getElementById('detail-hero-box'); if (box && window._currentDetailNoPhotoHtml) box.outerHTML = window._currentDetailNoPhotoHtml;">
+          <div class="detail-hero-overlay"></div>
+          <div class="detail-hero-content">
+            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}" style="margin-bottom:6px;">
+              ${item.isMemorable ? 'Memorable Run' : (item.statusLabel || item.status)}
+            </span>
+            <h2 style="font-size:1.35rem; font-weight:800; line-height:1.2; text-shadow:0 2px 8px rgba(0,0,0,0.8);">${item.name}</h2>
+            <div style="font-size:0.78rem; opacity:0.9; margin-top:2px;">
+              ${item.date || 'Undated'} &bull; ${item.surfaceLabel || 'Road'}
+            </div>
+          </div>
+        </div>
+      ` : noPhotoHeroHtml;
 
       content.innerHTML = `
         <div class="detail-view-wrap">
@@ -3020,18 +3121,7 @@
             ` : ''}
           </div>
 
-          <div class="detail-hero-banner" style="background-image: url('${cardImg}');">
-            <div class="detail-hero-overlay"></div>
-            <div class="detail-hero-content">
-              <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}" style="margin-bottom:6px;">
-                ${item.isMemorable ? 'Memorable Run' : (item.statusLabel || item.status)}
-              </span>
-              <h2 style="font-size:1.35rem; font-weight:800; line-height:1.2; text-shadow:0 2px 8px rgba(0,0,0,0.8);">${item.name}</h2>
-              <div style="font-size:0.78rem; opacity:0.9; margin-top:2px;">
-                ${item.date || 'Undated'} &bull; ${item.surfaceLabel || 'Road'}
-              </div>
-            </div>
-          </div>
+          ${heroHtml}
 
           ${(!zavodniTrasy[item.id] && !isReadOnlyShared) ? `
             <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
@@ -3934,6 +4024,7 @@
       currentMode = mode;
       sidebarContinent = null;
       sidebarCountry = null;
+      drillViewStack = { continents: null, countries: null };
       currentDetailItem = null;
       clearElevationHoverMarker();
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
