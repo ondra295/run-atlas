@@ -279,6 +279,24 @@
       pointer-events: none;
     }
     .hud-card-cluster { display: flex; gap: 10px; width: 100%; pointer-events: auto; }
+    .hud-elevation-box {
+      display: none; pointer-events: auto; width: 100%;
+      background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px;
+      padding: 10px 16px 8px; color: #f8fafc;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      flex-direction: column; gap: 6px;
+    }
+    .hud-elev-header {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      font-size: 0.72rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .hud-elev-readout {
+      color: #38bdf8; font-weight: 800; font-size: 0.78rem; text-transform: none; letter-spacing: 0;
+    }
+    .hud-elev-svg-wrap {
+      position: relative; width: 100%; height: 58px; cursor: crosshair; user-select: none;
+    }
     .hud-box {
       background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px; padding: 14px 18px;
@@ -849,6 +867,7 @@
 
         <!-- FLOATING TELEMETRY HUD -->
         <div id="floating-hud-panel">
+          <div id="hud-elevation-box" class="hud-elevation-box"></div>
           <div class="hud-card-cluster" id="hud-cluster-content"></div>
         </div>
 
@@ -1231,8 +1250,10 @@
     let sidebarContinent = null;
     let sidebarCountry = null;
     let currentFilteredList = [];
-    let isProgrammaticMove = false;
+    let programmaticMoveLock = false;
+    let programmaticUnlockTimer = null;
     let viewportDebounceTimer = null;
+    let elevHoverMarker = null;
     const MAX_DIRECT_CARDS = 8;
 
     let timelineYearFilter = 'all';
@@ -1431,30 +1452,45 @@
 
     let homeMarker = null;
 
+    function runProgrammaticMapMove(moveFn, onComplete) {
+      programmaticMoveLock = true;
+      if (programmaticUnlockTimer) clearTimeout(programmaticUnlockTimer);
+      let finished = false;
+      const done = () => {
+        if (finished) return;
+        finished = true;
+        programmaticMoveLock = false;
+        if (programmaticUnlockTimer) clearTimeout(programmaticUnlockTimer);
+        if (onComplete) onComplete();
+      };
+      map.once('moveend', done);
+      moveFn();
+      programmaticUnlockTimer = setTimeout(done, 1500);
+    }
+
     function fitAllMarkersOnMap() {
       sidebarContinent = null;
       sidebarCountry = null;
-      isProgrammaticMove = true;
-      if (markerLayerGroup.getLayers().length > 0) {
-        map.flyToBounds(markerLayerGroup.getBounds(), { padding: [55, 55], maxZoom: 11, animate: true, duration: 1.0 });
-      } else {
-        map.flyTo(userHomeCoords || [25.0, 10.0], userHomeCoords ? 5 : 2, { animate: true, duration: 1.0 });
-      }
-      setTimeout(() => { isProgrammaticMove = false; renderSidebarList(); }, 1050);
+      runProgrammaticMapMove(() => {
+        if (markerLayerGroup.getLayers().length > 0) {
+          map.flyToBounds(markerLayerGroup.getBounds(), { padding: [55, 55], maxZoom: 11, animate: true, duration: 0.9 });
+        } else {
+          map.flyTo(userHomeCoords || [25.0, 10.0], userHomeCoords ? 5 : 2, { animate: true, duration: 0.9 });
+        }
+      }, () => renderSidebarList());
     }
 
     map.on('moveend', function() {
+      if (programmaticMoveLock) return;
       if (currentDetailItem || !['races', 'memorable'].includes(currentMode)) return;
       if (viewportDebounceTimer) clearTimeout(viewportDebounceTimer);
       viewportDebounceTimer = setTimeout(() => {
-        if (!isProgrammaticMove) {
-          // When user manually zooms out to world/wide view, reset drill-down so hierarchy adapts naturally
-          if (map.getZoom() <= 3 && (sidebarContinent || sidebarCountry)) {
-            sidebarContinent = null;
-            sidebarCountry = null;
-          }
-          renderSidebarList();
+        if (programmaticMoveLock) return;
+        if (map.getZoom() <= 2 && (sidebarContinent || sidebarCountry)) {
+          sidebarContinent = null;
+          sidebarCountry = null;
         }
+        renderSidebarList();
       }, 120);
     });
 
@@ -2297,13 +2333,13 @@
     function flyToItemsBounds(items) {
       const validCoords = items.filter(i => Array.isArray(i.coords) && i.coords.length === 2).map(i => i.coords);
       if (validCoords.length === 0) return;
-      isProgrammaticMove = true;
-      if (validCoords.length === 1) {
-        map.flyTo(validCoords[0], 8, { animate: true, duration: 0.9 });
-      } else {
-        map.flyToBounds(L.latLngBounds(validCoords), { padding: [50, 50], maxZoom: 9, animate: true, duration: 0.9 });
-      }
-      setTimeout(() => { isProgrammaticMove = false; }, 980);
+      runProgrammaticMapMove(() => {
+        if (validCoords.length === 1) {
+          map.flyTo(validCoords[0], 8, { animate: true, duration: 0.85 });
+        } else {
+          map.flyToBounds(L.latLngBounds(validCoords), { padding: [50, 50], maxZoom: 9, animate: true, duration: 0.85 });
+        }
+      });
     }
 
     function drillIntoContinent(continentName, items) {
@@ -2434,7 +2470,7 @@
           bar.className = 'geo-breadcrumb-bar';
           bar.innerHTML = `
             <button class="back-btn" style="padding:4px 10px; font-size:0.75rem;" onclick="navigateBackSidebar('continents')">← Continents</button>
-            <div class="geo-breadcrumb-title">🌍 ${sidebarContinent} <span class="geo-group-total">${contPool.length}</span></div>
+            <div class="geo-breadcrumb-title">${sidebarContinent} <span class="geo-group-total">${contPool.length}</span></div>
           `;
           content.appendChild(bar);
 
@@ -2523,17 +2559,13 @@
       }
 
       // Multiple continents visible -> render Continent boxes
-      const contIcons = {
-        'Europe': '🇪🇺', 'North America': '🌎', 'South America': '🌎',
-        'Asia': '🌏', 'Africa': '🌍', 'Oceania': '🌏'
-      };
       contNames.forEach(cont => {
         const contItems = byContinent[cont].map(x => x.item);
         const box = document.createElement('div');
         box.className = 'geo-group-card';
         box.innerHTML = `
           <div class="geo-group-top">
-            <div class="geo-group-name"><span>${contIcons[cont] || '🌍'}</span><span>${cont}</span></div>
+            <div class="geo-group-name"><span>${cont}</span></div>
             <span class="geo-group-total">${contItems.length} ${contItems.length === 1 ? 'race' : 'races'} ➔</span>
           </div>
           <div class="geo-status-pills">${buildStatusPillsHtml(contItems)}</div>
@@ -2544,6 +2576,7 @@
     }
 
     function renderAll() {
+      if (!map.hasLayer(markerLayerGroup)) markerLayerGroup.addTo(map);
       markerLayerGroup.clearLayers();
       const content = document.getElementById('content');
       content.innerHTML = '';
@@ -2710,14 +2743,25 @@
       hud.style.display = 'flex';
     }
 
+    function clearElevationHoverMarker() {
+      if (elevHoverMarker) {
+        map.removeLayer(elevHoverMarker);
+        elevHoverMarker = null;
+      }
+    }
+
     function exitDetailView() {
       currentDetailItem = null;
+      clearElevationHoverMarker();
+      document.getElementById('hud-elevation-box').style.display = 'none';
+      document.getElementById('hud-elevation-box').innerHTML = '';
       document.getElementById('floating-hud-panel').style.display = 'none';
       document.querySelector('.map-bottom-controls').style.display = 'flex';
       if (currentRouteLayer) {
         map.removeLayer(currentRouteLayer);
         currentRouteLayer = null;
       }
+      if (!map.hasLayer(markerLayerGroup)) markerLayerGroup.addTo(map);
       renderAll();
 
       setTimeout(() => {
@@ -2731,41 +2775,178 @@
       }, 40);
     }
 
-    function buildElevationSparklineHtml(elevPoints, totalGainStr) {
-      if (!elevPoints || elevPoints.length < 3) return '';
-      const minE = Math.min(...elevPoints);
-      const maxE = Math.max(...elevPoints);
+    function sampleRouteWithDistances(coords, maxSamples = 60) {
+      if (!coords || coords.length < 2) return null;
+      const rad = Math.PI / 180;
+      const cumDist = [0];
+      for (let i = 1; i < coords.length; i++) {
+        const p1 = coords[i - 1], p2 = coords[i];
+        const dLat = (p2[0] - p1[0]) * rad;
+        const dLon = (p2[1] - p1[1]) * rad;
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(p1[0] * rad) * Math.cos(p2[0] * rad) * Math.sin(dLon / 2) ** 2;
+        cumDist.push(cumDist[i - 1] + 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+      }
+      const n = Math.min(maxSamples, coords.length);
+      const sampledCoords = [];
+      const sampledDistances = [];
+      for (let i = 0; i < n; i++) {
+        const idx = Math.min(coords.length - 1, Math.round((i * (coords.length - 1)) / (n - 1)));
+        sampledCoords.push(coords[idx]);
+        sampledDistances.push(cumDist[idx]);
+      }
+      return { coords: sampledCoords, distances: sampledDistances };
+    }
+
+    function renderFloatingElevationChart(item, profileData) {
+      const box = document.getElementById('hud-elevation-box');
+      if (!currentDetailItem || currentDetailItem.id !== item.id) return;
+      if (!profileData || !profileData.elevations || profileData.elevations.length < 3) {
+        box.style.display = 'none';
+        return;
+      }
+
+      const elevs = profileData.elevations;
+      const dists = profileData.distances || elevs.map((_, i) => i);
+      const coords = profileData.coords || [];
+      const minE = Math.min(...elevs);
+      const maxE = Math.max(...elevs);
       const span = (maxE - minE) || 1;
-      const w = 360, h = 64;
+      const totalKm = dists[dists.length - 1] || 0;
 
-      const pts = elevPoints.map((e, idx) => {
-        const x = (idx / (elevPoints.length - 1)) * w;
-        const y = h - 8 - ((e - minE) / span) * (h - 16);
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      }).join(' ');
+      const w = 800, h = 58, padTop = 6, padBot = 6;
+      const xy = elevs.map((e, idx) => {
+        const x = (idx / (elevs.length - 1)) * w;
+        const y = h - padBot - ((e - minE) / span) * (h - padTop - padBot);
+        return [x, y];
+      });
 
-      const fillPts = `0,${h} ${pts} ${w},${h}`;
+      const linePts = xy.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+      const fillPts = `0,${h} ${linePts} ${w},${h}`;
 
-      return `
-        <div class="elevation-spark-card">
-          <div class="elevation-spark-header">
-            <span>⛰️ Elevation Profile (${totalGainStr || ''})</span>
-            <span>${Math.round(minE)}m – ${Math.round(maxE)}m</span>
-          </div>
+      const gainLabel = item.elevation ? ` • ${item.elevation}` : '';
+      const defaultReadout = `Min ${Math.round(minE)} m / Max ${Math.round(maxE)} m${totalKm > 0 ? ' • ' + totalKm.toFixed(1) + ' km' : ''}`;
+
+      box.innerHTML = `
+        <div class="hud-elev-header">
+          <span>⛰️ Elevation Profile${gainLabel}</span>
+          <span id="hud-elev-readout" class="hud-elev-readout">${defaultReadout}</span>
+        </div>
+        <div class="hud-elev-svg-wrap" id="hud-elev-svg-wrap">
           <svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
-            <polygon points="${fillPts}" fill="rgba(56, 189, 248, 0.22)" />
-            <polyline points="${pts}" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            <defs>
+              <linearGradient id="hudElevGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.42"/>
+                <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+            <polygon points="${fillPts}" fill="url(#hudElevGrad)" />
+            <polyline points="${linePts}" fill="none" stroke="#38bdf8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+            <line id="hud-elev-cursor-line" x1="0" y1="0" x2="0" y2="${h}" stroke="#f8fafc" stroke-width="1.5" stroke-dasharray="3,3" style="display:none; opacity:0.75;" />
+            <circle id="hud-elev-cursor-dot" cx="0" cy="0" r="4.5" fill="#38bdf8" stroke="#ffffff" stroke-width="2" style="display:none;" />
           </svg>
         </div>
       `;
+      box.style.display = 'flex';
+
+      const wrap = document.getElementById('hud-elev-svg-wrap');
+      const readoutEl = document.getElementById('hud-elev-readout');
+      const cursorLine = document.getElementById('hud-elev-cursor-line');
+      const cursorDot = document.getElementById('hud-elev-cursor-dot');
+
+      wrap.addEventListener('mousemove', (e) => {
+        const rect = wrap.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const idx = Math.min(elevs.length - 1, Math.round(ratio * (elevs.length - 1)));
+        const [px, py] = xy[idx];
+
+        cursorLine.setAttribute('x1', px.toFixed(1));
+        cursorLine.setAttribute('x2', px.toFixed(1));
+        cursorLine.style.display = 'block';
+        cursorDot.setAttribute('cx', px.toFixed(1));
+        cursorDot.setAttribute('cy', py.toFixed(1));
+        cursorDot.style.display = 'block';
+
+        const kmTxt = totalKm > 0 ? `${dists[idx].toFixed(1)} km • ` : '';
+        readoutEl.textContent = `${kmTxt}${Math.round(elevs[idx])} m`;
+
+        if (coords[idx]) {
+          if (!elevHoverMarker) {
+            elevHoverMarker = L.circleMarker(coords[idx], {
+              radius: 7, fillColor: '#38bdf8', color: '#ffffff', weight: 2.5, fillOpacity: 1
+            }).addTo(map);
+          } else {
+            elevHoverMarker.setLatLng(coords[idx]);
+          }
+        }
+      });
+
+      wrap.addEventListener('mouseleave', () => {
+        cursorLine.style.display = 'none';
+        cursorDot.style.display = 'none';
+        readoutEl.textContent = defaultReadout;
+        clearElevationHoverMarker();
+      });
+    }
+
+    async function loadAndRenderFloatingElevation(item) {
+      const box = document.getElementById('hud-elevation-box');
+      const routeCoords = zavodniTrasy[item.id];
+      if (!routeCoords || routeCoords.length < 2) {
+        box.style.display = 'none';
+        box.innerHTML = '';
+        return;
+      }
+
+      // Already cached?
+      const cached = elevationProfiles[item.id];
+      if (cached) {
+        if (Array.isArray(cached)) {
+          const sampled = sampleRouteWithDistances(routeCoords, cached.length);
+          const normalized = { elevations: cached, distances: sampled?.distances, coords: sampled?.coords };
+          elevationProfiles[item.id] = normalized;
+          renderFloatingElevationChart(item, normalized);
+        } else {
+          renderFloatingElevationChart(item, cached);
+        }
+        return;
+      }
+
+      box.innerHTML = `<div class="hud-elev-header"><span>⛰️ Elevation Profile</span><span style="color:#64748b;">Loading terrain data...</span></div>`;
+      box.style.display = 'flex';
+
+      const sampled = sampleRouteWithDistances(routeCoords, 60);
+      if (!sampled) { box.style.display = 'none'; return; }
+
+      try {
+        const lats = sampled.coords.map(c => c[0].toFixed(4)).join(',');
+        const lngs = sampled.coords.map(c => c[1].toFixed(4)).join(',');
+        const res = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${lats}&longitude=${lngs}`);
+        if (!res.ok) throw new Error('Elevation API unavailable');
+        const json = await res.json();
+        if (!json || !Array.isArray(json.elevation) || json.elevation.length < 3) throw new Error('Invalid elevation data');
+
+        const profileObj = {
+          elevations: json.elevation,
+          distances: sampled.distances,
+          coords: sampled.coords
+        };
+        elevationProfiles[item.id] = profileObj;
+        renderFloatingElevationChart(item, profileObj);
+      } catch (err) {
+        if (currentDetailItem && currentDetailItem.id === item.id) {
+          box.style.display = 'none';
+        }
+      }
     }
 
     function showDetail(item) {
       currentDetailItem = item;
+      clearElevationHoverMarker();
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
       const content = document.getElementById('content');
       
       showFloatingHud(item);
+      loadAndRenderFloatingElevation(item);
       // Hide bottom-left map buttons so they don't overlap HUD boxes
       document.querySelector('.map-bottom-controls').style.display = 'none';
 
@@ -2773,14 +2954,26 @@
       const themeColor = item.isMemorable ? '#7e22ce' : (statusColors[item.status] || '#007aff');
 
       if (zavodniTrasy[item.id]) {
+        // Hide cluster/race pins so the dot doesn't obstruct the GPX route
+        if (map.hasLayer(markerLayerGroup)) map.removeLayer(markerLayerGroup);
+
         const coords = zavodniTrasy[item.id];
         currentRouteLayer = L.featureGroup([
           L.polyline(coords, { color: '#007aff', weight: 4.5 }),
           L.circleMarker(coords[0], { radius: 6, fillColor: '#16a34a', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Start"),
           L.circleMarker(coords[coords.length - 1], { radius: 6, fillColor: '#dc2626', color: '#fff', weight: 2, fillOpacity: 1 }).bindTooltip("Finish")
         ]).addTo(map);
-        map.fitBounds(currentRouteLayer.getBounds(), { padding: [60, 110], maxZoom: 13, animate: true });
+
+        runProgrammaticMapMove(() => {
+          map.fitBounds(currentRouteLayer.getBounds(), {
+            paddingTopLeft: [45, 45],
+            paddingBottomRight: [45, 225],
+            maxZoom: 13,
+            animate: true
+          });
+        });
       } else if (item.coords) {
+        if (!map.hasLayer(markerLayerGroup)) markerLayerGroup.addTo(map);
         const layers = [];
         layers.push(L.circle(item.coords, {
           radius: 3200,
@@ -2807,12 +3000,13 @@
           }));
         }
         currentRouteLayer = L.featureGroup(layers).addTo(map);
-        map.flyTo(item.coords, 11, { animate: true, duration: 1.1 });
+        runProgrammaticMapMove(() => {
+          map.flyTo(item.coords, 11, { animate: true, duration: 1.0 });
+        });
       }
 
       const cardImg = item.image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80';
       const homeDist = computeDistanceFromHome(item.coords);
-      const sparkHtml = buildElevationSparklineHtml(elevationProfiles[item.id], item.elevation);
 
       content.innerHTML = `
         <div class="detail-view-wrap">
@@ -2838,8 +3032,6 @@
               </div>
             </div>
           </div>
-
-          ${sparkHtml}
 
           ${(!zavodniTrasy[item.id] && !isReadOnlyShared) ? `
             <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
@@ -3742,6 +3934,12 @@
       currentMode = mode;
       sidebarContinent = null;
       sidebarCountry = null;
+      currentDetailItem = null;
+      clearElevationHoverMarker();
+      if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
+      const elevBoxEl = document.getElementById('hud-elevation-box');
+      if (elevBoxEl) { elevBoxEl.style.display = 'none'; elevBoxEl.innerHTML = ''; }
+      document.getElementById('floating-hud-panel').style.display = 'none';
       document.querySelectorAll('#left-rail .rail-btn').forEach(b => b.classList.remove('active'));
       const activeBtn = document.getElementById(`rail-${mode}`);
       if (activeBtn) activeBtn.classList.add('active');
