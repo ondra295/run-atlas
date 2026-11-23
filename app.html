@@ -1509,9 +1509,7 @@
 
     // LOGO CLICK (RETURNS TO RACE ATLAS OVERVIEW WITHOUT HOMEPAGE FLASH)
     function handleLogoClick() {
-      if (currentDetailItem) exitDetailView();
       switchPageMode('races');
-      fitAllMarkersOnMap();
     }
 
     // DEMO GUARD FOR SETTINGS & SUPPORT
@@ -1772,7 +1770,7 @@
       clearSpotlightSearch();
       const item = races.find(r => String(r.id) === String(id));
       if (!item) return;
-      if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode(item.isMemorable ? 'memorable' : 'races');
+      if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode(item.isMemorable ? 'memorable' : 'races', { autoCenter: false });
       showDetail(item);
     }
 
@@ -2606,8 +2604,8 @@
           hudColor: '#cbd5e1',
           badgeClass: 'badge-memorable-road',
           label: 'Road',
-          // Perspective road with center dashed line
-          iconSvg: `<path d="M8.5 16.5 L10.3 7.8 L13.7 7.8 L15.5 16.5 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/><line x1="12" y1="9.2" x2="12" y2="11.2" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round"/><line x1="12" y1="13" x2="12" y2="15.2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>`
+          // Open perspective road rails + center dashes (clean & airy at small pin scale)
+          iconSvg: `<path d="M7.0 16.2 L9.7 8.2 M17.0 16.2 L14.3 8.2" fill="none" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round"/><line x1="12" y1="8.8" x2="12" y2="11.0" stroke="#ffffff" stroke-width="1.7" stroke-linecap="round"/><line x1="12" y1="13.5" x2="12" y2="16.0" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>`
         };
       }
       if (s === 'mixed') {
@@ -4921,7 +4919,7 @@
           showToast('Added to Live Demo map!', '🏁');
         }
         closeModals();
-        if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode(localObj.isMemorable ? 'memorable' : 'races');
+        if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode(localObj.isMemorable ? 'memorable' : 'races', { autoCenter: false });
         else renderAll();
         if (wasEditingId) {
           showDetail(localObj);
@@ -4954,7 +4952,7 @@
         closeModals();
         await loadActivitiesFromDB(currentUser.id);
         if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) {
-          switchPageMode(record.is_memorable ? 'memorable' : 'races');
+          switchPageMode(record.is_memorable ? 'memorable' : 'races', { autoCenter: false });
         }
         const savedItem = savedId ? races.find(r => String(r.id) === String(savedId)) : null;
         if (wasEditingId && savedItem) {
@@ -5019,13 +5017,14 @@
       renderAll();
     }
 
-    function switchPageMode(mode) {
+    function switchPageMode(mode, { autoCenter = true } = {}) {
       currentMode = mode;
       sidebarContinent = null;
       sidebarCountry = null;
       drillViewStack = { continents: null, countries: null };
       currentDetailItem = null;
       clearElevationHoverMarker();
+      clearCountryHighlight();
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
       const elevBoxEl = document.getElementById('hud-elevation-box');
       if (elevBoxEl) { elevBoxEl.style.display = 'none'; elevBoxEl.innerHTML = ''; }
@@ -5055,7 +5054,7 @@
       mapWrapper.style.display = 'block';
       sidebar.style.display = 'flex';
       document.querySelector('.map-bottom-controls').style.display = 'flex';
-      setTimeout(() => map.invalidateSize(), 50);
+      map.invalidateSize();
 
       if (mode === 'races') {
         document.getElementById('main-title').textContent = isReadOnlyShared ? document.getElementById('main-title').textContent : (isDemoMode ? 'Race Atlas (Demo)' : 'Race Atlas');
@@ -5069,6 +5068,13 @@
         filtersWrap.style.display = 'flex';
       }
       renderAll();
+
+      if (autoCenter) {
+        setTimeout(() => {
+          map.invalidateSize();
+          fitAllMarkersOnMap();
+        }, 40);
+      }
     }
 
     loadWorldAtlas50m();
