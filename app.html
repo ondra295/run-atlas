@@ -139,18 +139,19 @@
     #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #cbd5e1; }
     #map { width: 100%; height: 100%; background: #cbd5e1; z-index: 1; }
 
-    /* Custom MarkerCluster Styling */
-    .custom-cluster-icon {
-      background: rgba(15, 23, 42, 0.9);
-      border: 2.5px solid #38bdf8;
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 0.82rem;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.45);
+    /* Custom Donut MarkerCluster Styling */
+    .marker-cluster-custom { background: transparent !important; border: none !important; }
+    .donut-cluster-wrap {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; filter: drop-shadow(0 3px 8px rgba(15, 23, 42, 0.45));
+      transition: transform 0.16s ease;
+    }
+    .donut-cluster-wrap:hover { transform: scale(1.1); }
+    .donut-cluster-svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
+    .donut-cluster-count {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      color: #ffffff; font-weight: 900; font-size: 0.8rem; letter-spacing: -0.3px;
+      pointer-events: none;
     }
 
     /* FULLSCREEN VIEW PANES */
@@ -703,13 +704,42 @@
     }
     .starter-btn:hover { background: #eff6ff; border-color: #007aff; color: #007aff; }
 
-    /* Map Pins */
+    /* Map Pins — Distinct Visual Hierarchy */
     .custom-race-pin { background: transparent !important; border: none !important; }
     .pin-circle {
-      border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; box-shadow: 0 3px 8px rgba(15, 23, 42, 0.4); transition: transform 0.15s ease;
+      border: 2.5px solid #ffffff; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; box-shadow: 0 3px 9px rgba(15, 23, 42, 0.45);
+      transition: transform 0.15s ease; position: relative;
     }
     .pin-circle:hover { transform: scale(1.25); }
+
+    /* Bucket List: crisp white-core ring with vibrant blue border + center target dot */
+    .pin-bucket {
+      background: rgba(255, 255, 255, 0.94);
+      border: 3px solid #0284c7;
+      box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85), 0 3px 8px rgba(15, 23, 42, 0.35);
+    }
+    .pin-bucket::after {
+      content: ""; width: 32%; height: 32%; border-radius: 50%; background: #0284c7;
+    }
+
+    /* Planned: vibrant amber with subtle pulsing beacon halo */
+    .pin-planned {
+      background: #f59e0b;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.38), 0 3px 10px rgba(15, 23, 42, 0.45);
+    }
+    .pin-planned::before {
+      content: ""; position: absolute; inset: -5px; border-radius: 50%;
+      border: 2px solid #f59e0b; opacity: 0.7;
+      animation: plannedPinPulse 2.2s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes plannedPinPulse {
+      0% { transform: scale(0.85); opacity: 0.8; }
+      75% { transform: scale(1.45); opacity: 0; }
+      100% { transform: scale(1.45); opacity: 0; }
+    }
 
     /* Modals & Dialogs */
     .modal-backdrop {
@@ -1614,16 +1644,59 @@
 
     L.control.layers({ "Topographic": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
 
+    let countryHighlightLayer = null;
+
     let markerLayerGroup = L.markerClusterGroup({
-      maxClusterRadius: 36,
+      maxClusterRadius: 38,
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       removeOutsideVisibleBounds: false,
       iconCreateFunction: function(cluster) {
+        const children = cluster.getAllChildMarkers();
+        const total = children.length;
+        const counts = { done: 0, planned: 0, bucket: 0, memorable: 0 };
+        for (let i = 0; i < total; i++) {
+          const st = children[i].options.raceStatus || 'bucket';
+          if (counts[st] !== undefined) counts[st]++;
+          else counts.bucket++;
+        }
+
+        const size = total >= 50 ? 44 : (total >= 10 ? 40 : 36);
+        const r = 16.5;
+        const circ = 2 * Math.PI * r;
+        const palette = [
+          { key: 'done', color: '#22c55e' },
+          { key: 'planned', color: '#f59e0b' },
+          { key: 'bucket', color: '#38bdf8' },
+          { key: 'memorable', color: '#a855f7' }
+        ];
+
+        let offset = 0;
+        let arcsHtml = '';
+        palette.forEach(p => {
+          const c = counts[p.key];
+          if (c <= 0) return;
+          const segLen = (c / total) * circ;
+          arcsHtml += `<circle cx="21" cy="21" r="${r}" fill="none" stroke="${p.color}" stroke-width="5.2" stroke-dasharray="${segLen.toFixed(2)} ${circ.toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" />`;
+          offset += segLen;
+        });
+
+        const html = `
+          <div class="donut-cluster-wrap" style="width:${size}px; height:${size}px;">
+            <svg class="donut-cluster-svg" viewBox="0 0 42 42">
+              <circle cx="21" cy="21" r="19.2" fill="#0f172a" />
+              ${arcsHtml}
+              <circle cx="21" cy="21" r="13.5" fill="#0f172a" />
+            </svg>
+            <span class="donut-cluster-count">${total}</span>
+          </div>
+        `;
+
         return L.divIcon({
-          html: `<div class="custom-cluster-icon" style="width:32px; height:32px;">${cluster.getChildCount()}</div>`,
+          html: html,
           className: 'marker-cluster-custom',
-          iconSize: [32, 32]
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2]
         });
       }
     }).addTo(map);
@@ -1650,6 +1723,7 @@
       sidebarContinent = null;
       sidebarCountry = null;
       drillViewStack = { continents: null, countries: null };
+      syncMapMarkersAndHighlight();
       runProgrammaticMapMove(() => {
         if (markerLayerGroup.getLayers().length > 0) {
           map.flyToBounds(markerLayerGroup.getBounds(), { padding: [55, 55], maxZoom: 11, animate: true, duration: 0.9 });
@@ -1668,6 +1742,7 @@
         if (map.getZoom() <= 2 && (sidebarContinent || sidebarCountry)) {
           sidebarContinent = null;
           sidebarCountry = null;
+          syncMapMarkersAndHighlight();
         }
         renderSidebarList();
       }, 120);
@@ -2536,6 +2611,7 @@
           }
         });
         if (!currentDetailItem && ['races', 'memorable'].includes(currentMode)) {
+          if (sidebarCountry) syncMapMarkersAndHighlight();
           renderSidebarList();
         }
       } catch (e) {
@@ -2825,10 +2901,117 @@
       return true;
     }
 
+    function clearCountryHighlight() {
+      if (countryHighlightLayer) {
+        map.removeLayer(countryHighlightLayer);
+        countryHighlightLayer = null;
+      }
+    }
+
+    function updateCountryHighlightLayer(countryCode) {
+      clearCountryHighlight();
+      if (!countryCode || !worldAtlas50mFeatures || currentDetailItem) return;
+      const code = countryCode.toLowerCase();
+      const numIds = [];
+      if (ISO2_TO_NUMERIC[code]) numIds.push(ISO2_TO_NUMERIC[code]);
+      // Denmark includes Greenland in our atlas grouping
+      if (code === 'dk' && ISO2_TO_NUMERIC['gl']) numIds.push(ISO2_TO_NUMERIC['gl']);
+
+      const features = numIds.map(id => worldAtlas50mFeatures[id]).filter(Boolean);
+      if (features.length === 0) return;
+
+      countryHighlightLayer = L.geoJSON({ type: 'FeatureCollection', features }, {
+        style: {
+          color: '#007aff',
+          weight: 2,
+          opacity: 0.65,
+          fillColor: '#007aff',
+          fillOpacity: 0.08,
+          dashArray: '4, 4'
+        },
+        interactive: false
+      }).addTo(map);
+      if (countryHighlightLayer.bringToBack) countryHighlightLayer.bringToBack();
+    }
+
+    function buildPinIconForItem(item) {
+      const imp = parseInt(item.importance) || 5;
+      const status = item.isMemorable ? 'memorable' : (item.status || 'done');
+
+      if (status === 'bucket') {
+        const pinSize = imp >= 8 ? 20 : (imp <= 3 ? 13 : 16);
+        const pinHtml = `<div class="pin-circle pin-bucket" style="width:${pinSize}px; height:${pinSize}px;"></div>`;
+        return {
+          icon: L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [pinSize, pinSize], iconAnchor: [pinSize / 2, pinSize / 2] }),
+          zIndexOffset: 200 + imp
+        };
+      }
+
+      if (status === 'planned') {
+        const pinSize = imp >= 8 ? 22 : (imp <= 3 ? 15 : 18);
+        const pinHtml = `<div class="pin-circle pin-planned" style="width:${pinSize}px; height:${pinSize}px;"></div>`;
+        return {
+          icon: L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [pinSize, pinSize], iconAnchor: [pinSize / 2, pinSize / 2] }),
+          zIndexOffset: 700 + imp
+        };
+      }
+
+      // Completed or Memorable — solid saturated pin with crisp white border
+      const pinColor = status === 'memorable' ? '#7e22ce' : '#16a34a';
+      const pinSize = imp >= 8 ? 23 : (imp <= 3 ? 14 : 18);
+      const pinGlow = imp >= 8 ? `box-shadow: 0 0 0 3px ${pinColor}44, 0 4px 10px rgba(15,23,42,0.5);` : '';
+      const pinHtml = `<div class="pin-circle" style="width:${pinSize}px; height:${pinSize}px; background:${pinColor}; ${pinGlow}"></div>`;
+      return {
+        icon: L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [pinSize, pinSize], iconAnchor: [pinSize / 2, pinSize / 2] }),
+        zIndexOffset: (status === 'memorable' ? 600 : 500) + imp
+      };
+    }
+
+    function syncMapMarkersAndHighlight() {
+      if (currentDetailItem || !['races', 'memorable'].includes(currentMode)) return;
+      if (!map.hasLayer(markerLayerGroup)) markerLayerGroup.addTo(map);
+      markerLayerGroup.clearLayers();
+
+      let mapItems = currentFilteredList;
+      let activeCountryCode = null;
+
+      if (sidebarCountry) {
+        mapItems = currentFilteredList.filter(item => {
+          const g = detectGeoFromCoords(item.coords, item.name);
+          if (g.country !== sidebarCountry) return false;
+          if (sidebarContinent && g.continent !== sidebarContinent) return false;
+          if (!activeCountryCode && g.code) activeCountryCode = g.code;
+          return true;
+        });
+      } else if (sidebarContinent) {
+        mapItems = currentFilteredList.filter(item => detectGeoFromCoords(item.coords, item.name).continent === sidebarContinent);
+      }
+
+      mapItems.forEach(item => {
+        if (!Array.isArray(item.coords) || item.coords.length < 2) return;
+        const { icon, zIndexOffset } = buildPinIconForItem(item);
+        const raceStatus = item.isMemorable ? 'memorable' : (item.status || 'done');
+        const marker = L.marker(item.coords, {
+          icon: icon,
+          zIndexOffset: zIndexOffset,
+          raceStatus: raceStatus
+        }).addTo(markerLayerGroup);
+        marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} &bull; ${item.surfaceLabel || ''}`);
+        marker.on('click', () => showDetail(item));
+      });
+
+      if (sidebarCountry && activeCountryCode) {
+        updateCountryHighlightLayer(activeCountryCode);
+      } else {
+        clearCountryHighlight();
+      }
+    }
+
     function drillIntoContinent(continentName, items) {
       const prevView = { center: map.getCenter(), zoom: map.getZoom() };
       sidebarContinent = continentName;
       sidebarCountry = null;
+      syncMapMarkersAndHighlight();
       const didMove = flyToItemsBounds(items, { allowZoomOut: false });
       drillViewStack.continents = didMove ? prevView : null;
       drillViewStack.countries = null;
@@ -2839,6 +3022,7 @@
       const prevView = { center: map.getCenter(), zoom: map.getZoom() };
       if (continentName) sidebarContinent = continentName;
       sidebarCountry = countryName;
+      syncMapMarkersAndHighlight();
       const didMove = flyToItemsBounds(items, { allowZoomOut: false });
       drillViewStack.countries = didMove ? prevView : null;
       renderSidebarList();
@@ -2848,6 +3032,7 @@
       if (targetLevel === 'continents') {
         sidebarContinent = null;
         sidebarCountry = null;
+        syncMapMarkersAndHighlight();
         const savedView = drillViewStack.continents;
         drillViewStack.continents = null;
         drillViewStack.countries = null;
@@ -2860,6 +3045,7 @@
         }
       } else if (targetLevel === 'countries') {
         sidebarCountry = null;
+        syncMapMarkersAndHighlight();
         const savedView = drillViewStack.countries;
         drillViewStack.countries = null;
         if (savedView) {
@@ -2959,6 +3145,7 @@
           return;
         } else {
           sidebarCountry = null;
+          syncMapMarkersAndHighlight();
         }
       }
 
@@ -3093,21 +3280,7 @@
       activeList = sortActivities(activeList);
       currentFilteredList = activeList;
 
-      activeList.forEach(item => {
-        const colors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
-        const pinColor = item.isMemorable ? '#7e22ce' : (colors[item.status] || '#007aff');
-
-        const imp = parseInt(item.importance) || 5;
-        const pinSize = imp >= 8 ? 24 : (imp <= 3 ? 13 : 18);
-        const pinGlow = imp >= 8 ? `box-shadow: 0 0 0 3px ${pinColor}44, 0 4px 10px rgba(15,23,42,0.5);` : '';
-        const pinHtml = `<div class="pin-circle" style="width:${pinSize}px; height:${pinSize}px; background:${pinColor}; ${pinGlow}"></div>`;
-        const icon = L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [pinSize, pinSize], iconAnchor: [pinSize / 2, pinSize / 2] });
-
-        const marker = L.marker(item.coords, { icon: icon }).addTo(markerLayerGroup);
-        marker.bindTooltip(`<b>${item.name}</b><br>${item.distance || ''} &bull; ${item.surfaceLabel || ''}`);
-        marker.on('click', () => showDetail(item));
-      });
-
+      syncMapMarkersAndHighlight();
       renderSidebarList();
     }
 
@@ -3239,6 +3412,7 @@
     function exitDetailView() {
       currentDetailItem = null;
       clearElevationHoverMarker();
+      clearCountryHighlight();
       document.getElementById('hud-elevation-box').style.display = 'none';
       document.getElementById('hud-elevation-box').innerHTML = '';
       document.getElementById('floating-hud-panel').style.display = 'none';
@@ -3428,6 +3602,7 @@
     function showDetail(item) {
       currentDetailItem = item;
       clearElevationHoverMarker();
+      clearCountryHighlight();
       if (currentRouteLayer) { map.removeLayer(currentRouteLayer); currentRouteLayer = null; }
       const content = document.getElementById('content');
       
