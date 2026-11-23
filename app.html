@@ -139,20 +139,64 @@
     #map-wrapper { flex: 1; height: 100%; position: relative; overflow: hidden; background: #cbd5e1; }
     #map { width: 100%; height: 100%; background: #cbd5e1; z-index: 1; }
 
-    /* Custom Donut MarkerCluster Styling */
+    /* Custom MarkerCluster Styling (4 Selectable Themes) */
     .marker-cluster-custom { background: transparent !important; border: none !important; }
-    .donut-cluster-wrap {
-      position: relative; display: flex; align-items: center; justify-content: center;
-      border-radius: 50%; filter: drop-shadow(0 3px 8px rgba(15, 23, 42, 0.45));
-      transition: transform 0.16s ease;
+
+    /* Style 1: Minimal Frosted Circle + Status Dots */
+    .cluster-minimal {
+      background: rgba(255, 255, 255, 0.93); backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(15, 23, 42, 0.14); border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .donut-cluster-wrap:hover { transform: scale(1.1); }
-    .donut-cluster-svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
-    .donut-cluster-count {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      color: #ffffff; font-weight: 900; font-size: 0.8rem; letter-spacing: -0.3px;
-      pointer-events: none;
+    .cluster-minimal:hover { transform: scale(1.1); box-shadow: 0 6px 18px rgba(15, 23, 42, 0.3); }
+    .cluster-minimal-num { color: #0f172a; font-weight: 900; font-size: 0.8rem; line-height: 1; }
+    .cluster-minimal-dots { display: flex; gap: 2.5px; align-items: center; justify-content: center; }
+    .cluster-minimal-dot { width: 4.5px; height: 4.5px; border-radius: 50%; }
+
+    /* Style 2: Outdoor Priority-Ring White Circle */
+    .cluster-outdoor {
+      background: #ffffff; border-radius: 50%;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, 0.28);
+      display: flex; align-items: center; justify-content: center;
+      color: #0f172a; font-weight: 900; font-size: 0.82rem;
+      transition: transform 0.15s ease;
     }
+    .cluster-outdoor:hover { transform: scale(1.1); }
+
+    /* Style 3 & 4: Soft Glass Pill/Circle + Proportional Mini Bar */
+    .cluster-softglass {
+      background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px);
+      border: 1px solid rgba(15, 23, 42, 0.12); border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+      padding: 4px 8px 5px; min-width: 34px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .cluster-softglass:hover { transform: scale(1.08); border-color: #007aff; }
+    .cluster-softglass-num { color: #0f172a; font-weight: 900; font-size: 0.78rem; line-height: 1; }
+    .cluster-softglass-bar {
+      width: 24px; height: 3.5px; border-radius: 99px; overflow: hidden;
+      display: flex; background: #e2e8f0; gap: 1px;
+    }
+    .cluster-softglass-seg { height: 100%; border-radius: 99px; }
+
+    /* Floating Map Style Switcher (Preview Bar) */
+    #map-style-switcher {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 1100;
+      background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 99px;
+      padding: 4px; display: flex; align-items: center; gap: 3px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .style-sw-btn {
+      background: transparent; border: none; color: #cbd5e1;
+      font-size: 0.72rem; font-weight: 800; padding: 5px 11px; border-radius: 99px;
+      cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
+    }
+    .style-sw-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.1); }
+    .style-sw-btn.active { background: #ffffff; color: #0f172a; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
 
     /* FULLSCREEN VIEW PANES */
     #full-page-view {
@@ -704,42 +748,29 @@
     }
     .starter-btn:hover { background: #eff6ff; border-color: #007aff; color: #007aff; }
 
-    /* Map Pins — Distinct Visual Hierarchy */
+    /* Map Pins (4 Selectable Themes) */
     .custom-race-pin { background: transparent !important; border: none !important; }
     .pin-circle {
-      border: 2.5px solid #ffffff; border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; box-shadow: 0 3px 9px rgba(15, 23, 42, 0.45);
+      border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; box-shadow: 0 2px 7px rgba(15, 23, 42, 0.38);
       transition: transform 0.15s ease; position: relative;
     }
-    .pin-circle:hover { transform: scale(1.25); }
+    .pin-circle:hover { transform: scale(1.22); }
 
-    /* Bucket List: crisp white-core ring with vibrant blue border + center target dot */
-    .pin-bucket {
-      background: rgba(255, 255, 255, 0.94);
-      border: 3px solid #0284c7;
-      box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85), 0 3px 8px rgba(15, 23, 42, 0.35);
+    .pin-diamond {
+      border: 2px solid #ffffff; border-radius: 3px;
+      transform: rotate(45deg);
+      box-shadow: 0 2px 7px rgba(15, 23, 42, 0.38);
+      transition: transform 0.15s ease;
     }
-    .pin-bucket::after {
-      content: ""; width: 32%; height: 32%; border-radius: 50%; background: #0284c7;
-    }
+    .pin-diamond:hover { transform: rotate(45deg) scale(1.22); }
 
-    /* Planned: vibrant amber with subtle pulsing beacon halo */
-    .pin-planned {
-      background: #f59e0b;
-      border: 2.5px solid #ffffff;
-      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.38), 0 3px 10px rgba(15, 23, 42, 0.45);
+    .pin-svg-wrap {
+      display: flex; align-items: center; justify-content: center;
+      filter: drop-shadow(0 2px 4px rgba(15, 23, 42, 0.38));
+      transition: transform 0.15s ease;
     }
-    .pin-planned::before {
-      content: ""; position: absolute; inset: -5px; border-radius: 50%;
-      border: 2px solid #f59e0b; opacity: 0.7;
-      animation: plannedPinPulse 2.2s ease-out infinite;
-      pointer-events: none;
-    }
-    @keyframes plannedPinPulse {
-      0% { transform: scale(0.85); opacity: 0.8; }
-      75% { transform: scale(1.45); opacity: 0; }
-      100% { transform: scale(1.45); opacity: 0; }
-    }
+    .pin-svg-wrap:hover { transform: scale(1.18) translateY(-1px); }
 
     /* Modals & Dialogs */
     .modal-backdrop {
@@ -1042,6 +1073,14 @@
       <!-- MAP & HUD OVERLAY -->
       <div id="map-wrapper">
         <div id="map"></div>
+
+        <!-- LIVE PIN & CLUSTER STYLE SWITCHER -->
+        <div id="map-style-switcher" title="Switch map pin & cluster style">
+          <button class="style-sw-btn active" data-style="minimal" onclick="setMapPinStyle('minimal')">1. Minimal</button>
+          <button class="style-sw-btn" data-style="outdoor" onclick="setMapPinStyle('outdoor')">2. Outdoor</button>
+          <button class="style-sw-btn" data-style="softglass" onclick="setMapPinStyle('softglass')">3. Soft Glass</button>
+          <button class="style-sw-btn" data-style="expedition" onclick="setMapPinStyle('expedition')">4. Expedition</button>
+        </div>
 
         <!-- FLOATING TELEMETRY HUD -->
         <div id="floating-hud-panel">
@@ -1645,60 +1684,79 @@
     L.control.layers({ "Topographic": esriTopo, "Dark Mode": esriDark, "Satellite": esriSat }).addTo(map);
 
     let countryHighlightLayer = null;
+    let currentPinStyle = localStorage.getItem('runatlas_pin_style') || 'minimal';
+
+    function setMapPinStyle(style) {
+      currentPinStyle = style;
+      localStorage.setItem('runatlas_pin_style', style);
+      document.querySelectorAll('#map-style-switcher .style-sw-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.style === style);
+      });
+      syncMapMarkersAndHighlight();
+    }
+
+    function createClusterIconForStyle(cluster) {
+      const children = cluster.getAllChildMarkers();
+      const total = children.length;
+      const counts = { done: 0, planned: 0, bucket: 0, memorable: 0 };
+      for (let i = 0; i < total; i++) {
+        const st = children[i].options.raceStatus || 'bucket';
+        if (counts[st] !== undefined) counts[st]++;
+        else counts.bucket++;
+      }
+
+      // STYLE 1: Minimal frosted circle + tiny status dots underneath
+      if (currentPinStyle === 'minimal') {
+        const size = total >= 50 ? 40 : (total >= 10 ? 36 : 32);
+        const dots = [];
+        if (counts.done > 0) dots.push('<span class="cluster-minimal-dot" style="background:#15803d;"></span>');
+        if (counts.planned > 0) dots.push('<span class="cluster-minimal-dot" style="background:#d97706;"></span>');
+        if (counts.bucket > 0) dots.push('<span class="cluster-minimal-dot" style="background:#0369a1;"></span>');
+        if (counts.memorable > 0) dots.push('<span class="cluster-minimal-dot" style="background:#7e22ce;"></span>');
+        return L.divIcon({
+          html: `<div class="cluster-minimal" style="width:${size}px; height:${size}px;"><span class="cluster-minimal-num">${total}</span><div class="cluster-minimal-dots">${dots.join('')}</div></div>`,
+          className: 'marker-cluster-custom',
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2]
+        });
+      }
+
+      // STYLE 2: Outdoor clean white circle with highest-priority colored border
+      if (currentPinStyle === 'outdoor') {
+        const size = total >= 50 ? 38 : (total >= 10 ? 34 : 30);
+        let borderColor = '#0284c7';
+        if (counts.planned > 0) borderColor = '#ea580c';
+        else if (counts.done > 0) borderColor = '#16a34a';
+        else if (counts.memorable > 0) borderColor = '#7e22ce';
+        return L.divIcon({
+          html: `<div class="cluster-outdoor" style="width:${size}px; height:${size}px; border:2.5px solid ${borderColor};">${total}</div>`,
+          className: 'marker-cluster-custom',
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2]
+        });
+      }
+
+      // STYLE 3 (Soft Glass) & STYLE 4 (Expedition): Frosted pill + thin proportional bar (matches sidebar!)
+      const segs = [];
+      if (counts.done > 0) segs.push(`<div class="cluster-softglass-seg" style="width:${(counts.done / total) * 100}%; background:#16a34a;"></div>`);
+      if (counts.planned > 0) segs.push(`<div class="cluster-softglass-seg" style="width:${(counts.planned / total) * 100}%; background:#ea580c;"></div>`);
+      if (counts.bucket > 0) segs.push(`<div class="cluster-softglass-seg" style="width:${(counts.bucket / total) * 100}%; background:#0284c7;"></div>`);
+      if (counts.memorable > 0) segs.push(`<div class="cluster-softglass-seg" style="width:${(counts.memorable / total) * 100}%; background:#7e22ce;"></div>`);
+      const w = total >= 100 ? 44 : 38;
+      return L.divIcon({
+        html: `<div class="cluster-softglass" style="width:${w}px;"><span class="cluster-softglass-num">${total}</span><div class="cluster-softglass-bar">${segs.join('')}</div></div>`,
+        className: 'marker-cluster-custom',
+        iconSize: [w, 28],
+        iconAnchor: [w / 2, 14]
+      });
+    }
 
     let markerLayerGroup = L.markerClusterGroup({
       maxClusterRadius: 38,
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       removeOutsideVisibleBounds: false,
-      iconCreateFunction: function(cluster) {
-        const children = cluster.getAllChildMarkers();
-        const total = children.length;
-        const counts = { done: 0, planned: 0, bucket: 0, memorable: 0 };
-        for (let i = 0; i < total; i++) {
-          const st = children[i].options.raceStatus || 'bucket';
-          if (counts[st] !== undefined) counts[st]++;
-          else counts.bucket++;
-        }
-
-        const size = total >= 50 ? 44 : (total >= 10 ? 40 : 36);
-        const r = 16.5;
-        const circ = 2 * Math.PI * r;
-        const palette = [
-          { key: 'done', color: '#22c55e' },
-          { key: 'planned', color: '#f59e0b' },
-          { key: 'bucket', color: '#38bdf8' },
-          { key: 'memorable', color: '#a855f7' }
-        ];
-
-        let offset = 0;
-        let arcsHtml = '';
-        palette.forEach(p => {
-          const c = counts[p.key];
-          if (c <= 0) return;
-          const segLen = (c / total) * circ;
-          arcsHtml += `<circle cx="21" cy="21" r="${r}" fill="none" stroke="${p.color}" stroke-width="5.2" stroke-dasharray="${segLen.toFixed(2)} ${circ.toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" />`;
-          offset += segLen;
-        });
-
-        const html = `
-          <div class="donut-cluster-wrap" style="width:${size}px; height:${size}px;">
-            <svg class="donut-cluster-svg" viewBox="0 0 42 42">
-              <circle cx="21" cy="21" r="19.2" fill="#0f172a" />
-              ${arcsHtml}
-              <circle cx="21" cy="21" r="13.5" fill="#0f172a" />
-            </svg>
-            <span class="donut-cluster-count">${total}</span>
-          </div>
-        `;
-
-        return L.divIcon({
-          html: html,
-          className: 'marker-cluster-custom',
-          iconSize: [size, size],
-          iconAnchor: [size / 2, size / 2]
-        });
-      }
+      iconCreateFunction: createClusterIconForStyle
     }).addTo(map);
 
     let homeMarker = null;
@@ -2937,33 +2995,119 @@
     function buildPinIconForItem(item) {
       const imp = parseInt(item.importance) || 5;
       const status = item.isMemorable ? 'memorable' : (item.status || 'done');
+      const zBase = status === 'planned' ? 700 : (status === 'memorable' ? 600 : (status === 'done' ? 500 : 200));
 
+      // STYLE 1: Cartographic Minimalism (Shapes instead of effects)
+      if (currentPinStyle === 'minimal') {
+        if (status === 'planned') {
+          const sz = imp >= 8 ? 16 : 13;
+          const html = `<div class="pin-diamond" style="width:${sz}px; height:${sz}px; background:#d97706;"></div>`;
+          return {
+            icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] }),
+            zIndexOffset: zBase + imp
+          };
+        }
+        if (status === 'bucket') {
+          const sz = imp >= 8 ? 15 : (imp <= 3 ? 10 : 12);
+          const html = `<div class="pin-circle" style="width:${sz}px; height:${sz}px; background:rgba(3,105,161,0.92); border-width:1.5px;"></div>`;
+          return {
+            icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] }),
+            zIndexOffset: zBase + imp
+          };
+        }
+        const color = status === 'memorable' ? '#7e22ce' : '#15803d';
+        const sz = imp >= 8 ? 19 : (imp <= 3 ? 13 : 16);
+        const html = `<div class="pin-circle" style="width:${sz}px; height:${sz}px; background:${color};"></div>`;
+        return {
+          icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] }),
+          zIndexOffset: zBase + imp
+        };
+      }
+
+      // STYLE 2: Outdoor Teardrop Pins (Komoot / AllTrails)
+      if (currentPinStyle === 'outdoor') {
+        if (status === 'bucket') {
+          const w = imp >= 8 ? 20 : 17;
+          const h = Math.round(w * 1.32);
+          const html = `<div class="pin-svg-wrap" style="width:${w}px; height:${h}px;"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="M12 1C5.9 1 1 5.9 1 12c0 7.7 11 19 11 19s11-11.3 11-19C23 5.9 18.1 1 12 1z" fill="#0284c7" stroke="#ffffff" stroke-width="2"/><circle cx="12" cy="11.5" r="3.4" fill="#ffffff"/></svg></div>`;
+          return {
+            icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [w, h], iconAnchor: [w / 2, h] }),
+            zIndexOffset: zBase + imp
+          };
+        }
+        if (status === 'planned') {
+          const w = 24, h = 32;
+          const html = `<div class="pin-svg-wrap" style="width:${w}px; height:${h}px;"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="M12 1C5.9 1 1 5.9 1 12c0 7.7 11 19 11 19s11-11.3 11-19C23 5.9 18.1 1 12 1z" fill="#ea580c" stroke="#ffffff" stroke-width="2"/><circle cx="12" cy="11.5" r="4" fill="#ffffff"/></svg></div>`;
+          return {
+            icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [w, h], iconAnchor: [w / 2, h] }),
+            zIndexOffset: zBase + imp
+          };
+        }
+        const w = 22, h = 29;
+        const fill = status === 'memorable' ? '#7e22ce' : '#16a34a';
+        const inner = status === 'memorable'
+          ? `<path d="M7.5 15 L11 9 L13.5 12.5 L15 10.5 L17 15 Z" fill="#ffffff"/>`
+          : `<path d="M8.5 12.2 L11 14.7 L16 9.5" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+        const html = `<div class="pin-svg-wrap" style="width:${w}px; height:${h}px;"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="M12 1C5.9 1 1 5.9 1 12c0 7.7 11 19 11 19s11-11.3 11-19C23 5.9 18.1 1 12 1z" fill="${fill}" stroke="#ffffff" stroke-width="2"/>${inner}</svg></div>`;
+        return {
+          icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [w, h], iconAnchor: [w / 2, h] }),
+          zIndexOffset: zBase + imp
+        };
+      }
+
+      // STYLE 3: Soft Glass / Apple Maps (Clean airy circles)
+      if (currentPinStyle === 'softglass') {
+        if (status === 'bucket') {
+          const sz = imp >= 8 ? 16 : (imp <= 3 ? 11 : 13);
+          const html = `<div class="pin-circle" style="width:${sz}px; height:${sz}px; background:rgba(2,132,199,0.82); border:2px solid rgba(255,255,255,0.92);"></div>`;
+          return {
+            icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] }),
+            zIndexOffset: zBase + imp
+          };
+        }
+        if (status === 'planned') {
+          const sz = imp >= 8 ? 20 : 17;
+          const html = `<div class="pin-circle" style="width:${sz}px; height:${sz}px; background:#f59e0b; border:2.5px solid #ffffff;"></div>`;
+          return {
+            icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] }),
+            zIndexOffset: zBase + imp
+          };
+        }
+        const color = status === 'memorable' ? '#8b5cf6' : '#16a34a';
+        const sz = imp >= 8 ? 19 : (imp <= 3 ? 13 : 16);
+        const html = `<div class="pin-circle" style="width:${sz}px; height:${sz}px; background:${color}; border:2px solid #ffffff;"></div>`;
+        return {
+          icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] }),
+          zIndexOffset: zBase + imp
+        };
+      }
+
+      // STYLE 4: Expedition (Checkmark badges, Pennant flags, Bucket stars)
       if (status === 'bucket') {
-        const pinSize = imp >= 8 ? 20 : (imp <= 3 ? 13 : 16);
-        const pinHtml = `<div class="pin-circle pin-bucket" style="width:${pinSize}px; height:${pinSize}px;"></div>`;
+        const sz = imp >= 8 ? 19 : 16;
+        const html = `<div class="pin-svg-wrap" style="width:${sz}px; height:${sz}px;"><svg viewBox="0 0 24 24" width="${sz}" height="${sz}"><path d="M12 2.2l2.9 6.1 6.7.9-4.9 4.7 1.2 6.7L12 17.4 6.1 20.6l1.2-6.7-4.9-4.7 6.7-.9z" fill="#0284c7" stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round"/></svg></div>`;
         return {
-          icon: L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [pinSize, pinSize], iconAnchor: [pinSize / 2, pinSize / 2] }),
-          zIndexOffset: 200 + imp
+          icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] }),
+          zIndexOffset: zBase + imp
         };
       }
-
       if (status === 'planned') {
-        const pinSize = imp >= 8 ? 22 : (imp <= 3 ? 15 : 18);
-        const pinHtml = `<div class="pin-circle pin-planned" style="width:${pinSize}px; height:${pinSize}px;"></div>`;
+        const w = 22, h = 24;
+        const html = `<div class="pin-svg-wrap" style="width:${w}px; height:${h}px;"><svg viewBox="0 0 24 26" width="${w}" height="${h}"><line x1="6" y1="3" x2="6" y2="24" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/><line x1="6" y1="3" x2="6" y2="24" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/><path d="M6 3 L21 8.5 L6 14.5 Z" fill="#ea580c" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>`;
         return {
-          icon: L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [pinSize, pinSize], iconAnchor: [pinSize / 2, pinSize / 2] }),
-          zIndexOffset: 700 + imp
+          icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [w, h], iconAnchor: [6, h - 2] }),
+          zIndexOffset: zBase + imp
         };
       }
-
-      // Completed or Memorable — solid saturated pin with crisp white border
-      const pinColor = status === 'memorable' ? '#7e22ce' : '#16a34a';
-      const pinSize = imp >= 8 ? 23 : (imp <= 3 ? 14 : 18);
-      const pinGlow = imp >= 8 ? `box-shadow: 0 0 0 3px ${pinColor}44, 0 4px 10px rgba(15,23,42,0.5);` : '';
-      const pinHtml = `<div class="pin-circle" style="width:${pinSize}px; height:${pinSize}px; background:${pinColor}; ${pinGlow}"></div>`;
+      const sz = imp >= 8 ? 22 : 19;
+      const fill = status === 'memorable' ? '#7e22ce' : '#16a34a';
+      const inner = status === 'memorable'
+        ? `<path d="M5.5 16 L9.5 9.5 L12.2 13.5 L14 11 L17 16 Z" fill="#ffffff"/>`
+        : `<path d="M6.8 11.8 L10 15 L16.2 8.5" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+      const html = `<div class="pin-svg-wrap" style="width:${sz}px; height:${sz}px;"><svg viewBox="0 0 22 22" width="${sz}" height="${sz}"><circle cx="11" cy="11" r="9.5" fill="${fill}" stroke="#ffffff" stroke-width="2"/>${inner}</svg></div>`;
       return {
-        icon: L.divIcon({ className: 'custom-race-pin', html: pinHtml, iconSize: [pinSize, pinSize], iconAnchor: [pinSize / 2, pinSize / 2] }),
-        zIndexOffset: (status === 'memorable' ? 600 : 500) + imp
+        icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] }),
+        zIndexOffset: zBase + imp
       };
     }
 
@@ -4897,6 +5041,9 @@
       renderAll();
     }
 
+    document.querySelectorAll('#map-style-switcher .style-sw-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.style === currentPinStyle);
+    });
     loadWorldAtlas50m();
     initApp();
   </script>
