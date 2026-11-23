@@ -21,6 +21,8 @@
 
   <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Real Natural Earth Country Outlines -->
+  <script src="country-shapes.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -2592,12 +2594,15 @@
       `;
     }
 
-    function buildGeoGroupCard({ titleHtml, items, continentWatermark = null, onClick }) {
+    function buildGeoGroupCard({ titleHtml, items, continentWatermark = null, countryCode = null, onClick }) {
       const box = document.createElement('div');
       box.className = 'geo-group-card';
-      const svgHtml = (continentWatermark && CONTINENT_SILHOUETTES[continentWatermark])
-        ? `<div class="geo-continent-box">${CONTINENT_SILHOUETTES[continentWatermark]}</div>`
-        : '';
+      let svgHtml = '';
+      if (continentWatermark && CONTINENT_SILHOUETTES[continentWatermark]) {
+        svgHtml = `<div class="geo-continent-box">${CONTINENT_SILHOUETTES[continentWatermark]}</div>`;
+      } else if (countryCode && window.COUNTRY_SHAPES && window.COUNTRY_SHAPES[countryCode]) {
+        svgHtml = `<div class="geo-continent-box"><svg class="geo-continent-svg" viewBox="0 0 100 68" fill="currentColor" aria-hidden="true"><path d="${window.COUNTRY_SHAPES[countryCode]}"/></svg></div>`;
+      }
       const unitLabel = currentMode === 'memorable' ? (items.length === 1 ? 'run' : 'runs') : (items.length === 1 ? 'race' : 'races');
       box.innerHTML = `
         <div class="geo-group-top">
@@ -2822,6 +2827,7 @@
             content.appendChild(buildGeoGroupCard({
               titleHtml: entry.geo.html,
               items: entry.items,
+              countryCode: entry.geo.code,
               onClick: () => drillIntoCountry(entry.geo.country, sidebarContinent, entry.items)
             }));
           });
@@ -2865,6 +2871,7 @@
           content.appendChild(buildGeoGroupCard({
             titleHtml: entry.geo.html,
             items: entry.items,
+            countryCode: entry.geo.code,
             onClick: () => drillIntoCountry(entry.geo.country, onlyCont, entry.items)
           }));
         });
