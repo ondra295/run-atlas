@@ -711,6 +711,15 @@
       background: #eff6ff; border-left: 4px solid #007aff; border-radius: 0 10px 10px 0;
       padding: 14px 16px; font-style: italic; color: #1e3a8a; line-height: 1.55; font-size: 0.88rem;
     }
+    .memorable-tags-card {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .memorable-tag-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 10px; border-radius: 99px;
+      background: #f0fdfa; border: 1px solid #99f6e4; color: #115e59;
+      font-size: 0.74rem; font-weight: 800; line-height: 1.1;
+    }
 
     .report-sheet-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;
@@ -1400,6 +1409,21 @@
             <option value="€€€€€€">€€€€€€ (Ultra-expensive / rare)</option>
           </select>
         </div>
+      </div>
+
+      <!-- ONLY FOR: MEMORABLE RUNS (WHAT MADE IT SPECIAL) -->
+      <div id="wrap-field-memorable-tags" style="display:none; flex-direction:column; gap:8px;">
+        <label class="form-group-label" style="margin:0;">What made this run special? (Select one or more)</label>
+        <div class="chips-group" id="chips-memorable-tags">
+          <div class="chip-btn" data-tag="nature" onclick="toggleMemorableTag('nature')">🏔️ Scenic Nature</div>
+          <div class="chip-btn" data-tag="performance" onclick="toggleMemorableTag('performance')">⚡ Great Performance</div>
+          <div class="chip-btn" data-tag="atmosphere" onclick="toggleMemorableTag('atmosphere')">✨ Unique Atmosphere</div>
+          <div class="chip-btn" data-tag="adventure" onclick="toggleMemorableTag('adventure')">🧭 Epic Adventure</div>
+          <div class="chip-btn" data-tag="company" onclick="toggleMemorableTag('company')">👥 Great Company</div>
+          <div class="chip-btn" data-tag="travel" onclick="toggleMemorableTag('travel')">✈️ Travel Discovery</div>
+          <div class="chip-btn" data-tag="other" onclick="toggleMemorableTag('other')">⭐ Other</div>
+        </div>
+        <input id="form-memorable-other" class="stepped-input" type="text" placeholder="Describe what made it special (e.g. First sunrise run, Birthday milestone)..." style="display:none;">
       </div>
 
       <!-- RACE IMPORTANCE (PIN SIZE ON MAP — COMPLETED & BUCKET LIST) -->
@@ -2211,12 +2235,12 @@
           { id: "demo-16", name: "Tarawera Ultra-Trail", date: "February", month: 2, coords: [-38.1368, 176.2497], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "stredni", cost: "€€€€€", distance: "102 km", elevation: "+3,100 m", importance: 8, qualification: "Open entry", why: "Flowing redwood forests, geothermal lakes, and Kiwi trail culture.", notes: "Very runnable singletrack — great summer escape from European winter.", image_url: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=600&q=80" },
 
           // === 6 MEMORABLE RUNS (Trail, Road & Mixed) ===
-          { id: "demo-m1", name: "Chamonix Grand Balcon Ridge", date: "2025-07-19", month: 7, coords: [45.9237, 6.8694], status: "done", statusLabel: "Completed", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€", distance: "24.5 km", elevation: "+1,450 m", importance: 9, isMemorable: true, why: "Sunrise alpine run facing Mont Blanc glaciers without a single soul on the trail.", notes: "Started at 5:30 AM from Chamonix, espresso at Flégère, technical descent back.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80", satisfaction: 10, course_satisfaction: 10 },
-          { id: "demo-m2", name: "Dolomites Seceda to Alpe di Siusi", date: "2026-07-11", month: 7, coords: [46.5994, 11.7248], status: "done", statusLabel: "Completed", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€", distance: "21.8 km", elevation: "+1,320 m", importance: 9, isMemorable: true, why: "Knife-edge Odle ridgeline views followed by endless green alpine meadows.", notes: "Perfect bluebird summer morning, refilled water at Rifugio Firenze.", image_url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80", satisfaction: 10, course_satisfaction: 10 },
-          { id: "demo-m3", name: "Amalfi Coastal Sunrise Run", date: "2025-10-04", month: 10, coords: [40.6340, 14.6027], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€", distance: "16.4 km", elevation: "+340 m", importance: 8, isMemorable: true, why: "Empty cliffside coastal road above the Tyrrhenian Sea before the tour buses woke up.", notes: "Out-and-back from Amalfi toward Positano with golden sunrise light.", image_url: "https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 10 },
-          { id: "demo-m4", name: "Kyoto Philosopher's Path & Arashiyama", date: "2025-03-29", month: 3, coords: [35.0262, 135.7955], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€", distance: "18.2 km", elevation: "+180 m", importance: 8, isMemorable: true, why: "Early morning temple canal run under full sakura blossoms.", notes: "Silent stone bridges and bamboo groves before 7 AM.", image_url: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 10 },
-          { id: "demo-m5", name: "Madeira Levada & Coastal Cliffs", date: "2026-02-14", month: 2, coords: [32.7420, -16.7010], status: "done", statusLabel: "Completed", surface: "mixed", surfaceLabel: "Mixed", difficulty: "stredni", cost: "€", distance: "19.6 km", elevation: "+680 m", importance: 8, isMemorable: true, why: "Winter sun escape linking narrow levada irrigation paths with volcanic sea cliffs.", notes: "Mix of paved village connectors, stone steps, and exposed dirt singletrack.", image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 9 },
-          { id: "demo-m6", name: "Edinburgh Arthur's Seat & Canal Loop", date: "2026-08-22", month: 8, coords: [55.9441, -3.1618], status: "done", statusLabel: "Completed", surface: "mixed", surfaceLabel: "Mixed", difficulty: "stredni", cost: "€", distance: "14.5 km", elevation: "+390 m", importance: 7, isMemorable: true, why: "City streets straight up an extinct volcano overlooking the Firth of Forth.", notes: "Windy summit views, smooth gravel towpath cool-down along Union Canal.", image_url: "https://images.unsplash.com/photo-1506377585622-bedcbb027afc?auto=format&fit=crop&w=600&q=80", satisfaction: 8, course_satisfaction: 9 }
+          { id: "demo-m1", name: "Chamonix Grand Balcon Ridge", date: "2025-07-19", month: 7, coords: [45.9237, 6.8694], status: "done", statusLabel: "Completed", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€", distance: "24.5 km", elevation: "+1,450 m", importance: 9, isMemorable: true, expectations: "nature,adventure", why: "Sunrise alpine run facing Mont Blanc glaciers without a single soul on the trail.", notes: "Started at 5:30 AM from Chamonix, espresso at Flégère, technical descent back.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-m2", name: "Dolomites Seceda to Alpe di Siusi", date: "2026-07-11", month: 7, coords: [46.5994, 11.7248], status: "done", statusLabel: "Completed", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€", distance: "21.8 km", elevation: "+1,320 m", importance: 9, isMemorable: true, expectations: "nature,atmosphere", why: "Knife-edge Odle ridgeline views followed by endless green alpine meadows.", notes: "Perfect bluebird summer morning, refilled water at Rifugio Firenze.", image_url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-m3", name: "Amalfi Coastal Sunrise Run", date: "2025-10-04", month: 10, coords: [40.6340, 14.6027], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€", distance: "16.4 km", elevation: "+340 m", importance: 8, isMemorable: true, expectations: "nature,travel", why: "Empty cliffside coastal road above the Tyrrhenian Sea before the tour buses woke up.", notes: "Out-and-back from Amalfi toward Positano with golden sunrise light.", image_url: "https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-m4", name: "Kyoto Philosopher's Path & Arashiyama", date: "2025-03-29", month: 3, coords: [35.0262, 135.7955], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€", distance: "18.2 km", elevation: "+180 m", importance: 8, isMemorable: true, expectations: "atmosphere,travel", why: "Early morning temple canal run under full sakura blossoms.", notes: "Silent stone bridges and bamboo groves before 7 AM.", image_url: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-m5", name: "Madeira Levada & Coastal Cliffs", date: "2026-02-14", month: 2, coords: [32.7420, -16.7010], status: "done", statusLabel: "Completed", surface: "mixed", surfaceLabel: "Mixed", difficulty: "stredni", cost: "€", distance: "19.6 km", elevation: "+680 m", importance: 8, isMemorable: true, expectations: "nature,adventure", why: "Winter sun escape linking narrow levada irrigation paths with volcanic sea cliffs.", notes: "Mix of paved village connectors, stone steps, and exposed dirt singletrack.", image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-m6", name: "Edinburgh Arthur's Seat & Canal Loop", date: "2026-08-22", month: 8, coords: [55.9441, -3.1618], status: "done", statusLabel: "Completed", surface: "mixed", surfaceLabel: "Mixed", difficulty: "stredni", cost: "€", distance: "14.5 km", elevation: "+390 m", importance: 7, isMemorable: true, expectations: "performance,travel", why: "City streets straight up an extinct volcano overlooking the Firth of Forth.", notes: "Windy summit views, smooth gravel towpath cool-down along Union Canal.", image_url: "https://images.unsplash.com/photo-1506377585622-bedcbb027afc?auto=format&fit=crop&w=600&q=80" }
         ];
 
         // Real geographic waypoint routes for every demo race & memorable run (city loops, point-to-point, alpine traverses, coastal out-and-backs)
@@ -2754,6 +2778,13 @@
 
       selectStatusMode(item.status || 'done');
       applyMemorableFormLayout(!!item.isMemorable);
+      if (item.isMemorable) {
+        const parsed = parseMemorableTagsFromItem(item);
+        selectedMemorableTags = parsed.tags;
+        const otherEl = document.getElementById('form-memorable-other');
+        if (otherEl) otherEl.value = parsed.otherText;
+        renderMemorableTagChips();
+      }
       selectChip('surface', item.surface || 'road');
       selectChip('difficulty', item.difficulty || 'stredni');
 
@@ -4177,6 +4208,8 @@
 
           ${heroHtml}
 
+          ${item.isMemorable ? buildMemorableTagsPillsHtml(item) : ''}
+
           ${(!zavodniTrasy[item.id] && !isReadOnlyShared) ? `
             <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
               <span style="font-size:0.76rem; color:#64748b; font-weight:600;">📍 Showing Race Zone (no GPX track attached)</span>
@@ -4493,7 +4526,7 @@
       doneList.forEach(r => {
         if (!longestRun || parseNum(r.distance) > parseNum(longestRun.distance)) longestRun = r;
         if (!biggestClimb || parseNum(r.elevation) > parseNum(biggestClimb.elevation)) biggestClimb = r;
-        if (!topRated || ((r.satisfaction || 0) + (r.course_satisfaction || 0)) > ((topRated.satisfaction || 0) + (topRated.course_satisfaction || 0))) topRated = r;
+        if (!r.isMemorable && (!topRated || ((r.satisfaction || 0) + (r.course_satisfaction || 0)) > ((topRated.satisfaction || 0) + (topRated.course_satisfaction || 0)))) topRated = r;
       });
 
       const renderPrCard = (title, badgeText, prObj, accentColor) => {
@@ -4704,7 +4737,7 @@
 
       let doneKm = 0, doneEle = 0, roadCount = 0, trailCount = 0;
       let marathons = 0, halfs = 0, ultras = 0, tens = 0;
-      let perfSum = 0, courseSum = 0;
+      let perfSum = 0, courseSum = 0, ratedCount = 0;
       const doneCountries = new Set();
       const doneContinents = new Set();
 
@@ -4719,16 +4752,19 @@
         else if (d >= 20 && d <= 23) halfs++;
         else if (d > 0) tens++;
 
-        perfSum += (r.satisfaction || 8);
-        courseSum += (r.course_satisfaction || 9);
+        if (!r.isMemorable) {
+          perfSum += (r.satisfaction || 8);
+          courseSum += (r.course_satisfaction || 9);
+          ratedCount++;
+        }
 
         const geo = detectGeoFromCoords(r.coords, r.name);
         doneCountries.add(geo.html);
         doneContinents.add(geo.continent);
       });
 
-      const avgPerf = doneList.length ? (perfSum / doneList.length).toFixed(1) : '-';
-      const avgCourse = doneList.length ? (courseSum / doneList.length).toFixed(1) : '-';
+      const avgPerf = ratedCount ? (perfSum / ratedCount).toFixed(1) : '-';
+      const avgCourse = ratedCount ? (courseSum / ratedCount).toFixed(1) : '-';
       const totalSurface = (roadCount + trailCount) || 1;
       const roadPct = Math.round((roadCount / totalSurface) * 100);
       const trailPct = 100 - roadPct;
@@ -4869,6 +4905,81 @@
     let pendingCatalogImageUrl = null;
     let modalPhotosList = [];
 
+    const MEMORABLE_HIGHLIGHT_MAP = {
+      nature: { emoji: '🏔️', label: 'Scenic Nature' },
+      performance: { emoji: '⚡', label: 'Great Performance' },
+      atmosphere: { emoji: '✨', label: 'Unique Atmosphere' },
+      adventure: { emoji: '🧭', label: 'Epic Adventure' },
+      company: { emoji: '👥', label: 'Great Company' },
+      travel: { emoji: '✈️', label: 'Travel Discovery' },
+      other: { emoji: '⭐', label: 'Other' }
+    };
+    let selectedMemorableTags = [];
+
+    function renderMemorableTagChips() {
+      document.querySelectorAll('#chips-memorable-tags .chip-btn').forEach(btn => {
+        btn.classList.toggle('active', selectedMemorableTags.includes(btn.dataset.tag));
+      });
+      const otherInput = document.getElementById('form-memorable-other');
+      if (otherInput) {
+        otherInput.style.display = selectedMemorableTags.includes('other') ? 'block' : 'none';
+      }
+    }
+
+    function toggleMemorableTag(tagKey) {
+      if (selectedMemorableTags.includes(tagKey)) {
+        selectedMemorableTags = selectedMemorableTags.filter(t => t !== tagKey);
+      } else {
+        selectedMemorableTags.push(tagKey);
+      }
+      renderMemorableTagChips();
+    }
+
+    function parseMemorableTagsFromItem(item) {
+      if (!item || !item.expectations) return { tags: [], otherText: '' };
+      const raw = String(item.expectations).trim();
+      if (!raw) return { tags: [], otherText: '' };
+      const parts = raw.split(',').map(s => s.trim()).filter(Boolean);
+      const tags = [];
+      let otherText = '';
+      parts.forEach(p => {
+        if (p.startsWith('other:')) {
+          if (!tags.includes('other')) tags.push('other');
+          otherText = p.slice(6).trim();
+        } else if (MEMORABLE_HIGHLIGHT_MAP[p]) {
+          if (!tags.includes(p)) tags.push(p);
+        } else {
+          if (!tags.includes('other')) tags.push('other');
+          otherText = otherText ? `${otherText}, ${p}` : p;
+        }
+      });
+      return { tags, otherText };
+    }
+
+    function serializeMemorableTags() {
+      const out = [];
+      selectedMemorableTags.forEach(t => {
+        if (t === 'other') {
+          const custom = (document.getElementById('form-memorable-other')?.value || '').trim().replace(/,/g, ';');
+          out.push(custom ? `other:${custom}` : 'other');
+        } else {
+          out.push(t);
+        }
+      });
+      return out.length > 0 ? out.join(',') : null;
+    }
+
+    function buildMemorableTagsPillsHtml(item) {
+      const { tags, otherText } = parseMemorableTagsFromItem(item);
+      if (tags.length === 0) return '';
+      const pills = tags.map(t => {
+        const meta = MEMORABLE_HIGHLIGHT_MAP[t] || { emoji: '⭐', label: 'Special' };
+        const text = (t === 'other' && otherText) ? otherText : meta.label;
+        return `<span class="memorable-tag-pill">${meta.emoji} ${text}</span>`;
+      }).join('');
+      return `<div class="memorable-tags-card">${pills}</div>`;
+    }
+
     function selectChip(category, value) {
       chipSelections[category] = value;
       document.querySelectorAll(`#chips-${category} .chip-btn`).forEach(btn => {
@@ -4907,6 +5018,11 @@
       if (photoInput) photoInput.value = '';
       renderModalPhotosGrid();
 
+      selectedMemorableTags = [];
+      const otherEl = document.getElementById('form-memorable-other');
+      if (otherEl) otherEl.value = '';
+      renderMemorableTagChips();
+
       selectStatusMode('done');
       selectChip('surface', 'road');
       selectChip('difficulty', 'stredni');
@@ -4915,13 +5031,15 @@
     function applyMemorableFormLayout(isMem) {
       isModalMemorableMode = isMem;
       document.getElementById('wrap-status-selector').style.display = isMem ? 'none' : 'block';
+      const wrapTags = document.getElementById('wrap-field-memorable-tags');
+      if (wrapTags) wrapTags.style.display = isMem ? 'flex' : 'none';
       if (isMem) {
         document.getElementById('wrap-field-date').style.display = 'block';
         document.getElementById('wrap-field-month').style.display = 'none';
         document.getElementById('fields-for-done').style.display = 'none';
         document.getElementById('fields-for-planned').style.display = 'none';
         document.getElementById('fields-for-planning-common').style.display = 'none';
-        document.getElementById('wrap-field-importance').style.display = 'flex';
+        document.getElementById('wrap-field-importance').style.display = 'none';
         document.getElementById('wrap-field-qualification').style.display = 'none';
         document.getElementById('wrap-field-notes').style.display = 'block';
         document.getElementById('label-dynamic-why').textContent = 'The Story — Why was this run unforgettable?';
@@ -5155,7 +5273,10 @@
         is_memorable: isModalMemorableMode
       };
 
-      if (status === 'done' && !isModalMemorableMode) {
+      if (isModalMemorableMode) {
+        record.expectations = serializeMemorableTags();
+        record.importance = 5;
+      } else if (status === 'done') {
         record.result_time = document.getElementById('form-finish-simple').value.trim() || null;
         record.placement = document.getElementById('form-placement').value.trim() || null;
         record.satisfaction = parseInt(document.getElementById('form-satisfaction').value) || 8;
