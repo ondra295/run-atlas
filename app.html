@@ -623,7 +623,10 @@
     .badge-done { background: #dcfce7; color: #166534; }
     .badge-planned { background: #fef3c7; color: #92400e; }
     .badge-bucket { background: #e0f2fe; color: #0369a1; }
-    .badge-memorable { background: #f3e8ff; color: #6b21a8; }
+    .badge-memorable { background: #ccfbf1; color: #115e59; }
+    .badge-memorable-trail { background: #ccfbf1; color: #115e59; }
+    .badge-memorable-road { background: #e2e8f0; color: #334155; }
+    .badge-memorable-mixed { background: #fef3c7; color: #92400e; }
 
     .open-detail-btn {
       background: #007aff; color: #fff; border: none; padding: 8px 16px; border-radius: 8px;
@@ -1098,10 +1101,11 @@
 
         <div id="filters-section-wrap" class="filters-section">
           <div class="filters-controls-row">
-            <div style="display:flex; gap:6px;">
-              <button class="pill-btn active" onclick="setSurfaceFilter('all', this)">All</button>
-              <button class="pill-btn" onclick="setSurfaceFilter('trail', this)">Trail</button>
-              <button class="pill-btn" onclick="setSurfaceFilter('road', this)">Road</button>
+            <div style="display:flex; gap:4px;">
+              <button class="pill-btn active" style="padding:6px 9px;" onclick="setSurfaceFilter('all', this)">All</button>
+              <button class="pill-btn" style="padding:6px 9px;" onclick="setSurfaceFilter('trail', this)">Trail</button>
+              <button class="pill-btn" style="padding:6px 9px;" onclick="setSurfaceFilter('road', this)">Road</button>
+              <button class="pill-btn" style="padding:6px 9px;" onclick="setSurfaceFilter('mixed', this)">Mixed</button>
             </div>
 
             <select id="sort-select" class="sort-select" onchange="handleSortChange(this.value)">
@@ -1491,8 +1495,9 @@
 
       confirmCallback = onConfirm;
       okBtn.onclick = () => {
+        const cb = confirmCallback;
         closeCustomConfirm();
-        if (confirmCallback) confirmCallback();
+        if (cb) cb();
       };
       document.getElementById('custom-confirm-modal').style.display = 'flex';
     }
@@ -1709,7 +1714,7 @@
         html += `<div class="spotlight-group-title">In Your Atlas (${myMatches.length})</div>`;
         myMatches.forEach(item => {
           const colors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
-          const dotColor = item.isMemorable ? '#7e22ce' : (colors[item.status] || '#007aff');
+          const dotColor = getItemAccentColor(item);
           html += `
             <div class="spotlight-item" onclick="selectSpotlightRace('${item.id}')">
               <div class="spotlight-item-left">
@@ -1765,7 +1770,7 @@
 
     function selectSpotlightRace(id) {
       clearSpotlightSearch();
-      const item = races.find(r => r.id === id);
+      const item = races.find(r => String(r.id) === String(id));
       if (!item) return;
       if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode(item.isMemorable ? 'memorable' : 'races');
       showDetail(item);
@@ -2397,7 +2402,7 @@
 
     function openEditActivityModal(id) {
       if (isReadOnlyShared) return;
-      const item = races.find(r => r.id === id);
+      const item = races.find(r => String(r.id) === String(id));
       if (!item) return;
 
       closeModals();
@@ -2452,7 +2457,8 @@
 
     function deleteActivity(id) {
       if (isReadOnlyShared) return;
-      const item = races.find(r => r.id === id);
+      const item = races.find(r => String(r.id) === String(id));
+      const targetId = item ? item.id : id;
       openCustomConfirm({
         title: 'Delete Activity?',
         message: `Are you sure you want to permanently remove "${item ? item.name : 'this activity'}" from your atlas?`,
@@ -2461,20 +2467,25 @@
         confirmText: 'Delete',
         onConfirm: async () => {
           if (isDemoMode) {
-            races = races.filter(r => r.id !== id);
+            races = races.filter(r => String(r.id) !== String(targetId));
+            delete zavodniTrasy[targetId];
+            delete elevationProfiles[targetId];
             exitDetailView();
             showToast('Demo activity deleted.', '🗑️');
             return;
           }
           if (!currentUser) return;
           try {
-            const { error } = await supabaseClient.from('races').delete().eq('id', id).eq('user_id', currentUser.id);
+            const { error } = await supabaseClient.from('races').delete().eq('id', targetId).eq('user_id', currentUser.id);
             if (error) throw error;
+            delete zavodniTrasy[targetId];
+            delete elevationProfiles[targetId];
             exitDetailView();
             await loadActivitiesFromDB(currentUser.id);
             showToast('Activity removed from atlas.', '🗑️');
           } catch (e) {
-            showToast('Error deleting activity.', '⚠️');
+            console.error('Delete error:', e);
+            showToast('Error deleting activity: ' + (e.message || 'Unknown error'), '⚠️');
           }
         }
       });
@@ -2502,9 +2513,50 @@
       });
     }
 
+    function getMemorableSurfaceTheme(surface) {
+      const s = (surface || 'trail').toLowerCase();
+      if (s === 'road') {
+        return {
+          key: 'road',
+          color: '#475569',
+          hudColor: '#cbd5e1',
+          badgeClass: 'badge-memorable-road',
+          label: 'Road',
+          // Perspective road with center dashed line
+          iconSvg: `<path d="M8.5 16.5 L10.3 7.8 L13.7 7.8 L15.5 16.5 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/><line x1="12" y1="9.2" x2="12" y2="11.2" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round"/><line x1="12" y1="13" x2="12" y2="15.2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>`
+        };
+      }
+      if (s === 'mixed') {
+        return {
+          key: 'mixed',
+          color: '#b45309',
+          hudColor: '#fbbf24',
+          badgeClass: 'badge-memorable-mixed',
+          label: 'Mixed',
+          // Winding trail/road S-path
+          iconSvg: `<path d="M8.5 16 C8.5 12.8, 15.5 13.2, 15.5 10 C15.5 8.5, 13.8 7.8, 12 7.8" fill="none" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round"/><circle cx="11.6" cy="7.8" r="1.4" fill="#ffffff"/>`
+        };
+      }
+      // Default: trail — calm deep pine-teal + mountain peaks
+      return {
+        key: 'trail',
+        color: '#0f766e',
+        hudColor: '#2dd4bf',
+        badgeClass: 'badge-memorable-trail',
+        label: 'Trail',
+        iconSvg: `<path d="M6.8 15.5 L10.6 8.8 L13.2 12.6 L14.8 10.4 L17.4 15.5 Z" fill="#ffffff"/>`
+      };
+    }
+
+    function getItemBadgeClass(item) {
+      if (item.isMemorable) return getMemorableSurfaceTheme(item.surface).badgeClass;
+      return 'badge-' + item.status;
+    }
+
     function getItemAccentColor(item) {
-      const colors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
-      return item.isMemorable ? '#7e22ce' : (colors[item.status] || '#007aff');
+      if (item.isMemorable) return getMemorableSurfaceTheme(item.surface).color;
+      const colors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7' };
+      return colors[item.status] || '#007aff';
     }
 
     // HIGH-RES NATURAL EARTH 50m COUNTRY SILHOUETTES (LOADED FROM CDN & CACHED IN MEMORY)
@@ -2715,7 +2767,7 @@
         <div class="card-body-wrap">
           <div class="card-meta-top">
             <div style="display:flex; align-items:center; gap:6px; min-width:0;">
-              <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
+              <span class="badge ${getItemBadgeClass(item)}">
                 ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
               </span>
               ${!hasPhoto ? `<span style="font-size:0.72rem; font-weight:700; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${geo.html}</span>` : ''}
@@ -2737,9 +2789,15 @@
     }
 
     function buildGeoBreakdownHtml(items) {
-      let done = 0, planned = 0, bucket = 0, mem = 0;
+      let done = 0, planned = 0, bucket = 0;
+      let memTrail = 0, memRoad = 0, memMixed = 0;
       items.forEach(i => {
-        if (i.isMemorable) mem++;
+        if (i.isMemorable) {
+          const s = (i.surface || 'trail').toLowerCase();
+          if (s === 'road') memRoad++;
+          else if (s === 'mixed') memMixed++;
+          else memTrail++;
+        }
         else if (i.status === 'done') done++;
         else if (i.status === 'planned') planned++;
         else bucket++;
@@ -2760,9 +2818,17 @@
         segments.push(`<div class="geo-progress-seg" style="width:${(bucket / total) * 100}%; background:#0284c7;"></div>`);
         legends.push(`<span class="geo-legend-item"><span class="geo-pill-dot" style="background:#0284c7;"></span>${bucket} Bucket List</span>`);
       }
-      if (mem > 0) {
-        segments.push(`<div class="geo-progress-seg" style="width:${(mem / total) * 100}%; background:#7e22ce;"></div>`);
-        legends.push(`<span class="geo-legend-item"><span class="geo-pill-dot" style="background:#7e22ce;"></span>${mem} Memorable</span>`);
+      if (memTrail > 0) {
+        segments.push(`<div class="geo-progress-seg" style="width:${(memTrail / total) * 100}%; background:#0f766e;"></div>`);
+        legends.push(`<span class="geo-legend-item"><span class="geo-pill-dot" style="background:#0f766e;"></span>${memTrail} Trail</span>`);
+      }
+      if (memRoad > 0) {
+        segments.push(`<div class="geo-progress-seg" style="width:${(memRoad / total) * 100}%; background:#475569;"></div>`);
+        legends.push(`<span class="geo-legend-item"><span class="geo-pill-dot" style="background:#475569;"></span>${memRoad} Road</span>`);
+      }
+      if (memMixed > 0) {
+        segments.push(`<div class="geo-progress-seg" style="width:${(memMixed / total) * 100}%; background:#b45309;"></div>`);
+        legends.push(`<span class="geo-legend-item"><span class="geo-pill-dot" style="background:#b45309;"></span>${memMixed} Mixed</span>`);
       }
 
       return `
@@ -2895,10 +2961,13 @@
       }
 
       const w = 22, h = 29;
-      const fill = status === 'memorable' ? '#7e22ce' : '#16a34a';
-      const inner = status === 'memorable'
-        ? `<path d="M7.5 15 L11 9 L13.5 12.5 L15 10.5 L17 15 Z" fill="#ffffff"/>`
-        : `<path d="M8.5 12.2 L11 14.7 L16 9.5" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+      let fill = '#16a34a';
+      let inner = `<path d="M8.5 12.2 L11 14.7 L16 9.5" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+      if (status === 'memorable') {
+        const mt = getMemorableSurfaceTheme(item.surface);
+        fill = mt.color;
+        inner = mt.iconSvg;
+      }
       const html = `<div class="pin-svg-wrap" style="width:${w}px; height:${h}px;"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="M12 1C5.9 1 1 5.9 1 12c0 7.7 11 19 11 19s11-11.3 11-19C23 5.9 18.1 1 12 1z" fill="${fill}" stroke="#ffffff" stroke-width="2"/>${inner}</svg>${badgeHtml}</div>`;
       return {
         icon: L.divIcon({ className: 'custom-race-pin', html, iconSize: [w, h], iconAnchor: [w / 2, h] }),
@@ -2908,7 +2977,7 @@
 
     function openRaceFromStackPopup(raceId) {
       map.closePopup();
-      const item = races.find(r => r.id === raceId);
+      const item = races.find(r => String(r.id) === String(raceId));
       if (item) showDetail(item);
     }
 
@@ -2972,7 +3041,7 @@
 
         const rowsHtml = sorted.map(r => {
           const st = r.isMemorable ? 'memorable' : (r.status || 'bucket');
-          const c = dotColors[st] || '#007aff';
+          const c = r.isMemorable ? getMemorableSurfaceTheme(r.surface).color : (dotColors[st] || '#007aff');
           const metaParts = [r.date, r.distance, r.resultTime].filter(Boolean).join(' &bull; ');
           return `
             <div class="stack-popup-row" onclick="openRaceFromStackPopup('${r.id}')">
@@ -3297,7 +3366,7 @@
         const geo = detectGeoFromCoords(item.coords, item.name);
         cluster.innerHTML = `
           <div class="hud-box">
-            <div class="hud-box-metric" style="color:#c084fc;">${item.distance || '-'}</div>
+            <div class="hud-box-metric" style="color:${getMemorableSurfaceTheme(item.surface).hudColor};">${item.distance || '-'}</div>
             <div class="hud-box-sub">${item.elevation || 'Flat / Rolling'}</div>
             <div class="hud-box-lbl">Distance & Climb</div>
           </div>
@@ -3609,7 +3678,7 @@
       document.querySelector('.map-bottom-controls').style.display = 'none';
 
       const statusColors = { done: '#16a34a', planned: '#d97706', bucket: '#0284c7', memorable: '#7e22ce' };
-      const themeColor = item.isMemorable ? '#7e22ce' : (statusColors[item.status] || '#007aff');
+      const themeColor = getItemAccentColor(item);
 
       if (zavodniTrasy[item.id]) {
         // Hide cluster/race pins so the dot doesn't obstruct the GPX route
@@ -3671,7 +3740,7 @@
       const noPhotoHeroHtml = `
         <div class="detail-hero-nophoto" style="--hero-accent:${themeColor};">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px;">
-            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
+            <span class="badge ${getItemBadgeClass(item)}">
               ${item.isMemorable ? 'Memorable Run' : (item.statusLabel || item.status)}
             </span>
             <span style="font-size:0.76rem; font-weight:700; color:#64748b;">${geo.html}</span>
@@ -3703,7 +3772,7 @@
           ${photos.length > 1 ? `<div class="detail-hero-photo-badge">📷 ${photos.length} photos</div>` : ''}
           <div class="detail-hero-overlay"></div>
           <div class="detail-hero-content">
-            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}" style="margin-bottom:6px;">
+            <span class="badge ${getItemBadgeClass(item)}" style="margin-bottom:6px;">
               ${item.isMemorable ? 'Memorable Run' : (item.statusLabel || item.status)}
             </span>
             <h2 style="font-size:1.35rem; font-weight:800; line-height:1.2; text-shadow:0 2px 8px rgba(0,0,0,0.8);">${item.name}</h2>
@@ -3871,7 +3940,7 @@
           mLabel = monthShort[parseInt(parts[1])] || 'RUN';
           dLabel = parts[2];
         }
-        const dotColor = item.isMemorable ? '#7e22ce' : (item.status === 'done' ? '#16a34a' : '#d97706');
+        const dotColor = item.isMemorable ? getMemorableSurfaceTheme(item.surface).color : (item.status === 'done' ? '#16a34a' : '#d97706');
         const geo = detectGeoFromCoords(item.coords, item.name);
 
         return `
@@ -3884,7 +3953,7 @@
               </div>
               <div style="min-width:0;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-                  <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
+                  <span class="badge ${getItemBadgeClass(item)}">
                     ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
                   </span>
                   <span style="font-size:0.76rem; font-weight:700; color:#64748b; display:inline-flex; align-items:center;">${geo.html}</span>
