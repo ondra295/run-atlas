@@ -3346,6 +3346,15 @@
       activeList = sortActivities(activeList);
       currentFilteredList = activeList;
 
+      if (currentDetailItem) {
+        const freshDetail = races.find(r => String(r.id) === String(currentDetailItem.id));
+        if (freshDetail) {
+          showDetail(freshDetail);
+          return;
+        }
+        currentDetailItem = null;
+      }
+
       syncMapMarkersAndHighlight();
       renderSidebarList();
     }
@@ -4802,8 +4811,10 @@
       }
       if (parsedGpxCoords) record.route_coords = parsedGpxCoords;
 
+      const wasEditingId = editingActivityId;
+
       if (isDemoMode) {
-        const localId = editingActivityId || `demo-${Date.now()}`;
+        const localId = wasEditingId || `demo-${Date.now()}`;
         const localObj = {
           ...record,
           id: localId,
@@ -4817,43 +4828,56 @@
         if (parsedGpxCoords) zavodniTrasy[localId] = parsedGpxCoords;
         if (parsedElevationSample) elevationProfiles[localId] = parsedElevationSample;
 
-        if (editingActivityId) {
-          races = races.map(r => r.id === editingActivityId ? localObj : r);
+        if (wasEditingId) {
+          races = races.map(r => String(r.id) === String(wasEditingId) ? localObj : r);
           showToast('Demo activity updated!', '✅');
         } else {
           races.unshift(localObj);
+          currentDetailItem = null;
           showToast('Added to Live Demo map!', '🏁');
         }
         closeModals();
-        if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode('races');
+        if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode(localObj.isMemorable ? 'memorable' : 'races');
         else renderAll();
-        map.flyTo(finalCoords, 11, { animate: true });
+        if (wasEditingId) {
+          showDetail(localObj);
+        } else {
+          map.flyTo(finalCoords, 11, { animate: true });
+        }
         saveBtn.textContent = 'Save to Atlas';
         saveBtn.disabled = false;
         return;
       }
 
       try {
-        if (editingActivityId) {
-          const { error: updErr } = await supabaseClient.from('races').update(record).eq('id', editingActivityId).eq('user_id', currentUser.id);
+        let savedId = wasEditingId;
+        if (wasEditingId) {
+          const { error: updErr } = await supabaseClient.from('races').update(record).eq('id', wasEditingId).eq('user_id', currentUser.id);
           if (updErr) throw updErr;
-          if (parsedElevationSample) elevationProfiles[editingActivityId] = parsedElevationSample;
+          if (parsedElevationSample) elevationProfiles[wasEditingId] = parsedElevationSample;
           showToast('Activity updated!', '✅');
         } else {
           const { data: insData, error: insErr } = await supabaseClient.from('races').insert([record]).select();
           if (insErr) throw insErr;
-          if (insData && insData[0] && parsedElevationSample) {
-            elevationProfiles[insData[0].id] = parsedElevationSample;
+          if (insData && insData[0]) {
+            savedId = insData[0].id;
+            if (parsedElevationSample) elevationProfiles[savedId] = parsedElevationSample;
           }
+          currentDetailItem = null;
           showToast('Activity saved to your atlas!', '🏁');
         }
 
         closeModals();
         await loadActivitiesFromDB(currentUser.id);
         if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) {
-          switchPageMode('races');
+          switchPageMode(record.is_memorable ? 'memorable' : 'races');
         }
-        map.flyTo(finalCoords, 11, { animate: true });
+        const savedItem = savedId ? races.find(r => String(r.id) === String(savedId)) : null;
+        if (wasEditingId && savedItem) {
+          showDetail(savedItem);
+        } else {
+          map.flyTo(finalCoords, 11, { animate: true });
+        }
       } catch (err) {
         showToast('Error: ' + err.message, '⚠️');
       } finally {
