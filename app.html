@@ -428,36 +428,161 @@
       font-size: 0.88rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px;
     }
     .geo-group-card {
+      position: relative; overflow: hidden;
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
-      padding: 16px 18px; cursor: pointer; transition: all 0.18s ease; flex-shrink: 0;
+      padding: 15px 18px 14px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0;
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
       display: flex; flex-direction: column; gap: 10px;
     }
     .geo-group-card:hover {
-      border-color: #007aff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.14);
+      border-color: #007aff; transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 122, 255, 0.14);
+    }
+    .geo-continent-watermark {
+      position: absolute; right: -6px; bottom: -10px; width: 112px; height: 86px;
+      color: #0f172a; opacity: 0.075; pointer-events: none; z-index: 0;
+      transition: opacity 0.2s ease, transform 0.25s ease, color 0.2s ease;
+    }
+    .geo-group-card:hover .geo-continent-watermark {
+      color: #007aff; opacity: 0.14; transform: scale(1.05);
+    }
+    .geo-group-top, .geo-progress-wrap, .geo-legend-row {
+      position: relative; z-index: 1;
     }
     .geo-group-top {
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
     }
     .geo-group-name {
-      font-size: 1.08rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;
+      font-size: 1.06rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 7px; letter-spacing: -0.2px;
     }
+    .geo-group-count {
+      display: inline-flex; align-items: baseline; gap: 4px; color: #0f172a; flex-shrink: 0;
+    }
+    .geo-group-count strong { font-size: 1.2rem; font-weight: 900; letter-spacing: -0.4px; }
+    .geo-group-count span { font-size: 0.72rem; font-weight: 700; color: #64748b; }
+    .geo-group-arrow {
+      font-size: 0.84rem; font-weight: 800; color: #94a3b8; margin-left: 3px;
+      transition: transform 0.18s ease, color 0.18s ease; display: inline-block;
+    }
+    .geo-group-card:hover .geo-group-arrow { transform: translateX(3px); color: #007aff; }
     .geo-group-total {
       font-size: 0.76rem; font-weight: 800; color: #64748b; background: #f1f5f9;
       padding: 3px 9px; border-radius: 20px; border: 1px solid #e2e8f0;
     }
-    .geo-status-pills {
-      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    .geo-progress-bar {
+      display: flex; width: 100%; height: 5px; border-radius: 99px; overflow: hidden;
+      background: #e2e8f0; gap: 2px;
     }
-    .geo-pill {
-      font-size: 0.73rem; font-weight: 800; padding: 3px 9px; border-radius: 8px;
+    .geo-progress-seg { height: 100%; border-radius: 99px; }
+    .geo-legend-row {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px;
+      font-size: 0.74rem; font-weight: 700; color: #475569;
+    }
+    .geo-legend-item {
+      display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+    }
+    .geo-pill-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+    /* Multi-photo badges, gallery strip & lightbox */
+    .card-photo-count {
+      position: absolute; right: 5px; bottom: 5px;
+      background: rgba(15, 23, 42, 0.78); color: #ffffff; backdrop-filter: blur(4px);
+      font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 6px;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    .detail-hero-photo-badge {
+      position: absolute; top: 10px; right: 10px; z-index: 3;
+      background: rgba(15, 23, 42, 0.76); color: #ffffff; backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.2);
+      font-size: 0.72rem; font-weight: 800; padding: 4px 9px; border-radius: 20px;
       display: inline-flex; align-items: center; gap: 5px;
     }
-    .geo-pill-done { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-    .geo-pill-planned { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-    .geo-pill-bucket { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-    .geo-pill-memorable { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
-    .geo-pill-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+    .detail-gallery-strip {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px;
+    }
+    .detail-gallery-thumb {
+      width: 68px; height: 68px; aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden;
+      flex-shrink: 0; cursor: pointer; border: 2px solid transparent; position: relative;
+      transition: transform 0.15s ease, border-color 0.15s ease; background: #e2e8f0;
+    }
+    .detail-gallery-thumb:hover { transform: translateY(-2px); border-color: #007aff; }
+    .detail-gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .modal-photo-grid {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;
+    }
+    .modal-photo-item {
+      position: relative; width: 64px; height: 64px; border-radius: 8px; overflow: hidden;
+      border: 2px solid #cbd5e1; background: #f1f5f9;
+    }
+    .modal-photo-item.is-cover { border-color: #007aff; box-shadow: 0 0 0 2px rgba(0,122,255,0.2); }
+    .modal-photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .modal-photo-del, .modal-photo-cover {
+      position: absolute; width: 20px; height: 20px; border-radius: 50%; border: none;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      font-size: 0.7rem; font-weight: 800; line-height: 1;
+    }
+    .modal-photo-del { top: 2px; right: 2px; background: rgba(15,23,42,0.8); color: #fff; }
+    .modal-photo-del:hover { background: #dc2626; }
+    .modal-photo-cover { bottom: 2px; left: 2px; background: rgba(15,23,42,0.75); color: #cbd5e1; }
+    .modal-photo-item.is-cover .modal-photo-cover { background: #007aff; color: #fff; }
+
+    /* Fullscreen Lightbox */
+    #photo-lightbox {
+      display: none; position: fixed; inset: 0; z-index: 120000;
+      background: rgba(10, 15, 28, 0.94); backdrop-filter: blur(10px);
+      align-items: center; justify-content: center; flex-direction: column; padding: 28px;
+    }
+    #photo-lightbox.show { display: flex; }
+    .lightbox-stage {
+      position: relative; max-width: 90vw; max-height: 78vh; display: flex; align-items: center; justify-content: center;
+    }
+    .lightbox-stage img {
+      max-width: 88vw; max-height: 76vh; border-radius: 12px; object-fit: contain;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65);
+    }
+    .lightbox-nav-btn {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(15, 23, 42, 0.78); color: #ffffff; font-size: 1.35rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    }
+    .lightbox-nav-btn:hover { background: #007aff; border-color: #007aff; }
+    .lightbox-nav-btn.prev { left: 24px; }
+    .lightbox-nav-btn.next { right: 24px; }
+    .lightbox-close-btn {
+      position: fixed; top: 20px; right: 24px; width: 42px; height: 42px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.22); background: rgba(15, 23, 42, 0.8); color: #ffffff;
+      font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .lightbox-close-btn:hover { background: #dc2626; border-color: #dc2626; }
+    .lightbox-caption {
+      margin-top: 14px; color: #e2e8f0; font-size: 0.88rem; font-weight: 700;
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    /* Timeline TODAY divider */
+    .timeline-today-divider {
+      position: relative; display: flex; align-items: center; gap: 12px;
+      margin: 6px 0; padding: 6px 0;
+    }
+    .timeline-today-dot {
+      position: absolute; left: -46px; top: 50%; transform: translateY(-50%);
+      width: 18px; height: 18px; border-radius: 50%; background: #007aff;
+      border: 3.5px solid #f8f9fb; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.25);
+    }
+    .timeline-today-line {
+      flex: 1; height: 2px;
+      background: linear-gradient(90deg, #007aff 0%, #38bdf8 55%, rgba(56, 189, 248, 0.15) 100%);
+      border-radius: 2px;
+    }
+    .timeline-today-pill {
+      background: #0f172a; color: #38bdf8; border: 1.5px solid #38bdf8;
+      font-size: 0.72rem; font-weight: 900; letter-spacing: 0.7px; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 99px; white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 122, 255, 0.22);
+    }
+    .timeline-today-hint {
+      font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+    }
     .race-card-rich:hover { border-color: #007aff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.15); }
     
     .card-thumb-left {
@@ -1084,9 +1209,23 @@
         <div id="catalog-suggestions" class="catalog-suggest-box"></div>
       </div>
 
-      <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 11px; text-align: center; background: #f8fafc; cursor: pointer;">
-        <span id="gpx-label" style="font-size:0.82rem; font-weight:700; color:#007aff;">📁 Drop watch track (.GPX) — Optional</span>
-        <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 11px; text-align: center; background: #f8fafc; cursor: pointer;">
+          <span id="gpx-label" style="font-size:0.8rem; font-weight:700; color:#007aff;">📁 Drop watch track (.GPX)</span>
+          <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
+        </div>
+        <div id="drop-photos" style="border: 2px dashed #64748b; border-radius: 10px; padding: 11px; text-align: center; background: #f8fafc; cursor: pointer;" onclick="document.getElementById('input-photos').click()">
+          <span id="photos-label" style="font-size:0.8rem; font-weight:700; color:#334155;">📷 Add Photos (Multiple)</span>
+          <input type="file" id="input-photos" accept="image/*" multiple style="display: none;" onchange="handlePhotosUpload(this.files)">
+        </div>
+      </div>
+
+      <div id="modal-photos-wrap" style="display:none; flex-direction:column; gap:6px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label class="form-group-label" style="margin:0;">Attached Photos (★ = Cover)</label>
+          <span id="modal-photos-status" style="font-size:0.72rem; font-weight:700; color:#64748b;"></span>
+        </div>
+        <div id="modal-photo-grid" class="modal-photo-grid"></div>
       </div>
 
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -1230,6 +1369,21 @@
         <button class="pill-btn" onclick="closeModals()">Cancel</button>
         <button id="btn-save-step1" class="open-detail-btn" onclick="saveActivityToSupabase()">Save to Atlas</button>
       </div>
+    </div>
+  </div>
+
+
+  <!-- 4. FULLSCREEN PHOTO GALLERY LIGHTBOX -->
+  <div id="photo-lightbox" onclick="if (event.target === this) closePhotoLightbox()">
+    <button class="lightbox-close-btn" onclick="closePhotoLightbox()" title="Close (Esc)">&times;</button>
+    <button id="lightbox-prev-btn" class="lightbox-nav-btn prev" onclick="stepPhotoLightbox(-1)" title="Previous (←)">‹</button>
+    <div class="lightbox-stage">
+      <img id="lightbox-img" src="" alt="Race photo">
+    </div>
+    <button id="lightbox-next-btn" class="lightbox-nav-btn next" onclick="stepPhotoLightbox(1)" title="Next (→)">›</button>
+    <div class="lightbox-caption">
+      <span id="lightbox-title"></span>
+      <span id="lightbox-counter" style="color:#38bdf8;"></span>
     </div>
   </div>
 
@@ -1729,12 +1883,12 @@
 
       const res = (country, code, continent) => ({ country, code, continent, html: `${renderFlag(code)}${country}` });
 
-      // Explicit keyword matches first (handles islands, border towns, etc.)
+      // 1. Explicit unambiguous place keywords (never match global series like 'utmb' or bare 'nice')
       if (low.includes('polar circle') || low.includes('greenland') || low.includes('kangerlussuaq')) return res('Greenland', 'gl', 'North America');
       if (low.includes('tenerife') || low.includes('transgrancanaria') || low.includes('zegama') || low.includes('penyagolosa') || low.includes('valencia') || low.includes('seville')) return res('Spain', 'es', 'Europe');
       if (low.includes('madeira') || low.includes('miut') || low.includes('estrela')) return res('Portugal', 'pt', 'Europe');
       if (low.includes('iceland') || low.includes('laugavegur')) return res('Iceland', 'is', 'Europe');
-      if (low.includes('corsica') || low.includes('korsika') || low.includes('restonica') || low.includes('chamonix') || low.includes('utmb') || low.includes('paris') || low.includes('nice') || low.includes('alsace') || low.includes('pyrénées') || low.includes('templiers') || low.includes('morbihan') || low.includes('bout du monde')) return res('France', 'fr', 'Europe');
+      if (low.includes('corsica') || low.includes('korsika') || low.includes('restonica') || low.includes('chamonix') || low.includes('mont-blanc') || low.includes('mont blanc') || low.includes('paris') || low.includes("côte d'azur") || low.includes("prom'classic") || low.includes('alsace') || low.includes('pyrénées') || low.includes('templiers') || low.includes('morbihan') || low.includes('bout du monde')) return res('France', 'fr', 'Europe');
       if (low.includes('wicklow') || low.includes('kerry way')) return res('Ireland', 'ie', 'Europe');
       if (low.includes('wales') || low.includes('scotland') || low.includes('highland fling') || low.includes('arc of attrition') || low.includes('london')) return res('United Kingdom', 'gb', 'Europe');
       if (low.includes('ardennes')) return res('Belgium', 'be', 'Europe');
@@ -1747,8 +1901,8 @@
       if (low.includes('gauja')) return res('Latvia', 'lv', 'Europe');
       if (low.includes('kernav')) return res('Lithuania', 'lt', 'Europe');
       if (low.includes('warsaw') || low.includes('varšava') || low.includes('niepodleg') || low.includes('bieg 7 dolin')) return res('Poland', 'pl', 'Europe');
-      if (low.includes('prague') || low.includes('praha') || low.includes('pražský') || low.includes('železná ruda') || low.includes('labský') || low.includes('krušné') || low.includes('run tour') || low.includes('sázav') || low.includes('týmovka') || low.includes('hostivice') || low.includes('čertovskej') || low.includes('třeboň') || low.includes('běchovice') || low.includes('pečeck') || low.includes('zátop') || low.includes('beskydská') || low.includes('krakonoš') || low.includes('zapomenuté') || low.includes('jesenick') || low.includes('ještěd') || low.includes('kunratick') || low.includes('ostravice') || low.includes('vltav')) return res('Czechia', 'cz', 'Europe');
-      if (low.includes('žaškov') || low.includes('nízkotatran') || low.includes('košic') || low.includes('mieru') || low.includes('malofatran') || low.includes('big bear') || low.includes('slovak')) return res('Slovakia', 'sk', 'Europe');
+      if (low.includes('prague') || low.includes('praha') || low.includes('pražský') || low.includes('železná ruda') || low.includes('labský') || low.includes('krušné') || low.includes('run tour') || low.includes('sázav') || low.includes('týmovka') || low.includes('hostivice') || low.includes('čertovskej') || low.includes('třeboň') || low.includes('běchovice') || low.includes('pečeck') || low.includes('zátop') || low.includes('beskydská') || low.includes('krakonoš') || low.includes('zapomenuté') || low.includes('jesenick') || low.includes('ještěd') || low.includes('kunratick') || low.includes('ostravice') || low.includes('vltav') || low.includes('slaný') || low.includes('kladno')) return res('Czechia', 'cz', 'Europe');
+      if (low.includes('žaškov') || low.includes('nízkotatran') || low.includes('košic') || low.includes('mieru') || low.includes('malofatran') || low.includes('big bear') || low.includes('slovak') || low.includes('kriváň') || low.includes('tatry')) return res('Slovakia', 'sk', 'Europe');
       if (low.includes('hungary')) return res('Hungary', 'hu', 'Europe');
       if (low.includes('transylvania')) return res('Romania', 'ro', 'Europe');
       if (low.includes('julian alps')) return res('Slovenia', 'si', 'Europe');
@@ -1789,7 +1943,33 @@
       if (low.includes('golden ring') || low.includes('grut')) return res('Russia', 'ru', 'Europe');
       if (low.includes('baikal')) return res('Russia', 'ru', 'Asia');
 
-      // Fallback geographic bounds
+      // 2. Continent-first coordinate fallbacks
+      if (lng < -30) {
+        if (lat > 15) {
+          if (lat > 58 && lng > -60) return res('Greenland', 'gl', 'North America');
+          if (lat > 49 && lng > -141) return res('Canada', 'ca', 'North America');
+          return res('USA', 'us', 'North America');
+        } else {
+          if (lng > -54 && lat > -34) return res('Brazil', 'br', 'South America');
+          if (lng < -68 && lat < -18) return res('Chile', 'cl', 'South America');
+          return res('Argentina', 'ar', 'South America');
+        }
+      }
+      if (lat < -10 && lng > 110) {
+        return lng > 165 ? res('New Zealand', 'nz', 'Oceania') : res('Australia', 'au', 'Oceania');
+      }
+      if (lat < 35 && lng >= -20 && lng <= 52) {
+        if (lat < -22 && lng >= 16 && lng <= 33) return res('South Africa', 'za', 'Africa');
+        if (lat > 27 && lng < 0) return res('Morocco', 'ma', 'Africa');
+        return res('Africa', '', 'Africa');
+      }
+      if (lng > 35 && lat >= 0) {
+        if (lat >= 30 && lat <= 46 && lng >= 128 && lng <= 146) return res('Japan', 'jp', 'Asia');
+        if (lat >= 36 && lat <= 42 && lng >= 26 && lng <= 45) return res('Turkey', 'tr', 'Asia');
+        return res('Asia', '', 'Asia');
+      }
+
+      // 3. Europe coordinate fallbacks
       if (lat >= 48.5 && lat <= 51.1 && lng >= 12.0 && lng <= 18.9) return res('Czechia', 'cz', 'Europe');
       if (lat >= 47.7 && lat <= 49.6 && lng >= 16.8 && lng <= 22.6) return res('Slovakia', 'sk', 'Europe');
       if (lat >= 46.3 && lat <= 49.0 && lng >= 9.5 && lng <= 17.2) return res('Austria', 'at', 'Europe');
@@ -1803,11 +1983,6 @@
       if (lat >= 58.0 && lat <= 71.2 && lng >= 4.5 && lng <= 31.1) return res('Norway', 'no', 'Europe');
       if (lat >= 55.3 && lat <= 69.1 && lng >= 11.0 && lng <= 24.2) return res('Sweden', 'se', 'Europe');
       if (lat >= 59.5 && lat <= 70.1 && lng >= 20.0 && lng <= 31.6) return res('Finland', 'fi', 'Europe');
-      if (lat > 15 && lng < -30) return res(lat > 49 && lng > -141 ? 'Canada' : 'USA', lat > 49 && lng > -141 ? 'ca' : 'us', 'North America');
-      if (lat <= 15 && lng < -30) return res('South America', '', 'South America');
-      if (lat < 35 && lng >= -20 && lng <= 52) return res('Africa', '', 'Africa');
-      if (lat < -10 && lng > 110) return res(lng > 165 ? 'New Zealand' : 'Australia', lng > 165 ? 'nz' : 'au', 'Oceania');
-      if (lng > 35 && lat >= 0) return res('Asia', '', 'Asia');
 
       return res('Europe', '', 'Europe');
     }
@@ -2193,6 +2368,10 @@
 
       parsedCenterCoords = Array.isArray(r.coords) ? r.coords : JSON.parse(r.coords);
       pendingCatalogImageUrl = r.image_url || null;
+      if (r.image_url && !modalPhotosList.includes(r.image_url)) {
+        modalPhotosList.unshift(r.image_url);
+        renderModalPhotosGrid();
+      }
 
       selectChip('surface', r.surface || 'road');
       if (r.difficulty) selectChip('difficulty', r.difficulty);
@@ -2242,6 +2421,8 @@
       }
 
       parsedCenterCoords = item.coords;
+      modalPhotosList = getItemPhotos(item);
+      renderModalPhotosGrid();
       if (zavodniTrasy[item.id]) {
         parsedGpxCoords = zavodniTrasy[item.id];
         document.getElementById('gpx-label').textContent = `Attached GPX track preserved`;
@@ -2308,16 +2489,38 @@
       return item.isMemorable ? '#7e22ce' : (colors[item.status] || '#007aff');
     }
 
+    const CONTINENT_SILHOUETTES = {
+      'Europe': `<svg class="geo-continent-watermark" viewBox="0 0 120 90" fill="currentColor" aria-hidden="true"><path d="M26 67 L17 64 L16 55 L26 52 L32 45 L44 43 L49 34 L45 24 L54 14 L67 12 L75 18 L73 27 L86 24 L103 28 L108 42 L98 54 L86 56 L77 66 L67 62 L61 73 L53 69 L51 58 L41 59 L35 68 Z M29 44 L23 41 L26 32 L33 34 Z"/></svg>`,
+      'Asia': `<svg class="geo-continent-watermark" viewBox="0 0 120 90" fill="currentColor" aria-hidden="true"><path d="M12 41 L20 27 L38 19 L62 15 L88 18 L105 26 L109 36 L98 46 L94 58 L83 63 L76 74 L68 68 L61 59 L52 72 L45 64 L39 53 L26 56 L17 49 Z M101 52 L108 55 L105 64 L99 61 Z"/></svg>`,
+      'North America': `<svg class="geo-continent-watermark" viewBox="0 0 120 90" fill="currentColor" aria-hidden="true"><path d="M12 24 L26 16 L46 14 L66 19 L77 14 L89 18 L83 31 L73 39 L67 51 L57 60 L54 71 L62 78 L54 81 L44 71 L38 58 L28 47 L23 36 L14 33 Z"/></svg>`,
+      'South America': `<svg class="geo-continent-watermark" viewBox="0 0 120 90" fill="currentColor" aria-hidden="true"><path d="M44 10 L62 13 L77 24 L87 36 L81 51 L70 64 L61 78 L52 84 L48 73 L46 57 L40 43 L37 26 Z"/></svg>`,
+      'Africa': `<svg class="geo-continent-watermark" viewBox="0 0 120 90" fill="currentColor" aria-hidden="true"><path d="M36 14 L56 12 L74 18 L82 29 L91 40 L83 54 L76 69 L65 82 L55 81 L49 66 L44 50 L31 44 L27 30 Z M86 64 L92 61 L91 74 L85 73 Z"/></svg>`,
+      'Oceania': `<svg class="geo-continent-watermark" viewBox="0 0 120 90" fill="currentColor" aria-hidden="true"><path d="M22 44 L36 33 L56 31 L72 39 L78 55 L70 69 L53 71 L36 66 L22 59 Z M90 61 L99 56 L104 64 L94 74 L87 70 Z"/></svg>`
+    };
+
+    function getItemPhotos(item) {
+      const list = [];
+      if (Array.isArray(item.images)) {
+        item.images.forEach(u => { if (u && typeof u === 'string' && u.trim() && !list.includes(u.trim())) list.push(u.trim()); });
+      }
+      if (item.image_url && typeof item.image_url === 'string' && item.image_url.trim() && !list.includes(item.image_url.trim())) {
+        list.unshift(item.image_url.trim());
+      }
+      return list;
+    }
+
     function buildRaceCardElement(item) {
       const card = document.createElement('div');
       const accent = getItemAccentColor(item);
-      const hasPhoto = Boolean(item.image_url && item.image_url.trim());
+      const photos = getItemPhotos(item);
+      const hasPhoto = photos.length > 0;
       card.className = 'race-card-rich' + (hasPhoto ? '' : ' no-photo');
       card.style.setProperty('--card-accent', accent);
 
       const geo = detectGeoFromCoords(item.coords, item.name);
+      const multiBadge = photos.length > 1 ? `<span class="card-photo-count">📷 ${photos.length}</span>` : '';
       const thumbHtml = hasPhoto
-        ? `<div class="card-thumb-left"><img class="card-thumb-img" src="${item.image_url}" alt="" loading="lazy" onerror="const c = this.closest('.race-card-rich'); this.parentElement.remove(); if (c) c.classList.add('no-photo');"></div>`
+        ? `<div class="card-thumb-left"><img class="card-thumb-img" src="${photos[0]}" alt="" loading="lazy" onerror="const c = this.closest('.race-card-rich'); this.parentElement.remove(); if (c) c.classList.add('no-photo');">${multiBadge}</div>`
         : '';
 
       card.innerHTML = `
@@ -2346,7 +2549,7 @@
       return card;
     }
 
-    function buildStatusPillsHtml(items) {
+    function buildGeoBreakdownHtml(items) {
       let done = 0, planned = 0, bucket = 0, mem = 0;
       items.forEach(i => {
         if (i.isMemorable) mem++;
@@ -2354,12 +2557,54 @@
         else if (i.status === 'planned') planned++;
         else bucket++;
       });
-      const pills = [];
-      if (done > 0) pills.push(`<span class="geo-pill geo-pill-done"><span class="geo-pill-dot" style="background:#16a34a;"></span>${done} Completed</span>`);
-      if (planned > 0) pills.push(`<span class="geo-pill geo-pill-planned"><span class="geo-pill-dot" style="background:#d97706;"></span>${planned} Planned</span>`);
-      if (bucket > 0) pills.push(`<span class="geo-pill geo-pill-bucket"><span class="geo-pill-dot" style="background:#0284c7;"></span>${bucket} Bucket List</span>`);
-      if (mem > 0) pills.push(`<span class="geo-pill geo-pill-memorable"><span class="geo-pill-dot" style="background:#7e22ce;"></span>${mem} Memorable</span>`);
-      return pills.join('');
+      const total = items.length || 1;
+      const segments = [];
+      const legends = [];
+
+      if (done > 0) {
+        segments.push(`<div class="geo-progress-seg" style="width:${(done / total) * 100}%; background:#16a34a;"></div>`);
+        legends.push(`<span class="geo-legend-item"><span class="geo-pill-dot" style="background:#16a34a;"></span>${done} Completed</span>`);
+      }
+      if (planned > 0) {
+        segments.push(`<div class="geo-progress-seg" style="width:${(planned / total) * 100}%; background:#d97706;"></div>`);
+        legends.push(`<span class="geo-legend-item"><span class="geo-pill-dot" style="background:#d97706;"></span>${planned} Planned</span>`);
+      }
+      if (bucket > 0) {
+        segments.push(`<div class="geo-progress-seg" style="width:${(bucket / total) * 100}%; background:#0284c7;"></div>`);
+        legends.push(`<span class="geo-legend-item"><span class="geo-pill-dot" style="background:#0284c7;"></span>${bucket} Bucket List</span>`);
+      }
+      if (mem > 0) {
+        segments.push(`<div class="geo-progress-seg" style="width:${(mem / total) * 100}%; background:#7e22ce;"></div>`);
+        legends.push(`<span class="geo-legend-item"><span class="geo-pill-dot" style="background:#7e22ce;"></span>${mem} Memorable</span>`);
+      }
+
+      return `
+        <div class="geo-progress-wrap">
+          <div class="geo-progress-bar">${segments.join('')}</div>
+        </div>
+        <div class="geo-legend-row">${legends.join('')}</div>
+      `;
+    }
+
+    function buildGeoGroupCard({ titleHtml, items, continentWatermark = null, onClick }) {
+      const box = document.createElement('div');
+      box.className = 'geo-group-card';
+      const watermarkHtml = (continentWatermark && CONTINENT_SILHOUETTES[continentWatermark]) ? CONTINENT_SILHOUETTES[continentWatermark] : '';
+      const unitLabel = currentMode === 'memorable' ? (items.length === 1 ? 'run' : 'runs') : (items.length === 1 ? 'race' : 'races');
+      box.innerHTML = `
+        ${watermarkHtml}
+        <div class="geo-group-top">
+          <div class="geo-group-name">${titleHtml}</div>
+          <div class="geo-group-count">
+            <strong>${items.length}</strong>
+            <span>${unitLabel}</span>
+            <span class="geo-group-arrow">→</span>
+          </div>
+        </div>
+        ${buildGeoBreakdownHtml(items)}
+      `;
+      box.onclick = onClick;
+      return box;
     }
 
     function flyToItemsBounds(items, { allowZoomOut = false } = {}) {
@@ -2562,17 +2807,11 @@
           }
 
           countryEntries.forEach(entry => {
-            const box = document.createElement('div');
-            box.className = 'geo-group-card';
-            box.innerHTML = `
-              <div class="geo-group-top">
-                <div class="geo-group-name">${entry.geo.html}</div>
-                <span class="geo-group-total">${entry.items.length} ${entry.items.length === 1 ? 'race' : 'races'} ➔</span>
-              </div>
-              <div class="geo-status-pills">${buildStatusPillsHtml(entry.items)}</div>
-            `;
-            box.onclick = () => drillIntoCountry(entry.geo.country, sidebarContinent, entry.items);
-            content.appendChild(box);
+            content.appendChild(buildGeoGroupCard({
+              titleHtml: entry.geo.html,
+              items: entry.items,
+              onClick: () => drillIntoCountry(entry.geo.country, sidebarContinent, entry.items)
+            }));
           });
           return;
         } else {
@@ -2611,35 +2850,24 @@
           return;
         }
         countryEntries.forEach(entry => {
-          const box = document.createElement('div');
-          box.className = 'geo-group-card';
-          box.innerHTML = `
-            <div class="geo-group-top">
-              <div class="geo-group-name">${entry.geo.html}</div>
-              <span class="geo-group-total">${entry.items.length} ${entry.items.length === 1 ? 'race' : 'races'} ➔</span>
-            </div>
-            <div class="geo-status-pills">${buildStatusPillsHtml(entry.items)}</div>
-          `;
-          box.onclick = () => drillIntoCountry(entry.geo.country, onlyCont, entry.items);
-          content.appendChild(box);
+          content.appendChild(buildGeoGroupCard({
+            titleHtml: entry.geo.html,
+            items: entry.items,
+            onClick: () => drillIntoCountry(entry.geo.country, onlyCont, entry.items)
+          }));
         });
         return;
       }
 
-      // Multiple continents visible -> render Continent boxes
+      // Multiple continents visible -> render Continent boxes with SVG silhouette watermarks
       contNames.forEach(cont => {
         const contItems = byContinent[cont].map(x => x.item);
-        const box = document.createElement('div');
-        box.className = 'geo-group-card';
-        box.innerHTML = `
-          <div class="geo-group-top">
-            <div class="geo-group-name"><span>${cont}</span></div>
-            <span class="geo-group-total">${contItems.length} ${contItems.length === 1 ? 'race' : 'races'} ➔</span>
-          </div>
-          <div class="geo-status-pills">${buildStatusPillsHtml(contItems)}</div>
-        `;
-        box.onclick = () => drillIntoContinent(cont, contItems);
-        content.appendChild(box);
+        content.appendChild(buildGeoGroupCard({
+          titleHtml: `<span>${cont}</span>`,
+          items: contItems,
+          continentWatermark: cont,
+          onClick: () => drillIntoContinent(cont, contItems)
+        }));
       });
     }
 
@@ -3073,7 +3301,8 @@
         });
       }
 
-      const hasHeroPhoto = Boolean(item.image_url && item.image_url.trim());
+      const photos = getItemPhotos(item);
+      const hasHeroPhoto = photos.length > 0;
       const geo = detectGeoFromCoords(item.coords, item.name);
       const homeDist = computeDistanceFromHome(item.coords);
 
@@ -3093,9 +3322,23 @@
       `;
 
       window._currentDetailNoPhotoHtml = noPhotoHeroHtml;
+      window._currentDetailPhotos = photos;
+      window._currentDetailTitle = item.name;
+
+      const galleryStripHtml = photos.length > 1 ? `
+        <div class="detail-gallery-strip">
+          ${photos.map((url, idx) => `
+            <div class="detail-gallery-thumb" onclick="openPhotoLightbox(${idx})" title="Open photo ${idx + 1} of ${photos.length}">
+              <img src="${url}" alt="" loading="lazy">
+            </div>
+          `).join('')}
+        </div>
+      ` : '';
+
       const heroHtml = hasHeroPhoto ? `
-        <div class="detail-hero-banner" id="detail-hero-box">
-          <img class="detail-hero-img" src="${item.image_url}" alt="" onerror="const box = document.getElementById('detail-hero-box'); if (box && window._currentDetailNoPhotoHtml) box.outerHTML = window._currentDetailNoPhotoHtml;">
+        <div class="detail-hero-banner" id="detail-hero-box" style="cursor:pointer;" onclick="openPhotoLightbox(0)" title="Click to view full photo${photos.length > 1 ? ' gallery' : ''}">
+          <img class="detail-hero-img" src="${photos[0]}" alt="" onerror="const box = document.getElementById('detail-hero-box'); if (box && window._currentDetailNoPhotoHtml) box.outerHTML = window._currentDetailNoPhotoHtml;">
+          ${photos.length > 1 ? `<div class="detail-hero-photo-badge">📷 ${photos.length} photos</div>` : ''}
           <div class="detail-hero-overlay"></div>
           <div class="detail-hero-content">
             <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}" style="margin-bottom:6px;">
@@ -3107,6 +3350,7 @@
             </div>
           </div>
         </div>
+        ${galleryStripHtml}
       ` : noPhotoHeroHtml;
 
       content.innerHTML = `
@@ -3169,7 +3413,53 @@
       `;
     }
 
+    // FULLSCREEN PHOTO LIGHTBOX
+    let lightboxIndex = 0;
+
+    function openPhotoLightbox(startIdx = 0) {
+      const photos = window._currentDetailPhotos || [];
+      if (photos.length === 0) return;
+      lightboxIndex = Math.max(0, Math.min(startIdx, photos.length - 1));
+      updateLightboxView();
+      document.getElementById('photo-lightbox').classList.add('show');
+    }
+
+    function closePhotoLightbox() {
+      document.getElementById('photo-lightbox').classList.remove('show');
+    }
+
+    function stepPhotoLightbox(delta) {
+      const photos = window._currentDetailPhotos || [];
+      if (photos.length <= 1) return;
+      lightboxIndex = (lightboxIndex + delta + photos.length) % photos.length;
+      updateLightboxView();
+    }
+
+    function updateLightboxView() {
+      const photos = window._currentDetailPhotos || [];
+      if (photos.length === 0) return;
+      document.getElementById('lightbox-img').src = photos[lightboxIndex];
+      document.getElementById('lightbox-title').textContent = window._currentDetailTitle || '';
+      document.getElementById('lightbox-counter').textContent = photos.length > 1 ? `${lightboxIndex + 1} / ${photos.length}` : '';
+      document.getElementById('lightbox-prev-btn').style.display = photos.length > 1 ? 'flex' : 'none';
+      document.getElementById('lightbox-next-btn').style.display = photos.length > 1 ? 'flex' : 'none';
+    }
+
+    window.addEventListener('keydown', function(e) {
+      const lb = document.getElementById('photo-lightbox');
+      if (!lb || !lb.classList.contains('show')) return;
+      if (e.key === 'Escape') closePhotoLightbox();
+      else if (e.key === 'ArrowLeft') stepPhotoLightbox(-1);
+      else if (e.key === 'ArrowRight') stepPhotoLightbox(1);
+    });
+
     // VIEW 1: SEASON TIMELINE
+    function scrollToTimelineToday(smooth = true) {
+      const marker = document.getElementById('timeline-today-marker');
+      if (!marker) return;
+      marker.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
+    }
+
     function renderTimelineDashboard() {
       const container = document.getElementById('full-page-content');
       currentDetailItem = null;
@@ -3180,6 +3470,22 @@
         const n = parseFloat(str.replace(/,/g, '').replace(/[^\d.]/g, ''));
         return isNaN(n) ? 0 : n;
       };
+
+      const now = new Date();
+      const pad2 = n => String(n).padStart(2, '0');
+      const todayIso = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+      const currentYearStr = String(now.getFullYear());
+      const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const todayFormatted = `${now.getDate()} ${monthNamesShort[now.getMonth()]} ${now.getFullYear()}`;
+
+      const buildTodayDividerHtml = (insideTrack = true) => `
+        <div id="timeline-today-marker" class="timeline-today-divider" ${insideTrack ? '' : 'style="margin: 10px 0 18px 24px; padding-left: 36px;"'}>
+          ${insideTrack ? '<div class="timeline-today-dot"></div>' : ''}
+          <span class="timeline-today-pill">📍 Today &bull; ${todayFormatted}</span>
+          <div class="timeline-today-line"></div>
+          <span class="timeline-today-hint">↑ Upcoming / ↓ Past</span>
+        </div>
+      `;
 
       const timelineItems = races.filter(r => r.status !== 'bucket' || (r.date && r.date.includes('-')));
 
@@ -3196,7 +3502,50 @@
       const years = Object.keys(groups).sort((a, b) => b.localeCompare(a));
       const monthShort = ["", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
+      const renderNodeCard = (item) => {
+        let mLabel = 'TBD', dLabel = '—';
+        if (item.date && item.date.includes('-')) {
+          const parts = item.date.split('-');
+          mLabel = monthShort[parseInt(parts[1])] || 'RUN';
+          dLabel = parts[2];
+        }
+        const dotColor = item.isMemorable ? '#7e22ce' : (item.status === 'done' ? '#16a34a' : '#d97706');
+        const geo = detectGeoFromCoords(item.coords, item.name);
+
+        return `
+          <div class="timeline-node-card" onclick="selectSpotlightRace('${item.id}')">
+            <div class="timeline-dot" style="background:${dotColor}; box-shadow: 0 0 0 2px ${dotColor};"></div>
+            <div style="display:flex; align-items:center; gap:18px; min-width:0;">
+              <div class="timeline-date-col">
+                <span class="timeline-month">${mLabel}</span>
+                <span class="timeline-day">${dLabel}</span>
+              </div>
+              <div style="min-width:0;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                  <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
+                    ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
+                  </span>
+                  <span style="font-size:0.76rem; font-weight:700; color:#64748b; display:inline-flex; align-items:center;">${geo.html}</span>
+                </div>
+                <div style="font-size:1.08rem; font-weight:800; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+                ${item.why ? `<div style="font-size:0.8rem; color:#64748b; font-style:italic; margin-top:2px;">„${item.why}“</div>` : ''}
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+              <span class="card-stat-pill">${item.distance || '-'}</span>
+              <span class="card-stat-pill">${item.elevation || '-'}</span>
+              ${item.resultTime ? `<span class="card-stat-pill" style="background:#dcfce7; color:#166534; border-color:#bbf7d0; font-weight:800;">⏱️ ${item.resultTime}</span>` : ''}
+              ${item.ambitionTime && item.status === 'planned' ? `<span class="card-stat-pill" style="background:#fef3c7; color:#92400e; border-color:#fde68a; font-weight:800;">🎯 ${item.ambitionTime}</span>` : ''}
+              <span style="color:#007aff; font-weight:800; font-size:0.84rem; margin-left:4px;">Map ➔</span>
+            </div>
+          </div>
+        `;
+      };
+
       let timelineHtml = '';
+      let todayPlaced = false;
+      const shouldShowToday = (timelineYearFilter === 'all' || timelineYearFilter === currentYearStr);
+
       if (years.length === 0) {
         timelineHtml = `
           <div class="stats-panel-card" style="text-align:center; padding:48px 20px;">
@@ -3208,9 +3557,31 @@
       } else {
         years.forEach(yr => {
           if (timelineYearFilter !== 'all' && timelineYearFilter !== yr) return;
+
+          // If current year has no races, place Today divider right before the first past year
+          if (shouldShowToday && !todayPlaced && /^\d{4}$/.test(yr) && yr < currentYearStr) {
+            timelineHtml += buildTodayDividerHtml(false);
+            todayPlaced = true;
+          }
+
           const items = groups[yr].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
           let yrKm = 0, yrEle = 0;
           items.forEach(i => { yrKm += parseNum(i.distance); yrEle += parseNum(i.elevation); });
+
+          let trackItemsHtml = '';
+          items.forEach(item => {
+            if (shouldShowToday && !todayPlaced && yr === currentYearStr && item.date && item.date < todayIso) {
+              trackItemsHtml += buildTodayDividerHtml(true);
+              todayPlaced = true;
+            }
+            trackItemsHtml += renderNodeCard(item);
+          });
+
+          // If all events in currentYearStr are in the future (>= todayIso), place Today at bottom of currentYearStr
+          if (shouldShowToday && !todayPlaced && yr === currentYearStr) {
+            trackItemsHtml += buildTodayDividerHtml(true);
+            todayPlaced = true;
+          }
 
           timelineHtml += `
             <div class="timeline-year-section">
@@ -3219,49 +3590,16 @@
                 <span class="timeline-year-summary">${items.length} Events &bull; ${yrKm.toFixed(0)} km &bull; +${yrEle.toLocaleString()} m</span>
               </div>
               <div class="timeline-track">
-                ${items.map(item => {
-                  let mLabel = 'TBD', dLabel = '—';
-                  if (item.date && item.date.includes('-')) {
-                    const parts = item.date.split('-');
-                    mLabel = monthShort[parseInt(parts[1])] || 'RUN';
-                    dLabel = parts[2];
-                  }
-                  const dotColor = item.isMemorable ? '#7e22ce' : (item.status === 'done' ? '#16a34a' : '#d97706');
-                  const geo = detectGeoFromCoords(item.coords, item.name);
-
-                  return `
-                    <div class="timeline-node-card" onclick="selectSpotlightRace('${item.id}')">
-                      <div class="timeline-dot" style="background:${dotColor}; box-shadow: 0 0 0 2px ${dotColor};"></div>
-                      <div style="display:flex; align-items:center; gap:18px; min-width:0;">
-                        <div class="timeline-date-col">
-                          <span class="timeline-month">${mLabel}</span>
-                          <span class="timeline-day">${dLabel}</span>
-                        </div>
-                        <div style="min-width:0;">
-                          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-                            <span class="badge ${item.isMemorable ? 'badge-memorable' : 'badge-' + item.status}">
-                              ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
-                            </span>
-                            <span style="font-size:0.76rem; font-weight:700; color:#64748b; display:inline-flex; align-items:center;">${geo.html}</span>
-                          </div>
-                          <div style="font-size:1.08rem; font-weight:800; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
-                          ${item.why ? `<div style="font-size:0.8rem; color:#64748b; font-style:italic; margin-top:2px;">„${item.why}“</div>` : ''}
-                        </div>
-                      </div>
-                      <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
-                        <span class="card-stat-pill">${item.distance || '-'}</span>
-                        <span class="card-stat-pill">${item.elevation || '-'}</span>
-                        ${item.resultTime ? `<span class="card-stat-pill" style="background:#dcfce7; color:#166534; border-color:#bbf7d0; font-weight:800;">⏱️ ${item.resultTime}</span>` : ''}
-                        ${item.ambitionTime && item.status === 'planned' ? `<span class="card-stat-pill" style="background:#fef3c7; color:#92400e; border-color:#fde68a; font-weight:800;">🎯 ${item.ambitionTime}</span>` : ''}
-                        <span style="color:#007aff; font-weight:800; font-size:0.84rem; margin-left:4px;">Map ➔</span>
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
+                ${trackItemsHtml}
               </div>
             </div>
           `;
         });
+
+        if (shouldShowToday && !todayPlaced) {
+          timelineHtml += buildTodayDividerHtml(false);
+          todayPlaced = true;
+        }
       }
 
       container.innerHTML = `
@@ -3270,7 +3608,8 @@
             <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Season Timeline & Calendar</h1>
             <p style="font-size:0.86rem; color:#64748b;">Chronological progression of your completed races and scheduled season targets.</p>
           </div>
-          <div style="display:flex; gap:8px; align-items:center;">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            ${todayPlaced ? `<button class="pill-btn" style="background:#0f172a; color:#38bdf8; border-color:#38bdf8;" onclick="scrollToTimelineToday(true)">📍 Today</button>` : ''}
             <div class="chips-group">
               <button class="chip-btn ${timelineYearFilter === 'all' ? 'active' : ''}" onclick="timelineYearFilter='all'; renderTimelineDashboard();">All Years</button>
               ${years.map(y => `<button class="chip-btn ${timelineYearFilter === y ? 'active' : ''}" onclick="timelineYearFilter='${y}'; renderTimelineDashboard();">${y}</button>`).join('')}
@@ -3280,6 +3619,10 @@
         </div>
         ${timelineHtml}
       `;
+
+      if (todayPlaced) {
+        requestAnimationFrame(() => setTimeout(() => scrollToTimelineToday(false), 60));
+      }
     }
 
     // VIEW 2: PERSONAL BESTS & TROPHY ROOM
@@ -3714,6 +4057,7 @@
     let parsedElevationSample = null;
     let parsedCenterCoords = null;
     let pendingCatalogImageUrl = null;
+    let modalPhotosList = [];
 
     function selectChip(category, value) {
       chipSelections[category] = value;
@@ -3748,6 +4092,10 @@
       parsedElevationSample = null;
       parsedCenterCoords = null;
       pendingCatalogImageUrl = null;
+      modalPhotosList = [];
+      const photoInput = document.getElementById('input-photos');
+      if (photoInput) photoInput.value = '';
+      renderModalPhotosGrid();
 
       selectStatusMode('done');
       selectChip('surface', 'road');
@@ -3794,6 +4142,108 @@
     }
 
     document.getElementById('drop-gpx').addEventListener('click', () => document.getElementById('input-gpx').click());
+
+    function renderModalPhotosGrid() {
+      const wrap = document.getElementById('modal-photos-wrap');
+      const grid = document.getElementById('modal-photo-grid');
+      const label = document.getElementById('photos-label');
+      if (!wrap || !grid) return;
+
+      if (modalPhotosList.length === 0) {
+        wrap.style.display = 'none';
+        grid.innerHTML = '';
+        if (label) label.textContent = '📷 Add Photos (Multiple)';
+        return;
+      }
+
+      wrap.style.display = 'flex';
+      if (label) label.textContent = `📷 ${modalPhotosList.length} photo${modalPhotosList.length > 1 ? 's' : ''} attached (+ Add)`;
+      grid.innerHTML = modalPhotosList.map((url, idx) => `
+        <div class="modal-photo-item ${idx === 0 ? 'is-cover' : ''}">
+          <img src="${url}" alt="">
+          <button type="button" class="modal-photo-cover" title="Set as cover photo" onclick="setModalCoverPhoto(${idx})">★</button>
+          <button type="button" class="modal-photo-del" title="Remove photo" onclick="removeModalPhoto(${idx})">&times;</button>
+        </div>
+      `).join('');
+    }
+
+    function setModalCoverPhoto(idx) {
+      if (idx <= 0 || idx >= modalPhotosList.length) return;
+      const [picked] = modalPhotosList.splice(idx, 1);
+      modalPhotosList.unshift(picked);
+      renderModalPhotosGrid();
+    }
+
+    function removeModalPhoto(idx) {
+      modalPhotosList.splice(idx, 1);
+      renderModalPhotosGrid();
+    }
+
+    function compressImageFile(file, maxDim = 1400, quality = 0.82) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = reject;
+          img.onload = () => {
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+              const scale = maxDim / Math.max(width, height);
+              width = Math.round(width * scale);
+              height = Math.round(height * scale);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob(blob => {
+              const dataUrl = canvas.toDataURL('image/jpeg', quality);
+              resolve({ blob, dataUrl });
+            }, 'image/jpeg', quality);
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handlePhotosUpload(fileList) {
+      if (!fileList || fileList.length === 0) return;
+      const statusEl = document.getElementById('modal-photos-status');
+      const wrap = document.getElementById('modal-photos-wrap');
+      wrap.style.display = 'flex';
+      if (statusEl) statusEl.textContent = `Processing ${fileList.length} photo(s)...`;
+
+      let uploadedCount = 0;
+      for (const file of Array.from(fileList)) {
+        try {
+          const { blob, dataUrl } = await compressImageFile(file);
+          if (!isDemoMode && currentUser && blob) {
+            const path = `${currentUser.id}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
+            const { error: upErr } = await supabaseClient.storage.from('race-photos').upload(path, blob, { contentType: 'image/jpeg' });
+            if (!upErr) {
+              const { data: pub } = supabaseClient.storage.from('race-photos').getPublicUrl(path);
+              if (pub && pub.publicUrl) {
+                modalPhotosList.push(pub.publicUrl);
+                uploadedCount++;
+                continue;
+              }
+            }
+          }
+          // Fallback (Demo mode or if storage bucket isn't created yet)
+          modalPhotosList.push(dataUrl);
+          uploadedCount++;
+        } catch (err) {
+          console.error('Photo upload error:', err);
+        }
+      }
+
+      if (statusEl) statusEl.textContent = '';
+      renderModalPhotosGrid();
+      if (uploadedCount > 0) showToast(`Added ${uploadedCount} photo${uploadedCount > 1 ? 's' : ''}!`, '📷');
+    }
 
     function handleGpxUpload(file) {
       if (!file) return;
@@ -3908,7 +4358,17 @@
         record.cost = document.getElementById('form-cost').value || null;
       }
 
-      if (pendingCatalogImageUrl) record.image_url = pendingCatalogImageUrl;
+      const finalImages = [...modalPhotosList];
+      if (pendingCatalogImageUrl && !finalImages.includes(pendingCatalogImageUrl)) {
+        finalImages.unshift(pendingCatalogImageUrl);
+      }
+      if (finalImages.length > 0) {
+        record.image_url = finalImages[0];
+        record.images = finalImages;
+      } else if (editingActivityId) {
+        record.image_url = null;
+        record.images = [];
+      }
       if (parsedGpxCoords) record.route_coords = parsedGpxCoords;
 
       if (isDemoMode) {
