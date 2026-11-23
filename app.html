@@ -2154,17 +2154,101 @@
         document.getElementById('main-title').textContent = "Race Atlas (Demo)";
 
         if (!userHomeCoords) {
-          userHomeCoords = [51.5074, -0.1278]; // Neutral demo Home Base: London
+          userHomeCoords = [51.5074, -0.1278]; // Neutral demo Home Base: London (no completed race in London)
           refreshHomeMarker();
           map.setView(userHomeCoords, 4);
         }
 
         races = [
-          { id: "demo-1", name: "London Marathon", date: "2025-04-27", month: 4, coords: [51.5074, -0.1278], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€", distance: "42.2 km", elevation: "+110 m", importance: 9, resultTime: "3:08:15", placement: "Top 10%", why: "Electric crowds crossing Tower Bridge.", notes: "Negative split in the final 10 km.", image_url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 10 },
-          { id: "demo-2", name: "Valencia Marathon", date: "2026-12-06", month: 12, coords: [39.4699, -0.3763], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€", distance: "42.2 km", elevation: "+35 m", importance: 8, ambitionTime: "Sub 3:05:00", logisticsTransport: "Plane", why: "Fastest flat course for an autumn PR attempt.", notes: "Targeting 4:22/km pace.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
-          { id: "demo-3", name: "Tokyo Marathon", date: "March", month: 3, coords: [35.6762, 139.6503], status: "bucket", statusLabel: "Bucket list", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€€", distance: "42.2 km", elevation: "+90 m", importance: 10, why: "Dream World Major and spring trip to Japan.", image_url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" },
-          { id: "demo-4", name: "Chamonix Grand Balcon Ridge", date: "2025-07-19", month: 7, coords: [45.9237, 6.8694], status: "done", statusLabel: "Completed", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€", distance: "24.5 km", elevation: "+1,450 m", importance: 9, isMemorable: true, why: "Sunrise alpine run facing Mont Blanc glaciers.", notes: "Unforgettable morning trails above the valley.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80", satisfaction: 10, course_satisfaction: 10 }
+          // === 3 COMPLETED RACES (all outside Home Base London) ===
+          { id: "demo-1", name: "Berlin Marathon", date: "2025-09-21", month: 9, coords: [52.5163, 13.3777], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€", distance: "42.2 km", elevation: "+45 m", importance: 9, resultTime: "3:04:42", placement: "Top 8%", why: "Chasing a marathon PR through the Brandenburg Gate.", notes: "Even splits through 35 km, strong kick down Unter den Linden.", image_url: "https://images.unsplash.com/photo-1560969184-10fe8719e047?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 10 },
+          { id: "demo-2", name: "Copenhagen Half Marathon", date: "2026-09-13", month: 9, coords: [55.6761, 12.5683], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€", distance: "21.1 km", elevation: "+40 m", importance: 8, resultTime: "1:26:18", placement: "Top 6%", why: "Super-fast Nordic road course with electric street crowds.", notes: "Locked into 4:05/km rhythm from kilometer 3.", image_url: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=600&q=80", satisfaction: 10, course_satisfaction: 9 },
+          { id: "demo-3", name: "Zegama-Aizkorri", date: "2026-05-24", month: 5, coords: [42.9760, -2.2905], status: "done", statusLabel: "Completed", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€€", distance: "42.2 km", elevation: "+2,736 m", importance: 10, resultTime: "5:12:40", placement: "Top 25%", why: "The Tour de France of skyrunning — mud, limestone ridges, and roaring Basque fans.", notes: "Goosebumps climbing Sancti Spiritu through a wall of spectators.", image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 10 },
+
+          // === 3 PLANNED RACES ===
+          { id: "demo-4", name: "Valencia Marathon", date: "2026-12-06", month: 12, coords: [39.4699, -0.3763], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€", distance: "42.2 km", elevation: "+35 m", importance: 9, ambitionTime: "Sub 2:59:59", logisticsTransport: "Plane", qualification: "Open entry", why: "Flattest December course in Europe for a Sub-3 attempt.", notes: "Targeting 4:15/km cruise pace and 70g carbs/hour.", image_url: "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-5", name: "Prague Half Marathon", date: "2027-04-03", month: 4, coords: [50.0875, 14.4211], status: "planned", statusLabel: "Planned", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€", distance: "21.1 km", elevation: "+95 m", importance: 7, ambitionTime: "Sub 1:24:00", logisticsTransport: "Plane", qualification: "Open entry", why: "Spring speed check along the Vltava bridges and Old Town.", notes: "Watch out for the short cobblestone sections near the start.", image_url: "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-6", name: "Lavaredo Ultra Trail 50K", date: "2027-06-26", month: 6, coords: [46.5405, 12.1357], status: "planned", statusLabel: "Planned", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€€€", distance: "50.0 km", elevation: "+2,600 m", importance: 9, ambitionTime: "Sub 6:30:00", logisticsTransport: "Plane", qualification: "UTMB Index / Lottery", why: "Running under the iconic Tre Cime towers in the Dolomites.", notes: "Focus on long sustained uphill hiking with poles in spring.", image_url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80" },
+
+          // === 10 BUCKET LIST RACES (across 6 continents) ===
+          { id: "demo-7", name: "UTMB Mont-Blanc", date: "August", month: 8, coords: [45.9237, 6.8694], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "extremni", cost: "€€€€", distance: "171 km", elevation: "+10,000 m", importance: 10, qualification: "Running Stones + UTMB Index", why: "The ultimate alpine lap around Mont Blanc through France, Italy, and Switzerland.", notes: "Need 2–3 qualifiers and solid mountain night-running prep.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-8", name: "Sierre-Zinal", date: "August", month: 8, coords: [46.2920, 7.5350], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€€€", distance: "31.0 km", elevation: "+2,200 m", importance: 8, qualification: "Fast sell-out / Ballot", why: "The Race of the Five 4000m Peaks — runnable alpine ridge magic.", notes: "Brutal opening climb out of Sierre, then fast high-altitude cruising.", image_url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-9", name: "Lofoten Skyrace", date: "May", month: 5, coords: [68.2342, 14.5683], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€€€€", distance: "32.0 km", elevation: "+2,100 m", importance: 8, qualification: "Open entry", why: "Arctic fjords and sharp granite ridges rising straight out of the sea.", notes: "Technical rocky descents and midnight-sun light.", image_url: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-10", name: "Boston Marathon", date: "April", month: 4, coords: [42.3601, -71.0589], status: "bucket", statusLabel: "Bucket list", surface: "road", surfaceLabel: "Road", difficulty: "tezka", cost: "€€€€", distance: "42.2 km", elevation: "+240 m", importance: 10, qualification: "BQ Time Standard", why: "The world's oldest annual marathon and a true rite of passage.", notes: "Save legs on the early downhills before Newton and Heartbreak Hill.", image_url: "https://images.unsplash.com/photo-1501979376754-2ff867a4f659?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-11", name: "Western States 100", date: "June", month: 6, coords: [39.1969, -120.2357], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "extremni", cost: "€€€€€", distance: "161 km", elevation: "+5,500 m", importance: 10, qualification: "100K/100M Qualifier + Lottery", why: "From Sierra Nevada snowfields through scorching canyons to Auburn track.", notes: "Heat acclimatization is everything in the canyons.", image_url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-12", name: "Tokyo Marathon", date: "March", month: 3, coords: [35.6762, 139.6503], status: "bucket", statusLabel: "Bucket list", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€€€€", distance: "42.2 km", elevation: "+90 m", importance: 9, qualification: "General Lottery / Charity", why: "Dream World Major combined with a spring trip across Japan.", notes: "Flat, wide boulevards and unbeatable Japanese organization.", image_url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-13", name: "Mt. Fuji 100", date: "April", month: 4, coords: [35.4875, 138.8079], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "extremni", cost: "€€€€", distance: "166 km", elevation: "+7,000 m", importance: 9, qualification: "ITRA / Qualifier points", why: "Circling Mount Fuji's five lakes under spring cherry blossoms.", notes: "Steep forest climbs and chilly night temperatures.", image_url: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-14", name: "Cape Town Marathon", date: "October", month: 10, coords: [-33.9249, 18.4241], status: "bucket", statusLabel: "Bucket list", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€€€€", distance: "42.2 km", elevation: "+260 m", importance: 8, qualification: "Open entry", why: "Coastal city marathon right beneath the dramatic cliffs of Table Mountain.", notes: "Fast oceanfront stretches — watch out for Cape winds.", image_url: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-15", name: "Patagonia Run", date: "April", month: 4, coords: [-40.1579, -71.3534], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€€€€€", distance: "100 km", elevation: "+4,900 m", importance: 9, qualification: "Open entry", why: "Andean forests, turquoise glacial lakes, and wild Patagonian peaks.", notes: "Autumn foliage in San Martín de los Andes is unforgettable.", image_url: "https://images.unsplash.com/photo-1518182170546-07661fd94144?auto=format&fit=crop&w=600&q=80" },
+          { id: "demo-16", name: "Tarawera Ultra-Trail", date: "February", month: 2, coords: [-38.1368, 176.2497], status: "bucket", statusLabel: "Bucket list", surface: "trail", surfaceLabel: "Trail", difficulty: "stredni", cost: "€€€€€", distance: "102 km", elevation: "+3,100 m", importance: 8, qualification: "Open entry", why: "Flowing redwood forests, geothermal lakes, and Kiwi trail culture.", notes: "Very runnable singletrack — great summer escape from European winter.", image_url: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=600&q=80" },
+
+          // === 6 MEMORABLE RUNS (Trail, Road & Mixed) ===
+          { id: "demo-m1", name: "Chamonix Grand Balcon Ridge", date: "2025-07-19", month: 7, coords: [45.9237, 6.8694], status: "done", statusLabel: "Completed", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€", distance: "24.5 km", elevation: "+1,450 m", importance: 9, isMemorable: true, why: "Sunrise alpine run facing Mont Blanc glaciers without a single soul on the trail.", notes: "Started at 5:30 AM from Chamonix, espresso at Flégère, technical descent back.", image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80", satisfaction: 10, course_satisfaction: 10 },
+          { id: "demo-m2", name: "Dolomites Seceda to Alpe di Siusi", date: "2026-07-11", month: 7, coords: [46.5994, 11.7248], status: "done", statusLabel: "Completed", surface: "trail", surfaceLabel: "Trail", difficulty: "tezka", cost: "€", distance: "21.8 km", elevation: "+1,320 m", importance: 9, isMemorable: true, why: "Knife-edge Odle ridgeline views followed by endless green alpine meadows.", notes: "Perfect bluebird summer morning, refilled water at Rifugio Firenze.", image_url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80", satisfaction: 10, course_satisfaction: 10 },
+          { id: "demo-m3", name: "Amalfi Coastal Sunrise Run", date: "2025-10-04", month: 10, coords: [40.6340, 14.6027], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "stredni", cost: "€", distance: "16.4 km", elevation: "+340 m", importance: 8, isMemorable: true, why: "Empty cliffside coastal road above the Tyrrhenian Sea before the tour buses woke up.", notes: "Out-and-back from Amalfi toward Positano with golden sunrise light.", image_url: "https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 10 },
+          { id: "demo-m4", name: "Kyoto Philosopher's Path & Arashiyama", date: "2025-03-29", month: 3, coords: [35.0262, 135.7955], status: "done", statusLabel: "Completed", surface: "road", surfaceLabel: "Road", difficulty: "snadna", cost: "€", distance: "18.2 km", elevation: "+180 m", importance: 8, isMemorable: true, why: "Early morning temple canal run under full sakura blossoms.", notes: "Silent stone bridges and bamboo groves before 7 AM.", image_url: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 10 },
+          { id: "demo-m5", name: "Madeira Levada & Coastal Cliffs", date: "2026-02-14", month: 2, coords: [32.7420, -16.7010], status: "done", statusLabel: "Completed", surface: "mixed", surfaceLabel: "Mixed", difficulty: "stredni", cost: "€", distance: "19.6 km", elevation: "+680 m", importance: 8, isMemorable: true, why: "Winter sun escape linking narrow levada irrigation paths with volcanic sea cliffs.", notes: "Mix of paved village connectors, stone steps, and exposed dirt singletrack.", image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80", satisfaction: 9, course_satisfaction: 9 },
+          { id: "demo-m6", name: "Edinburgh Arthur's Seat & Canal Loop", date: "2026-08-22", month: 8, coords: [55.9441, -3.1618], status: "done", statusLabel: "Completed", surface: "mixed", surfaceLabel: "Mixed", difficulty: "stredni", cost: "€", distance: "14.5 km", elevation: "+390 m", importance: 7, isMemorable: true, why: "City streets straight up an extinct volcano overlooking the Firth of Forth.", notes: "Windy summit views, smooth gravel towpath cool-down along Union Canal.", image_url: "https://images.unsplash.com/photo-1506377585622-bedcbb027afc?auto=format&fit=crop&w=600&q=80", satisfaction: 8, course_satisfaction: 9 }
         ];
+
+        // Generate realistic GPX tracks & elevation profiles for every single demo entry
+        const buildDemoGpxAndElevation = (item, idx) => {
+          const distKm = parseFloat(String(item.distance || '20').replace(/,/g, '').replace(/[^\d.]/g, '')) || 20;
+          const gainM = parseFloat(String(item.elevation || '100').replace(/,/g, '').replace(/[^\d.]/g, '')) || 100;
+          const [lat0, lng0] = item.coords;
+          const cosLat = Math.max(0.25, Math.cos((lat0 * Math.PI) / 180));
+          const seed = (idx + 1) * 1.73;
+
+          // Approximate loop radius in km so perimeter roughly matches distKm (capped gently for very long ultras)
+          const effDist = Math.min(distKm, 85);
+          const radiusKm = Math.max(1.2, effDist / (2 * Math.PI * 1.15));
+          const dLatScale = radiusKm / 111.32;
+          const dLngScale = radiusKm / (111.32 * cosLat);
+
+          const numPts = 60;
+          const coords = [];
+          const angleOffset = (idx * 0.9) % (Math.PI * 2);
+          // Center shifted so coords[0] starts right at item.coords
+          const cLat = lat0 + Math.sin(angleOffset) * dLatScale;
+          const cLng = lng0 + Math.cos(angleOffset) * dLngScale;
+
+          for (let i = 0; i < numPts; i++) {
+            const t = i / (numPts - 1);
+            const theta = angleOffset + Math.PI + t * Math.PI * 2;
+            const wobble = 1
+              + 0.18 * Math.sin(3 * theta + seed)
+              + 0.10 * Math.cos(5 * theta - seed * 0.7)
+              + (item.surface === 'trail' ? 0.08 * Math.sin(9 * theta + seed) : 0.03 * Math.sin(7 * theta));
+            const rFactor = (i === 0 || i === numPts - 1) ? 1.0 : wobble;
+            const pLat = cLat + Math.sin(theta) * dLatScale * rFactor;
+            const pLng = cLng + Math.cos(theta) * dLngScale * rFactor;
+            coords.push([parseFloat(pLat.toFixed(5)), parseFloat(pLng.toFixed(5))]);
+          }
+          coords[0] = [lat0, lng0];
+
+          // Realistic base elevation & climb profile matching terrain
+          const isTrail = item.surface === 'trail';
+          const isMixed = item.surface === 'mixed';
+          const baseAlt = isTrail ? (gainM > 3000 ? 1050 : 620) : (isMixed ? 120 : 28);
+          const peakAmp = Math.max(12, Math.min(gainM * (isTrail ? 0.42 : 0.55), 1450));
+          const distances = [];
+          const elevations = [];
+          for (let i = 0; i < numPts; i++) {
+            const t = i / (numPts - 1);
+            distances.push(t * distKm);
+            const primaryClimb = Math.sin(t * Math.PI);
+            const secondary = isTrail
+              ? (0.35 * Math.sin(t * Math.PI * 3 + seed) * Math.sin(t * Math.PI) + 0.14 * Math.sin(t * Math.PI * 7))
+              : (0.22 * Math.sin(t * Math.PI * 4 + seed) * Math.sin(t * Math.PI));
+            const elev = Math.max(4, baseAlt + peakAmp * Math.max(0, primaryClimb + secondary));
+            elevations.push(Math.round(elev));
+          }
+
+          zavodniTrasy[item.id] = coords;
+          elevationProfiles[item.id] = { elevations, distances, coords };
+        };
+
+        races.forEach((item, idx) => buildDemoGpxAndElevation(item, idx));
 
         if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView)) {
           switchPageMode(initialView);
