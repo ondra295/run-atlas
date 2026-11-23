@@ -1892,7 +1892,7 @@
       const res = (country, code, continent) => ({ country, code, continent, html: `${renderFlag(code)}${country}` });
 
       // 1. Explicit unambiguous place keywords (never match global series like 'utmb' or bare 'nice')
-      if (low.includes('polar circle') || low.includes('greenland') || low.includes('kangerlussuaq')) return res('Greenland', 'gl', 'North America');
+      if (low.includes('polar circle') || low.includes('greenland') || low.includes('kangerlussuaq')) return res('Denmark', 'dk', 'Europe');
       if (low.includes('tenerife') || low.includes('transgrancanaria') || low.includes('zegama') || low.includes('penyagolosa') || low.includes('valencia') || low.includes('seville')) return res('Spain', 'es', 'Europe');
       if (low.includes('madeira') || low.includes('miut') || low.includes('estrela')) return res('Portugal', 'pt', 'Europe');
       if (low.includes('iceland') || low.includes('laugavegur')) return res('Iceland', 'is', 'Europe');
@@ -1954,7 +1954,7 @@
       // 2. Continent-first coordinate fallbacks
       if (lng < -30) {
         if (lat > 15) {
-          if (lat > 58 && lng > -60) return res('Greenland', 'gl', 'North America');
+          if (lat > 58 && lng > -60) return res('Denmark', 'dk', 'Europe');
           if (lat > 49 && lng > -141) return res('Canada', 'ca', 'North America');
           return res('USA', 'us', 'North America');
         } else {
@@ -2504,7 +2504,7 @@
       fr: [-6.0, 41.0, 10.5, 51.5],
       us: [-125.5, 24.0, -66.0, 50.0],
       no: [4.0, 57.5, 32.0, 72.0],
-      ru: [19.0, 41.0, 179.9, 78.0],
+      ru: [19.0, 41.0, 195.0, 78.0],
       nl: [3.0, 50.5, 7.5, 54.0],
       dk: [7.5, 54.4, 15.5, 58.0],
       es: [-10.0, 35.5, 5.0, 44.0],
@@ -2514,7 +2514,7 @@
       nz: [165.0, -48.0, 179.5, -34.0],
       cl: [-76.5, -56.5, -66.0, -17.0],
       za: [16.0, -35.5, 33.5, -22.0],
-      fj: [176.5, -19.5, 179.9, -16.0],
+      fj: [176.5, -19.5, 185.0, -16.0],
       ca: [-142.0, 41.5, -52.0, 83.5]
     };
 
@@ -2563,6 +2563,23 @@
       } else if (geom.type === 'MultiPolygon') {
         rawPolys = geom.coordinates.map(poly => poly[0]);
       }
+
+      // Unwrap antimeridian-crossing countries (e.g. Russia/Chukotka, Fiji) so +180/-180 doesn't draw a horizontal streak
+      const antimeridianCountries = new Set(['ru', 'fj', 'ki']);
+      rawPolys = rawPolys.map(ring => {
+        if (antimeridianCountries.has(code)) {
+          return ring.map(pt => [pt[0] < 0 ? pt[0] + 360 : pt[0], pt[1]]);
+        }
+        let rMin = Infinity, rMax = -Infinity;
+        for (let i = 0; i < ring.length; i++) {
+          if (ring[i][0] < rMin) rMin = ring[i][0];
+          if (ring[i][0] > rMax) rMax = ring[i][0];
+        }
+        if (rMax - rMin > 180) {
+          return ring.map(pt => [pt[0] < 0 ? pt[0] + 360 : pt[0], pt[1]]);
+        }
+        return ring;
+      });
 
       const clip = COUNTRY_CLIP_BOXES[code];
       if (clip && rawPolys.length > 1) {
