@@ -549,23 +549,39 @@
     .detail-gallery-thumb:hover { transform: translateY(-2px); border-color: #007aff; }
     .detail-gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .modal-photo-grid {
-      display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px;
     }
+    .modal-photo-card {
+      display: flex; flex-direction: column; gap: 4px; width: 76px;
+      cursor: grab; user-select: none; transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .modal-photo-card.dragging { opacity: 0.45; transform: scale(0.95); cursor: grabbing; }
+    .modal-photo-card.drag-over .modal-photo-item { border-color: #007aff; box-shadow: 0 0 0 3px rgba(0,122,255,0.32); }
     .modal-photo-item {
-      position: relative; width: 64px; height: 64px; border-radius: 8px; overflow: hidden;
+      position: relative; width: 76px; height: 76px; border-radius: 9px; overflow: hidden;
       border: 2px solid #cbd5e1; background: #f1f5f9;
     }
     .modal-photo-item.is-cover { border-color: #007aff; box-shadow: 0 0 0 2px rgba(0,122,255,0.2); }
-    .modal-photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .modal-photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
     .modal-photo-del, .modal-photo-cover {
       position: absolute; width: 20px; height: 20px; border-radius: 50%; border: none;
       display: flex; align-items: center; justify-content: center; cursor: pointer;
       font-size: 0.7rem; font-weight: 800; line-height: 1;
     }
-    .modal-photo-del { top: 2px; right: 2px; background: rgba(15,23,42,0.8); color: #fff; }
+    .modal-photo-del { top: 3px; right: 3px; background: rgba(15,23,42,0.82); color: #fff; }
     .modal-photo-del:hover { background: #dc2626; }
-    .modal-photo-cover { bottom: 2px; left: 2px; background: rgba(15,23,42,0.75); color: #cbd5e1; }
+    .modal-photo-cover { bottom: 3px; left: 3px; background: rgba(15,23,42,0.76); color: #cbd5e1; }
     .modal-photo-item.is-cover .modal-photo-cover { background: #007aff; color: #fff; }
+    .modal-photo-order-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 3px;
+    }
+    .modal-photo-move {
+      flex: 1; height: 20px; border-radius: 5px; border: 1px solid #cbd5e1;
+      background: #ffffff; color: #334155; font-size: 0.72rem; font-weight: 800;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;
+    }
+    .modal-photo-move:hover:not(:disabled) { background: #eff6ff; border-color: #007aff; color: #007aff; }
+    .modal-photo-move:disabled { opacity: 0.35; cursor: default; }
 
     /* Fullscreen Lightbox */
     #photo-lightbox {
@@ -1107,7 +1123,7 @@
         <div class="sidebar-header">
           <div class="sidebar-title-row">
             <h2 id="main-title">Race Atlas</h2>
-            <button id="memorable-info-btn" class="info-badge-btn" title="What are Memorable Runs?" onclick="toggleMemorableExplainer()" onmouseenter="showMemorableExplainer()">i</button>
+            <button id="memorable-info-btn" class="info-badge-btn" title="What are Memorable Runs?" onclick="toggleMemorableExplainer()">i</button>
           </div>
           <p id="stats-label">Loading activities...</p>
 
@@ -1274,7 +1290,7 @@
       </div>
 
       <div style="position:relative;">
-        <label class="form-group-label">2. Race / Route Title (or search catalog) *</label>
+        <label class="form-group-label" id="label-form-name">2. Race / Route Title (or search catalog) *</label>
         <input id="form-name" class="stepped-input" type="text" placeholder="e.g. Berlin Marathon, UTMB, Boston..." oninput="handleCatalogQuickSearch(this.value)">
         <div id="catalog-suggestions" class="catalog-suggest-box"></div>
       </div>
@@ -1292,7 +1308,7 @@
 
       <div id="modal-photos-wrap" style="display:none; flex-direction:column; gap:6px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label class="form-group-label" style="margin:0;">Attached Photos (★ = Cover)</label>
+          <label class="form-group-label" style="margin:0;">Attached Photos (drag or ← → to reorder • ★ = Cover)</label>
           <span id="modal-photos-status" style="font-size:0.72rem; font-weight:700; color:#64748b;"></span>
         </div>
         <div id="modal-photo-grid" class="modal-photo-grid"></div>
@@ -2704,6 +2720,7 @@
 
     function handleCatalogQuickSearch(q) {
       const box = document.getElementById('catalog-suggestions');
+      if (isModalMemorableMode) { box.style.display = 'none'; return; }
       const val = q.trim().toLowerCase();
       if (!val || val.length < 2) { box.style.display = 'none'; return; }
 
@@ -2803,7 +2820,9 @@
       }
 
       document.getElementById('btn-save-step1').textContent = 'Update Activity';
-      document.getElementById('add-modal').style.display = 'flex';
+      const modalEl = document.getElementById('add-modal');
+      modalEl.style.display = 'flex';
+      resetAddModalScroll();
     }
 
     function deleteActivity(id) {
@@ -3400,13 +3419,27 @@
         mapItems = currentFilteredList.filter(item => detectGeoFromCoords(item.coords, item.name).continent === sidebarContinent);
       }
 
-      // Group ONLY races with virtually identical coordinates (~11m tolerance)
-      const exactStacks = new Map();
+      // Group activities starting within ~200m of each other (absorbs GPS drift around Home Base)
+      const haversineMeters = (c1, c2) => {
+        const rad = Math.PI / 180;
+        const dLat = (c2[0] - c1[0]) * rad;
+        const dLon = (c2[1] - c1[1]) * rad;
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(c1[0] * rad) * Math.cos(c2[0] * rad) * Math.sin(dLon / 2) ** 2;
+        return 6371000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      };
+      const STACK_RADIUS_M = 200;
+      const exactStacks = [];
       mapItems.forEach(item => {
         if (!Array.isArray(item.coords) || item.coords.length < 2) return;
-        const key = `${Number(item.coords[0]).toFixed(4)},${Number(item.coords[1]).toFixed(4)}`;
-        if (!exactStacks.has(key)) exactStacks.set(key, []);
-        exactStacks.get(key).push(item);
+        let matched = null;
+        for (const group of exactStacks) {
+          if (haversineMeters(group[0].coords, item.coords) <= STACK_RADIUS_M) {
+            matched = group;
+            break;
+          }
+        }
+        if (matched) matched.push(item);
+        else exactStacks.push([item]);
       });
 
       const statusPriority = { planned: 4, done: 3, memorable: 2, bucket: 1 };
@@ -3436,7 +3469,7 @@
 
         const tipLines = sorted.slice(0, 4).map(r => `&bull; ${r.name}${r.date ? ' (' + r.date.slice(0, 4) + ')' : ''}`).join('<br>');
         const moreLine = sorted.length > 4 ? `<br><i>+${sorted.length - 4} more...</i>` : '';
-        marker.bindTooltip(`<b>${sorted.length} races at this spot</b><br>${tipLines}${moreLine}`, { offset: [0, -24], direction: 'top' });
+        marker.bindTooltip(`<b>${sorted.length} ${currentMode === 'memorable' ? 'runs' : 'races'} at this spot</b><br>${tipLines}${moreLine}`, { offset: [0, -24], direction: 'top' });
 
         const rowsHtml = sorted.map(r => {
           const st = r.isMemorable ? 'memorable' : (r.status || 'bucket');
@@ -3458,7 +3491,7 @@
 
         const popupHtml = `
           <div class="stack-popup-list">
-            <div class="stack-popup-header">${sorted.length} races at this location</div>
+            <div class="stack-popup-header">${sorted.length} ${currentMode === 'memorable' ? 'runs' : 'races'} at this location</div>
             ${rowsHtml}
           </div>
         `;
@@ -5033,6 +5066,17 @@
       document.getElementById('wrap-status-selector').style.display = isMem ? 'none' : 'block';
       const wrapTags = document.getElementById('wrap-field-memorable-tags');
       if (wrapTags) wrapTags.style.display = isMem ? 'flex' : 'none';
+      const nameLabel = document.getElementById('label-form-name');
+      const nameInput = document.getElementById('form-name');
+      const catSuggest = document.getElementById('catalog-suggestions');
+      if (isMem) {
+        if (nameLabel) nameLabel.textContent = '1. Route / Run Title *';
+        if (nameInput) nameInput.placeholder = 'e.g. Chamonix Grand Balcon Ridge, Morning Forest Loop...';
+        if (catSuggest) catSuggest.style.display = 'none';
+      } else {
+        if (nameLabel) nameLabel.textContent = '2. Race / Route Title (or search catalog) *';
+        if (nameInput) nameInput.placeholder = 'e.g. Berlin Marathon, UTMB, Boston...';
+      }
       if (isMem) {
         document.getElementById('wrap-field-date').style.display = 'block';
         document.getElementById('wrap-field-month').style.display = 'none';
@@ -5046,6 +5090,14 @@
         document.getElementById('form-why').placeholder = 'e.g. Sunrise over the ridge, vacation discovery...';
         document.getElementById('label-dynamic-notes').textContent = 'Trail & Experience Notes';
       }
+    }
+
+    function resetAddModalScroll() {
+      const card = document.querySelector('#add-modal .stepped-modal-card');
+      if (!card) return;
+      card.scrollTop = 0;
+      requestAnimationFrame(() => { card.scrollTop = 0; });
+      setTimeout(() => { card.scrollTop = 0; }, 30);
     }
 
     function openAddModal(forcedMode = null) {
@@ -5062,6 +5114,7 @@
         applyMemorableFormLayout(false);
         selectStatusMode('done');
       }
+      resetAddModalScroll();
     }
 
     function closeModals() {
@@ -5070,6 +5123,50 @@
     }
 
     document.getElementById('drop-gpx').addEventListener('click', () => document.getElementById('input-gpx').click());
+
+    let draggedPhotoIdx = null;
+
+    function handlePhotoDragStart(e, idx) {
+      draggedPhotoIdx = idx;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(idx));
+      if (e.currentTarget) e.currentTarget.classList.add('dragging');
+    }
+
+    function handlePhotoDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (e.currentTarget) e.currentTarget.classList.add('drag-over');
+    }
+
+    function handlePhotoDragLeave(e) {
+      if (e.currentTarget) e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handlePhotoDrop(e, targetIdx) {
+      e.preventDefault();
+      if (e.currentTarget) e.currentTarget.classList.remove('drag-over');
+      if (draggedPhotoIdx === null || draggedPhotoIdx === targetIdx) return;
+      const [moved] = modalPhotosList.splice(draggedPhotoIdx, 1);
+      modalPhotosList.splice(targetIdx, 0, moved);
+      draggedPhotoIdx = null;
+      renderModalPhotosGrid();
+    }
+
+    function handlePhotoDragEnd(e) {
+      draggedPhotoIdx = null;
+      document.querySelectorAll('#modal-photo-grid .modal-photo-card').forEach(c => {
+        c.classList.remove('dragging', 'drag-over');
+      });
+    }
+
+    function moveModalPhoto(idx, delta) {
+      const target = idx + delta;
+      if (target < 0 || target >= modalPhotosList.length) return;
+      const [moved] = modalPhotosList.splice(idx, 1);
+      modalPhotosList.splice(target, 0, moved);
+      renderModalPhotosGrid();
+    }
 
     function renderModalPhotosGrid() {
       const wrap = document.getElementById('modal-photos-wrap');
@@ -5086,11 +5183,25 @@
 
       wrap.style.display = 'flex';
       if (label) label.textContent = `📷 ${modalPhotosList.length} photo${modalPhotosList.length > 1 ? 's' : ''} attached (+ Add)`;
+      const showReorder = modalPhotosList.length > 1;
       grid.innerHTML = modalPhotosList.map((url, idx) => `
-        <div class="modal-photo-item ${idx === 0 ? 'is-cover' : ''}">
-          <img src="${url}" alt="">
-          <button type="button" class="modal-photo-cover" title="Set as cover photo" onclick="setModalCoverPhoto(${idx})">★</button>
-          <button type="button" class="modal-photo-del" title="Remove photo" onclick="removeModalPhoto(${idx})">&times;</button>
+        <div class="modal-photo-card" draggable="true"
+             ondragstart="handlePhotoDragStart(event, ${idx})"
+             ondragover="handlePhotoDragOver(event)"
+             ondragleave="handlePhotoDragLeave(event)"
+             ondrop="handlePhotoDrop(event, ${idx})"
+             ondragend="handlePhotoDragEnd(event)">
+          <div class="modal-photo-item ${idx === 0 ? 'is-cover' : ''}">
+            <img src="${url}" alt="">
+            <button type="button" class="modal-photo-cover" title="${idx === 0 ? 'Cover photo' : 'Set as cover photo'}" onclick="setModalCoverPhoto(${idx})">★</button>
+            <button type="button" class="modal-photo-del" title="Remove photo" onclick="removeModalPhoto(${idx})">&times;</button>
+          </div>
+          ${showReorder ? `
+            <div class="modal-photo-order-bar">
+              <button type="button" class="modal-photo-move" title="Move left" ${idx === 0 ? 'disabled' : ''} onclick="moveModalPhoto(${idx}, -1)">←</button>
+              <button type="button" class="modal-photo-move" title="Move right" ${idx === modalPhotosList.length - 1 ? 'disabled' : ''} onclick="moveModalPhoto(${idx}, 1)">→</button>
+            </div>
+          ` : ''}
         </div>
       `).join('');
     }
@@ -5212,12 +5323,32 @@
           parsedElevationSample = rawElevations.filter((_, idx) => idx % step === 0);
         }
 
+        // Extract activity date from GPX (<trkpt><time>, <metadata><time>, or any <time>)
+        let extractedIsoDate = null;
+        const timeEl = xml.querySelector('trkpt > time') || xml.querySelector('metadata > time') || xml.querySelector('time');
+        if (timeEl && timeEl.textContent) {
+          const rawTime = timeEl.textContent.trim();
+          const dateMatch = rawTime.match(/^(\d{4}-\d{2}-\d{2})/);
+          if (dateMatch) {
+            extractedIsoDate = dateMatch[1];
+          } else {
+            const parsedDt = new Date(rawTime);
+            if (!isNaN(parsedDt.getTime())) {
+              const pad2 = n => String(n).padStart(2, '0');
+              extractedIsoDate = `${parsedDt.getFullYear()}-${pad2(parsedDt.getMonth() + 1)}-${pad2(parsedDt.getDate())}`;
+            }
+          }
+        }
+        if (extractedIsoDate) {
+          document.getElementById('form-date').value = extractedIsoDate;
+        }
+
         parsedGpxCoords = latlngs;
         parsedCenterCoords = latlngs[0];
         document.getElementById('form-distance').value = totalDist.toFixed(1) + ' km';
         document.getElementById('form-elevation').value = '+' + Math.round(totalEle) + ' m';
         document.getElementById('gpx-label').textContent = `Loaded track (${latlngs.length} pts, ${totalDist.toFixed(1)} km)`;
-        showToast('GPX route & elevation parsed!', '📍');
+        showToast(extractedIsoDate ? `GPX route, elevation & date (${extractedIsoDate}) parsed!` : 'GPX route & elevation parsed!', '📍');
       };
       reader.readAsText(file);
     }
@@ -5328,13 +5459,10 @@
           showToast('Added to Live Demo map!', '🏁');
         }
         closeModals();
-        if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode(localObj.isMemorable ? 'memorable' : 'races', { autoCenter: false });
+        const targetMode = localObj.isMemorable ? 'memorable' : 'races';
+        if (currentMode !== targetMode) switchPageMode(targetMode, { autoCenter: false });
         else renderAll();
-        if (wasEditingId) {
-          showDetail(localObj);
-        } else {
-          map.flyTo(finalCoords, 11, { animate: true });
-        }
+        showDetail(localObj);
         saveBtn.textContent = 'Save to Atlas';
         saveBtn.disabled = false;
         return;
@@ -5360,11 +5488,12 @@
 
         closeModals();
         await loadActivitiesFromDB(currentUser.id);
-        if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) {
-          switchPageMode(record.is_memorable ? 'memorable' : 'races', { autoCenter: false });
+        const targetMode = record.is_memorable ? 'memorable' : 'races';
+        if (currentMode !== targetMode) {
+          switchPageMode(targetMode, { autoCenter: false });
         }
         const savedItem = savedId ? races.find(r => String(r.id) === String(savedId)) : null;
-        if (wasEditingId && savedItem) {
+        if (savedItem) {
           showDetail(savedItem);
         } else {
           map.flyTo(finalCoords, 11, { animate: true });
@@ -5465,16 +5594,46 @@
       document.querySelector('.map-bottom-controls').style.display = 'flex';
       map.invalidateSize();
 
+      const sortSelect = document.getElementById('sort-select');
+      const fitAllBtn = document.getElementById('floating-fitall-btn');
+
       if (mode === 'races') {
         document.getElementById('main-title').textContent = isReadOnlyShared ? document.getElementById('main-title').textContent : (isDemoMode ? 'Race Atlas (Demo)' : 'Race Atlas');
         memorableInfoBtn.style.display = 'none';
         statusWrap.style.display = 'flex';
         filtersWrap.style.display = 'flex';
+        if (fitAllBtn) {
+          fitAllBtn.textContent = '🌐 World View';
+          fitAllBtn.title = 'Zoom out to show all your pins';
+        }
+        if (sortSelect && !sortSelect.querySelector('option[value="importance"]')) {
+          const impOpt = document.createElement('option');
+          impOpt.value = 'importance';
+          impOpt.textContent = 'Sort: Highest importance';
+          const alphaOpt = sortSelect.querySelector('option[value="alpha"]');
+          sortSelect.insertBefore(impOpt, alphaOpt || null);
+        }
       } else if (mode === 'memorable') {
         document.getElementById('main-title').textContent = 'Memorable Runs';
         memorableInfoBtn.style.display = 'inline-flex';
         statusWrap.style.display = 'none';
         filtersWrap.style.display = 'flex';
+        if (fitAllBtn) {
+          fitAllBtn.textContent = '🗺️ Show All';
+          fitAllBtn.title = 'Zoom to show all your memorable runs';
+        }
+        if (sortSelect) {
+          const impOpt = sortSelect.querySelector('option[value="importance"]');
+          if (impOpt) impOpt.remove();
+          if (sortOrder === 'importance') {
+            sortOrder = 'newest';
+            sortSelect.value = 'newest';
+          }
+        }
+        if (!localStorage.getItem('runatlas_memorable_info_seen')) {
+          showMemorableExplainer();
+          localStorage.setItem('runatlas_memorable_info_seen', 'true');
+        }
       }
       renderAll();
 
