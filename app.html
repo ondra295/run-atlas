@@ -1644,6 +1644,7 @@
     let featuredRacesList = [];
     let zavodniTrasy = {};
     let elevationProfiles = {};
+    let routeFetchChecked = new Set();
 
     let editingActivityId = null;
     let isModalMemorableMode = false;
@@ -2079,7 +2080,7 @@
         confirmText: 'Log Out',
         onConfirm: () => {
           Object.keys(localStorage).forEach(k => {
-            if (k.startsWith('sb-') || k.includes('supabase')) localStorage.removeItem(k);
+            if (k.startsWith('sb-') || k.includes('supabase') || k.startsWith('runatlas_cache_')) localStorage.removeItem(k);
           });
           sessionStorage.clear();
           supabaseClient.auth.signOut({ scope: 'local' }).catch(() => {});
@@ -2694,22 +2695,49 @@
       }
 
       try {
-        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-        if (authError || !user) {
+        let user = null;
+        const { data: sessionData } = await supabaseClient.auth.getSession();
+        if (sessionData && sessionData.session && sessionData.session.user) {
+          user = sessionData.session.user;
+        } else if (!sharedUser) {
+          const { data: userData } = await supabaseClient.auth.getUser();
+          user = userData?.user || null;
+        }
+
+        if (!user) {
           if (!sharedUser) { window.location.href = 'index.html'; return; }
         } else if (!sharedUser) {
           currentUser = user;
-          const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
-          const username = profile?.username || currentUser.email.split('@')[0];
-          document.getElementById('label-user').textContent = username;
-          await loadActivitiesFromDB(currentUser.id);
+          const fallbackUsername = currentUser.email ? currentUser.email.split('@')[0] : 'Profile';
+          document.getElementById('label-user').textContent = fallbackUsername;
+
+          // Instant paint from local cache (if available) while fresh data loads in parallel
+          const hadCache = hydrateActivitiesFromCache(currentUser.id);
+          if (hadCache) {
+            if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView)) {
+              switchPageMode(initialView, { autoCenter: false });
+            } else {
+              renderAll();
+            }
+          }
+
+          // Load profile and lightweight races in parallel
+          const [profileRes] = await Promise.all([
+            supabaseClient.from('profiles').select('username, display_name').eq('id', currentUser.id).single(),
+            loadActivitiesFromDB(currentUser.id)
+          ]);
+
+          const profile = profileRes?.data;
+          if (profile?.username) {
+            document.getElementById('label-user').textContent = profile.username;
+          }
 
           const userTourKey = `runatlas_tour_completed_${currentUser.id}`;
           const tourAlreadySeen = !!(localStorage.getItem(userTourKey) || localStorage.getItem('runatlas_tour_completed'));
           if (races.length > 0) {
             markTourSeen();
           }
-          if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView)) {
+          if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView) && currentMode !== initialView) {
             switchPageMode(initialView);
           } else if (!tourAlreadySeen && races.length === 0) {
             setTimeout(() => startContextualTour(), 500);
@@ -2775,9 +2803,80 @@
       ];
     }
 
+    const LIGHTWEIGHT_RACE_COLUMNS = 'id, name, date, month, coords, status, status_label, surface, surface_label, difficulty, distance, elevation, importance, why, notes, qualification, images, image_url, result_time, ambition_time, placement, satisfaction, course_satisfaction, expectations, cost, logistics_transport, is_memorable';
+
+    function getAtlasCacheKey(userId) {
+      return `runatlas_cache_v1_${userId}`;
+    }
+
+    function hydrateActivitiesFromCache(userId) {
+      if (!userId || isDemoMode) return false;
+      try {
+        const raw = localStorage.getItem(getAtlasCacheKey(userId));
+        if (!raw) return false;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !Array.isArray(parsed.races) || parsed.races.length === 0) return false;
+        races = parsed.races;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function saveActivitiesToCache(userId, list) {
+      if (!userId || isDemoMode) return;
+      try {
+        // Strip oversized inline base64 data URLs before caching so localStorage stays fast and within quota
+        const compact = (list || []).map(r => {
+          const isHugeDataUrl = u => typeof u === 'string' && u.startsWith('data:') && u.length > 40000;
+          const safeImg = isHugeDataUrl(r.image_url) ? null : r.image_url;
+          const safeImgs = Array.isArray(r.images) ? r.images.filter(u => !isHugeDataUrl(u)) : [];
+          return { ...r, image_url: safeImg, images: safeImgs };
+        });
+        localStorage.setItem(getAtlasCacheKey(userId), JSON.stringify({ ts: Date.now(), races: compact }));
+      } catch (e) {
+        // Ignore quota errors silently
+      }
+    }
+
+    async function ensureRouteLoaded(raceId) {
+      const key = String(raceId);
+      if (zavodniTrasy[raceId]) return zavodniTrasy[raceId];
+      if (isDemoMode || routeFetchChecked.has(key)) return null;
+      routeFetchChecked.add(key);
+      try {
+        const { data, error } = await supabaseClient
+          .from('races')
+          .select('route_coords')
+          .eq('id', raceId)
+          .single();
+        if (!error && data && Array.isArray(data.route_coords) && data.route_coords.length >= 2) {
+          zavodniTrasy[raceId] = data.route_coords;
+          return data.route_coords;
+        }
+      } catch (e) {
+        console.warn('Lazy GPX load failed:', e);
+      }
+      return null;
+    }
+
     async function loadActivitiesFromDB(userId) {
       try {
-        const { data, error } = await supabaseClient.from('races').select('*').eq('user_id', userId);
+        // 1. Lightweight query excluding heavy route_coords (GPX tracks are lazy-loaded on click)
+        let { data, error } = await supabaseClient
+          .from('races')
+          .select(LIGHTWEIGHT_RACE_COLUMNS)
+          .eq('user_id', userId);
+
+        // Fallback to select('*') only if schema differs from lightweight column list
+        let usedFullFallback = false;
+        if (error) {
+          console.warn('Lightweight select fallback:', error.message);
+          const fullRes = await supabaseClient.from('races').select('*').eq('user_id', userId);
+          data = fullRes.data;
+          error = fullRes.error;
+          usedFullFallback = true;
+        }
         if (error) throw error;
 
         races = (data || []).map(item => ({
@@ -2813,9 +2912,13 @@
           isMemorable: item.is_memorable || (item.status === 'memorable')
         }));
 
-        (data || []).forEach(item => {
-          if (item.route_coords) zavodniTrasy[item.id] = item.route_coords;
-        });
+        if (usedFullFallback) {
+          (data || []).forEach(item => {
+            if (item.route_coords) zavodniTrasy[item.id] = item.route_coords;
+          });
+        }
+
+        saveActivitiesToCache(userId, races);
       } catch (err) {
         console.error('Data error:', err);
       } finally {
@@ -2981,6 +3084,15 @@
       if (zavodniTrasy[item.id]) {
         parsedGpxCoords = zavodniTrasy[item.id];
         document.getElementById('gpx-label').textContent = `Attached GPX track preserved`;
+      } else if (!isDemoMode && !routeFetchChecked.has(String(item.id))) {
+        const editTargetId = item.id;
+        ensureRouteLoaded(editTargetId).then(coords => {
+          if (coords && String(editingActivityId) === String(editTargetId) && !parsedGpxCoords) {
+            parsedGpxCoords = coords;
+            const lbl = document.getElementById('gpx-label');
+            if (lbl) lbl.textContent = `Attached GPX track preserved`;
+          }
+        });
       }
 
       currentWizardStep = 1;
@@ -4545,8 +4657,8 @@
           ${item.isMemorable ? buildMemorableTagsPillsHtml(item) : ''}
 
           ${(!zavodniTrasy[item.id] && !isReadOnlyShared) ? `
-            <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:0.76rem; color:#64748b; font-weight:600;">📍 Showing Race Zone (no GPX track attached)</span>
+            <div id="detail-gpx-status-bar" style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.76rem; color:#64748b; font-weight:600;">${(!isDemoMode && !routeFetchChecked.has(String(item.id))) ? '⏳ Loading GPX track...' : '📍 Showing Race Zone (no GPX track attached)'}</span>
               <button class="pill-btn" style="padding:3px 8px; font-size:0.72rem; color:#007aff;" onclick="openEditActivityModal('${item.id}')">+ Add GPX</button>
             </div>
           ` : ''}
@@ -4588,6 +4700,23 @@
           ` : ''}
         </div>
       `;
+
+      // Lazy-load GPX track from Supabase only when the user actually opens this activity
+      if (!zavodniTrasy[item.id] && !isDemoMode && !routeFetchChecked.has(String(item.id))) {
+        const targetId = item.id;
+        ensureRouteLoaded(targetId).then(coords => {
+          if (!currentDetailItem || String(currentDetailItem.id) !== String(targetId)) return;
+          if (coords) {
+            showDetail(currentDetailItem);
+          } else {
+            const bar = document.getElementById('detail-gpx-status-bar');
+            if (bar) {
+              const span = bar.querySelector('span');
+              if (span) span.textContent = '📍 Showing Race Zone (no GPX track attached)';
+            }
+          }
+        });
+      }
     }
 
     // FULLSCREEN PHOTO LIGHTBOX
@@ -5892,13 +6021,19 @@
         if (wasEditingId) {
           const { error: updErr } = await supabaseClient.from('races').update(record).eq('id', wasEditingId).eq('user_id', currentUser.id);
           if (updErr) throw updErr;
+          if (parsedGpxCoords) {
+            zavodniTrasy[wasEditingId] = parsedGpxCoords;
+            routeFetchChecked.add(String(wasEditingId));
+          }
           if (parsedElevationSample) elevationProfiles[wasEditingId] = parsedElevationSample;
           showToast('Activity updated!', '✅');
         } else {
-          const { data: insData, error: insErr } = await supabaseClient.from('races').insert([record]).select();
+          const { data: insData, error: insErr } = await supabaseClient.from('races').insert([record]).select('id');
           if (insErr) throw insErr;
           if (insData && insData[0]) {
             savedId = insData[0].id;
+            if (parsedGpxCoords) zavodniTrasy[savedId] = parsedGpxCoords;
+            routeFetchChecked.add(String(savedId));
             if (parsedElevationSample) elevationProfiles[savedId] = parsedElevationSample;
           }
           currentDetailItem = null;
