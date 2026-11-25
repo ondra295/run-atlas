@@ -850,13 +850,13 @@
     }
     .pin-svg-wrap:hover { transform: scale(1.16) translateY(-1px); }
     .pin-stack-badge {
-      position: absolute; top: -4px; right: -5px;
-      min-width: 14px; height: 14px; padding: 0 3px; border-radius: 99px;
-      background: rgba(255, 255, 255, 0.92); color: #334155;
-      border: 1px solid rgba(15, 23, 42, 0.22);
-      font-size: 0.6rem; font-weight: 800; line-height: 12px;
+      position: absolute; top: -6px; right: -7px; z-index: 5;
+      min-width: 16px; height: 16px; padding: 0 4px; border-radius: 99px;
+      background: #0f172a; color: #ffffff;
+      border: 1.5px solid #ffffff;
+      font-size: 0.65rem; font-weight: 800; line-height: 13px;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.22);
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.4);
       pointer-events: none;
     }
 
@@ -3762,7 +3762,7 @@
 
         const lead = sorted[0];
         const { icon, zIndexOffset } = buildPinIconForItem(lead, sorted.length);
-        const marker = L.marker(lead.coords, { icon, zIndexOffset: zIndexOffset + 5 }).addTo(markerLayerGroup);
+        const marker = L.marker(lead.coords, { icon, zIndexOffset: zIndexOffset + 150 }).addTo(markerLayerGroup);
 
         const tipLines = sorted.slice(0, 4).map(r => `&bull; ${r.name}${r.date ? ' (' + r.date.slice(0, 4) + ')' : ''}`).join('<br>');
         const moreLine = sorted.length > 4 ? `<br><i>+${sorted.length - 4} more...</i>` : '';
