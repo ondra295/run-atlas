@@ -2301,7 +2301,13 @@
         const homeIcon = L.divIcon({ className: 'custom-home-pin', html: homePinHtml, iconSize: [22, 22], iconAnchor: [11, 19] });
 
         if (!homeMarker) {
-          homeMarker = L.marker(userHomeCoords, { icon: homeIcon, zIndexOffset: 100 }).addTo(map).bindTooltip("Home Base", { direction: 'top', offset: [0, -16] });
+          homeMarker = L.marker(userHomeCoords, { icon: homeIcon, zIndexOffset: 100 })
+            .addTo(map)
+            .bindTooltip("Home Base", { direction: 'top', offset: [0, -16] })
+            .on('click', () => {
+              if (!userHomeCoords) return;
+              map.flyTo(userHomeCoords, 6, { animate: true, duration: 0.9 });
+            });
         } else {
           homeMarker.setLatLng(userHomeCoords);
           homeMarker.setIcon(homeIcon);
