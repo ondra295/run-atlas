@@ -501,6 +501,36 @@
       background: #ffffff; color: #007aff; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
     }
 
+    /* YEAR FILTER TABS BAR INSIDE COUNTRY LIST */
+    .year-tabs-bar {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px;
+      padding: 8px 10px; flex-shrink: 0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    .year-tab-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 10px; border-radius: 99px; border: 1px solid #cbd5e1;
+      background: #f8fafc; color: #334155; font-size: 0.74rem; font-weight: 800;
+      cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
+    }
+    .year-tab-pill:hover { border-color: #007aff; color: #007aff; background: #eff6ff; }
+    .year-tab-pill.active {
+      background: #007aff; border-color: #007aff; color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 122, 255, 0.28);
+    }
+    .year-tab-count {
+      font-size: 0.67rem; font-weight: 800; padding: 1px 5px; border-radius: 99px;
+      background: rgba(15, 23, 42, 0.08); color: inherit;
+    }
+    .year-tab-pill.active .year-tab-count {
+      background: rgba(255, 255, 255, 0.24); color: #ffffff;
+    }
+    .year-tabs-summary {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.71rem; font-weight: 700; color: #64748b;
+      padding-top: 6px; margin-top: 2px; border-top: 1px solid #f1f5f9;
+    }
+
     /* COLLAPSIBLE YEAR GROUPS INSIDE COUNTRY LIST */
     .year-group-section {
       display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
@@ -1670,6 +1700,7 @@
     const YEAR_GROUP_THRESHOLD = 10;
     let sidebarDensity = localStorage.getItem('runatlas_sidebar_density') || 'cards';
     let yearGroupOpenState = {};
+    let selectedYearTab = {};
 
     let timelineYearFilter = 'all';
     let exploreContinentFilter = 'all';
@@ -3308,13 +3339,8 @@
       return item.status === 'bucket' ? 'Bucket List' : 'Undated';
     }
 
-    function toggleYearGroup(scopeKey, yKey) {
-      // Accordion behavior: clicking a collapsed year opens it and collapses others; clicking the open one closes it
-      if (yearGroupOpenState[scopeKey] === yKey) {
-        yearGroupOpenState[scopeKey] = null;
-      } else {
-        yearGroupOpenState[scopeKey] = yKey;
-      }
+    function selectYearTab(scopeKey, tabKey) {
+      selectedYearTab[scopeKey] = tabKey;
       renderSidebarList();
     }
 
@@ -3325,7 +3351,7 @@
         return isNaN(n) ? 0 : n;
       };
 
-      // Group by year when a country/list has more than YEAR_GROUP_THRESHOLD items and spans 2+ year groups
+      // Show year tabs bar when a country/list has more than YEAR_GROUP_THRESHOLD items and spans 2+ year groups
       if (items.length > YEAR_GROUP_THRESHOLD) {
         const groupsMap = new Map();
         items.forEach(item => {
@@ -3345,40 +3371,47 @@
           });
 
           const scopeKey = `${currentMode}:${sidebarCountry || 'all'}`;
-          const openYearKey = yearGroupOpenState[scopeKey] || null;
+          let activeTab = selectedYearTab[scopeKey];
+          if (!activeTab || (activeTab !== '__ALL__' && !groupsMap.has(activeTab))) {
+            activeTab = keys[0];
+            selectedYearTab[scopeKey] = activeTab;
+          }
+
+          const displayedItems = activeTab === '__ALL__' ? items : (groupsMap.get(activeTab) || []);
+          const totalKm = Math.round(displayedItems.reduce((acc, it) => acc + parseKm(it.distance), 0));
           const unitWord = currentMode === 'memorable' ? ['run', 'runs'] : ['race', 'races'];
 
+          const tabsBar = document.createElement('div');
+          tabsBar.className = 'year-tabs-bar';
+
           keys.forEach(yKey => {
-            const groupItems = groupsMap.get(yKey);
-            const isOpen = (openYearKey === yKey);
-            const totalKm = Math.round(groupItems.reduce((acc, it) => acc + parseKm(it.distance), 0));
-            const kmText = totalKm > 0 ? ` • ${totalKm.toLocaleString()} km` : '';
-            const countText = `${groupItems.length} ${groupItems.length === 1 ? unitWord[0] : unitWord[1]}${kmText}`;
-
-            const section = document.createElement('div');
-            section.className = 'year-group-section';
-
-            const header = document.createElement('div');
-            header.className = 'year-group-header' + (isOpen ? ' open' : '');
-            header.innerHTML = `
-              <div class="year-group-header-left">
-                <span class="year-group-chevron">${isOpen ? '▾' : '▸'}</span>
-                <span>${isNumericYear(yKey) ? '📅 ' + yKey : '⭐️ ' + yKey}</span>
-              </div>
-              <span class="year-group-meta">${countText}</span>
-            `;
-            header.onclick = () => toggleYearGroup(scopeKey, yKey);
-            section.appendChild(header);
-
-            if (isOpen) {
-              const body = document.createElement('div');
-              body.className = 'year-group-body';
-              groupItems.forEach(it => body.appendChild(buildRaceCardElement(it)));
-              section.appendChild(body);
-            }
-
-            container.appendChild(section);
+            const grp = groupsMap.get(yKey);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'year-tab-pill' + (activeTab === yKey ? ' active' : '');
+            btn.innerHTML = `<span>${yKey}</span><span class="year-tab-count">${grp.length}</span>`;
+            btn.onclick = () => selectYearTab(scopeKey, yKey);
+            tabsBar.appendChild(btn);
           });
+
+          const allBtn = document.createElement('button');
+          allBtn.type = 'button';
+          allBtn.className = 'year-tab-pill' + (activeTab === '__ALL__' ? ' active' : '');
+          allBtn.innerHTML = `<span>All</span><span class="year-tab-count">${items.length}</span>`;
+          allBtn.onclick = () => selectYearTab(scopeKey, '__ALL__');
+          tabsBar.appendChild(allBtn);
+
+          const summary = document.createElement('div');
+          summary.className = 'year-tabs-summary';
+          const activeLabel = activeTab === '__ALL__' ? 'All years' : (isNumericYear(activeTab) ? `Season ${activeTab}` : activeTab);
+          summary.innerHTML = `
+            <span>${activeLabel}</span>
+            <span>${displayedItems.length} ${displayedItems.length === 1 ? unitWord[0] : unitWord[1]}${totalKm > 0 ? ' • ' + totalKm.toLocaleString() + ' km' : ''}</span>
+          `;
+          tabsBar.appendChild(summary);
+
+          container.appendChild(tabsBar);
+          displayedItems.forEach(it => container.appendChild(buildRaceCardElement(it)));
           return;
         }
       }
