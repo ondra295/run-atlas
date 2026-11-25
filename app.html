@@ -2518,7 +2518,7 @@
             }
           }
 
-          const distKm = parseFloat(String(item.distance || '20').replace(/,/g, '').replace(/[^\d.]/g, '')) || 20;
+          const distKm = parseMetricNumber(item.distance) || 20;
           const distances = coords.map((_, i) => (i / Math.max(1, coords.length - 1)) * distKm);
 
           item.coords = coords[0];
@@ -2987,10 +2987,32 @@
       renderAll();
     }
 
+    function parseMetricNumber(val) {
+      if (val == null) return NaN;
+      let s = String(val).trim();
+      if (!s) return NaN;
+      s = s.replace(/[\u00A0\u202F]/g, ' ');
+      // Collapse genuine thousands separators (e.g. "3 200" or "1,450") without merging ranges like "400 - 600"
+      let prev;
+      do {
+        prev = s;
+        s = s.replace(/(\d)[ ,](\d{3})(?!\d)/g, '$1$2');
+      } while (s !== prev);
+      // Convert decimal comma (e.g. "42,2") to dot
+      s = s.replace(/(\d),(\d{1,2})(?!\d)/g, '$1.$2');
+      // If written as a range (e.g. "400-600 m", "+400 – 600 m", "400 to 600"), use midpoint
+      const rangeMatch = s.match(/^\s*\+?\s*(\d+(?:\.\d+)?)\s*(?:-|–|—|to|až)\s*\+?\s*(\d+(?:\.\d+)?)/i);
+      if (rangeMatch) {
+        return (parseFloat(rangeMatch[1]) + parseFloat(rangeMatch[2])) / 2;
+      }
+      // Otherwise extract the first numeric value (handles "+400 m / -400 m", "+3 200 m", "42.2 km")
+      const firstMatch = s.match(/(\d+(?:\.\d+)?)/);
+      return firstMatch ? parseFloat(firstMatch[1]) : NaN;
+    }
+
     function sortActivities(list) {
       const parseDist = d => {
-        if (!d) return 0;
-        const num = parseFloat(d.replace(/,/g, '.').replace(/[^\d.]/g, ''));
+        const num = parseMetricNumber(d);
         return isNaN(num) ? 0 : num;
       };
 
@@ -3277,8 +3299,7 @@
 
     function appendActivityList(container, items) {
       const parseKm = str => {
-        if (!str) return 0;
-        const n = parseFloat(String(str).replace(/,/g, '.').replace(/[^\d.]/g, ''));
+        const n = parseMetricNumber(str);
         return isNaN(n) ? 0 : n;
       };
 
@@ -4256,9 +4277,7 @@
         else rawLoss += -diff;
       }
       const netDelta = elevs[elevs.length - 1] - elevs[0];
-      const parsedLoggedGain = item.elevation
-        ? parseFloat(String(item.elevation).replace(/,/g, '').replace(/[^\d.]/g, ''))
-        : NaN;
+      const parsedLoggedGain = parseMetricNumber(item.elevation);
       const hasLoggedGain = !isNaN(parsedLoggedGain) && parsedLoggedGain > 0;
       const displayGain = hasLoggedGain ? Math.round(parsedLoggedGain) : Math.round(rawGain);
       const displayLoss = hasLoggedGain
@@ -4635,8 +4654,7 @@
       document.getElementById('floating-hud-panel').style.display = 'none';
 
       const parseNum = str => {
-        if (!str) return 0;
-        const n = parseFloat(str.replace(/,/g, '').replace(/[^\d.]/g, ''));
+        const n = parseMetricNumber(str);
         return isNaN(n) ? 0 : n;
       };
 
@@ -4819,8 +4837,7 @@
       document.getElementById('floating-hud-panel').style.display = 'none';
 
       const parseNum = str => {
-        if (!str) return 0;
-        const n = parseFloat(str.replace(/,/g, '').replace(/[^\d.]/g, ''));
+        const n = parseMetricNumber(str);
         return isNaN(n) ? 0 : n;
       };
 
@@ -5052,8 +5069,7 @@
       document.getElementById('floating-hud-panel').style.display = 'none';
 
       const parseNum = str => {
-        if (!str) return 0;
-        const n = parseFloat(str.replace(/,/g, '').replace(/[^\d.]/g, ''));
+        const n = parseMetricNumber(str);
         return isNaN(n) ? 0 : n;
       };
 
