@@ -1659,8 +1659,19 @@
     }
 
     // CONTEXTUAL TOUR (WITH MEMORABLE RUNS STEP)
+    function markTourSeen() {
+      localStorage.setItem('runatlas_tour_completed', 'true');
+      if (currentUser && currentUser.id) {
+        localStorage.setItem(`runatlas_tour_completed_${currentUser.id}`, 'true');
+      }
+      if (isDemoMode) {
+        sessionStorage.setItem('runatlas_demo_tour_seen', 'true');
+      }
+    }
+
     function startContextualTour() {
       if (['stats', 'timeline', 'bests', 'catalog'].includes(currentMode)) switchPageMode('races');
+      markTourSeen();
 
       const driverObj = window.driver.js.driver({
         showProgress: true,
@@ -1670,7 +1681,7 @@
         prevBtnText: '← Back',
         doneBtnText: 'Got it! 🚀',
         onDestroyed: () => {
-          localStorage.setItem('runatlas_tour_completed', 'true');
+          markTourSeen();
         },
         steps: [
           {
@@ -2592,7 +2603,9 @@
         } else {
           renderAll();
         }
-        setTimeout(() => startContextualTour(), 500);
+        if (!sessionStorage.getItem('runatlas_demo_tour_seen')) {
+          setTimeout(() => startContextualTour(), 500);
+        }
         return;
       }
 
@@ -2607,9 +2620,14 @@
           document.getElementById('label-user').textContent = username;
           await loadActivitiesFromDB(currentUser.id);
 
+          const userTourKey = `runatlas_tour_completed_${currentUser.id}`;
+          const tourAlreadySeen = !!(localStorage.getItem(userTourKey) || localStorage.getItem('runatlas_tour_completed'));
+          if (races.length > 0) {
+            markTourSeen();
+          }
           if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView)) {
             switchPageMode(initialView);
-          } else if (!localStorage.getItem('runatlas_tour_completed') || races.length === 0) {
+          } else if (!tourAlreadySeen && races.length === 0) {
             setTimeout(() => startContextualTour(), 500);
           }
           return;
@@ -5815,8 +5833,15 @@
             sortSelect.value = 'newest';
           }
         }
-        if (!localStorage.getItem('runatlas_memorable_info_seen')) {
+        const hasMemorableRuns = races.some(r => r.isMemorable);
+        const memSeenKey = (currentUser && currentUser.id) ? `runatlas_memorable_info_seen_${currentUser.id}` : 'runatlas_memorable_info_seen';
+        const memInfoAlreadySeen = !!(localStorage.getItem(memSeenKey) || localStorage.getItem('runatlas_memorable_info_seen'));
+        if (hasMemorableRuns) {
+          localStorage.setItem(memSeenKey, 'true');
+          localStorage.setItem('runatlas_memorable_info_seen', 'true');
+        } else if (!memInfoAlreadySeen && !isReadOnlyShared && !isDemoMode) {
           showMemorableExplainer();
+          localStorage.setItem(memSeenKey, 'true');
           localStorage.setItem('runatlas_memorable_info_seen', 'true');
         }
       }
