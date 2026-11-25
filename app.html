@@ -3308,8 +3308,13 @@
       return item.status === 'bucket' ? 'Bucket List' : 'Undated';
     }
 
-    function toggleYearGroup(stateKey) {
-      yearGroupOpenState[stateKey] = !yearGroupOpenState[stateKey];
+    function toggleYearGroup(scopeKey, yKey) {
+      // Accordion behavior: clicking a collapsed year opens it and collapses others; clicking the open one closes it
+      if (yearGroupOpenState[scopeKey] === yKey) {
+        yearGroupOpenState[scopeKey] = null;
+      } else {
+        yearGroupOpenState[scopeKey] = yKey;
+      }
       renderSidebarList();
     }
 
@@ -3340,16 +3345,12 @@
           });
 
           const scopeKey = `${currentMode}:${sidebarCountry || 'all'}`;
+          const openYearKey = yearGroupOpenState[scopeKey] || null;
           const unitWord = currentMode === 'memorable' ? ['run', 'runs'] : ['race', 'races'];
 
-          keys.forEach((yKey, idx) => {
+          keys.forEach(yKey => {
             const groupItems = groupsMap.get(yKey);
-            const stateKey = `${scopeKey}:${yKey}`;
-            if (yearGroupOpenState[stateKey] === undefined) {
-              // Expand the first (most recent / oldest) year by default; collapse older years
-              yearGroupOpenState[stateKey] = (idx === 0);
-            }
-            const isOpen = !!yearGroupOpenState[stateKey];
+            const isOpen = (openYearKey === yKey);
             const totalKm = Math.round(groupItems.reduce((acc, it) => acc + parseKm(it.distance), 0));
             const kmText = totalKm > 0 ? ` • ${totalKm.toLocaleString()} km` : '';
             const countText = `${groupItems.length} ${groupItems.length === 1 ? unitWord[0] : unitWord[1]}${kmText}`;
@@ -3366,7 +3367,7 @@
               </div>
               <span class="year-group-meta">${countText}</span>
             `;
-            header.onclick = () => toggleYearGroup(stateKey);
+            header.onclick = () => toggleYearGroup(scopeKey, yKey);
             section.appendChild(header);
 
             if (isOpen) {
