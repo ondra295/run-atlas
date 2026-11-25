@@ -2290,16 +2290,16 @@
       if (userHomeCoords) {
         if (homeLabel) homeLabel.textContent = "Center Home";
         const homePinHtml = `
-          <div style="background:#007aff; width:34px; height:34px; border-radius:50%; border:2.5px solid #ffffff; box-shadow:0 3px 12px rgba(15,23,42,0.4); display:flex; align-items:center; justify-content:center;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <div style="background:#0f172a; width:22px; height:22px; border-radius:50%; border:1.8px solid #ffffff; box-shadow:0 2px 6px rgba(15,23,42,0.42); display:flex; align-items:center; justify-content:center;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
             </svg>
           </div>
         `;
-        const homeIcon = L.divIcon({ className: 'custom-home-pin', html: homePinHtml, iconSize: [34, 34], iconAnchor: [17, 17] });
+        const homeIcon = L.divIcon({ className: 'custom-home-pin', html: homePinHtml, iconSize: [22, 22], iconAnchor: [11, 11] });
 
         if (!homeMarker) {
-          homeMarker = L.marker(userHomeCoords, { icon: homeIcon }).addTo(map).bindTooltip("Home Base", { direction: 'top' });
+          homeMarker = L.marker(userHomeCoords, { icon: homeIcon, zIndexOffset: 100 }).addTo(map).bindTooltip("Home Base", { direction: 'top', offset: [0, -10] });
         } else {
           homeMarker.setLatLng(userHomeCoords);
           homeMarker.setIcon(homeIcon);
@@ -2381,8 +2381,9 @@
         if (!userHomeCoords) {
           userHomeCoords = [51.5074, -0.1278]; // Neutral demo Home Base: London (no completed race in London)
           refreshHomeMarker();
-          map.setView(userHomeCoords, 4);
         }
+        // Always open Demo in full World View so all continents are visible immediately
+        map.setView([20.0, 10.0], 2);
 
         races = [
           {"id": "demo-1", "name": "Ultra Wales", "date": "2025-08-16", "month": 8, "coords": [52.82425, -3.89636], "status": "done", "statusLabel": "Completed", "surface": "trail", "surfaceLabel": "Trail", "difficulty": "tezka", "cost": "€€€€", "distance": "80 km", "elevation": "+3 200 m", "importance": 9, "why": "Wild Snowdonia trails, rugged Welsh ridges, and relentless mountain climbs.", "notes": "Steady hiking on the steep slate ascents; stayed strong through the final 15 km valley stretch.", "image_url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=80", "resultTime": "10:42:18", "placement": "Top 18%", "satisfaction": 9, "course_satisfaction": 10},
