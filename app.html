@@ -4404,12 +4404,30 @@
       const linePts = xy.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
       const fillPts = `0,${h} ${linePts} ${w},${h}`;
 
-      const gainLabel = item.elevation ? ` • ${item.elevation}` : '';
+      let rawGain = 0, rawLoss = 0;
+      for (let i = 1; i < elevs.length; i++) {
+        const diff = elevs[i] - elevs[i - 1];
+        if (diff > 0) rawGain += diff;
+        else rawLoss += -diff;
+      }
+      const netDelta = elevs[elevs.length - 1] - elevs[0];
+      const parsedLoggedGain = item.elevation
+        ? parseFloat(String(item.elevation).replace(/,/g, '').replace(/[^\d.]/g, ''))
+        : NaN;
+      const hasLoggedGain = !isNaN(parsedLoggedGain) && parsedLoggedGain > 0;
+      const displayGain = hasLoggedGain ? Math.round(parsedLoggedGain) : Math.round(rawGain);
+      const displayLoss = hasLoggedGain
+        ? Math.max(0, Math.round(parsedLoggedGain - netDelta))
+        : Math.round(rawLoss);
+
+      const elevDeltaHtml = (displayGain > 0 || displayLoss > 0)
+        ? ` &bull; <span style="color:#4ade80; text-transform:none;">+${displayGain.toLocaleString()} m</span> <span style="color:#64748b;">/</span> <span style="color:#fb923c; text-transform:none;">-${displayLoss.toLocaleString()} m</span>`
+        : '';
       const defaultReadout = `Min ${Math.round(minE)} m / Max ${Math.round(maxE)} m${totalKm > 0 ? ' • ' + totalKm.toFixed(1) + ' km' : ''}`;
 
       box.innerHTML = `
         <div class="hud-elev-header">
-          <span>⛰️ Elevation Profile${gainLabel}</span>
+          <span>⛰️ Elevation Profile${elevDeltaHtml}</span>
           <span id="hud-elev-readout" class="hud-elev-readout">${defaultReadout}</span>
         </div>
         <div class="hud-elev-svg-wrap" id="hud-elev-svg-wrap">
