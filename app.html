@@ -790,10 +790,37 @@
       backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;
     }
     .stepped-modal-card {
-      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 26px;
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 24px 26px;
       max-width: 600px; width: 100%; color: #0f172a; display: flex; flex-direction: column; gap: 14px;
       max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
     }
+    .wizard-stepper {
+      display: flex; gap: 6px; padding: 4px; background: #f1f5f9;
+      border-radius: 12px; border: 1px solid #e2e8f0;
+    }
+    .wizard-step-tab {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 8px 10px; border-radius: 9px; border: 1px solid transparent;
+      background: transparent; color: #64748b; font-size: 0.76rem; font-weight: 800;
+      cursor: pointer; transition: all 0.16s ease; white-space: nowrap;
+    }
+    .wizard-step-tab:hover { color: #0f172a; background: rgba(255, 255, 255, 0.7); }
+    .wizard-step-tab.active {
+      background: #ffffff; color: #007aff; border-color: #bfdbfe;
+      box-shadow: 0 2px 6px rgba(0, 122, 255, 0.12);
+    }
+    .wizard-step-tab.completed { color: #15803d; }
+    .wizard-step-num {
+      width: 18px; height: 18px; border-radius: 50%; font-size: 0.68rem; font-weight: 900;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #e2e8f0; color: #475569; flex-shrink: 0;
+    }
+    .wizard-step-tab.active .wizard-step-num { background: #007aff; color: #ffffff; }
+    .wizard-step-tab.completed .wizard-step-num { background: #16a34a; color: #ffffff; }
+    .wizard-pane {
+      display: none; flex-direction: column; gap: 13px;
+    }
+    .wizard-pane.active { display: flex; }
 
     /* Custom App Dialog */
     .custom-dialog-card {
@@ -1260,215 +1287,247 @@
     </div>
   </div>
 
-  <!-- 3. ADD / EDIT ACTIVITY MODAL -->
+  <!-- 3. ADD / EDIT ACTIVITY MODAL (STEPPED WIZARD) -->
   <div id="add-modal" class="modal-backdrop">
     <div class="stepped-modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
           <h3 id="step1-modal-title" style="font-size: 1.3rem; font-weight: 800; color:#0f172a;">Add to Atlas</h3>
-          <p style="font-size:0.8rem; color:#64748b;">1. Choose activity status &bull; 2. Fill in matching details</p>
+          <p id="modal-step-subtitle" style="font-size:0.8rem; color:#64748b;">Step 1 of 3 &bull; Basics &amp; GPX Route</p>
         </div>
         <button onclick="closeModals()" style="background:transparent; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
       </div>
 
-      <div id="wrap-status-selector">
-        <label class="form-group-label">1. What kind of entry is this? *</label>
-        <div class="status-selector-grid" id="status-mode-selector">
-          <div class="status-mode-card active" data-mode="done" onclick="selectStatusMode('done')">
-            <strong>🏁 Completed</strong>
-            <span>Log finish time & race review</span>
-          </div>
-          <div class="status-mode-card" data-mode="planned" onclick="selectStatusMode('planned')">
-            <strong>📅 Planned</strong>
-            <span>Registered / upcoming target</span>
-          </div>
-          <div class="status-mode-card" data-mode="bucket" onclick="selectStatusMode('bucket')">
-            <strong>⭐️ Bucket List</strong>
-            <span>Future dream race or trail</span>
+      <!-- CLICKABLE WIZARD STEPPER -->
+      <div class="wizard-stepper" id="modal-wizard-stepper">
+        <button type="button" class="wizard-step-tab active" id="wizard-tab-1" onclick="goToWizardStep(1)">
+          <span class="wizard-step-num" id="wizard-num-1">1</span>
+          <span>Basics &amp; Route</span>
+        </button>
+        <button type="button" class="wizard-step-tab" id="wizard-tab-2" onclick="goToWizardStep(2)">
+          <span class="wizard-step-num" id="wizard-num-2">2</span>
+          <span id="wizard-tab-2-label">Race Details</span>
+        </button>
+        <button type="button" class="wizard-step-tab" id="wizard-tab-3" onclick="goToWizardStep(3)">
+          <span class="wizard-step-num" id="wizard-num-3">3</span>
+          <span>Story &amp; Photos</span>
+        </button>
+      </div>
+
+      <!-- STEP 1: BASICS & GPX ROUTE -->
+      <div class="wizard-pane active" id="wizard-pane-1">
+        <div id="wrap-status-selector">
+          <label class="form-group-label">1. What kind of entry is this? *</label>
+          <div class="status-selector-grid" id="status-mode-selector">
+            <div class="status-mode-card active" data-mode="done" onclick="selectStatusMode('done')">
+              <strong>🏁 Completed</strong>
+              <span>Log finish time &amp; race review</span>
+            </div>
+            <div class="status-mode-card" data-mode="planned" onclick="selectStatusMode('planned')">
+              <strong>📅 Planned</strong>
+              <span>Registered / upcoming target</span>
+            </div>
+            <div class="status-mode-card" data-mode="bucket" onclick="selectStatusMode('bucket')">
+              <strong>⭐️ Bucket List</strong>
+              <span>Future dream race or trail</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div style="position:relative;">
-        <label class="form-group-label" id="label-form-name">2. Race / Route Title (or search catalog) *</label>
-        <input id="form-name" class="stepped-input" type="text" placeholder="e.g. Berlin Marathon, UTMB, Boston..." oninput="handleCatalogQuickSearch(this.value)">
-        <div id="catalog-suggestions" class="catalog-suggest-box"></div>
-      </div>
+        <div style="position:relative;">
+          <label class="form-group-label" id="label-form-name">2. Race / Route Title (or search catalog) *</label>
+          <input id="form-name" class="stepped-input" type="text" placeholder="e.g. Berlin Marathon, UTMB, Boston..." oninput="handleCatalogQuickSearch(this.value)">
+          <div id="catalog-suggestions" class="catalog-suggest-box"></div>
+        </div>
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 11px; text-align: center; background: #f8fafc; cursor: pointer;">
-          <span id="gpx-label" style="font-size:0.8rem; font-weight:700; color:#007aff;">📁 Drop watch track (.GPX)</span>
+        <div id="drop-gpx" style="border: 2px dashed #007aff; border-radius: 10px; padding: 13px; text-align: center; background: #f8fafc; cursor: pointer;">
+          <span id="gpx-label" style="font-size:0.82rem; font-weight:700; color:#007aff;">📁 Drop watch track (.GPX) — auto-fills date, distance &amp; climb</span>
           <input type="file" id="input-gpx" accept=".gpx" style="display: none;" onchange="handleGpxUpload(this.files[0])">
         </div>
-        <div id="drop-photos" style="border: 2px dashed #64748b; border-radius: 10px; padding: 11px; text-align: center; background: #f8fafc; cursor: pointer;" onclick="document.getElementById('input-photos').click()">
-          <span id="photos-label" style="font-size:0.8rem; font-weight:700; color:#334155;">📷 Add Photos (Multiple)</span>
-          <input type="file" id="input-photos" accept="image/*" multiple style="display: none;" onchange="handlePhotosUpload(this.files)">
-        </div>
-      </div>
-
-      <div id="modal-photos-wrap" style="display:none; flex-direction:column; gap:6px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label class="form-group-label" style="margin:0;">Attached Photos (drag or ← → to reorder • ★ = Cover)</label>
-          <span id="modal-photos-status" style="font-size:0.72rem; font-weight:700; color:#64748b;"></span>
-        </div>
-        <div id="modal-photo-grid" class="modal-photo-grid"></div>
-      </div>
-
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div id="wrap-field-date">
-          <label class="form-group-label">Event Date</label>
-          <input id="form-date" class="stepped-input" type="date">
-        </div>
-
-        <div id="wrap-field-month" style="display:none;">
-          <label class="form-group-label">Typical Season / Month</label>
-          <select id="form-month-select" class="stepped-input">
-            <option value="">Anytime / Unknown</option>
-            <option value="1">January</option><option value="2">February</option><option value="3">March</option>
-            <option value="4">April</option><option value="5">May</option><option value="6">June</option>
-            <option value="7">July</option><option value="8">August</option><option value="9">September</option>
-            <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="form-group-label">Surface</label>
-          <div class="chips-group" id="chips-surface" style="margin-top:2px;">
-            <div class="chip-btn" data-val="trail" onclick="selectChip('surface', 'trail')">Trail</div>
-            <div class="chip-btn" data-val="road" onclick="selectChip('surface', 'road')">Road</div>
-            <div class="chip-btn" data-val="mixed" onclick="selectChip('surface', 'mixed')">Mixed</div>
-          </div>
-        </div>
-      </div>
-
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div>
-          <label class="form-group-label">Distance</label>
-          <input id="form-distance" class="stepped-input" type="text" placeholder="e.g. 42.2 km">
-        </div>
-        <div>
-          <label class="form-group-label">Elevation Gain</label>
-          <input id="form-elevation" class="stepped-input" type="text" placeholder="e.g. +140 m">
-        </div>
-      </div>
-
-      <!-- ONLY FOR: COMPLETED -->
-      <div id="fields-for-done" style="display:flex; flex-direction:column; gap:12px;">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <div>
-            <label class="form-group-label">Official Finish Time</label>
-            <input id="form-finish-simple" class="stepped-input" type="text" placeholder="e.g. 3:14:22">
-          </div>
-          <div>
-            <label class="form-group-label">Placement (Optional)</label>
-            <input id="form-placement" class="stepped-input" type="text" placeholder="e.g. 42nd / 431">
-          </div>
-        </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <div class="slider-box-wrap">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <label class="form-group-label" style="margin:0;">Performance</label>
-              <strong id="label-perf-satisfaction" style="color:#16a34a; font-size:0.85rem;">8 / 10</strong>
+          <div id="wrap-field-date">
+            <label class="form-group-label">Event Date</label>
+            <input id="form-date" class="stepped-input" type="date">
+          </div>
+
+          <div id="wrap-field-month" style="display:none;">
+            <label class="form-group-label">Typical Season / Month</label>
+            <select id="form-month-select" class="stepped-input">
+              <option value="">Anytime / Unknown</option>
+              <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+              <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+              <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+              <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-group-label">Surface</label>
+            <div class="chips-group" id="chips-surface" style="margin-top:2px;">
+              <div class="chip-btn" data-val="trail" onclick="selectChip('surface', 'trail')">Trail</div>
+              <div class="chip-btn" data-val="road" onclick="selectChip('surface', 'road')">Road</div>
+              <div class="chip-btn" data-val="mixed" onclick="selectChip('surface', 'mixed')">Mixed</div>
             </div>
-            <input type="range" id="form-satisfaction" min="1" max="10" value="8" style="accent-color:#16a34a;" oninput="document.getElementById('label-perf-satisfaction').textContent = this.value + ' / 10'">
           </div>
+        </div>
 
-          <div class="slider-box-wrap">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <label class="form-group-label" style="margin:0;">Course & Vibe</label>
-              <strong id="label-course-satisfaction" style="color:#0284c7; font-size:0.85rem;">9 / 10</strong>
-            </div>
-            <input type="range" id="form-course-satisfaction" min="1" max="10" value="9" style="accent-color:#0284c7;" oninput="document.getElementById('label-course-satisfaction').textContent = this.value + ' / 10'">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label class="form-group-label">Distance</label>
+            <input id="form-distance" class="stepped-input" type="text" placeholder="e.g. 42.2 km">
+          </div>
+          <div>
+            <label class="form-group-label">Elevation Gain</label>
+            <input id="form-elevation" class="stepped-input" type="text" placeholder="e.g. +140 m">
           </div>
         </div>
       </div>
 
-      <!-- ONLY FOR: PLANNED -->
-      <div id="fields-for-planned" style="display:none; flex-direction:column; gap:12px;">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+      <!-- STEP 2: RACE DETAILS (COMPLETED / PLANNED / BUCKET LIST) -->
+      <div class="wizard-pane" id="wizard-pane-2">
+        <!-- ONLY FOR: COMPLETED -->
+        <div id="fields-for-done" style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div>
+              <label class="form-group-label">Official Finish Time</label>
+              <input id="form-finish-simple" class="stepped-input" type="text" placeholder="e.g. 3:14:22">
+            </div>
+            <div>
+              <label class="form-group-label">Placement (Optional)</label>
+              <input id="form-placement" class="stepped-input" type="text" placeholder="e.g. 42nd / 431">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="slider-box-wrap">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label class="form-group-label" style="margin:0;">Performance</label>
+                <strong id="label-perf-satisfaction" style="color:#16a34a; font-size:0.85rem;">8 / 10</strong>
+              </div>
+              <input type="range" id="form-satisfaction" min="1" max="10" value="8" style="accent-color:#16a34a;" oninput="document.getElementById('label-perf-satisfaction').textContent = this.value + ' / 10'">
+            </div>
+
+            <div class="slider-box-wrap">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label class="form-group-label" style="margin:0;">Course &amp; Vibe</label>
+                <strong id="label-course-satisfaction" style="color:#0284c7; font-size:0.85rem;">9 / 10</strong>
+              </div>
+              <input type="range" id="form-course-satisfaction" min="1" max="10" value="9" style="accent-color:#0284c7;" oninput="document.getElementById('label-course-satisfaction').textContent = this.value + ' / 10'">
+            </div>
+          </div>
+        </div>
+
+        <!-- ONLY FOR: PLANNED -->
+        <div id="fields-for-planned" style="display:none; flex-direction:column; gap:12px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div>
+              <label class="form-group-label">Target Time / Goal</label>
+              <input id="form-target-ambition" class="stepped-input" type="text" placeholder="e.g. Sub 3:15:00">
+            </div>
+            <div>
+              <label class="form-group-label">Transport Mode</label>
+              <select id="form-logistics-transport" class="stepped-input">
+                <option value="Car">Car</option>
+                <option value="Plane">Plane</option>
+                <option value="Train">Train</option>
+                <option value="Local">Local / Public Transit</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOR PLANNED & BUCKET LIST -->
+        <div id="fields-for-planning-common" style="display:none; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div>
-            <label class="form-group-label">Target Time / Goal</label>
-            <input id="form-target-ambition" class="stepped-input" type="text" placeholder="e.g. Sub 3:15:00">
+            <label class="form-group-label">Difficulty</label>
+            <div class="chips-group" id="chips-difficulty">
+              <div class="chip-btn" data-val="snadna" onclick="selectChip('difficulty', 'snadna')">Easy</div>
+              <div class="chip-btn" data-val="stredni" onclick="selectChip('difficulty', 'stredni')">Moderate</div>
+              <div class="chip-btn" data-val="tezka" onclick="selectChip('difficulty', 'tezka')">Hard</div>
+              <div class="chip-btn" data-val="extremni" onclick="selectChip('difficulty', 'extremni')">Extreme</div>
+            </div>
           </div>
           <div>
-            <label class="form-group-label">Transport Mode</label>
-            <select id="form-logistics-transport" class="stepped-input">
-              <option value="Car">Car</option>
-              <option value="Plane">Plane</option>
-              <option value="Train">Train</option>
-              <option value="Local">Local / Public Transit</option>
+            <label class="form-group-label">Estimated Budget</label>
+            <select id="form-cost" class="stepped-input">
+              <option value="€">€ (Almost free / local)</option>
+              <option value="€€" selected>€€ (Low / weekend trip)</option>
+              <option value="€€€">€€€ (Medium / European trip)</option>
+              <option value="€€€€">€€€€ (High / flight &amp; hotel)</option>
+              <option value="€€€€€">€€€€€ (Extreme / major expedition)</option>
+              <option value="€€€€€€">€€€€€€ (Ultra-expensive / rare)</option>
             </select>
           </div>
         </div>
-      </div>
 
-      <!-- FOR PLANNED & BUCKET LIST -->
-      <div id="fields-for-planning-common" style="display:none; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div>
-          <label class="form-group-label">Difficulty</label>
-          <div class="chips-group" id="chips-difficulty">
-            <div class="chip-btn" data-val="snadna" onclick="selectChip('difficulty', 'snadna')">Easy</div>
-            <div class="chip-btn" data-val="stredni" onclick="selectChip('difficulty', 'stredni')">Moderate</div>
-            <div class="chip-btn" data-val="tezka" onclick="selectChip('difficulty', 'tezka')">Hard</div>
-            <div class="chip-btn" data-val="extremni" onclick="selectChip('difficulty', 'extremni')">Extreme</div>
+        <!-- RACE IMPORTANCE (PIN SIZE ON MAP — COMPLETED & BUCKET LIST) -->
+        <div id="wrap-field-importance" class="slider-box-wrap">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-group-label" style="margin:0;">Race Importance (Pin size on map)</label>
+            <strong id="label-importance" style="color:#007aff; font-size:0.85rem;">5 / 10</strong>
           </div>
+          <input type="range" id="form-importance" min="1" max="10" value="5" style="accent-color:#007aff;" oninput="document.getElementById('label-importance').textContent = this.value + ' / 10'">
         </div>
+
+        <div id="wrap-field-qualification" style="display:none;">
+          <label class="form-group-label">Qualification &amp; Entry Requirements (Optional)</label>
+          <input id="form-qualification" class="stepped-input" type="text" placeholder="e.g. Open entry, UTMB Index, Lottery, Sub-3:00 BQ...">
+        </div>
+      </div>
+
+      <!-- STEP 3 (OR STEP 2 FOR MEMORABLE): STORY, PHOTOS & NOTES (OPTIONAL) -->
+      <div class="wizard-pane" id="wizard-pane-3">
+        <!-- ONLY FOR: MEMORABLE RUNS (WHAT MADE IT SPECIAL) -->
+        <div id="wrap-field-memorable-tags" style="display:none; flex-direction:column; gap:8px;">
+          <label class="form-group-label" style="margin:0;">What made this run special? (Select one or more)</label>
+          <div class="chips-group" id="chips-memorable-tags">
+            <div class="chip-btn" data-tag="nature" onclick="toggleMemorableTag('nature')">🏔️ Scenic Nature</div>
+            <div class="chip-btn" data-tag="performance" onclick="toggleMemorableTag('performance')">⚡ Great Performance</div>
+            <div class="chip-btn" data-tag="atmosphere" onclick="toggleMemorableTag('atmosphere')">✨ Unique Atmosphere</div>
+            <div class="chip-btn" data-tag="adventure" onclick="toggleMemorableTag('adventure')">🧭 Epic Adventure</div>
+            <div class="chip-btn" data-tag="company" onclick="toggleMemorableTag('company')">👥 Great Company</div>
+            <div class="chip-btn" data-tag="travel" onclick="toggleMemorableTag('travel')">✈️ Travel Discovery</div>
+            <div class="chip-btn" data-tag="other" onclick="toggleMemorableTag('other')">⭐ Other</div>
+          </div>
+          <input id="form-memorable-other" class="stepped-input" type="text" placeholder="Describe what made it special (e.g. First sunrise run, Birthday milestone)..." style="display:none;">
+        </div>
+
+        <div id="drop-photos" style="border: 2px dashed #64748b; border-radius: 10px; padding: 13px; text-align: center; background: #f8fafc; cursor: pointer;" onclick="document.getElementById('input-photos').click()">
+          <span id="photos-label" style="font-size:0.82rem; font-weight:700; color:#334155;">📷 Add Photos (Multiple)</span>
+          <input type="file" id="input-photos" accept="image/*" multiple style="display: none;" onchange="handlePhotosUpload(this.files)">
+        </div>
+
+        <div id="modal-photos-wrap" style="display:none; flex-direction:column; gap:6px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-group-label" style="margin:0;">Attached Photos (drag or ← → to reorder • ★ = Cover)</label>
+            <span id="modal-photos-status" style="font-size:0.72rem; font-weight:700; color:#64748b;"></span>
+          </div>
+          <div id="modal-photo-grid" class="modal-photo-grid"></div>
+        </div>
+
         <div>
-          <label class="form-group-label">Estimated Budget</label>
-          <select id="form-cost" class="stepped-input">
-            <option value="€">€ (Almost free / local)</option>
-            <option value="€€" selected>€€ (Low / weekend trip)</option>
-            <option value="€€€">€€€ (Medium / European trip)</option>
-            <option value="€€€€">€€€€ (High / flight &amp; hotel)</option>
-            <option value="€€€€€">€€€€€ (Extreme / major expedition)</option>
-            <option value="€€€€€€">€€€€€€ (Ultra-expensive / rare)</option>
-          </select>
+          <label class="form-group-label" id="label-dynamic-why">The 'Why' &amp; Motivation (Optional)</label>
+          <input id="form-why" class="stepped-input" type="text" placeholder="What made this race special?">
+        </div>
+
+        <div id="wrap-field-notes">
+          <label class="form-group-label" id="label-dynamic-notes">Race Report &amp; Course Notes</label>
+          <textarea id="form-notes" class="stepped-input" placeholder="Pacing notes, terrain details, fueling..." style="height:94px;"></textarea>
         </div>
       </div>
 
-      <!-- ONLY FOR: MEMORABLE RUNS (WHAT MADE IT SPECIAL) -->
-      <div id="wrap-field-memorable-tags" style="display:none; flex-direction:column; gap:8px;">
-        <label class="form-group-label" style="margin:0;">What made this run special? (Select one or more)</label>
-        <div class="chips-group" id="chips-memorable-tags">
-          <div class="chip-btn" data-tag="nature" onclick="toggleMemorableTag('nature')">🏔️ Scenic Nature</div>
-          <div class="chip-btn" data-tag="performance" onclick="toggleMemorableTag('performance')">⚡ Great Performance</div>
-          <div class="chip-btn" data-tag="atmosphere" onclick="toggleMemorableTag('atmosphere')">✨ Unique Atmosphere</div>
-          <div class="chip-btn" data-tag="adventure" onclick="toggleMemorableTag('adventure')">🧭 Epic Adventure</div>
-          <div class="chip-btn" data-tag="company" onclick="toggleMemorableTag('company')">👥 Great Company</div>
-          <div class="chip-btn" data-tag="travel" onclick="toggleMemorableTag('travel')">✈️ Travel Discovery</div>
-          <div class="chip-btn" data-tag="other" onclick="toggleMemorableTag('other')">⭐ Other</div>
+      <!-- WIZARD FOOTER NAVIGATION -->
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; border-top:1px solid #e2e8f0; padding-top:14px;">
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button type="button" id="btn-wizard-cancel" class="pill-btn" onclick="closeModals()">Cancel</button>
+          <button type="button" id="btn-wizard-back" class="pill-btn" style="display:none;" onclick="prevWizardStep()">← Back</button>
         </div>
-        <input id="form-memorable-other" class="stepped-input" type="text" placeholder="Describe what made it special (e.g. First sunrise run, Birthday milestone)..." style="display:none;">
-      </div>
-
-      <!-- RACE IMPORTANCE (PIN SIZE ON MAP — COMPLETED & BUCKET LIST) -->
-      <div id="wrap-field-importance" class="slider-box-wrap">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label class="form-group-label" style="margin:0;">Race Importance (Pin size on map)</label>
-          <strong id="label-importance" style="color:#007aff; font-size:0.85rem;">5 / 10</strong>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button type="button" id="btn-wizard-skip" class="pill-btn" style="display:none;" onclick="saveActivityToSupabase()">Skip &amp; Save</button>
+          <button type="button" id="btn-wizard-next" class="open-detail-btn" onclick="nextWizardStep()">Next ➔</button>
+          <button type="button" id="btn-save-step1" class="open-detail-btn" style="display:none;" onclick="saveActivityToSupabase()">Save to Atlas</button>
         </div>
-        <input type="range" id="form-importance" min="1" max="10" value="5" style="accent-color:#007aff;" oninput="document.getElementById('label-importance').textContent = this.value + ' / 10'">
-      </div>
-
-      <div>
-        <label class="form-group-label" id="label-dynamic-why">The 'Why' & Motivation (Optional)</label>
-        <input id="form-why" class="stepped-input" type="text" placeholder="What made this race special?">
-      </div>
-
-      <div id="wrap-field-qualification" style="display:none;">
-        <label class="form-group-label">Qualification &amp; Entry Requirements (Optional)</label>
-        <input id="form-qualification" class="stepped-input" type="text" placeholder="e.g. Open entry, UTMB Index, Lottery, Sub-3:00 BQ...">
-      </div>
-
-      <div id="wrap-field-notes">
-        <label class="form-group-label" id="label-dynamic-notes">Race Report &amp; Course Notes</label>
-        <textarea id="form-notes" class="stepped-input" placeholder="Pacing notes, terrain details, fueling..." style="height:70px;"></textarea>
-      </div>
-
-      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:14px;">
-        <button class="pill-btn" onclick="closeModals()">Cancel</button>
-        <button id="btn-save-step1" class="open-detail-btn" onclick="saveActivityToSupabase()">Save to Atlas</button>
       </div>
     </div>
   </div>
@@ -1519,6 +1578,7 @@
 
     let sidebarContinent = null;
     let sidebarCountry = null;
+    let forceShowContinents = false;
     let drillViewStack = { continents: null, countries: null };
     let currentFilteredList = [];
     let programmaticMoveLock = false;
@@ -1730,6 +1790,7 @@
     function fitAllMarkersOnMap() {
       sidebarContinent = null;
       sidebarCountry = null;
+      forceShowContinents = false;
       drillViewStack = { continents: null, countries: null };
       syncMapMarkersAndHighlight();
       runProgrammaticMapMove(() => {
@@ -2716,6 +2777,7 @@
         labelWhy.textContent = "Why is this on my dream bucket list?";
         inputWhy.placeholder = "e.g. Iconic mountain ridges, lifelong marathon goal...";
       }
+      if (typeof updateWizardUI === 'function') updateWizardUI();
     }
 
     function handleCatalogQuickSearch(q) {
@@ -2819,10 +2881,10 @@
         document.getElementById('gpx-label').textContent = `Attached GPX track preserved`;
       }
 
-      document.getElementById('btn-save-step1').textContent = 'Update Activity';
+      currentWizardStep = 1;
       const modalEl = document.getElementById('add-modal');
       modalEl.style.display = 'flex';
-      resetAddModalScroll();
+      updateWizardUI();
     }
 
     function deleteActivity(id) {
@@ -3507,6 +3569,7 @@
 
     function drillIntoContinent(continentName, items) {
       const prevView = { center: map.getCenter(), zoom: map.getZoom() };
+      forceShowContinents = false;
       sidebarContinent = continentName;
       sidebarCountry = null;
       syncMapMarkersAndHighlight();
@@ -3518,6 +3581,7 @@
 
     function drillIntoCountry(countryName, continentName, items) {
       const prevView = { center: map.getCenter(), zoom: map.getZoom() };
+      forceShowContinents = false;
       if (continentName) sidebarContinent = continentName;
       sidebarCountry = countryName;
       syncMapMarkersAndHighlight();
@@ -3530,6 +3594,7 @@
       if (targetLevel === 'continents') {
         sidebarContinent = null;
         sidebarCountry = null;
+        forceShowContinents = true;
         syncMapMarkersAndHighlight();
         const savedView = drillViewStack.continents;
         drillViewStack.continents = null;
@@ -3694,7 +3759,7 @@
       }
 
       // LEVEL 1: Top-level viewport view
-      if (enriched.length <= MAX_DIRECT_CARDS) {
+      if (enriched.length <= MAX_DIRECT_CARDS && !forceShowContinents) {
         enriched.forEach(x => content.appendChild(buildRaceCardElement(x.item)));
         return;
       }
@@ -3709,8 +3774,8 @@
 
       const contNames = Object.keys(byContinent).sort((a, b) => byContinent[b].length - byContinent[a].length);
 
-      // If viewport only spans 1 continent, skip straight to Country boxes!
-      if (contNames.length === 1) {
+      // If viewport only spans 1 continent, skip straight to Country boxes (unless user explicitly clicked ← Continents)
+      if (contNames.length === 1 && !forceShowContinents) {
         const onlyCont = contNames[0];
         const byCountry = {};
         byContinent[onlyCont].forEach(x => {
@@ -5039,7 +5104,8 @@
       document.getElementById('label-course-satisfaction').textContent = '9 / 10';
       document.getElementById('form-importance').value = 5;
       document.getElementById('label-importance').textContent = '5 / 10';
-      document.getElementById('gpx-label').textContent = '📁 Drop watch track (.GPX) — Optional';
+      document.getElementById('gpx-label').textContent = '📁 Drop watch track (.GPX) — auto-fills date, distance & climb';
+      currentWizardStep = 1;
       document.getElementById('catalog-suggestions').style.display = 'none';
 
       parsedGpxCoords = null;
@@ -5092,6 +5158,119 @@
       }
     }
 
+    let currentWizardStep = 1;
+
+    function getWizardStepsList() {
+      return isModalMemorableMode ? [1, 3] : [1, 2, 3];
+    }
+
+    function updateWizardUI() {
+      const steps = getWizardStepsList();
+      if (!steps.includes(currentWizardStep)) currentWizardStep = steps[0];
+
+      const stepIdx = steps.indexOf(currentWizardStep);
+      const totalSteps = steps.length;
+      const isFirst = (stepIdx === 0);
+      const isLast = (stepIdx === totalSteps - 1);
+
+      // Update panes
+      [1, 2, 3].forEach(n => {
+        const pane = document.getElementById(`wizard-pane-${n}`);
+        if (pane) pane.classList.toggle('active', n === currentWizardStep);
+      });
+
+      // Update stepper tabs
+      const tab1 = document.getElementById('wizard-tab-1');
+      const tab2 = document.getElementById('wizard-tab-2');
+      const tab3 = document.getElementById('wizard-tab-3');
+      const num1 = document.getElementById('wizard-num-1');
+      const num2 = document.getElementById('wizard-num-2');
+      const num3 = document.getElementById('wizard-num-3');
+      const tab2Label = document.getElementById('wizard-tab-2-label');
+
+      if (tab2) tab2.style.display = isModalMemorableMode ? 'none' : 'flex';
+      if (num3) num3.textContent = isModalMemorableMode ? '2' : '3';
+
+      if (tab2Label) {
+        if (chipSelections.status === 'planned') tab2Label.textContent = 'Target & Logistics';
+        else if (chipSelections.status === 'bucket') tab2Label.textContent = 'Scope & Entry';
+        else tab2Label.textContent = 'Race Details';
+      }
+
+      const tabsMap = [
+        { step: 1, tab: tab1, num: num1, displayNum: '1' },
+        { step: 2, tab: tab2, num: num2, displayNum: '2' },
+        { step: 3, tab: tab3, num: num3, displayNum: isModalMemorableMode ? '2' : '3' }
+      ];
+      tabsMap.forEach(({ step, tab, num, displayNum }) => {
+        if (!tab) return;
+        const idx = steps.indexOf(step);
+        tab.classList.toggle('active', step === currentWizardStep);
+        const isDone = idx !== -1 && idx < stepIdx;
+        tab.classList.toggle('completed', isDone);
+        if (num) num.textContent = isDone ? '✓' : displayNum;
+      });
+
+      // Subtitle
+      const subEl = document.getElementById('modal-step-subtitle');
+      if (subEl) {
+        const stepTitle = currentWizardStep === 1
+          ? 'Basics & GPX Route'
+          : (currentWizardStep === 2 ? (tab2Label ? tab2Label.textContent : 'Race Details') : 'Story, Photos & Notes (Optional)');
+        subEl.textContent = `Step ${stepIdx + 1} of ${totalSteps} • ${stepTitle}`;
+      }
+
+      // Footer buttons
+      const cancelBtn = document.getElementById('btn-wizard-cancel');
+      const backBtn = document.getElementById('btn-wizard-back');
+      const skipBtn = document.getElementById('btn-wizard-skip');
+      const nextBtn = document.getElementById('btn-wizard-next');
+      const saveBtn = document.getElementById('btn-save-step1');
+
+      if (cancelBtn) cancelBtn.style.display = isFirst ? 'inline-flex' : 'none';
+      if (backBtn) backBtn.style.display = isFirst ? 'none' : 'inline-flex';
+      if (nextBtn) nextBtn.style.display = isLast ? 'none' : 'inline-flex';
+
+      const isEditing = !!editingActivityId;
+      if (skipBtn) skipBtn.style.display = (isLast && !isEditing) ? 'inline-flex' : 'none';
+      if (saveBtn) {
+        saveBtn.style.display = (isLast || isEditing) ? 'inline-flex' : 'none';
+        saveBtn.textContent = isEditing ? 'Update Activity' : 'Save to Atlas';
+      }
+
+      resetAddModalScroll();
+    }
+
+    function goToWizardStep(targetStep) {
+      const steps = getWizardStepsList();
+      if (!steps.includes(targetStep)) return;
+      if (currentWizardStep === 1 && targetStep !== 1 && !editingActivityId) {
+        const nameVal = (document.getElementById('form-name')?.value || '').trim();
+        if (!nameVal) {
+          showToast('Please enter a title first.', '⚠️');
+          document.getElementById('form-name')?.focus();
+          return;
+        }
+      }
+      currentWizardStep = targetStep;
+      updateWizardUI();
+    }
+
+    function nextWizardStep() {
+      const steps = getWizardStepsList();
+      const idx = steps.indexOf(currentWizardStep);
+      if (idx === -1 || idx >= steps.length - 1) return;
+      goToWizardStep(steps[idx + 1]);
+    }
+
+    function prevWizardStep() {
+      const steps = getWizardStepsList();
+      const idx = steps.indexOf(currentWizardStep);
+      if (idx <= 0) return;
+      currentWizardStep = steps[idx - 1];
+      updateWizardUI();
+    }
+
     function resetAddModalScroll() {
       const card = document.querySelector('#add-modal .stepped-modal-card');
       if (!card) return;
@@ -5107,6 +5286,7 @@
       const isMem = (forcedMode === 'memorable') || (forcedMode === null && currentMode === 'memorable');
       document.getElementById('step1-modal-title').textContent = isMem ? 'Add Memorable Run' : 'Add to Atlas';
       document.getElementById('add-modal').style.display = 'flex';
+      currentWizardStep = 1;
       if (isMem) {
         selectStatusMode('done');
         applyMemorableFormLayout(true);
@@ -5114,7 +5294,7 @@
         applyMemorableFormLayout(false);
         selectStatusMode('done');
       }
-      resetAddModalScroll();
+      updateWizardUI();
     }
 
     function closeModals() {
@@ -5361,8 +5541,10 @@
 
       let finalCoords = parsedCenterCoords || userHomeCoords || [map.getCenter().lat, map.getCenter().lng];
       const saveBtn = document.getElementById('btn-save-step1');
+      const skipBtn = document.getElementById('btn-wizard-skip');
       saveBtn.textContent = 'Saving...';
       saveBtn.disabled = true;
+      if (skipBtn) skipBtn.disabled = true;
 
       let dateStr = '';
       let monthInt = null;
@@ -5465,6 +5647,7 @@
         showDetail(localObj);
         saveBtn.textContent = 'Save to Atlas';
         saveBtn.disabled = false;
+        if (skipBtn) skipBtn.disabled = false;
         return;
       }
 
@@ -5503,6 +5686,7 @@
       } finally {
         saveBtn.textContent = 'Save to Atlas';
         saveBtn.disabled = false;
+        if (skipBtn) skipBtn.disabled = false;
       }
     }
 
@@ -5559,6 +5743,7 @@
       currentMode = mode;
       sidebarContinent = null;
       sidebarCountry = null;
+      forceShowContinents = false;
       drillViewStack = { continents: null, countries: null };
       currentDetailItem = null;
       clearElevationHoverMarker();
