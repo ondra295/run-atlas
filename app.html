@@ -1912,8 +1912,8 @@
 
     // MAP + MARKER CLUSTERING
     const map = L.map('map', {
-      center: userHomeCoords || [25.0, 10.0],
-      zoom: userHomeCoords ? 5 : 2,
+      center: [20.0, 10.0],
+      zoom: 2,
       minZoom: 2,
       maxBounds: [[-85, -Infinity], [85, Infinity]],
       maxBoundsViscosity: 1.0,
@@ -1930,6 +1930,31 @@
     let markerLayerGroup = L.featureGroup().addTo(map);
 
     let homeMarker = null;
+    let hasUserMovedMap = false;
+
+    map.on('dragstart zoomstart', function() {
+      if (!programmaticMoveLock) hasUserMovedMap = true;
+    });
+
+    function autoFitInitialMapView() {
+      if (hasUserMovedMap || currentDetailItem || !['races', 'memorable'].includes(currentMode)) return;
+      programmaticMoveLock = true;
+      try {
+        const layers = markerLayerGroup.getLayers();
+        if (layers.length > 1) {
+          map.fitBounds(markerLayerGroup.getBounds(), { padding: [50, 50], maxZoom: 6, animate: false });
+        } else if (layers.length === 1) {
+          map.setView(layers[0].getLatLng(), 6, { animate: false });
+        } else if (userHomeCoords) {
+          map.setView(userHomeCoords, 5, { animate: false });
+        } else {
+          map.setView([20.0, 10.0], 2, { animate: false });
+        }
+      } finally {
+        programmaticMoveLock = false;
+      }
+      renderSidebarList();
+    }
 
     function runProgrammaticMapMove(moveFn, onComplete) {
       programmaticMoveLock = true;
@@ -2626,9 +2651,6 @@
             }
           }
           refreshHomeMarker();
-          if (userHomeCoords && map.getZoom() <= 2) {
-            map.setView(userHomeCoords, 5);
-          }
 
           // Instant paint from local cache (if available) while fresh data loads in parallel
           const hadCache = hydrateActivitiesFromCache(currentUser.id);
@@ -2637,6 +2659,7 @@
               switchPageMode(initialView, { autoCenter: false });
             } else {
               renderAll();
+              autoFitInitialMapView();
             }
           }
 
@@ -2645,6 +2668,7 @@
             supabaseClient.from('profiles').select('username, display_name').eq('id', currentUser.id).single(),
             loadActivitiesFromDB(currentUser.id)
           ]);
+          autoFitInitialMapView();
 
           const profile = profileRes?.data;
           if (profile?.username) {
@@ -2682,6 +2706,8 @@
             await loadActivitiesFromDB(profile.id);
             if (initialView && ['races', 'memorable', 'timeline', 'bests', 'stats', 'catalog'].includes(initialView)) {
               switchPageMode(initialView);
+            } else {
+              autoFitInitialMapView();
             }
           }
         }
