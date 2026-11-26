@@ -252,6 +252,31 @@
       display: flex; flex-direction: column; gap: 2px; cursor: pointer;
     }
     .pr-race-link:hover strong { color: #007aff; text-decoration: underline; }
+    .pr-podium-list {
+      margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e2e8f0;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .pr-podium-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 4px 6px; border-radius: 7px; font-size: 0.74rem; color: #475569;
+      cursor: pointer; transition: background 0.15s ease;
+    }
+    .pr-podium-row:hover { background: #eff6ff; color: #007aff; }
+    .pr-podium-left { display: flex; align-items: center; gap: 5px; min-width: 0; }
+    .pr-podium-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+    .pr-podium-time { font-weight: 800; color: #0f172a; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+    .pr-feats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    }
+    .pr-feat-card {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;
+      text-align: left; display: flex; flex-direction: column; gap: 4px; transition: all 0.18s ease;
+    }
+    .pr-feat-card.clickable { cursor: pointer; }
+    .pr-feat-card.clickable:hover {
+      border-color: #007aff; background: #ffffff; transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 122, 255, 0.10);
+    }
 
     /* EXPLORE CATALOG FULLSCREEN STYLES */
     .catalog-full-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -1008,7 +1033,7 @@
     }
 
     @media (max-width: 900px) {
-      .pr-grid, .catalog-full-grid, .stats-top-kpis, .stats-two-col { grid-template-columns: 1fr; }
+      .pr-grid, .pr-feats-grid, .catalog-full-grid, .stats-top-kpis, .stats-two-col { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
       .top-search-wrap { display: none; }
@@ -4794,37 +4819,93 @@
 
       const doneList = races.filter(r => r.status === 'done');
 
-      const findBestForRange = (minKm, maxKm, stdKm) => {
+      const findTopForRange = (minKm, maxKm, stdKm, limit = 3) => {
         const candidates = doneList.filter(r => {
           const d = parseNum(r.distance);
           const sec = parseTimeToSeconds(r.resultTime);
           return d >= minKm && d <= maxKm && sec !== null && sec > 0;
         });
-        if (candidates.length === 0) return null;
+        if (candidates.length === 0) return [];
         candidates.sort((a, b) => parseTimeToSeconds(a.resultTime) - parseTimeToSeconds(b.resultTime));
-        const best = candidates[0];
-        const sec = parseTimeToSeconds(best.resultTime);
-        return {
-          item: best,
-          time: best.resultTime,
-          pace: formatPacePerKm(sec, stdKm || parseNum(best.distance))
-        };
+        return candidates.slice(0, limit).map(item => {
+          const sec = parseTimeToSeconds(item.resultTime);
+          return {
+            item,
+            time: item.resultTime,
+            pace: formatPacePerKm(sec, stdKm || parseNum(item.distance)),
+            sec
+          };
+        });
       };
 
-      const pr10k = findBestForRange(9.5, 10.6, 10);
-      const prHalf = findBestForRange(20.5, 21.6, 21.0975);
-      const prMarathon = findBestForRange(41.5, 43.0, 42.195);
-      const prUltra = findBestForRange(45.0, 500.0, null);
+      const pr5k = findTopForRange(4.7, 5.4, 5.0);
+      const pr10k = findTopForRange(9.5, 10.6, 10.0);
+      const prHalf = findTopForRange(20.5, 21.6, 21.0975);
+      const prMarathon = findTopForRange(41.5, 43.0, 42.195);
 
-      let longestRun = null, biggestClimb = null, topRated = null;
+      let longestRun = null;
+      let biggestClimb = null;
+      let bestUltraPace = null; // { item, paceSec, paceStr, dist }
+      let topRated = null;
+
+      let steepestRace = null;  // { item, ratio }
+      let longestTime = null;   // { item, sec }
+      let farthestRace = null;  // { item, km }
+      const seasonVolume = {};  // year -> { km, count }
+
       doneList.forEach(r => {
-        if (!longestRun || parseNum(r.distance) > parseNum(longestRun.distance)) longestRun = r;
-        if (!biggestClimb || parseNum(r.elevation) > parseNum(biggestClimb.elevation)) biggestClimb = r;
-        if (!r.isMemorable && (!topRated || ((r.satisfaction || 0) + (r.course_satisfaction || 0)) > ((topRated.satisfaction || 0) + (topRated.course_satisfaction || 0)))) topRated = r;
+        const d = parseNum(r.distance);
+        const ele = parseNum(r.elevation);
+        const sec = parseTimeToSeconds(r.resultTime);
+
+        if (d > 0 && (!longestRun || d > parseNum(longestRun.distance))) longestRun = r;
+        if (ele > 0 && (!biggestClimb || ele > parseNum(biggestClimb.elevation))) biggestClimb = r;
+
+        if (d > 45 && sec !== null && sec > 0) {
+          const pSec = sec / d;
+          if (!bestUltraPace || pSec < bestUltraPace.paceSec) {
+            bestUltraPace = { item: r, paceSec: pSec, paceStr: formatPacePerKm(sec, d), dist: d };
+          }
+        }
+
+        if (!r.isMemorable && (!topRated || ((r.satisfaction || 0) + (r.course_satisfaction || 0)) > ((topRated.satisfaction || 0) + (topRated.course_satisfaction || 0)))) {
+          topRated = r;
+        }
+
+        if (d >= 3 && ele > 0) {
+          const ratio = ele / d;
+          if (!steepestRace || ratio > steepestRace.ratio) {
+            steepestRace = { item: r, ratio };
+          }
+        }
+
+        if (sec !== null && sec > 0) {
+          if (!longestTime || sec > longestTime.sec) {
+            longestTime = { item: r, sec };
+          }
+        }
+
+        if (userHomeCoords && Array.isArray(r.coords) && r.coords.length === 2) {
+          const hDist = computeDistanceFromHome(r.coords);
+          if (hDist !== null && (!farthestRace || hDist > farthestRace.km)) {
+            farthestRace = { item: r, km: hDist };
+          }
+        }
+
+        if (r.date && /^\d{4}/.test(String(r.date))) {
+          const yr = String(r.date).slice(0, 4);
+          if (!seasonVolume[yr]) seasonVolume[yr] = { year: yr, km: 0, count: 0 };
+          seasonVolume[yr].km += d;
+          seasonVolume[yr].count += 1;
+        }
       });
 
-      const renderPrCard = (title, badgeText, prObj, accentColor) => {
-        if (!prObj) {
+      const biggestSeason = Object.values(seasonVolume)
+        .filter(s => s.km > 0)
+        .sort((a, b) => b.km - a.km)[0] || null;
+
+      const renderPrCard = (title, badgeText, topList, accentColor) => {
+        if (!topList || topList.length === 0) {
           return `
             <div class="pr-trophy-card" style="border-top-color:#cbd5e1;">
               <div>
@@ -4836,65 +4917,157 @@
             </div>
           `;
         }
+        const best = topList[0];
+        const runnersUp = topList.slice(1);
+        const medals = ['🥈', '🥉'];
+        const runnersUpHtml = runnersUp.length > 0 ? `
+          <div class="pr-podium-list">
+            ${runnersUp.map((entry, idx) => `
+              <div class="pr-podium-row" onclick="selectSpotlightRace('${entry.item.id}')" title="${entry.item.name} (${entry.item.date || 'Completed'}) • ${entry.pace}">
+                <div class="pr-podium-left">
+                  <span>${medals[idx] || '•'}</span>
+                  <span class="pr-podium-name">${entry.item.name}</span>
+                </div>
+                <span class="pr-podium-time">${entry.time}</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : '';
+
         return `
           <div class="pr-trophy-card" style="border-top-color:${accentColor};">
             <div>
               <span class="pr-dist-badge">${badgeText}</span>
               <div style="font-size:0.86rem; font-weight:800; color:#64748b; margin-top:10px;">${title}</div>
-              <div class="pr-time-val">${prObj.time}</div>
-              <div class="pr-pace-sub">⚡ Avg Pace: ${prObj.pace}</div>
+              <div class="pr-time-val">${best.time}</div>
+              <div class="pr-pace-sub">⚡ Avg Pace: ${best.pace}</div>
             </div>
-            <div class="pr-race-link" onclick="selectSpotlightRace('${prObj.item.id}')">
-              <strong>🏁 ${prObj.item.name} ➔</strong>
-              <span>📅 ${prObj.item.date || 'Completed'}</span>
+            <div>
+              <div class="pr-race-link" onclick="selectSpotlightRace('${best.item.id}')">
+                <strong>🥇 ${best.item.name} ➔</strong>
+                <span>📅 ${best.item.date || 'Completed'}</span>
+              </div>
+              ${runnersUpHtml}
             </div>
           </div>
         `;
       };
 
+      const renderFeatCard = ({ label, color, value, sub, meta = '', onClick = '' }) => `
+        <div class="pr-feat-card ${onClick ? 'clickable' : ''}" ${onClick ? `onclick="${onClick}"` : ''}>
+          <span style="font-size:0.69rem; font-weight:800; color:${color}; text-transform:uppercase; letter-spacing:0.4px;">${label}</span>
+          <div style="font-size:1.55rem; font-weight:900; color:#0f172a; margin:2px 0; line-height:1.15;">${value}</div>
+          <div style="font-size:0.8rem; font-weight:700; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${sub}">${sub}</div>
+          ${meta ? `<div style="font-size:0.71rem; font-weight:600; color:#94a3b8;">${meta}</div>` : ''}
+        </div>
+      `;
+
+      const farthestCardHtml = farthestRace
+        ? renderFeatCard({
+            label: '✈️ Farthest from Home',
+            color: '#0284c7',
+            value: `${farthestRace.km.toLocaleString()} km`,
+            sub: farthestRace.item.name,
+            meta: farthestRace.item.date || 'Completed',
+            onClick: `selectSpotlightRace('${farthestRace.item.id}')`
+          })
+        : renderFeatCard({
+            label: '✈️ Farthest from Home',
+            color: '#0284c7',
+            value: userHomeCoords ? '—' : 'Set Home',
+            sub: userHomeCoords ? 'No completed runs' : (isReadOnlyShared ? 'Home Base not set' : 'Click to set Home Base ➔'),
+            onClick: (!userHomeCoords && !isReadOnlyShared) ? 'handleHomeBaseClick()' : ''
+          });
+
       container.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px;">
           <div>
             <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Personal Bests & Trophy Room</h1>
-            <p style="font-size:0.86rem; color:#64748b;">All-time fastest performances and endurance milestones automatically extracted from your completed races.</p>
+            <p style="font-size:0.86rem; color:#64748b;">Top 3 performances across standard distances and all-time endurance records from your completed runs.</p>
           </div>
           <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
         </div>
 
         <div class="pr-grid">
+          ${renderPrCard('5K Road / Trail', '5.0 KM PR', pr5k, '#0284c7')}
           ${renderPrCard('10K Road / Trail', '10.0 KM PR', pr10k, '#007aff')}
           ${renderPrCard('Half Marathon', '21.1 KM PR', prHalf, '#16a34a')}
           ${renderPrCard('Full Marathon', '42.2 KM PR', prMarathon, '#d97706')}
-          ${renderPrCard('Ultra Endurance', 'ULTRA (>45K)', prUltra, '#7e22ce')}
         </div>
 
         <div class="stats-panel-card">
           <div class="stats-panel-header">
             <h3>🏔️ All-Time Endurance Feats & Highlights</h3>
           </div>
-          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;">
-            <div class="discipline-box" style="text-align:left; padding:18px; cursor:pointer;" ${longestRun ? `onclick="selectSpotlightRace('${longestRun.id}')"` : ''}>
-              <span style="font-size:0.7rem; font-weight:800; color:#007aff; text-transform:uppercase;">Longest Single Distance</span>
-              <div style="font-size:1.65rem; font-weight:900; color:#0f172a; margin:4px 0;">${longestRun ? longestRun.distance : '—'}</div>
-              <div style="font-size:0.82rem; font-weight:700; color:#475569;">${longestRun ? longestRun.name : 'No completed runs'}</div>
-            </div>
+          <div class="pr-feats-grid">
+            ${renderFeatCard({
+              label: 'Longest Single Distance',
+              color: '#007aff',
+              value: longestRun ? longestRun.distance : '—',
+              sub: longestRun ? longestRun.name : 'No completed runs',
+              meta: longestRun ? (longestRun.elevation || longestRun.date || '') : '',
+              onClick: longestRun ? `selectSpotlightRace('${longestRun.id}')` : ''
+            })}
 
-            <div class="discipline-box" style="text-align:left; padding:18px; cursor:pointer;" ${biggestClimb ? `onclick="selectSpotlightRace('${biggestClimb.id}')"` : ''}>
-              <span style="font-size:0.7rem; font-weight:800; color:#16a34a; text-transform:uppercase;">Biggest Single Climb</span>
-              <div style="font-size:1.65rem; font-weight:900; color:#0f172a; margin:4px 0;">${biggestClimb ? biggestClimb.elevation : '—'}</div>
-              <div style="font-size:0.82rem; font-weight:700; color:#475569;">${biggestClimb ? biggestClimb.name : 'No elevation logged'}</div>
-            </div>
+            ${renderFeatCard({
+              label: 'Biggest Single Climb',
+              color: '#16a34a',
+              value: biggestClimb ? biggestClimb.elevation : '—',
+              sub: biggestClimb ? biggestClimb.name : 'No elevation logged',
+              meta: biggestClimb ? (biggestClimb.distance || biggestClimb.date || '') : '',
+              onClick: biggestClimb ? `selectSpotlightRace('${biggestClimb.id}')` : ''
+            })}
 
-            <div class="discipline-box" style="text-align:left; padding:18px; cursor:pointer;" ${topRated ? `onclick="selectSpotlightRace('${topRated.id}')"` : ''}>
-              <span style="font-size:0.7rem; font-weight:800; color:#d97706; text-transform:uppercase;">Highest Rated Experience</span>
-              <div style="font-size:1.65rem; font-weight:900; color:#0f172a; margin:4px 0;">${topRated ? `${topRated.course_satisfaction || 9}/10 Vibe` : '—'}</div>
-              <div style="font-size:0.82rem; font-weight:700; color:#475569;">${topRated ? topRated.name : 'No ratings yet'}</div>
-            </div>
+            ${renderFeatCard({
+              label: '⚡ Best Ultra Pace (>45K)',
+              color: '#7e22ce',
+              value: bestUltraPace ? bestUltraPace.paceStr : '—',
+              sub: bestUltraPace ? bestUltraPace.item.name : 'No timed ultra yet',
+              meta: bestUltraPace ? `${bestUltraPace.item.distance} • ${bestUltraPace.item.resultTime}` : '',
+              onClick: bestUltraPace ? `selectSpotlightRace('${bestUltraPace.item.id}')` : ''
+            })}
+
+            ${renderFeatCard({
+              label: 'Highest Rated Experience',
+              color: '#d97706',
+              value: topRated ? `${topRated.course_satisfaction || 9}/10 Vibe` : '—',
+              sub: topRated ? topRated.name : 'No ratings yet',
+              meta: topRated ? `Form: ${topRated.satisfaction || 8}/10` : '',
+              onClick: topRated ? `selectSpotlightRace('${topRated.id}')` : ''
+            })}
+
+            ${renderFeatCard({
+              label: '⛰️ Steepest Race',
+              color: '#0f766e',
+              value: steepestRace ? `+${Math.round(steepestRace.ratio)} m/km` : '—',
+              sub: steepestRace ? steepestRace.item.name : 'Need distance & climb',
+              meta: steepestRace ? `${steepestRace.item.distance} • ${steepestRace.item.elevation}` : '',
+              onClick: steepestRace ? `selectSpotlightRace('${steepestRace.item.id}')` : ''
+            })}
+
+            ${renderFeatCard({
+              label: '⏱️ Longest Time on Feet',
+              color: '#b45309',
+              value: longestTime ? longestTime.item.resultTime : '—',
+              sub: longestTime ? longestTime.item.name : 'No finish time logged',
+              meta: longestTime ? `${longestTime.item.distance || ''} ${longestTime.item.date ? '• ' + longestTime.item.date : ''}`.trim() : '',
+              onClick: longestTime ? `selectSpotlightRace('${longestTime.item.id}')` : ''
+            })}
+
+            ${farthestCardHtml}
+
+            ${renderFeatCard({
+              label: '🔥 Biggest Season',
+              color: '#dc2626',
+              value: biggestSeason ? `${Math.round(biggestSeason.km).toLocaleString()} km` : '—',
+              sub: biggestSeason ? `Season ${biggestSeason.year}` : 'No dated runs yet',
+              meta: biggestSeason ? `${biggestSeason.count} completed ${biggestSeason.count === 1 ? 'event' : 'events'}` : '',
+              onClick: biggestSeason ? `timelineYearFilter='${biggestSeason.year}'; switchPageMode('timeline');` : ''
+            })}
           </div>
         </div>
       `;
     }
-
     // VIEW 3: GLOBAL RACE CATALOG (CONTINENT, COUNTRY, SURFACE, MONTH FILTERS)
     function renderExploreCatalogDashboard() {
       const container = document.getElementById('full-page-content');
