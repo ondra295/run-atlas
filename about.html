@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>About — Running Atlas</title>
+  <title>About Us — Running Atlas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Favicon (matches Running Atlas app) -->
@@ -22,152 +22,242 @@
     }
 
     html, body {
-      min-height: 100%;
+      height: 100%;
+      overflow: hidden;
       background: #f8f9fb;
       color: #0f172a;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Top Bar (consistent with app.html) */
+    /* App Shell Layout (1:1 with app.html) */
+    #app-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    /* Top Bar */
     #top-bar {
-      height: 58px;
+      height: 54px;
       background: #0f172a;
       border-bottom: 1px solid #1e293b;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      padding: 0 18px;
+      z-index: 2000;
+      flex-shrink: 0;
+      position: relative;
     }
 
-    .top-bar-actions {
+    .top-bar-right {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .nav-btn {
+    .top-action-btn {
       background: #1e293b;
       border: 1px solid #334155;
       color: #e2e8f0;
-      padding: 7px 14px;
+      padding: 6px 13px;
       border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .top-action-btn:hover {
+      background: #0f172a;
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
+    .top-action-btn.primary {
+      background: #007aff;
+      border-color: #007aff;
+      color: #ffffff;
+    }
+
+    .top-action-btn.primary:hover {
+      background: #0062cc;
+      border-color: #0062cc;
+      color: #ffffff;
+    }
+
+    /* Workspace */
+    #main-body {
+      display: flex;
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Left Rail (1:1 with app.html) */
+    #left-rail {
+      width: 56px;
+      background: #1e293b;
+      border-right: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 12px 6px;
+      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      white-space: nowrap;
+      z-index: 1500;
+      flex-shrink: 0;
+    }
+
+    #left-rail:hover {
+      width: 215px;
+      box-shadow: 6px 0 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .rail-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      color: #94a3b8;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.15s;
+      text-decoration: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .rail-btn:hover,
+    .rail-btn.active {
+      background: #0f172a;
+      color: #38bdf8;
+    }
+
+    .rail-btn .rail-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    #left-rail .rail-btn span:not(.rail-icon) {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
+
+    #left-rail:hover .rail-btn span:not(.rail-icon) {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .rail-spacer {
+      flex: 1;
+      min-height: 12px;
+    }
+
+    .rail-divider {
+      height: 1px;
+      background: #334155;
+      margin: 4px 4px;
+    }
+
+    /* Full-Page View Pane (consistent with Stats / Timeline / Catalog views) */
+    #full-page-view {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+      background: #f8f9fb;
+      padding: 36px 28px 60px;
+    }
+
+    .page-container {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Page Header */
+    .page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-bottom: 4px;
+    }
+
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+
+    .page-header p {
+      font-size: 0.92rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .back-pill-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 8px 14px;
+      border-radius: 10px;
       font-size: 0.82rem;
       font-weight: 700;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.16s ease;
+      transition: all 0.15s ease;
     }
 
-    .nav-btn:hover {
-      background: #0f172a;
-      border-color: #38bdf8;
-      color: #38bdf8;
-    }
-
-    .nav-btn.primary {
-      background: #007aff;
+    .back-pill-btn:hover {
       border-color: #007aff;
-      color: #ffffff;
+      color: #007aff;
+      background: #f0f9ff;
     }
 
-    .nav-btn.primary:hover {
-      background: #0062cc;
-      border-color: #0062cc;
-      color: #ffffff;
-    }
-
-    /* Hero Banner */
-    .about-hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 65%, #0c4a6e 100%);
-      color: #ffffff;
-      padding: 64px 24px 78px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .about-hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle at 82% 28%, rgba(56, 189, 248, 0.16) 0%, transparent 50%),
-                        radial-gradient(circle at 14% 80%, rgba(0, 122, 255, 0.18) 0%, transparent 45%);
-      pointer-events: none;
-    }
-
-    .hero-inner {
-      max-width: 760px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.4px;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.28);
-      padding: 5px 12px;
-      border-radius: 99px;
-      margin-bottom: 18px;
-    }
-
-    .about-hero h1 {
-      font-size: clamp(2rem, 4.4vw, 2.75rem);
-      font-weight: 900;
-      letter-spacing: -0.025em;
-      line-height: 1.15;
-      margin-bottom: 14px;
-    }
-
-    .about-hero p {
-      font-size: 1.05rem;
-      color: #cbd5e1;
-      line-height: 1.65;
-      max-width: 600px;
-    }
-
-    /* Main Content Container */
-    .about-main {
-      max-width: 760px;
-      margin: -40px auto 64px;
-      padding: 0 20px;
-      position: relative;
-      z-index: 5;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .story-card {
+    /* Story Card */
+    .content-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 38px 42px;
-      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.06);
+      border-radius: 16px;
+      padding: 34px 38px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
       display: flex;
       flex-direction: column;
-      gap: 34px;
+      gap: 30px;
     }
 
     .story-section {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 15px;
     }
 
     .story-section h2 {
-      font-size: 1.45rem;
+      font-size: 1.32rem;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: -0.015em;
@@ -177,41 +267,41 @@
     }
 
     .section-accent-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       background: #007aff;
-      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.14);
+      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.13);
       flex-shrink: 0;
     }
 
     .story-section p {
-      font-size: 1.01rem;
+      font-size: 0.98rem;
       line-height: 1.78;
       color: #334155;
     }
 
-    .story-quote-highlight {
+    .story-callout {
       background: #f0f9ff;
       border-left: 4px solid #007aff;
       border-radius: 0 12px 12px 0;
-      padding: 16px 20px;
-      font-size: 1.02rem;
-      line-height: 1.7;
+      padding: 15px 19px;
+      font-size: 0.98rem;
+      line-height: 1.72;
       color: #0f172a;
       font-weight: 500;
     }
 
-    .story-divider {
+    .card-divider {
       height: 1px;
       background: #e2e8f0;
       width: 100%;
     }
 
-    /* Handwritten Signature Block */
+    /* Handwritten Signature */
     .signature-block {
-      margin-top: 8px;
-      padding-top: 8px;
+      margin-top: 6px;
+      padding-top: 6px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -220,7 +310,7 @@
 
     .signature-handwritten {
       font-family: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
-      font-size: 2.65rem;
+      font-size: 2.55rem;
       font-weight: 700;
       color: #0f172a;
       line-height: 1.05;
@@ -233,170 +323,335 @@
     .signature-flourish {
       margin-top: -2px;
       margin-left: 2px;
-      opacity: 0.78;
+      opacity: 0.8;
     }
 
     .signature-role {
-      font-size: 0.78rem;
-      font-weight: 700;
+      font-size: 0.74rem;
+      font-weight: 800;
       color: #64748b;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-top: 6px;
+      letter-spacing: 0.7px;
+      margin-top: 5px;
     }
 
-    /* Bottom CTA Card */
-    .cta-card {
-      background: #0f172a;
-      color: #ffffff;
-      border: 1px solid #1e293b;
+    /* Unified Light CTA Strip */
+    .feedback-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 16px;
-      padding: 28px 32px;
+      padding: 22px 26px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 18px;
       flex-wrap: wrap;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
     }
 
-    .cta-card h3 {
-      font-size: 1.15rem;
+    .feedback-card h3 {
+      font-size: 1.02rem;
       font-weight: 800;
-      margin-bottom: 4px;
+      color: #0f172a;
+      margin-bottom: 3px;
     }
 
-    .cta-card p {
-      font-size: 0.88rem;
-      color: #94a3b8;
-      line-height: 1.5;
+    .feedback-card p {
+      font-size: 0.86rem;
+      color: #64748b;
     }
 
-    .cta-buttons {
+    .feedback-actions {
       display: flex;
+      align-items: center;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .about-footer {
-      text-align: center;
-      padding: 0 20px 40px;
-      font-size: 0.78rem;
-      color: #94a3b8;
+    .btn-secondary {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      padding: 8px 15px;
+      border-radius: 9px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.15s ease;
     }
 
-    @media (max-width: 640px) {
-      #top-bar {
-        padding: 0 14px;
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-primary {
+      background: #007aff;
+      border: 1px solid #007aff;
+      color: #ffffff;
+      padding: 8px 15px;
+      border-radius: 9px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      background: #0062cc;
+      border-color: #0062cc;
+    }
+
+    @media (max-width: 768px) {
+      #left-rail {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100% !important;
+        height: 56px;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        border-right: none;
+        border-top: 1px solid #334155;
+        z-index: 3000;
+        padding: 4px 6px;
+        overflow-x: auto;
       }
-      .about-hero {
-        padding: 46px 20px 64px;
+
+      #left-rail:hover {
+        width: 100% !important;
+        box-shadow: none;
       }
-      .story-card {
-        padding: 26px 22px;
-        gap: 28px;
+
+      #left-rail .rail-btn {
+        width: auto;
+        justify-content: center;
+        padding: 8px 10px;
       }
-      .story-section h2 {
-        font-size: 1.28rem;
-      }
-      .signature-handwritten {
-        font-size: 2.3rem;
-      }
-      .cta-card {
-        padding: 22px;
-      }
-      .nav-btn span.hide-sm {
+
+      #left-rail .rail-btn span:not(.rail-icon),
+      .rail-spacer,
+      .rail-divider {
         display: none;
+      }
+
+      #full-page-view {
+        padding: 22px 16px 86px;
+      }
+
+      .content-card {
+        padding: 24px 20px;
+        gap: 24px;
+      }
+
+      .page-header h1 {
+        font-size: 1.45rem;
+      }
+
+      .signature-handwritten {
+        font-size: 2.25rem;
+      }
+
+      .feedback-card {
+        padding: 18px 20px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- TOP BAR -->
-  <header id="top-bar">
-    <a href="app.html" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0;" title="Back to Running Atlas">
-      <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
-        <g transform="translate(6, 36)">
-          <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
-          <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
-        </g>
-        <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
-        <path d="M 6 102 L 205 102 L 216 95 L 225 106 L 235 89 L 246 102 L 368 102" stroke="#007aff" stroke-width="2.2" stroke-opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="6" cy="102" r="4" fill="#34c759"/>
-        <circle cx="368" cy="102" r="4" fill="#ff3b30"/>
-      </svg>
-    </a>
+  <div id="app-layout">
 
-    <div class="top-bar-actions">
-      <a href="support.html" class="nav-btn">💡 <span class="hide-sm">Support &amp; Ideas</span></a>
-      <a href="app.html" class="nav-btn primary">← Back to Atlas</a>
-    </div>
-  </header>
+    <!-- TOP BAR -->
+    <header id="top-bar">
+      <a href="app.html" style="display: inline-flex; align-items: center; text-decoration: none; padding: 2px 0;" title="Back to Race Atlas">
+        <svg width="128" height="38" viewBox="0 0 380 115" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="8" y="22" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="8">RUNNING</text>
+          <g transform="translate(6, 36)">
+            <path d="M 32 0 L 0 54 L 14 54 L 32 23 L 50 54 L 64 54 Z" fill="#007aff"/>
+            <path d="M -6 32 Q 13 20 32 29 T 70 26" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path d="M -4 42 Q 14 31 32 39 T 68 36" stroke="#5ac8fa" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </g>
+          <text x="77" y="86" fill="#007aff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="62" font-weight="900" letter-spacing="2">TLAS</text>
+          <path d="M 6 102 L 205 102 L 216 95 L 225 106 L 235 89 L 246 102 L 368 102" stroke="#007aff" stroke-width="2.2" stroke-opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="6" cy="102" r="4" fill="#34c759"/>
+          <circle cx="368" cy="102" r="4" fill="#ff3b30"/>
+        </svg>
+      </a>
 
-  <!-- HERO -->
-  <section class="about-hero">
-    <div class="hero-inner">
-      <div class="hero-eyebrow">🗺️ The Story Behind Running Atlas</div>
-      <h1>More than split times and finish lines.</h1>
-      <p>A personal map of where running has taken you — and everywhere you still dream of going.</p>
-    </div>
-  </section>
-
-  <!-- STORY CONTENT -->
-  <main class="about-main">
-    <article class="story-card">
-
-      <section class="story-section">
-        <h2><span class="section-accent-dot"></span>Why did I build Running Atlas?</h2>
-        <p>
-          Above all, I was missing a place where I could keep not just my results, but the actual memories and stories behind my races and runs. I wanted a way to visualize everything running has let me see and experience — and at the same time, look ahead to everything I still want to chase. It reminds me that the best part of the journey is still ahead.
-        </p>
-        <p>
-          Sure, pace matters on race day. Almost all of us care about the clock. But where do you log a quiet sunrise you caught on a random morning run? Or that feeling when the horizon finally opens up after an endless climb and the whole landscape stretches out below you? At the end of the day, whether we admit it or not, those moments are what really keep us moving forward. At least, that’s how it is for me.
-        </p>
-        <div class="story-quote-highlight">
-          In running more than anywhere else, the journey truly <em>is</em> the destination — and Running Atlas is built to capture that journey as authentically as possible. Everyone’s memories and experiences are different, which is why I want Running Atlas to be a blank canvas that each runner can make their own.
-        </div>
-      </section>
-
-      <div class="story-divider"></div>
-
-      <section class="story-section">
-        <h2><span class="section-accent-dot"></span>Who am I?</h2>
-        <p>
-          I’m an enthusiastic runner who might not have decades of racing under his belt yet, but fell hard for the sport all the same. I’m only 28, though my midlife crisis clearly arrived about 15 years ahead of schedule — so I dove headfirst into planning all sorts of crazy challenges and pushing my own limits. I originally started building Running Atlas just for myself, before realizing there are probably plenty of other runners who could use it too.
-        </p>
-
-        <div class="signature-block">
-          <div class="signature-handwritten">Ondra</div>
-          <svg class="signature-flourish" width="118" height="14" viewBox="0 0 118 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M3 10.5 C 28 3.5, 68 2.5, 114 7.5" stroke="#007aff" stroke-width="2.4" stroke-linecap="round"/>
-          </svg>
-          <span class="signature-role">Creator of Running Atlas</span>
-        </div>
-      </section>
-
-    </article>
-
-    <!-- BOTTOM CTA -->
-    <div class="cta-card">
-      <div>
-        <h3>Got an idea or a dream race missing from the catalog?</h3>
-        <p>Running Atlas is constantly evolving — drop me a line anytime.</p>
+      <div class="top-bar-right">
+        <a href="app.html" class="top-action-btn primary">← Back to Atlas</a>
       </div>
-      <div class="cta-buttons">
-        <a href="support.html" class="nav-btn">Share Feedback</a>
-        <a href="app.html" class="nav-btn primary">Open My Atlas →</a>
-      </div>
-    </div>
-  </main>
+    </header>
 
-  <footer class="about-footer">
-    Running Atlas &bull; Built for runners who collect places, not just splits.
-  </footer>
+    <!-- MAIN BODY WITH LEFT RAIL -->
+    <div id="main-body">
+
+      <!-- LEFT NAVIGATION RAIL (matches app.html) -->
+      <nav id="left-rail" aria-label="Main navigation">
+        <a class="rail-btn" href="app.html?view=races" title="Race Atlas">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </span>
+          <span>Race Atlas</span>
+        </a>
+
+        <a class="rail-btn" href="app.html?view=memorable" title="Memorable Runs">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13" cy="4" r="1.2" fill="currentColor"></circle>
+              <path d="M7 21l3-4"></path><path d="M16 21l-2-4-3-3 1-6"></path><path d="M6 12l2-3 4-1 3 3 1"></path>
+            </svg>
+          </span>
+          <span>Memorable Runs</span>
+        </a>
+
+        <a class="rail-btn" href="app.html?view=timeline" title="Season Timeline">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </span>
+          <span>Season Timeline</span>
+        </a>
+
+        <a class="rail-btn" href="app.html?view=bests" title="Personal Bests">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+              <path d="M4 22h16"></path>
+              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+              <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+            </svg>
+          </span>
+          <span>Personal Bests</span>
+        </a>
+
+        <a class="rail-btn" href="app.html?view=stats" title="Milestones & Stats">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </span>
+          <span>Milestones &amp; Stats</span>
+        </a>
+
+        <a class="rail-btn" href="app.html?view=catalog" title="Explore Catalog">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+          </span>
+          <span>Explore Catalog</span>
+        </a>
+
+        <div class="rail-spacer"></div>
+        <div class="rail-divider"></div>
+
+        <a class="rail-btn" href="settings.html" title="Settings">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
+
+        <a class="rail-btn active" href="about.html" aria-current="page" title="About Us">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </span>
+          <span>About Us</span>
+        </a>
+
+        <a class="rail-btn" href="support.html" title="Support & Ideas">
+          <span class="rail-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle>
+              <line x1="4.93" y1="4.93" x2="9.17" y2="9.17"></line><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"></line>
+            </svg>
+          </span>
+          <span>Support &amp; Ideas</span>
+        </a>
+      </nav>
+
+      <!-- CONTENT PANE -->
+      <main id="full-page-view">
+        <div class="page-container">
+
+          <div class="page-header">
+            <div>
+              <h1>About Running Atlas</h1>
+              <p>More than split times and finish lines — the story behind the project.</p>
+            </div>
+            <a href="app.html" class="back-pill-btn">← Back to Interactive Map</a>
+          </div>
+
+          <article class="content-card">
+
+            <section class="story-section">
+              <h2><span class="section-accent-dot"></span>Why did I build Running Atlas?</h2>
+              <p>
+                Above all, I was missing a place where I could keep not just my results, but the actual memories and stories behind my races and runs. I wanted a way to visualize everything running has let me see and experience — and at the same time, look ahead to everything I still want to chase. It reminds me that the best part of the journey is still ahead.
+              </p>
+              <p>
+                Sure, pace matters on race day. Almost all of us care about the clock. But where do you log a quiet sunrise you caught on a random morning run? Or that feeling when the horizon finally opens up after an endless climb and the whole landscape stretches out below you? At the end of the day, whether we admit it or not, those moments are what really keep us moving forward. At least, that’s how it is for me.
+              </p>
+              <div class="story-callout">
+                In running more than anywhere else, the journey truly <em>is</em> the destination — and Running Atlas is built to capture that journey as authentically as possible. Everyone’s memories and experiences are different, which is why I want Running Atlas to be a blank canvas that each runner can make their own.
+              </div>
+            </section>
+
+            <div class="card-divider"></div>
+
+            <section class="story-section">
+              <h2><span class="section-accent-dot"></span>Who am I?</h2>
+              <p>
+                I’m an enthusiastic runner who might not have decades of racing under his belt yet, but fell hard for the sport all the same. I’m only 28, though my midlife crisis clearly arrived about 15 years ahead of schedule — so I dove headfirst into planning all sorts of crazy challenges and pushing my own limits. I originally started building Running Atlas just for myself, before realizing there are probably plenty of other runners who could use it too.
+              </p>
+
+              <div class="signature-block">
+                <div class="signature-handwritten">Ondra</div>
+                <svg class="signature-flourish" width="114" height="14" viewBox="0 0 114 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M3 10.5 C 27 3.5, 66 2.5, 110 7.5" stroke="#007aff" stroke-width="2.4" stroke-linecap="round"/>
+                </svg>
+                <span class="signature-role">Creator of Running Atlas</span>
+              </div>
+            </section>
+
+          </article>
+
+          <div class="feedback-card">
+            <div>
+              <h3>Got an idea or a dream race missing from the catalog?</h3>
+              <p>Running Atlas is constantly evolving — drop me a line anytime.</p>
+            </div>
+            <div class="feedback-actions">
+              <a href="support.html" class="btn-secondary">Share Feedback</a>
+              <a href="app.html" class="btn-primary">Open My Atlas →</a>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+    </div>
+  </div>
 
 </body>
 </html>
