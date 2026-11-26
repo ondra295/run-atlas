@@ -180,6 +180,23 @@
     .kpi-hero-sub { font-size: 0.76rem; color: #16a34a; font-weight: 700; margin-top: 2px; }
 
     .stats-two-col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
+    .stats-bottom-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
+    .stats-mini-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .stats-highlight-list { display: flex; flex-direction: column; gap: 8px; }
+    .stats-highlight-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 13px;
+      transition: all 0.16s ease;
+    }
+    .stats-highlight-row.clickable { cursor: pointer; }
+    .stats-highlight-row.clickable:hover {
+      border-color: #007aff; background: #ffffff; transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 122, 255, 0.10);
+    }
+    .stats-highlight-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .stats-highlight-lbl { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; }
+    .stats-highlight-name { font-size: 0.84rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stats-highlight-val { font-size: 0.94rem; font-weight: 900; color: #0f172a; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums; }
     .stats-panel-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px;
       box-shadow: 0 4px 16px rgba(15,23,42,0.04); display: flex; flex-direction: column; gap: 16px;
@@ -1053,7 +1070,7 @@
     }
 
     @media (max-width: 900px) {
-      .pr-grid, .pr-feats-grid, .catalog-full-grid, .stats-top-kpis, .stats-two-col { grid-template-columns: 1fr; }
+      .pr-grid, .pr-feats-grid, .catalog-full-grid, .stats-top-kpis, .stats-two-col, .stats-bottom-two-col { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
       .top-search-wrap { display: none; }
@@ -1719,6 +1736,7 @@
 
     let timelineYearFilter = 'all';
     let timelineCategoryFilter = 'races';
+    let statsCategoryFilter = 'races';
     let exploreContinentFilter = 'all';
     let exploreCountryFilter = 'all';
     let exploreSurfaceFilter = 'all';
@@ -5243,78 +5261,332 @@
         const n = parseMetricNumber(str);
         return isNaN(n) ? 0 : n;
       };
+      const fmtNum = n => Math.round(n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
 
-      const doneList = races.filter(r => r.status === 'done');
-      const plannedList = races.filter(r => r.status === 'planned');
-      const bucketList = races.filter(r => r.status === 'bucket');
+      const allRacesOnly = races.filter(r => !r.isMemorable);
+      const memorableList = races.filter(r => r.isMemorable);
+      const isMemTab = (statsCategoryFilter === 'memorable');
 
-      let doneKm = 0, doneEle = 0, roadCount = 0, trailCount = 0;
+      const headerHtml = `
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Milestones & Athletic Footprint</h1>
+            <p style="font-size:0.86rem; color:#64748b;">${isMemTab ? 'Distance, elevation, terrain, and travel highlights across your memorable non-race runs.' : 'Separated analytics for completed races, scheduled targets, and dream expeditions.'}</p>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <div class="timeline-cat-switch">
+              <button type="button" class="timeline-cat-btn ${!isMemTab ? 'active' : ''}" onclick="statsCategoryFilter='races'; renderStatsFullDashboard();">
+                🏁 Races <span style="opacity:0.65;">(${allRacesOnly.length})</span>
+              </button>
+              <button type="button" class="timeline-cat-btn ${isMemTab ? 'active' : ''}" onclick="statsCategoryFilter='memorable'; renderStatsFullDashboard();">
+                🏔️ Memorable <span style="opacity:0.65;">(${memorableList.length})</span>
+              </button>
+            </div>
+            <button class="back-btn" onclick="switchPageMode('races')">← Back to Map</button>
+          </div>
+        </div>
+      `;
+
+      const renderHighlightRow = ({ label, color, name, value, onClick = '' }) => `
+        <div class="stats-highlight-row ${onClick ? 'clickable' : ''}" ${onClick ? `onclick="${onClick}"` : ''}>
+          <div class="stats-highlight-left">
+            <span class="stats-highlight-lbl" style="color:${color};">${label}</span>
+            <span class="stats-highlight-name" title="${name}">${name}</span>
+          </div>
+          <span class="stats-highlight-val">${value}</span>
+        </div>
+      `;
+
+      if (isMemTab) {
+        let memKm = 0, memEle = 0, memTrail = 0, memRoad = 0, memMixed = 0;
+        const memCountries = new Map(); // country -> html
+        const memContinents = new Set();
+        const tagCounts = {};
+        let longestMem = null, biggestClimbMem = null, farthestMem = null;
+
+        memorableList.forEach(r => {
+          const d = parseNum(r.distance);
+          const ele = parseNum(r.elevation);
+          memKm += d;
+          memEle += ele;
+
+          const s = (r.surface || 'trail').toLowerCase();
+          if (s === 'road') memRoad++;
+          else if (s === 'mixed') memMixed++;
+          else memTrail++;
+
+          if (d > 0 && (!longestMem || d > parseNum(longestMem.distance))) longestMem = r;
+          if (ele > 0 && (!biggestClimbMem || ele > parseNum(biggestClimbMem.elevation))) biggestClimbMem = r;
+
+          if (userHomeCoords && Array.isArray(r.coords) && r.coords.length === 2) {
+            const hDist = computeDistanceFromHome(r.coords);
+            if (hDist !== null && (!farthestMem || hDist > farthestMem.km)) {
+              farthestMem = { item: r, km: hDist };
+            }
+          }
+
+          const geo = detectGeoFromCoords(r.coords, r.name);
+          if (geo.country !== 'Unknown') memCountries.set(geo.country, geo.html);
+          memContinents.add(geo.continent);
+
+          const parsedTags = parseMemorableTagsFromItem(r);
+          parsedTags.tags.forEach(t => {
+            tagCounts[t] = (tagCounts[t] || 0) + 1;
+          });
+        });
+
+        const memTotal = memorableList.length || 1;
+        const trailPct = memorableList.length ? Math.round((memTrail / memTotal) * 100) : 0;
+        const roadPct = memorableList.length ? Math.round((memRoad / memTotal) * 100) : 0;
+        const mixedPct = memorableList.length ? Math.max(0, 100 - trailPct - roadPct) : 0;
+        const avgElePerRun = memorableList.length ? Math.round(memEle / memorableList.length) : 0;
+
+        let favSurface = '—', favSurfaceSub = 'No runs logged yet';
+        if (memorableList.length > 0) {
+          const surfArr = [
+            { name: 'Trail', count: memTrail, pct: trailPct },
+            { name: 'Road', count: memRoad, pct: roadPct },
+            { name: 'Mixed', count: memMixed, pct: mixedPct }
+          ].sort((a, b) => b.count - a.count);
+          favSurface = surfArr[0].name;
+          favSurfaceSub = `${surfArr[0].pct}% of memorable runs`;
+        }
+
+        const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+
+        const farthestMemRow = farthestMem
+          ? renderHighlightRow({
+              label: '✈️ Farthest from Home',
+              color: '#0284c7',
+              name: farthestMem.item.name,
+              value: `${fmtNum(farthestMem.km)} km`,
+              onClick: `selectSpotlightRace('${farthestMem.item.id}')`
+            })
+          : renderHighlightRow({
+              label: '✈️ Farthest from Home',
+              color: '#0284c7',
+              name: userHomeCoords ? 'No memorable runs yet' : (isReadOnlyShared ? 'Home Base not set' : 'Click to set Home Base ➔'),
+              value: '—',
+              onClick: (!userHomeCoords && !isReadOnlyShared) ? 'handleHomeBaseClick()' : ''
+            });
+
+        container.innerHTML = `
+          ${headerHtml}
+
+          <div class="stats-top-kpis">
+            <div class="kpi-hero-card">
+              <span class="kpi-hero-lbl">Memorable Distance</span>
+              <div class="kpi-hero-val" style="color:#0f766e;">${fmtNum(memKm)} km</div>
+              <span class="kpi-hero-sub" style="color:#0f766e;">Across ${memorableList.length} memorable ${memorableList.length === 1 ? 'run' : 'runs'}</span>
+            </div>
+            <div class="kpi-hero-card">
+              <span class="kpi-hero-lbl">Total Elevation Gain</span>
+              <div class="kpi-hero-val" style="color:#007aff;">+${fmtNum(memEle)} m</div>
+              <span class="kpi-hero-sub">Avg +${fmtNum(avgElePerRun)} m per run</span>
+            </div>
+            <div class="kpi-hero-card">
+              <span class="kpi-hero-lbl">Geographic Reach</span>
+              <div class="kpi-hero-val">${memCountries.size} <span style="font-size:1.05rem; color:#64748b; font-weight:700;">Countries</span></div>
+              <span class="kpi-hero-sub" style="color:#0284c7;">${memContinents.size} Continents explored</span>
+            </div>
+            <div class="kpi-hero-card">
+              <span class="kpi-hero-lbl">Favorite Terrain</span>
+              <div class="kpi-hero-val">${favSurface}</div>
+              <span class="kpi-hero-sub">${favSurfaceSub}</span>
+            </div>
+          </div>
+
+          <div class="stats-panel-card">
+            <div class="stats-panel-header">
+              <h3>🏔️ Memorable Runs Breakdown</h3>
+              <span class="badge badge-memorable">${memorableList.length} Total</span>
+            </div>
+
+            <div>
+              <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:0.78rem; font-weight:700; color:#475569; margin-bottom:6px;">
+                <span>🏔️ Trail (${memTrail} • ${trailPct}%)</span>
+                <span>🛣️ Road (${memRoad} • ${roadPct}%)</span>
+                <span>🔀 Mixed (${memMixed} • ${mixedPct}%)</span>
+              </div>
+              <div style="height:10px; width:100%; background:#e2e8f0; border-radius:6px; overflow:hidden; display:flex;">
+                <div style="width:${trailPct}%; background:#0f766e;"></div>
+                <div style="width:${roadPct}%; background:#475569;"></div>
+                <div style="width:${mixedPct}%; background:#b45309;"></div>
+              </div>
+            </div>
+
+            ${sortedTags.length > 0 ? `
+              <div>
+                <small style="font-size:0.72rem; font-weight:800; color:#64748b; text-transform:uppercase; display:block; margin-bottom:8px;">What Made Them Special</small>
+                <div class="memorable-tags-card">
+                  ${sortedTags.map(([key, cnt]) => {
+                    const meta = MEMORABLE_HIGHLIGHT_MAP[key] || { emoji: '⭐', label: key };
+                    return `<span class="memorable-tag-pill">${meta.emoji} ${meta.label} <strong style="margin-left:2px; opacity:0.75;">(${cnt})</strong></span>`;
+                  }).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <div>
+              <small style="font-size:0.72rem; font-weight:800; color:#64748b; text-transform:uppercase; display:block; margin-bottom:8px;">Explored Countries & Territories</small>
+              <div class="country-pill-list">
+                ${memCountries.size > 0 ? Array.from(memCountries.values()).map(c => `<span class="country-pill">${c}</span>`).join('') : '<span style="font-size:0.84rem; color:#94a3b8;">No memorable runs logged yet.</span>'}
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-panel-card">
+            <div class="stats-panel-header">
+              <h3>✨ Memorable Run Highlights</h3>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+              ${renderHighlightRow({
+                label: '📏 Longest Run',
+                color: '#0f766e',
+                name: longestMem ? longestMem.name : 'No memorable runs yet',
+                value: longestMem ? longestMem.distance : '—',
+                onClick: longestMem ? `selectSpotlightRace('${longestMem.id}')` : ''
+              })}
+              ${renderHighlightRow({
+                label: '⛰️ Biggest Climb',
+                color: '#16a34a',
+                name: biggestClimbMem ? biggestClimbMem.name : 'No elevation logged',
+                value: biggestClimbMem ? biggestClimbMem.elevation : '—',
+                onClick: biggestClimbMem ? `selectSpotlightRace('${biggestClimbMem.id}')` : ''
+              })}
+              ${farthestMemRow}
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // RACES TAB (STRICTLY !r.isMemorable)
+      const doneList = allRacesOnly.filter(r => r.status === 'done');
+      const plannedList = allRacesOnly.filter(r => r.status === 'planned');
+      const bucketList = allRacesOnly.filter(r => r.status === 'bucket');
+
+      let doneKm = 0, doneEle = 0, roadCount = 0, trailCount = 0, mixedCount = 0;
       let marathons = 0, halfs = 0, ultras = 0, tens = 0;
       let perfSum = 0, courseSum = 0, ratedCount = 0;
-      const doneCountries = new Set();
+      const doneCountries = new Map();
       const doneContinents = new Set();
 
       doneList.forEach(r => {
         const d = parseNum(r.distance);
         doneKm += d;
         doneEle += parseNum(r.elevation);
-        if (r.surface === 'trail') trailCount++; else roadCount++;
+        const surf = (r.surface || 'road').toLowerCase();
+        if (surf === 'trail') trailCount++;
+        else if (surf === 'mixed') mixedCount++;
+        else roadCount++;
 
         if (d > 45) ultras++;
         else if (d >= 40 && d <= 45) marathons++;
         else if (d >= 20 && d <= 23) halfs++;
         else if (d > 0) tens++;
 
-        if (!r.isMemorable) {
-          perfSum += (r.satisfaction || 8);
-          courseSum += (r.course_satisfaction || 9);
-          ratedCount++;
-        }
+        perfSum += (r.satisfaction || 8);
+        courseSum += (r.course_satisfaction || 9);
+        ratedCount++;
 
         const geo = detectGeoFromCoords(r.coords, r.name);
-        doneCountries.add(geo.html);
+        if (geo.country !== 'Unknown') doneCountries.set(geo.country, geo.html);
         doneContinents.add(geo.continent);
       });
 
       const avgPerf = ratedCount ? (perfSum / ratedCount).toFixed(1) : '-';
       const avgCourse = ratedCount ? (courseSum / ratedCount).toFixed(1) : '-';
-      const totalSurface = (roadCount + trailCount) || 1;
-      const roadPct = Math.round((roadCount / totalSurface) * 100);
-      const trailPct = 100 - roadPct;
+      const totalSurface = (roadCount + trailCount + mixedCount) || 1;
+      const roadPct = doneList.length ? Math.round((roadCount / totalSurface) * 100) : 0;
+      const trailPct = doneList.length ? Math.round((trailCount / totalSurface) * 100) : 0;
+      const mixedPct = doneList.length ? Math.max(0, 100 - roadPct - trailPct) : 0;
 
+      // PLANNED ANALYTICS
       let plannedKm = 0, plannedEle = 0;
+      const plannedCountries = new Map();
+      let nextPlannedRace = null;
+      let longestPlannedRace = null;
+      const todayIso = new Date().toISOString().slice(0, 10);
+
       plannedList.forEach(r => {
-        plannedKm += parseNum(r.distance);
+        const d = parseNum(r.distance);
+        plannedKm += d;
         plannedEle += parseNum(r.elevation);
+
+        const geo = detectGeoFromCoords(r.coords, r.name);
+        if (geo.country !== 'Unknown') plannedCountries.set(geo.country, geo.html);
+
+        if (d > 0 && (!longestPlannedRace || d > parseNum(longestPlannedRace.distance))) {
+          longestPlannedRace = r;
+        }
+        if (r.date && /^\d{4}-\d{2}-\d{2}/.test(r.date) && r.date >= todayIso) {
+          if (!nextPlannedRace || r.date < nextPlannedRace.date) nextPlannedRace = r;
+        }
       });
 
+      let nextPlannedCountdown = '—';
+      if (nextPlannedRace && nextPlannedRace.date) {
+        const diffDays = Math.ceil((new Date(nextPlannedRace.date) - new Date()) / (1000 * 60 * 60 * 24));
+        nextPlannedCountdown = diffDays > 0 ? `In ${diffDays} d` : (diffDays === 0 ? 'Today!' : nextPlannedRace.date);
+      }
+
+      // BUCKET LIST ANALYTICS
       let bucketKm = 0, bucketEle = 0;
       const bucketCountries = new Set();
+      let longestBucket = null;
+      let biggestBucketClimb = null;
+      let farthestBucket = null;
+
       bucketList.forEach(r => {
-        bucketKm += parseNum(r.distance);
-        bucketEle += parseNum(r.elevation);
-        bucketCountries.add(detectGeoFromCoords(r.coords, r.name).country);
+        const d = parseNum(r.distance);
+        const ele = parseNum(r.elevation);
+        bucketKm += d;
+        bucketEle += ele;
+
+        const geo = detectGeoFromCoords(r.coords, r.name);
+        if (geo.country !== 'Unknown') bucketCountries.add(geo.country);
+
+        if (d > 0 && (!longestBucket || d > parseNum(longestBucket.distance))) longestBucket = r;
+        if (ele > 0 && (!biggestBucketClimb || ele > parseNum(biggestBucketClimb.elevation))) biggestBucketClimb = r;
+
+        if (userHomeCoords && Array.isArray(r.coords) && r.coords.length === 2) {
+          const hDist = computeDistanceFromHome(r.coords);
+          if (hDist !== null && (!farthestBucket || hDist > farthestBucket.km)) {
+            farthestBucket = { item: r, km: hDist };
+          }
+        }
       });
 
+      const farthestBucketRow = farthestBucket
+        ? renderHighlightRow({
+            label: '✈️ Farthest from Home',
+            color: '#0284c7',
+            name: farthestBucket.item.name,
+            value: `${fmtNum(farthestBucket.km)} km`,
+            onClick: `selectSpotlightRace('${farthestBucket.item.id}')`
+          })
+        : renderHighlightRow({
+            label: '✈️ Farthest from Home',
+            color: '#0284c7',
+            name: userHomeCoords ? 'No bucket list races yet' : (isReadOnlyShared ? 'Home Base not set' : 'Click to set Home Base ➔'),
+            value: '—',
+            onClick: (!userHomeCoords && !isReadOnlyShared) ? 'handleHomeBaseClick()' : ''
+          });
+
       container.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px;">
-          <div>
-            <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Milestones & Athletic Footprint</h1>
-            <p style="font-size:0.86rem; color:#64748b;">Separated analytics for completed races, scheduled targets, and dream expeditions.</p>
-          </div>
-          <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
-        </div>
+        ${headerHtml}
 
         <div class="stats-top-kpis">
           <div class="kpi-hero-card">
             <span class="kpi-hero-lbl">Completed Distance</span>
-            <div class="kpi-hero-val" style="color:#16a34a;">${doneKm.toFixed(0)} km</div>
-            <span class="kpi-hero-sub">Across ${doneList.length} finished events</span>
+            <div class="kpi-hero-val" style="color:#16a34a;">${fmtNum(doneKm)} km</div>
+            <span class="kpi-hero-sub">Across ${doneList.length} finished ${doneList.length === 1 ? 'race' : 'races'}</span>
           </div>
           <div class="kpi-hero-card">
             <span class="kpi-hero-lbl">Total Elevation Gain</span>
-            <div class="kpi-hero-val" style="color:#007aff;">+${doneEle.toLocaleString()} m</div>
-            <span class="kpi-hero-sub">${trailPct}% Trail / ${roadPct}% Road</span>
+            <div class="kpi-hero-val" style="color:#007aff;">+${fmtNum(doneEle)} m</div>
+            <span class="kpi-hero-sub">${trailPct}% Trail / ${roadPct}% Road${mixedPct > 0 ? ` / ${mixedPct}% Mixed` : ''}</span>
           </div>
           <div class="kpi-hero-card">
             <span class="kpi-hero-lbl">Geographic Reach</span>
@@ -5328,90 +5600,141 @@
           </div>
         </div>
 
-        <div class="stats-two-col">
+        <div class="stats-panel-card">
+          <div class="stats-panel-header">
+            <h3>🏁 Completed Race Breakdown</h3>
+            <span class="badge badge-done">${doneList.length} Total</span>
+          </div>
+
+          <div class="discipline-grid">
+            <div class="discipline-box">
+              <div class="discipline-num">${ultras}</div>
+              <div class="discipline-lbl">Ultras (>45k)</div>
+            </div>
+            <div class="discipline-box">
+              <div class="discipline-num">${marathons}</div>
+              <div class="discipline-lbl">Marathons</div>
+            </div>
+            <div class="discipline-box">
+              <div class="discipline-num">${halfs}</div>
+              <div class="discipline-lbl">Half Marathons</div>
+            </div>
+            <div class="discipline-box">
+              <div class="discipline-num">${tens}</div>
+              <div class="discipline-lbl">10K / Shorter</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:0.78rem; font-weight:700; color:#475569; margin-bottom:6px;">
+              <span>🛣️ Road Surface (${roadCount} • ${roadPct}%)</span>
+              <span>⛰️ Trail & Mountain (${trailCount} • ${trailPct}%)</span>
+              ${mixedCount > 0 ? `<span>🔀 Mixed (${mixedCount} • ${mixedPct}%)</span>` : ''}
+            </div>
+            <div style="height:10px; width:100%; background:#e2e8f0; border-radius:6px; overflow:hidden; display:flex;">
+              <div style="width:${roadPct}%; background:#007aff;"></div>
+              <div style="width:${trailPct}%; background:#16a34a;"></div>
+              ${mixedPct > 0 ? `<div style="width:${mixedPct}%; background:#d97706;"></div>` : ''}
+            </div>
+          </div>
+
+          <div>
+            <small style="font-size:0.72rem; font-weight:800; color:#64748b; text-transform:uppercase; display:block; margin-bottom:8px;">Raced Countries & Territories</small>
+            <div class="country-pill-list">
+              ${doneCountries.size > 0 ? Array.from(doneCountries.values()).map(c => `<span class="country-pill">${c}</span>`).join('') : '<span style="font-size:0.84rem; color:#94a3b8;">No completed races logged yet.</span>'}
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-bottom-two-col">
           <div class="stats-panel-card">
             <div class="stats-panel-header">
-              <h3>🏁 Completed Race Breakdown</h3>
-              <span class="badge badge-done">${doneList.length} Total</span>
+              <h3>📅 Upcoming Season (Planned)</h3>
+              <span class="badge badge-planned">${plannedList.length} Scheduled</span>
             </div>
 
-            <div class="discipline-grid">
+            <div class="stats-mini-kpis">
               <div class="discipline-box">
-                <div class="discipline-num">${ultras}</div>
-                <div class="discipline-lbl">Ultras (>45k)</div>
+                <div class="discipline-num" style="color:#d97706; font-size:1.3rem;">${fmtNum(plannedKm)} km</div>
+                <div class="discipline-lbl">Volume</div>
               </div>
               <div class="discipline-box">
-                <div class="discipline-num">${marathons}</div>
-                <div class="discipline-lbl">Marathons</div>
+                <div class="discipline-num" style="color:#d97706; font-size:1.3rem;">+${fmtNum(plannedEle)} m</div>
+                <div class="discipline-lbl">Planned Climb</div>
               </div>
               <div class="discipline-box">
-                <div class="discipline-num">${halfs}</div>
-                <div class="discipline-lbl">Half Marathons</div>
+                <div class="discipline-num" style="color:#d97706; font-size:1.3rem;">${plannedCountries.size}</div>
+                <div class="discipline-lbl">Countries</div>
               </div>
-              <div class="discipline-box">
-                <div class="discipline-num">${tens}</div>
-                <div class="discipline-lbl">10K / Shorter</div>
-              </div>
+            </div>
+
+            <div class="stats-highlight-list">
+              ${renderHighlightRow({
+                label: '⏳ Next Race on Calendar',
+                color: '#d97706',
+                name: nextPlannedRace ? `${nextPlannedRace.name} (${nextPlannedRace.date})` : 'No upcoming dated race',
+                value: nextPlannedCountdown,
+                onClick: nextPlannedRace ? `selectSpotlightRace('${nextPlannedRace.id}')` : ''
+              })}
+              ${renderHighlightRow({
+                label: '📏 Longest Planned Race',
+                color: '#b45309',
+                name: longestPlannedRace ? longestPlannedRace.name : 'No planned races yet',
+                value: longestPlannedRace ? longestPlannedRace.distance : '—',
+                onClick: longestPlannedRace ? `selectSpotlightRace('${longestPlannedRace.id}')` : ''
+              })}
             </div>
 
             <div>
-              <div style="display:flex; justify-content:space-between; font-size:0.78rem; font-weight:700; color:#475569; margin-bottom:6px;">
-                <span>🛣️ Road Surface (${roadCount} races • ${roadPct}%)</span>
-                <span>⛰️ Trail & Mountain (${trailCount} races • ${trailPct}%)</span>
-              </div>
-              <div style="height:10px; width:100%; background:#e2e8f0; border-radius:6px; overflow:hidden; display:flex;">
-                <div style="width:${roadPct}%; background:#007aff;"></div>
-                <div style="width:${trailPct}%; background:#16a34a;"></div>
-              </div>
-            </div>
-
-            <div>
-              <small style="font-size:0.72rem; font-weight:800; color:#64748b; text-transform:uppercase; display:block; margin-bottom:8px;">Raced Countries & Territories</small>
+              <small style="font-size:0.72rem; font-weight:800; color:#64748b; text-transform:uppercase; display:block; margin-bottom:8px;">Planned Countries to Visit</small>
               <div class="country-pill-list">
-                ${doneCountries.size > 0 ? Array.from(doneCountries).map(c => `<span class="country-pill">${c}</span>`).join('') : '<span style="font-size:0.84rem; color:#94a3b8;">No completed races logged yet.</span>'}
+                ${plannedCountries.size > 0 ? Array.from(plannedCountries.values()).map(c => `<span class="country-pill" style="background:#fffbeb; border-color:#fde68a; color:#92400e;">${c}</span>`).join('') : '<span style="font-size:0.84rem; color:#94a3b8;">No planned races scheduled yet.</span>'}
               </div>
             </div>
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:20px;">
-            <div class="stats-panel-card">
-              <div class="stats-panel-header">
-                <h3>📅 Upcoming Season (Planned)</h3>
-                <span class="badge badge-planned">${plannedList.length} Scheduled</span>
+          <div class="stats-panel-card">
+            <div class="stats-panel-header">
+              <h3>⭐️ Bucket List Expeditions</h3>
+              <span class="badge badge-bucket">${bucketList.length} Dream Targets</span>
+            </div>
+
+            <div class="stats-mini-kpis">
+              <div class="discipline-box">
+                <div class="discipline-num" style="color:#0284c7; font-size:1.3rem;">${fmtNum(bucketKm)} km</div>
+                <div class="discipline-lbl">Future Challenge</div>
               </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div class="discipline-box">
-                  <div class="discipline-num" style="color:#d97706;">${plannedKm.toFixed(0)} km</div>
-                  <div class="discipline-lbl">Scheduled Volume</div>
-                </div>
-                <div class="discipline-box">
-                  <div class="discipline-num" style="color:#d97706;">+${plannedEle.toLocaleString()} m</div>
-                  <div class="discipline-lbl">Planned Climb</div>
-                </div>
+              <div class="discipline-box">
+                <div class="discipline-num" style="color:#0284c7; font-size:1.3rem;">+${fmtNum(bucketEle)} m</div>
+                <div class="discipline-lbl">Dream Climb</div>
+              </div>
+              <div class="discipline-box">
+                <div class="discipline-num" style="color:#0284c7; font-size:1.3rem;">${bucketCountries.size}</div>
+                <div class="discipline-lbl">Dream Countries</div>
               </div>
             </div>
 
-            <div class="stats-panel-card">
-              <div class="stats-panel-header">
-                <h3>⭐️ Bucket List Expeditions</h3>
-                <span class="badge badge-bucket">${bucketList.length} Dream Targets</span>
-              </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div class="discipline-box">
-                  <div class="discipline-num" style="color:#0284c7;">${bucketKm.toFixed(0)} km</div>
-                  <div class="discipline-lbl">Future Challenge</div>
-                </div>
-                <div class="discipline-box">
-                  <div class="discipline-num" style="color:#0284c7;">${bucketCountries.size}</div>
-                  <div class="discipline-lbl">Dream Countries</div>
-                </div>
-              </div>
+            <div class="stats-highlight-list">
+              ${renderHighlightRow({
+                label: '📏 Longest Bucket List Race',
+                color: '#0284c7',
+                name: longestBucket ? longestBucket.name : 'No bucket list races yet',
+                value: longestBucket ? longestBucket.distance : '—',
+                onClick: longestBucket ? `selectSpotlightRace('${longestBucket.id}')` : ''
+              })}
+              ${renderHighlightRow({
+                label: '⛰️ Biggest Bucket Climb',
+                color: '#0f766e',
+                name: biggestBucketClimb ? biggestBucketClimb.name : 'No elevation logged',
+                value: biggestBucketClimb ? biggestBucketClimb.elevation : '—',
+                onClick: biggestBucketClimb ? `selectSpotlightRace('${biggestBucketClimb.id}')` : ''
+              })}
+              ${farthestBucketRow}
             </div>
           </div>
         </div>
       `;
     }
-
     let parsedGpxCoords = null;
     let parsedElevationSample = null;
     let parsedCenterCoords = null;
