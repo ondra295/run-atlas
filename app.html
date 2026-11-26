@@ -1977,6 +1977,75 @@
       }, 120);
     });
 
+    function normalizeRaceName(str) {
+      return String(str || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+    }
+
+    function findMatchingRaceInAtlas(catRace) {
+      if (!catRace) return null;
+      const catNorm = normalizeRaceName(catRace.name);
+      const isHalfName = n => /\b(half|pulmaraton|polmaraton|21k|21 1)\b/.test(n);
+      const isMarathonName = n => /\b(marathon|maraton|maratona|maratonu)\b/.test(n) && !isHalfName(n);
+      const hasWord = (n, w) => new RegExp(`\\b${w}\\b`).test(n);
+
+      const cityMarathonMatch = (myNorm, myDist, cityTokens) => {
+        if (!cityTokens.some(t => myNorm.includes(t))) return false;
+        if (isHalfName(myNorm)) return false;
+        if (myDist > 0 && myDist < 38) return false;
+        return isMarathonName(myNorm) || (myDist >= 40 && myDist <= 45);
+      };
+
+      const matchers = {
+        'c-1': (n, d) => cityMarathonMatch(n, d, ['berlin']),
+        'c-2': (n, d) => cityMarathonMatch(n, d, ['boston']),
+        'c-3': (n, d) => cityMarathonMatch(n, d, ['london', 'londyn']),
+        'c-4': (n, d) => cityMarathonMatch(n, d, ['new york', 'nyc']),
+        'c-5': (n, d) => cityMarathonMatch(n, d, ['chicago']),
+        'c-6': (n, d) => cityMarathonMatch(n, d, ['tokyo', 'tokio']),
+        'c-7': (n, d) => cityMarathonMatch(n, d, ['sydney']),
+        'c-8': (n, d) => cityMarathonMatch(n, d, ['valencia', 'valencie']),
+        'c-9': (n, d) => (n.includes('copenhagen') || n.includes('kodan')) && (isHalfName(n) || (d >= 20 && d <= 22.5)),
+        'c-10': (n, d) => cityMarathonMatch(n, d, ['paris', 'pariz']),
+        'c-11': (n, d) => cityMarathonMatch(n, d, ['amsterdam']),
+        'c-12': (n, d) => cityMarathonMatch(n, d, ['prague', 'praha', 'prazsky']),
+        'c-13': (n, d) => cityMarathonMatch(n, d, ['vienna', 'viden']),
+        'c-14': (n, d) => cityMarathonMatch(n, d, ['athens', 'atheny', 'athensky', 'authentic marathon']),
+        'c-15': (n, d) => cityMarathonMatch(n, d, ['stockholm']),
+        'c-16': (n, d) => cityMarathonMatch(n, d, ['rome', 'roma', 'rim']),
+        'c-17': (n) => n.includes('mont blanc') || /^utmb(\s+\d+k?)?$/.test(n),
+        'c-18': (n) => n.includes('lavaredo'),
+        'c-19': (n) => n.includes('zegama'),
+        'c-20': (n) => n.includes('eiger'),
+        'c-21': (n) => n.includes('sierre') && n.includes('zinal'),
+        'c-22': (n) => n.includes('transgrancanaria'),
+        'c-23': (n) => n.includes('western states') || hasWord(n, 'wser'),
+        'c-24': (n) => n.includes('big sur'),
+        'c-25': (n) => n.includes('comrades'),
+        'c-26': (n, d) => cityMarathonMatch(n, d, ['cape town', 'kapske mesto']),
+        'c-27': (n) => (n.includes('fuji') && (n.includes('100') || n.includes('ultra') || n.includes('mt'))) || hasWord(n, 'utmf'),
+        'c-28': (n) => n.includes('patagonia run'),
+        'c-29': (n) => hasWord(n, 'miut') || n.includes('madeira island ultra'),
+        'c-30': (n) => n.includes('tarawera')
+      };
+
+      const ruleFn = matchers[catRace.id];
+
+      return races.find(my => {
+        if (my.isMemorable) return false;
+        const myNorm = normalizeRaceName(my.name);
+        if (!myNorm) return false;
+        if (myNorm === catNorm) return true;
+        const myDist = parseMetricNumber(my.distance) || 0;
+        if (ruleFn && ruleFn(myNorm, myDist)) return true;
+        return false;
+      }) || null;
+    }
+
     // Spotlight Search
     function handleSpotlightSearch(val) {
       const q = val.trim().toLowerCase();
@@ -1993,7 +2062,7 @@
 
       const myMatches = races.filter(r => r.name.toLowerCase().includes(q) || (r.why && r.why.toLowerCase().includes(q))).slice(0, 5);
       const catalogMatches = featuredRacesList.filter(c => {
-        const inMyRaces = races.some(r => r.name.toLowerCase() === c.name.toLowerCase());
+        const inMyRaces = !!findMatchingRaceInAtlas(c);
         return !inMyRaces && (c.name.toLowerCase().includes(q) || (c.location && c.location.toLowerCase().includes(q)));
       }).slice(0, 4);
 
@@ -5228,7 +5297,7 @@
               No races match these filters. <button class="pill-btn" style="margin-left:8px;" onclick="exploreContinentFilter='all'; exploreCountryFilter='all'; exploreSurfaceFilter='all'; exploreMonthFilter='all'; exploreSearchQuery=''; renderExploreCatalogDashboard();">Reset Filters</button>
             </div>
           ` : filtered.map(r => {
-            const alreadyInAtlas = races.find(my => my.name.toLowerCase() === r.name.toLowerCase());
+            const alreadyInAtlas = findMatchingRaceInAtlas(r);
             return `
               <div class="catalog-showcase-card">
                 <div>
