@@ -298,6 +298,65 @@
       width: 100%;
     }
 
+
+    /* Author Bio + Photo Layout */
+    .author-layout {
+      display: flex;
+      align-items: flex-start;
+      gap: 28px;
+    }
+
+    .author-photo-wrap {
+      flex-shrink: 0;
+      width: 175px;
+      height: 210px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      background: #f1f5f9;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+      position: relative;
+    }
+
+    .author-photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+      display: block;
+    }
+
+    .author-photo-fallback {
+      display: none;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #64748b;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 12px;
+    }
+
+    .author-photo-wrap.missing img {
+      display: none;
+    }
+
+    .author-photo-wrap.missing .author-photo-fallback {
+      display: flex;
+    }
+
+    .author-bio-col {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
     /* Handwritten Signature */
     .signature-block {
       margin-top: 6px;
@@ -447,6 +506,18 @@
 
       .page-header h1 {
         font-size: 1.45rem;
+      }
+
+
+      .author-layout {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+      }
+
+      .author-photo-wrap {
+        width: 130px;
+        height: 156px;
       }
 
       .signature-handwritten {
@@ -621,16 +692,28 @@
 
             <section class="story-section">
               <h2><span class="section-accent-dot"></span>Who am I?</h2>
-              <p>
-                I’m an enthusiastic runner who might not have decades of racing under his belt yet, but fell hard for the sport all the same. I’m only 28, though my midlife crisis clearly arrived about 15 years ahead of schedule — so I dove headfirst into planning all sorts of crazy challenges and pushing my own limits. I originally started building Running Atlas just for myself, before realizing there are probably plenty of other runners who could use it too.
-              </p>
+              <div class="author-layout">
+                <div class="author-photo-wrap" id="author-photo-wrap">
+                  <img src="ondra.jpg" alt="Ondra — Creator of Running Atlas" onerror="document.getElementById('author-photo-wrap').classList.add('missing')">
+                  <div class="author-photo-fallback">
+                    <span style="font-size: 1.6rem;">🏃‍♂️</span>
+                    <span>Upload <code>ondra.jpg</code></span>
+                  </div>
+                </div>
 
-              <div class="signature-block">
-                <div class="signature-handwritten">Ondra</div>
-                <svg class="signature-flourish" width="114" height="14" viewBox="0 0 114 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M3 10.5 C 27 3.5, 66 2.5, 110 7.5" stroke="#007aff" stroke-width="2.4" stroke-linecap="round"/>
-                </svg>
-                <span class="signature-role">Creator of Running Atlas</span>
+                <div class="author-bio-col">
+                  <p>
+                    I’m an enthusiastic runner who might not have decades of racing under his belt yet, but fell hard for the sport all the same. I’m only 28, though my midlife crisis clearly arrived about 15 years ahead of schedule — so I dove headfirst into planning all sorts of crazy challenges and pushing my own limits. I originally started building Running Atlas just for myself, before realizing there are probably plenty of other runners who could use it too.
+                  </p>
+
+                  <div class="signature-block">
+                    <div class="signature-handwritten">Ondra</div>
+                    <svg class="signature-flourish" width="114" height="14" viewBox="0 0 114 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M3 10.5 C 27 3.5, 66 2.5, 110 7.5" stroke="#007aff" stroke-width="2.4" stroke-linecap="round"/>
+                    </svg>
+                    <span class="signature-role">Creator of Running Atlas</span>
+                  </div>
+                </div>
               </div>
             </section>
 
