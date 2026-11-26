@@ -4855,7 +4855,7 @@
         return isNaN(n) ? 0 : n;
       };
 
-      const doneList = races.filter(r => r.status === 'done');
+      const doneList = races.filter(r => !r.isMemorable && r.status === 'done');
 
       const findTopForRange = (minKm, maxKm, stdKm, limit = 3) => {
         const candidates = doneList.filter(r => {
@@ -5022,7 +5022,7 @@
             label: '✈️ Farthest from Home',
             color: '#0284c7',
             value: userHomeCoords ? '—' : 'Set Home',
-            sub: userHomeCoords ? 'No completed runs' : (isReadOnlyShared ? 'Home Base not set' : 'Click to set Home Base ➔'),
+            sub: userHomeCoords ? 'No completed races' : (isReadOnlyShared ? 'Home Base not set' : 'Click to set Home Base ➔'),
             onClick: (!userHomeCoords && !isReadOnlyShared) ? 'handleHomeBaseClick()' : ''
           });
 
@@ -5030,7 +5030,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px;">
           <div>
             <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Personal Bests & Trophy Room</h1>
-            <p style="font-size:0.86rem; color:#64748b;">Top 3 performances across standard distances and all-time endurance records from your completed runs.</p>
+            <p style="font-size:0.86rem; color:#64748b;">Top 3 performances across standard distances and all-time endurance records from your completed races.</p>
           </div>
           <button class="back-btn" onclick="switchPageMode('races')">← Back to Interactive Map</button>
         </div>
@@ -5051,7 +5051,7 @@
               label: 'Longest Single Distance',
               color: '#007aff',
               value: longestRun ? longestRun.distance : '—',
-              sub: longestRun ? longestRun.name : 'No completed runs',
+              sub: longestRun ? longestRun.name : 'No completed races',
               meta: longestRun ? (longestRun.elevation || longestRun.date || '') : '',
               onClick: longestRun ? `selectSpotlightRace('${longestRun.id}')` : ''
             })}
