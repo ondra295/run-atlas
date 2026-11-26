@@ -2651,8 +2651,11 @@
         { id: "c-25", name: "Comrades Marathon", continent: "Africa", country: "South Africa", location: "Durban – Pietermaritzburg, SA", distance: "89 km", elevation: "+1,800 m", surface: "road", difficulty: "extremni", cost: "€€€€", month: 6, coords: [-29.8587, 31.0218], desc: "The Ultimate Human Race — world's largest and oldest road ultramarathon.", image_url: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=600&q=80" },
         { id: "c-26", name: "Cape Town Marathon", continent: "Africa", country: "South Africa", location: "Cape Town, South Africa", distance: "42.2 km", elevation: "+260 m", surface: "road", difficulty: "stredni", cost: "€€€", month: 10, coords: [-33.9249, 18.4241], desc: "Fast coastal city marathon beneath the iconic Table Mountain.", image_url: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=600&q=80" },
         { id: "c-27", name: "Mt. Fuji 100", continent: "Asia", country: "Japan", location: "Fujiyoshida, Japan", distance: "166 km", elevation: "+7,000 m", surface: "trail", difficulty: "extremni", cost: "€€€€", month: 4, coords: [35.4875, 138.8079], desc: "Epic 100-mile loop around the foothills and lakes of Mount Fuji.", image_url: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=600&q=80" },
-        { id: "c-28", name: "Patagonia Run", continent: "South America", country: "Argentina", location: "San Martín de los Andes, AR", distance: "100 km", elevation: "+4,900 m", surface: "trail", difficulty: "tezka", cost: "€€€€", month: 4, coords: [-40.1579, -71.3534], desc: "Andean forests, glacial lakes, and rugged Patagonian peaks.", image_url: "https://images.unsplash.com/photo-1518182170546-07661fd94144?auto=format&fit=crop&w=600&q=80" }
+        { id: "c-28", name: "Patagonia Run", continent: "South America", country: "Argentina", location: "San Martín de los Andes, AR", distance: "100 km", elevation: "+4,900 m", surface: "trail", difficulty: "tezka", cost: "€€€€", month: 4, coords: [-40.1579, -71.3534], desc: "Andean forests, glacial lakes, and rugged Patagonian peaks.", image_url: "https://images.unsplash.com/photo-1518182170546-07661fd94144?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-29", name: "MIUT – Madeira Island Ultra-Trail", continent: "Europe", country: "Portugal", location: "Madeira, Portugal", distance: "115 km", elevation: "+7,100 m", surface: "trail", difficulty: "extremni", cost: "€€€", month: 4, coords: [32.8669, -17.1670], desc: "Dramatic Atlantic island traverse across volcanic ridges, cloud forests, and Pico Ruivo.", image_url: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80" },
+        { id: "c-30", name: "Tarawera Ultramarathon", continent: "Oceania", country: "New Zealand", location: "Rotorua, New Zealand", distance: "102 km", elevation: "+3,000 m", surface: "trail", difficulty: "tezka", cost: "€€€€", month: 2, coords: [-38.1368, 176.2497], desc: "Geothermal lakes, native fern forests, and runnable volcanic singletrack on the North Island.", image_url: "https://images.unsplash.com/photo-1469521669194-babb45599def?auto=format&fit=crop&w=600&q=80" }
       ];
+      featuredRacesList.sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }));
     }
 
     const LIGHTWEIGHT_RACE_COLUMNS = 'id, name, date, month, coords, status, status_label, surface, surface_label, difficulty, distance, elevation, importance, why, notes, qualification, images, image_url, result_time, ambition_time, placement, satisfaction, course_satisfaction, expectations, cost, logistics_transport, is_memorable';
@@ -2858,7 +2861,20 @@
       box.style.display = 'flex';
     }
 
-    function applyCatalogPreset(raceId) {
+    let catalogRoutesCache = null;
+    async function loadCatalogRoutesMap() {
+      if (catalogRoutesCache !== null) return catalogRoutesCache;
+      try {
+        const res = await fetch('catalog-routes.json');
+        if (!res.ok) { catalogRoutesCache = {}; return catalogRoutesCache; }
+        catalogRoutesCache = await res.json();
+      } catch (e) {
+        catalogRoutesCache = {};
+      }
+      return catalogRoutesCache;
+    }
+
+    async function applyCatalogPreset(raceId) {
       const r = featuredRacesList.find(x => x.id === raceId);
       if (!r) return;
 
@@ -2878,6 +2894,16 @@
 
       selectChip('surface', r.surface || 'road');
       if (r.difficulty) selectChip('difficulty', r.difficulty);
+
+      // Auto-attach catalog GPX route if available (inline or from catalog-routes.json)
+      const routesMap = await loadCatalogRoutesMap();
+      const catTrack = r.route_coords || routesMap[r.id] || routesMap[r.name];
+      if (Array.isArray(catTrack) && catTrack.length >= 2) {
+        parsedGpxCoords = catTrack;
+        parsedCenterCoords = catTrack[0];
+        const gpxLbl = document.getElementById('gpx-label');
+        if (gpxLbl) gpxLbl.textContent = `✅ Official catalog GPX route attached (${catTrack.length} pts)`;
+      }
     }
 
     function openEditActivityModal(id) {
@@ -5155,7 +5181,7 @@
         if (exploreMonthFilter !== 'all' && String(r.month) !== exploreMonthFilter) return false;
         if (exploreSearchQuery && !r.name.toLowerCase().includes(exploreSearchQuery) && !r.location.toLowerCase().includes(exploreSearchQuery)) return false;
         return true;
-      });
+      }).sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }));
 
       container.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px; flex-wrap:wrap; gap:12px;">
