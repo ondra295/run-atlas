@@ -249,9 +249,12 @@
     .pr-pace-sub { font-size: 0.8rem; font-weight: 700; color: #16a34a; margin-top: 4px; }
     .pr-race-link {
       border-top: 1px solid #e2e8f0; padding-top: 10px; font-size: 0.78rem; color: #475569;
-      display: flex; flex-direction: column; gap: 2px; cursor: pointer;
+      display: flex; flex-direction: column; gap: 2px; cursor: pointer; min-height: 46px; justify-content: center;
     }
+    .pr-race-link strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
     .pr-race-link:hover strong { color: #007aff; text-decoration: underline; }
+    .pr-race-link.empty { cursor: default; color: #94a3b8; }
+    .pr-race-link.empty:hover strong { color: #94a3b8; text-decoration: none; }
     .pr-podium-list {
       margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e2e8f0;
       display: flex; flex-direction: column; gap: 4px;
@@ -259,9 +262,26 @@
     .pr-podium-row {
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
       padding: 4px 6px; border-radius: 7px; font-size: 0.74rem; color: #475569;
-      cursor: pointer; transition: background 0.15s ease;
+      cursor: pointer; transition: background 0.15s ease; height: 26px;
     }
     .pr-podium-row:hover { background: #eff6ff; color: #007aff; }
+    .pr-podium-row.empty {
+      cursor: default; color: #cbd5e1; opacity: 0.8;
+    }
+    .pr-podium-row.empty:hover { background: transparent; color: #cbd5e1; }
+    .pr-podium-row.empty .pr-podium-time { color: #cbd5e1; font-weight: 700; }
+    .timeline-cat-switch {
+      display: inline-flex; background: #e2e8f0; padding: 3px; border-radius: 10px; gap: 3px;
+    }
+    .timeline-cat-btn {
+      border: none; background: transparent; color: #475569; font-size: 0.78rem; font-weight: 800;
+      padding: 6px 12px; border-radius: 7px; cursor: pointer; transition: all 0.15s ease;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .timeline-cat-btn:hover { color: #0f172a; }
+    .timeline-cat-btn.active {
+      background: #ffffff; color: #007aff; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.10);
+    }
     .pr-podium-left { display: flex; align-items: center; gap: 5px; min-width: 0; }
     .pr-podium-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
     .pr-podium-time { font-weight: 800; color: #0f172a; flex-shrink: 0; font-variant-numeric: tabular-nums; }
@@ -1698,6 +1718,7 @@
     let yearGroupOpenState = {};
 
     let timelineYearFilter = 'all';
+    let timelineCategoryFilter = 'races';
     let exploreContinentFilter = 'all';
     let exploreCountryFilter = 'all';
     let exploreSurfaceFilter = 'all';
@@ -4650,7 +4671,10 @@
         </div>
       `;
 
-      const timelineItems = races.filter(r => r.status !== 'bucket' || (r.date && r.date.includes('-')));
+      const isMemTab = (timelineCategoryFilter === 'memorable');
+      const raceTimelinePool = races.filter(r => !r.isMemorable && (r.status !== 'bucket' || (r.date && r.date.includes('-'))));
+      const memorableTimelinePool = races.filter(r => r.isMemorable);
+      const timelineItems = isMemTab ? memorableTimelinePool : raceTimelinePool;
 
       const groups = {};
       timelineItems.forEach(item => {
@@ -4663,6 +4687,9 @@
       });
 
       const years = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+      if (timelineYearFilter !== 'all' && !years.includes(timelineYearFilter)) {
+        timelineYearFilter = 'all';
+      }
       const monthShort = ["", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
       const renderNodeCard = (item) => {
@@ -4686,7 +4713,7 @@
               <div style="min-width:0;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
                   <span class="badge ${getItemBadgeClass(item)}">
-                    ${item.isMemorable ? 'Memorable' : (item.statusLabel || item.status)}
+                    ${item.isMemorable ? (item.surfaceLabel || 'Memorable') : (item.statusLabel || item.status)}
                   </span>
                   <span style="font-size:0.76rem; font-weight:700; color:#64748b; display:inline-flex; align-items:center;">${geo.html}</span>
                 </div>
@@ -4707,14 +4734,14 @@
 
       let timelineHtml = '';
       let todayPlaced = false;
-      const shouldShowToday = (timelineYearFilter === 'all' || timelineYearFilter === currentYearStr);
+      const shouldShowToday = !isMemTab && (timelineYearFilter === 'all' || timelineYearFilter === currentYearStr);
 
       if (years.length === 0) {
         timelineHtml = `
           <div class="stats-panel-card" style="text-align:center; padding:48px 20px;">
-            <h3 style="font-size:1.2rem; color:#0f172a; margin-bottom:6px;">Your Season Timeline is empty</h3>
-            <p style="font-size:0.88rem; color:#64748b; margin-bottom:18px;">Add completed or planned races with event dates to see your chronological season flow.</p>
-            ${!isReadOnlyShared ? `<div><button class="open-detail-btn" onclick="openAddModal()">➕ Add Race to Timeline</button></div>` : ''}
+            <h3 style="font-size:1.2rem; color:#0f172a; margin-bottom:6px;">${isMemTab ? 'No Memorable Runs logged yet' : 'Your Race Timeline is empty'}</h3>
+            <p style="font-size:0.88rem; color:#64748b; margin-bottom:18px;">${isMemTab ? 'Log unforgettable non-race runs with dates to see them organized chronologically.' : 'Add completed or planned races with event dates to see your chronological season flow.'}</p>
+            ${!isReadOnlyShared ? `<div><button class="open-detail-btn" onclick="openAddModal('${isMemTab ? 'memorable' : 'race'}')">➕ ${isMemTab ? 'Add Memorable Run' : 'Add Race to Timeline'}</button></div>` : ''}
           </div>
         `;
       } else {
@@ -4746,11 +4773,12 @@
             todayPlaced = true;
           }
 
+          const unitLbl = isMemTab ? (items.length === 1 ? 'Run' : 'Runs') : (items.length === 1 ? 'Race' : 'Races');
           timelineHtml += `
             <div class="timeline-year-section">
               <div style="display:flex; align-items:center; gap:16px;">
                 <div class="timeline-year-badge">📅 ${yr}</div>
-                <span class="timeline-year-summary">${items.length} Events &bull; ${yrKm.toFixed(0)} km &bull; +${yrEle.toLocaleString()} m</span>
+                <span class="timeline-year-summary">${items.length} ${unitLbl} &bull; ${yrKm.toFixed(0)} km &bull; +${yrEle.toLocaleString()} m</span>
               </div>
               <div class="timeline-track">
                 ${trackItemsHtml}
@@ -4769,16 +4797,27 @@
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #cbd5e1; padding-bottom:14px; flex-wrap:wrap; gap:12px;">
           <div>
             <h1 style="font-size:1.65rem; font-weight:800; color:#0f172a;">Season Timeline & Calendar</h1>
-            <p style="font-size:0.86rem; color:#64748b;">Chronological progression of your completed races and scheduled season targets.</p>
+            <p style="font-size:0.86rem; color:#64748b;">${isMemTab ? 'Chronological log of your memorable non-race runs and mountain adventures.' : 'Chronological progression of your completed races and scheduled season targets.'}</p>
           </div>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            ${todayPlaced ? `<button class="pill-btn" style="background:#0f172a; color:#38bdf8; border-color:#38bdf8;" onclick="scrollToTimelineToday(true)">📍 Today</button>` : ''}
-            <div class="chips-group">
-              <button class="chip-btn ${timelineYearFilter === 'all' ? 'active' : ''}" onclick="timelineYearFilter='all'; renderTimelineDashboard();">All Years</button>
-              ${years.map(y => `<button class="chip-btn ${timelineYearFilter === y ? 'active' : ''}" onclick="timelineYearFilter='${y}'; renderTimelineDashboard();">${y}</button>`).join('')}
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <div class="timeline-cat-switch">
+              <button type="button" class="timeline-cat-btn ${!isMemTab ? 'active' : ''}" onclick="timelineCategoryFilter='races'; timelineYearFilter='all'; renderTimelineDashboard();">
+                🏁 Races <span style="opacity:0.65;">(${raceTimelinePool.length})</span>
+              </button>
+              <button type="button" class="timeline-cat-btn ${isMemTab ? 'active' : ''}" onclick="timelineCategoryFilter='memorable'; timelineYearFilter='all'; renderTimelineDashboard();">
+                🏔️ Memorable <span style="opacity:0.65;">(${memorableTimelinePool.length})</span>
+              </button>
             </div>
             <button class="back-btn" onclick="switchPageMode('races')">← Back to Map</button>
           </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div class="chips-group">
+            <button class="chip-btn ${timelineYearFilter === 'all' ? 'active' : ''}" onclick="timelineYearFilter='all'; renderTimelineDashboard();">All Years</button>
+            ${years.map(y => `<button class="chip-btn ${timelineYearFilter === y ? 'active' : ''}" onclick="timelineYearFilter='${y}'; renderTimelineDashboard();">${y}</button>`).join('')}
+          </div>
+          ${todayPlaced ? `<button class="pill-btn" style="background:#0f172a; color:#38bdf8; border-color:#38bdf8;" onclick="scrollToTimelineToday(true)">📍 Jump to Today</button>` : ''}
         </div>
         ${timelineHtml}
       `;
@@ -4787,7 +4826,6 @@
         requestAnimationFrame(() => setTimeout(() => scrollToTimelineToday(false), 60));
       }
     }
-
     // VIEW 2: PERSONAL BESTS & TROPHY ROOM
     function parseTimeToSeconds(timeStr) {
       if (!timeStr) return null;
@@ -4892,7 +4930,7 @@
           }
         }
 
-        if (r.date && /^\d{4}/.test(String(r.date))) {
+        if (!r.isMemorable && r.date && /^\d{4}/.test(String(r.date))) {
           const yr = String(r.date).slice(0, 4);
           if (!seasonVolume[yr]) seasonVolume[yr] = { year: yr, km: 0, count: 0 };
           seasonVolume[yr].km += d;
@@ -4905,49 +4943,58 @@
         .sort((a, b) => b.km - a.km)[0] || null;
 
       const renderPrCard = (title, badgeText, topList, accentColor) => {
-        if (!topList || topList.length === 0) {
-          return `
-            <div class="pr-trophy-card" style="border-top-color:#cbd5e1;">
-              <div>
-                <span class="pr-dist-badge" style="background:#f1f5f9; color:#64748b; border-color:#cbd5e1;">${badgeText}</span>
-                <div style="font-size:0.9rem; font-weight:800; color:#475569; margin-top:12px;">${title}</div>
-                <div class="pr-time-val" style="color:#cbd5e1; margin-top:6px;">— : —</div>
+        const list = topList || [];
+        const hasBest = list.length > 0;
+        const best = hasBest ? list[0] : null;
+        const medals = ['🥈', '🥉'];
+
+        const podiumRowsHtml = [1, 2].map((slotIdx, i) => {
+          const entry = list[slotIdx];
+          if (!entry) {
+            return `
+              <div class="pr-podium-row empty">
+                <div class="pr-podium-left">
+                  <span style="opacity:0.45;">${medals[i]}</span>
+                  <span class="pr-podium-name">—</span>
+                </div>
+                <span class="pr-podium-time">—</span>
               </div>
-              <div style="font-size:0.76rem; color:#94a3b8;">Log a completed ${title.toLowerCase()} with a finish time to unlock this trophy.</div>
+            `;
+          }
+          return `
+            <div class="pr-podium-row" onclick="selectSpotlightRace('${entry.item.id}')" title="${entry.item.name} (${entry.item.date || 'Completed'}) • ${entry.pace}">
+              <div class="pr-podium-left">
+                <span>${medals[i]}</span>
+                <span class="pr-podium-name">${entry.item.name}</span>
+              </div>
+              <span class="pr-podium-time">${entry.time}</span>
             </div>
           `;
-        }
-        const best = topList[0];
-        const runnersUp = topList.slice(1);
-        const medals = ['🥈', '🥉'];
-        const runnersUpHtml = runnersUp.length > 0 ? `
-          <div class="pr-podium-list">
-            ${runnersUp.map((entry, idx) => `
-              <div class="pr-podium-row" onclick="selectSpotlightRace('${entry.item.id}')" title="${entry.item.name} (${entry.item.date || 'Completed'}) • ${entry.pace}">
-                <div class="pr-podium-left">
-                  <span>${medals[idx] || '•'}</span>
-                  <span class="pr-podium-name">${entry.item.name}</span>
-                </div>
-                <span class="pr-podium-time">${entry.time}</span>
-              </div>
-            `).join('')}
-          </div>
-        ` : '';
+        }).join('');
 
         return `
-          <div class="pr-trophy-card" style="border-top-color:${accentColor};">
+          <div class="pr-trophy-card" style="border-top-color:${hasBest ? accentColor : '#cbd5e1'};">
             <div>
-              <span class="pr-dist-badge">${badgeText}</span>
+              <span class="pr-dist-badge" ${hasBest ? '' : 'style="background:#f1f5f9; color:#64748b; border-color:#cbd5e1;"'}>${badgeText}</span>
               <div style="font-size:0.86rem; font-weight:800; color:#64748b; margin-top:10px;">${title}</div>
-              <div class="pr-time-val">${best.time}</div>
-              <div class="pr-pace-sub">⚡ Avg Pace: ${best.pace}</div>
+              <div class="pr-time-val" ${hasBest ? '' : 'style="color:#cbd5e1;"'}>${hasBest ? best.time : '— : —'}</div>
+              <div class="pr-pace-sub" ${hasBest ? '' : 'style="color:#94a3b8; font-weight:600;"'}>${hasBest ? `⚡ Avg Pace: ${best.pace}` : 'No finish time logged'}</div>
             </div>
             <div>
-              <div class="pr-race-link" onclick="selectSpotlightRace('${best.item.id}')">
-                <strong>🥇 ${best.item.name} ➔</strong>
-                <span>📅 ${best.item.date || 'Completed'}</span>
+              ${hasBest ? `
+                <div class="pr-race-link" onclick="selectSpotlightRace('${best.item.id}')" title="${best.item.name}">
+                  <strong>🥇 ${best.item.name} ➔</strong>
+                  <span>📅 ${best.item.date || 'Completed'}</span>
+                </div>
+              ` : `
+                <div class="pr-race-link empty">
+                  <strong>🥇 —</strong>
+                  <span>Log a ${title.split(' ')[0]} to unlock</span>
+                </div>
+              `}
+              <div class="pr-podium-list">
+                ${podiumRowsHtml}
               </div>
-              ${runnersUpHtml}
             </div>
           </div>
         `;
@@ -5060,9 +5107,9 @@
               label: '🔥 Biggest Season',
               color: '#dc2626',
               value: biggestSeason ? `${Math.round(biggestSeason.km).toLocaleString()} km` : '—',
-              sub: biggestSeason ? `Season ${biggestSeason.year}` : 'No dated runs yet',
-              meta: biggestSeason ? `${biggestSeason.count} completed ${biggestSeason.count === 1 ? 'event' : 'events'}` : '',
-              onClick: biggestSeason ? `timelineYearFilter='${biggestSeason.year}'; switchPageMode('timeline');` : ''
+              sub: biggestSeason ? `Season ${biggestSeason.year}` : 'No completed races yet',
+              meta: biggestSeason ? `${biggestSeason.count} completed ${biggestSeason.count === 1 ? 'race' : 'races'}` : '',
+              onClick: biggestSeason ? `timelineCategoryFilter='races'; timelineYearFilter='${biggestSeason.year}'; switchPageMode('timeline');` : ''
             })}
           </div>
         </div>
